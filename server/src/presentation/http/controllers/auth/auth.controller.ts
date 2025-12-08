@@ -13,7 +13,6 @@ import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
-import { logger } from "@infrastructure/providers/logger/winston.logger";
 import { ValidationError } from "@presentation/express/utils/error-handling";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";

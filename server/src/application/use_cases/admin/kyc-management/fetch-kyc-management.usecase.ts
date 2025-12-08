@@ -14,11 +14,9 @@ export class FetchAllKycDocsUseCase implements IFetchAllKycDocsUseCase {
   constructor(
     @inject(USER_TYPES.KycRepository) private readonly _kycRepository: IKycRepository,
     @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
-  ) {}
+  ) { }
 
-  async execute(
-    options: QueryOptions,
-  ): Promise<FetchDataResponseDTO<KycResponseDTO>> {
+  async execute(options: QueryOptions): Promise<FetchDataResponseDTO<KycResponseDTO>> {
     const allDocs = await this._kycRepository.findWithFilters(options);
 
     const fullData = await Promise.all(
@@ -38,6 +36,7 @@ export class FetchAllKycDocsUseCase implements IFetchAllKycDocsUseCase {
       page: options.page || 1,
       limit: options.limit || 10,
       totalPages: Math.ceil(totalCount / (options.limit || 10)),
+      
     };
   }
 }

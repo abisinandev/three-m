@@ -3,7 +3,7 @@ import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
 import { ChangePasswordApi } from '@shared/services/user/ChangePasswordApi';
-import { useNavigate } from '@tanstack/react-router';
+import type { AxiosError } from 'axios';
 
 interface ChangePasswordModalProps {
     isOpen: boolean;
@@ -43,15 +43,17 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
             {
                 currentPassword,
                 newPassword,
-                confirmPassword,
+                confirmPassword
             }
         ),
         onSuccess: (res) => {
             toast.success(res.data?.message);
             onClose();
         },
-        onError: (err: any) => {
-            toast.error(err.data.data?.message || "Change password failed");
+        onError: (err: AxiosError<{ message: string }>) => {
+            console.log('=', err?.response?.data?.message)
+            console.log('===',err)
+            toast.error(err?.response?.data?.message || "Change password failed");
 
         }
     })
@@ -76,13 +78,13 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
 
     return (
         <>
-            {/* Backdrop - Click to Close */}
+    
             <div
                 className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50"
                 onClick={onClose}
             />
 
-            {/* Modal */}
+ 
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                 <div
                     className="w-full max-w-sm bg-[#0f0f0f] rounded-2xl border border-[#222] shadow-2xl"
@@ -98,7 +100,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
 
                         <form onSubmit={handleSubmit} className="space-y-4">
 
-                            {/* Current Password */}
+ 
                             <div className="relative">
                                 <input
                                     type={showCurrent ? 'text' : 'password'}
@@ -117,7 +119,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                                 </button>
                             </div>
 
-                            {/* New Password */}
+             
                             <div className="relative">
                                 <input
                                     type={showNew ? 'text' : 'password'}
@@ -136,7 +138,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                                 </button>
                             </div>
 
-                            {/* Confirm Password */}
+     
                             <div className="relative">
                                 <input
                                     type={showConfirm ? 'text' : 'password'}
@@ -155,7 +157,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                                 </button>
                             </div>
 
-                            {/* Password Rules */}
+         
                             <div className="text-xs space-y-1.5 p-3 bg-[#1A1A1A] rounded-lg border border-[#333]">
                                 {[
                                     { text: '8+ characters', met: requirements.length },
@@ -173,7 +175,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                                 ))}
                             </div>
 
-                            {/* Security Notice */}
+   
                             <div className="flex gap-2 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg text-xs">
                                 <AlertCircle className="w-4 h-4 text-blue-400 flex-shrink-0" />
                                 <p className="text-gray-300">
@@ -181,7 +183,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                                 </p>
                             </div>
 
-                            {/* Buttons */}
+   
                             <div className="flex gap-3 pt-2">
                                 <button
                                     type="submit"

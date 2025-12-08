@@ -13,10 +13,7 @@ export const toEntity = (dto: KycSubmitDTO): KycEntity => {
   });
 };
 
-export const toKycResponse = (
-  data: KycEntity,
-  user: UserEntity,
-): KycResponseDTO => {
+export const toKycResponse = (data: KycEntity, user: UserEntity): KycResponseDTO => {
   return {
     id: data.id,
     userId: data.userId,

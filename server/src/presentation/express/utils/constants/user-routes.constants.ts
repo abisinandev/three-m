@@ -7,4 +7,5 @@ export enum Routes {
   PROFILE_UPDATE = '/profile/update',
   EMAIL_UPDATE_OTP_SEND = '/profile/update/email/send-otp',
   EMAIL_UPDATE_VERIFY = '/profile/update/email/verify-otp',
+  UPLOAD_PROFILE_IMAGE = '/profile/update/profile-image',
 }

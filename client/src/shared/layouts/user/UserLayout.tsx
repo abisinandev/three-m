@@ -6,11 +6,15 @@ import { useUserStore } from '@stores/user/UserStore';
 import { Wallet, ChevronDown, LogOut, User, Menu } from 'lucide-react';
 import { Footer } from '@shared/components/LandingPage/Footer';
 import { LOGOUT } from '@shared/constants/userContants';
+import ConfirmModal from '@shared/components/modals/ConfirmModal';
 
 const UserLayout = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [loggingOut, setLoggingOut] = useState(false);
+    
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const { user, logout, } = useUserStore();
+    const { user, logout } = useUserStore();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,16 +28,19 @@ const UserLayout = () => {
     }, []);
 
     const handleLogout = async () => {
-        if (window.confirm('Are you sure you want to logout?')) {
-            try {
-                await api.post(LOGOUT, {}, { withCredentials: true });
-                logout();
-                useUserStore.persist.clearStorage();
-                navigate({ to: '/auth/login', replace: true });
-                toast.success('Logged out successfully');
-            } catch (error) {
-                toast.error('Logout failed');
-            }
+        setLoggingOut(true);
+        try {
+            await api.post(LOGOUT, {}, { withCredentials: true });
+            logout();
+            useUserStore.persist.clearStorage();
+            navigate({ to: '/auth/login', replace: true });
+            toast.success('Logged out successfully');
+        } catch (error) {
+            console.log('Logout failed: ', error);
+            toast.error('Logout failed. Please try again.');
+        } finally {
+            setLoggingOut(false);
+            setShowLogoutModal(false);
         }
     };
 
@@ -110,8 +117,11 @@ const UserLayout = () => {
                                         </Link>
                                         <div className="h-px bg-[#2a2a2a]" />
                                         <button
-                                            onClick={handleLogout}
-                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-[#1a1a1a] transition"
+                                            onClick={() => {
+                                                setIsDropdownOpen(false);
+                                                setShowLogoutModal(true);
+                                            }}
+                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-900/20 transition"
                                         >
                                             <LogOut size={16} />
                                             Logout
@@ -133,9 +143,20 @@ const UserLayout = () => {
             </main>
 
             <Footer />
+
+            <ConfirmModal
+                isOpen={showLogoutModal}
+                onClose={() => setShowLogoutModal(false)}
+                onConfirm={handleLogout}
+                title="Logout"
+                message="Are you sure you want to log out of your account?"
+                confirmText="Yes, Logout"
+                cancelText="Cancel"
+                variant="destructive"
+                loading={loggingOut}
+            />
         </div>
     );
-}
+};
 
-
-export default UserLayout
+export default UserLayout;

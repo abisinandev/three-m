@@ -4,23 +4,20 @@ import type { IUnblockUserUsecase } from "@application/use_cases/interfaces/admi
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
-import e, { type NextFunction, type Request, type Response } from "express";
+import { type NextFunction, type Request, type Response } from "express";
 import { inject, injectable } from "inversify";
 
 @injectable()
 export class AdminUserController {
   constructor(
-    @inject(ADMIN_TYPES.FetchUserDetails)
-    private readonly _fetchUserDetails: IFetchUserDetails,
-    @inject(ADMIN_TYPES.BlockUserUseCase)
-    private readonly _blockUserUsecase: IBlockUserUseCase,
-    @inject(ADMIN_TYPES.UnblockUserUsecase)
-    private readonly _unblockUserUsecase: IUnblockUserUsecase,
+    @inject(ADMIN_TYPES.FetchUserDetails) private readonly _fetchUserDetails: IFetchUserDetails,
+    @inject(ADMIN_TYPES.BlockUserUseCase) private readonly _blockUserUsecase: IBlockUserUseCase,
+    @inject(ADMIN_TYPES.UnblockUserUsecase) private readonly _unblockUserUsecase: IUnblockUserUsecase,
   ) {}
 
   async fetchUserDetails(req: Request, res: Response, next: NextFunction) {
     try {
-      const { page, limit, search, role, sortBy, sortOrder } = req.query;
+      // const { page, limit, search, role, sortBy, sortOrder } = req.query;
 
       const result = await this._fetchUserDetails.execute(req.query);
       return res.status(HttpStatus.OK).json({

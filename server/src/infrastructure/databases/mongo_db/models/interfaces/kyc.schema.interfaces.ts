@@ -16,7 +16,7 @@ export interface IKycSchema {
     fullAddress: string;
     city: string;
     state: string;
-    pinCode: string;
+    pincode: string;
   };
   rejectionReason?: string | null;
   createdAt: Date | null;

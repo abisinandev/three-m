@@ -7,8 +7,8 @@ export const toDomain = (doc: KycDocument): KycEntity => {
   return KycEntity.reconstitute({
     id: doc.id,
     userId: doc.userId as string,
-    documents: doc.documents as any,
-    address: doc.address as any,
+    documents: doc.documents ,
+    address: doc.address ,
     panNumber: doc.panNumber as string,
     adhaarNumber: doc.adhaarNumber as string,
     isKycVerified: doc.isKycVerified,
@@ -33,7 +33,7 @@ export const toPersistance = (data: KycEntity): Partial<KycDocument> => {
           fullAddress: data.address.fullAddress,
           city: data.address.city,
           state: data.address.state,
-          pinCode: data.address.pincode,
+          pincode: data.address.pincode,
         }
       : undefined,
 

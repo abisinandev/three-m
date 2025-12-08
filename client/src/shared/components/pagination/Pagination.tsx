@@ -18,7 +18,7 @@ export const Pagination = ({ page, limit, total, onPageChange }: PaginationProps
   const showPages = 5;
 
   let start = Math.max(1, page - Math.floor(showPages / 2));
-  let end = Math.min(totalPages, start + showPages - 1);
+  const end = Math.min(totalPages, start + showPages - 1);
 
   if (end === totalPages) {
     start = Math.max(1, totalPages - showPages + 1);

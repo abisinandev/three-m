@@ -1,7 +1,7 @@
 import type { IStorageProvider } from "@application/interfaces/services/externals/storage-provider.interface";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import { v2 as cloudinary } from "cloudinary";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 export class CloudinaryStorageProvider implements IStorageProvider {
   constructor() {
@@ -26,9 +26,9 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     return {
       signature,
       timestamp,
-      apiKey: env.CLOUDINARY_API_KEY!,
-      cloudName: env.CLOUDINARY_CLOUD_NAME!,
-      uploadPreset: env.CLOUDINARY_UPLOAD_PRESET!,
+      apiKey: env.CLOUDINARY_API_KEY || "",
+      cloudName: env.CLOUDINARY_CLOUD_NAME || "",
+      uploadPreset: env.CLOUDINARY_UPLOAD_PRESET || "",
       folder: fullFolder,
     };
   }

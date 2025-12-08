@@ -22,7 +22,7 @@ const RootLayout = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Outlet />
-      {/* <TanStackRouterDevtools position='bottom-right' /> */}
+      <TanStackRouterDevtools position='bottom-right' />
     </div>
   )
 }

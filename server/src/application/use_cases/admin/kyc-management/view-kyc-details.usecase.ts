@@ -1,3 +1,4 @@
+import { KycResponseDTO } from "@application/dto/user/kyc-response.dto";
 import type { IKycRepository } from "@application/interfaces/repositories/kyc-repository.interface";
 import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import { toKycResponse } from "@application/mappers/user/kyc.mapper";
@@ -13,13 +14,12 @@ export class ViewKycDetailsUseCase implements IViewKycDetailsUseCase {
     @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
   ) { }
 
-  async execute(kycId: string): Promise<any> {
+  async execute(kycId: string): Promise<KycResponseDTO> {
     const kyc = await this._kycRepository.findById(kycId);
     const user = await this._userRepository.findById(kyc?.userId as string);
     if (!kyc) {
       throw new Error("KYC not found");
     }
-
     return toKycResponse(kyc, user as UserEntity);
   }
 }

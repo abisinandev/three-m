@@ -25,7 +25,7 @@ export class GoogleAuthService implements IGoogleAuthService {
 
     return {
       id: payload.sub,
-      email: payload.email!,
+      email: payload.email || "",
       name: payload.name || payload.given_name || "User",
       avatar: payload.picture,
       emailVerified: payload.email_verified === true,

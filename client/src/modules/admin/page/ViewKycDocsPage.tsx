@@ -3,10 +3,13 @@ import { useParams, Link } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle, XCircle, AlertCircle, User, Mail, Hash, MapPin, FileText } from "lucide-react";
 import { FetchUserKycApi, approveKycApi, rejectKycApi } from "@shared/services/admin/user-management/KycApis";
 import { toast } from "sonner";
+import { useState } from "react";
+import KycActionModal from "@shared/components/modals/KycActionModal";
 
 const ViewKycDocPage = () => {
   const { kycId } = useParams({ from: "/admin/view-kyc/$kycId" });
   const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["kyc", kycId],
@@ -76,28 +79,15 @@ const ViewKycDocPage = () => {
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
             {status === "PENDING" && (
-              <>
+              <div className="flex items-center gap-3">
                 <button
-                  onClick={() => confirm("Approve this KYC?") && approve.mutate()}
-                  disabled={approve.isPending}
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-sm font-bold uppercase tracking-wider rounded-lg transition-all flex items-center gap-2"
+                  onClick={() => setIsModalOpen(true)}
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-sm font-bold uppercase tracking-wider rounded-lg transition-all flex items-center gap-2 shadow-lg"
                 >
                   <CheckCircle className="w-4 h-4" />
-                  Approve
+                  Review & Approve/Reject
                 </button>
-
-                <button
-                  onClick={() => {
-                    const reason = prompt("Reason for rejection:");
-                    if (reason?.trim()) reject.mutate(reason.trim());
-                  }}
-                  disabled={reject.isPending}
-                  className="px-5 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-60 text-sm font-bold uppercase tracking-wider rounded-lg transition-all flex items-center gap-2"
-                >
-                  <XCircle className="w-4 h-4" />
-                  Reject
-                </button>
-              </>  
+              </div>
             )}
 
             {status === "VERIFIED" && (
@@ -156,8 +146,8 @@ const ViewKycDocPage = () => {
               <div>
                 <p className="text-gray-500 text-xs">Status</p>
                 <span className={`inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-md ${status === "VERIFIED" ? "bg-emerald-600/20 text-emerald-400" :
-                    status === "REJECTED" ? "bg-red-600/20 text-red-400" :
-                      "bg-yellow-600/20 text-yellow-400"
+                  status === "REJECTED" ? "bg-red-600/20 text-red-400" :
+                    "bg-yellow-600/20 text-yellow-400"
                   }`}>
                   {status}
                 </span>
@@ -202,7 +192,6 @@ const ViewKycDocPage = () => {
           )}
         </div>
 
-        {/* Documents */}
         <div>
           <h2 className="text-base font-bold text-gray-300 mb-5 flex items-center gap-2">
             <FileText className="w-4 h-4" /> Submitted Documents
@@ -212,25 +201,60 @@ const ViewKycDocPage = () => {
             {kyc.documents.map((doc: any) => (
               <div
                 key={doc._id}
-                className="bg-[#111] rounded-xl border border-neutral-800 overflow-hidden hover:border-neutral-700 transition-all"
+                className="bg-[#111] rounded-xl border border-neutral-800 overflow-hidden hover:border-neutral-700 transition-all duration-300 group"
               >
-                <div className="bg-[#0f0f0f] px-4 py-3 border-b border-neutral-800">
-                  <p className="text-sm font-semibold capitalize">{doc.type}</p>
-                  <p className="text-xs text-gray-500 truncate">{doc.fileName}</p>
+                <div className="bg-[#0f0f0f] px-5 py-4 border-b border-neutral-800">
+                  <p className="text-sm font-semibold text-white capitalize tracking-wide">
+                    {doc.type === 'pan' ? 'PAN Card' : doc.type === 'aadhaar' ? 'Aadhaar Card' : doc.type === 'selfie' ? 'Live Selfie' : doc.type}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate mt-1 font-medium">
+                    {doc.fileName}
+                  </p>
                 </div>
-                <div className="p-3 bg-black">
-                  <img
-                    src={doc.fileUrl}
-                    alt={doc.type}
-                    className="w-full h-64 object-cover rounded-lg border border-neutral-800"
-                  />
+
+                <div className="p-4 bg-black">
+                  <div className="relative w-full h-64 bg-neutral-900 rounded-lg overflow-hidden border border-neutral-800">
+                    <img
+                      src={doc.fileUrl}
+                      alt={doc.type}
+                      className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 pointer-events-none" />
+                  </div>
+                </div>
+
+                <div className="px-5 py-3 bg-[#0f0f0f] border-t border-neutral-800 flex items-center justify-between">
+                  <span className="text-xs text-green-400 font-medium">Verified</span>
+                  <a
+                    href={doc.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-gray-400 hover:text-white transition-colors"
+                  >
+                    View Full Size →
+                  </a>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
+      <KycActionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onApprove={() => {
+          approve.mutate();
+          setIsModalOpen(false);
+        }}
+        onReject={(reason) => {
+          reject.mutate(reason);
+          setIsModalOpen(false);
+        }}
+        isLoading={approve.isPending || reject.isPending}
+        userName={kyc.fullName}
+      />
     </div>
+
   );
 };
 

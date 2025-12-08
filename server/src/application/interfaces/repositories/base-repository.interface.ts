@@ -1,5 +1,3 @@
-import { QueryOptions } from "mongoose";
-
 export interface IBaseRepository<T> {
   create(entity: T): Promise<void>;
   findById(id: string): Promise<T | null>;

@@ -48,10 +48,15 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
 
     const skip = (page - 1) * limit;
 
-    const finalFilter: any = { ...filter };
+    type UserFilter = Record<string, unknown> & {
+      $or?: Array<Record<string, unknown>>;
+    };
+
+    const finalFilter: UserFilter = { ...filter };
+
     if (search.trim()) {
       const searchRegex = { $regex: search.trim(), $options: "i" };
-      finalFilter.$or = searchField.map((field: any) => ({
+      finalFilter.$or = searchField.map((field: string) => ({
         [field]: searchRegex,
       }));
     }
@@ -68,5 +73,20 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
       .exec();
 
     return Promise.all(docs.map((doc) => this.mapper.toDomain(doc)));
+  }
+
+  async CountActiveUsers(): Promise<{ totalActiveUsersCount: number; }> {
+    const totalActiveUsersCount = await this.model.countDocuments({ isBlocked: false });
+    return { totalActiveUsersCount };
+  }
+
+  async CountInActiveUsers(): Promise<{ totalInActiveUsersCount: number; }> {
+    const totalInActiveUsersCount = await this.model.countDocuments({ isBlocked: true });
+    return { totalInActiveUsersCount }
+  }
+
+  async CountVerifiedUsers(): Promise<{ totalVerifiedUsersCount: number; }> {
+    const totalVerifiedUsersCount = await this.model.countDocuments({ isVerified: true });
+    return { totalVerifiedUsersCount }
   }
 }

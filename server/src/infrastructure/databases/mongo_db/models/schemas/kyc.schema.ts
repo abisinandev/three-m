@@ -22,7 +22,7 @@ const KycSchema = new Schema<KycDocument>(
       fullAddress: { type: String },
       city: { type: String },
       state: { type: String },
-      pinCode: { type: String },
+      pincode: { type: String },
     },
     rejectionReason: { type: String },
   },

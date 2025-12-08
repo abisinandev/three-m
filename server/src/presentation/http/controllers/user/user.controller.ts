@@ -1,8 +1,9 @@
-import { IChangeEmailSendOtpUseCase } from "@application/use_cases/interfaces/user/change-email-usecase.interface";
-import { IChangeEmailVerifyOtpUseCase } from "@application/use_cases/interfaces/user/change-email-verify-usecase.interface";
+import type { IChangeEmailSendOtpUseCase } from "@application/use_cases/interfaces/user/change-email-usecase.interface";
+import type { IChangeEmailVerifyOtpUseCase } from "@application/use_cases/interfaces/user/change-email-verify-usecase.interface";
 import type { IChangePasswordUseCase } from "@application/use_cases/interfaces/user/change-password.usecase.interface";
-import { IEditProfileUseCase } from "@application/use_cases/interfaces/user/edit-profile-usecase.interface";
+import type { IEditProfileUseCase } from "@application/use_cases/interfaces/user/edit-profile-usecase.interface";
 import type { IKycSubmitUseCase } from "@application/use_cases/interfaces/user/kyc-submit-usecase.interface";
+import { IProfileImageUploadUseCase } from "@application/use_cases/interfaces/user/profile-image-upload-usecase.interface";
 import type { ISignatureUploadUseCase } from "@application/use_cases/interfaces/user/signature-upload-usecase.interface";
 import type { IUserLogoutUseCase } from "@application/use_cases/interfaces/user/user-logout-usecase.interface";
 import type { IUserProfileInterface } from "@application/use_cases/interfaces/user/user-profile-usecase.interface";
@@ -12,7 +13,6 @@ import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { logger } from "@infrastructure/providers/logger/winston.logger";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
-import { http } from "winston";
 
 @injectable()
 export class UserController {
@@ -25,6 +25,7 @@ export class UserController {
     @inject(USER_TYPES.EditProfileUseCase) private readonly _editProfileUseCase: IEditProfileUseCase,
     @inject(USER_TYPES.ChangeEmailSendOtpUseCase) private readonly _changeEmailSendOtp: IChangeEmailSendOtpUseCase,
     @inject(USER_TYPES.ChangeEmailVerifyOtpUseCase) private readonly _changeEmailVerifyOtpUseCase: IChangeEmailVerifyOtpUseCase,
+    @inject(USER_TYPES.ProfileImageUploadUseCase) private readonly _profileImageUploadUseCase: IProfileImageUploadUseCase,
   ) { }
 
   async getProfile(req: Request, res: Response, next: NextFunction) {
@@ -86,7 +87,7 @@ export class UserController {
     try {
       const dto = { ...req.body };
       logger.info(`kyc data: ${dto}`);
-      const result = await this._kycSubmitUseCase.execute(dto);
+      await this._kycSubmitUseCase.execute(dto);
       return res.json({ success: true });
     } catch (error) {
       next(error);
@@ -102,6 +103,19 @@ export class UserController {
       return res.status(HttpStatus.OK).json({
         success: true,
         message: SuccessMessage.PROFILE_UPDATION_DONE,
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async uploadProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const dto = { ...req.body };
+      await this._profileImageUploadUseCase.execute(dto);
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        message: SuccessMessage.PROFILE_IMAGE_ADDED
       })
     } catch (error) {
       next(error)

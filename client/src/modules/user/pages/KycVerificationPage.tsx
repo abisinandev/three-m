@@ -12,7 +12,7 @@ const steps = [
     { id: 1, title: 'Your Details', field: 'details', isForm: true },
     { id: 2, title: 'Address Proof', field: 'address', isForm: true },
     { id: 3, title: 'PAN Card', field: 'pan' },
-    { id: 4, title: 'Aadhaar Card (Optional)', field: 'aadhaar', optional: true },
+    { id: 4, title: 'Aadhaar Card', field: 'aadhaar' },
     { id: 5, title: 'Live Selfie', field: 'selfie' },
 ];
 
@@ -73,7 +73,6 @@ const KYCVerificationPage = () => {
         }
     }, [user]);
 
-    // File handler
     const handleFileChange = (field: 'pan' | 'aadhaar' | 'selfie', file: File | null) => {
         if (!file) {
             setFiles(prev => ({ ...prev, [field]: null }));
@@ -108,7 +107,6 @@ const KYCVerificationPage = () => {
         setPreviews(prev => ({ ...prev, [field]: null }));
     };
 
-    // Camera Functions
     const startCamera = async () => {
         try {
             const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -146,12 +144,10 @@ const KYCVerificationPage = () => {
                 const file = new File([blob], `selfie_${Date.now()}.jpg`, { type: 'image/jpeg' });
                 handleFileChange('selfie', file);
                 stopCamera();
-                // toast.success('Selfie captured successfully!');
             }
         }, 'image/jpeg', 0.95);
     };
 
-    // Auto start camera on selfie step
     useEffect(() => {
         if (step.field === 'selfie' && !files.selfie) {
             startCamera();
@@ -161,7 +157,6 @@ const KYCVerificationPage = () => {
         };
     }, [currentStep, files.selfie]);
 
-    // Validation
     const isDetailsComplete = () => {
         const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
         return details.fullName.trim().length >= 3 && panRegex.test(details.panNumber.toUpperCase());
@@ -177,7 +172,6 @@ const KYCVerificationPage = () => {
     };
 
     const isStepComplete = () => {
-        if (step.optional) return true;
         if (step.field === 'details') return isDetailsComplete();
         if (step.field === 'address') return isAddressComplete();
         return !!files[step.field as keyof typeof files];
@@ -239,7 +233,6 @@ const KYCVerificationPage = () => {
             <div className="min-h-screen bg-[#050505] flex items-center justify-center px-4 py-8">
                 <div className="w-full max-w-md">
 
-                    {/* Success Overlay */}
                     {submitStatus === 'success' && (
                         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
                             <div className="text-center">
@@ -267,7 +260,6 @@ const KYCVerificationPage = () => {
                     <div className="bg-[#0a0a0a] rounded-2xl border border-[#1f1f1f] p-6 shadow-2xl">
                         <div className="space-y-6">
 
-                            {/* Header Icon */}
                             <div className="text-center">
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#111111] border border-[#333] mb-4">
                                     {step.isForm ? (
@@ -285,12 +277,9 @@ const KYCVerificationPage = () => {
                                 <h3 className="text-base font-medium text-white">
                                     {step.field === 'details' ? 'Enter Your Details' : step.isForm ? 'Enter Address' : `Upload ${step.title}`}
                                 </h3>
-                                {step.optional && <p className="text-xs text-gray-500 mt-1">Optional</p>}
                             </div>
 
-                            {/* CONTENT */}
                             {step.field === 'selfie' ? (
-                                // Selfie with Camera
                                 <div className="space-y-4">
                                     {!files.selfie ? (
                                         <div className="relative rounded-xl overflow-hidden bg-black">
@@ -341,7 +330,6 @@ const KYCVerificationPage = () => {
                                     )}
                                 </div>
                             ) : step.field === 'details' ? (
-                                // Details Form
                                 <div className="space-y-4">
                                     <input
                                         type="text"
@@ -359,14 +347,13 @@ const KYCVerificationPage = () => {
                                     />
                                     <input
                                         type="text"
-                                        placeholder="Aadhaar Number (optional)"
+                                        placeholder="Aadhaar Number"
                                         value={details.aadhaarNumber}
                                         onChange={(e) => setDetails(prev => ({ ...prev, aadhaarNumber: e.target.value.replace(/\D/g, '').slice(0, 12) }))}
                                         className="w-full px-4 py-3 bg-[#111111] border border-[#333] rounded-lg text-xs text-white placeholder-gray-500 focus:border-[#22C55E] outline-none font-mono"
                                     />
                                 </div>
                             ) : step.field === 'address' ? (
-                                // Address Form
                                 <div className="space-y-4">
                                     <input
                                         type="text"
@@ -401,7 +388,6 @@ const KYCVerificationPage = () => {
                                     />
                                 </div>
                             ) : (
-                                // Regular File Upload (PAN / Aadhaar)
                                 <div className="relative">
                                     {previews[step.field as keyof typeof previews] ? (
                                         <div className="relative rounded-xl overflow-hidden border border-[#333]">
@@ -444,7 +430,6 @@ const KYCVerificationPage = () => {
                                 </div>
                             )}
 
-                            {/* Navigation */}
                             <div className="flex justify-between pt-6">
                                 <button
                                     onClick={prevStep}
@@ -456,14 +441,6 @@ const KYCVerificationPage = () => {
                                 </button>
 
                                 <div className="flex gap-3">
-                                    {step.optional && (
-                                        <button
-                                            onClick={() => setCurrentStep(prev => prev + 1)}
-                                            className="px-4 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white hover:bg-[#1a1a1a] transition"
-                                        >
-                                            Skip
-                                        </button>
-                                    )}
                                     <button
                                         onClick={currentStep === steps.length - 1 ? handleSubmit : goNext}
                                         disabled={!isStepComplete() || isSubmitting}
@@ -485,7 +462,6 @@ const KYCVerificationPage = () => {
                         </div>
                     </div>
 
-                    {/* Hidden canvas */}
                     <canvas ref={canvasRef} className="hidden" />
                 </div>
             </div>

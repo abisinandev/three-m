@@ -2,7 +2,6 @@ import type { CreateUserDTO } from "@application/dto/auth/create-user.dto";
 import type { UserDTO } from "@application/dto/user/user-dto";
 import type { KycEntity } from "@domain/entities/kyc.entity";
 import { UserEntity } from "@domain/entities/user.entity";
-import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
 import { SubscripionPlan } from "@domain/enum/users/subscription-plan.enum";
 
 // Dto => Domain

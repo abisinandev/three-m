@@ -1,4 +1,6 @@
-export const uploadToCloudinary = async (file: File, signatureData: any) => {
+import type { SignatureDataType } from "@shared/types/user/SignatureDataType";
+
+export const uploadToCloudinary = async (file: File, signatureData: SignatureDataType) => {
   const { timestamp, signature, apiKey, cloudName, folder } = signatureData;
 
   if (!timestamp || !signature || !apiKey || !cloudName) {

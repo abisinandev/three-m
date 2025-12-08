@@ -25,6 +25,6 @@ export type UserType = {
     };
 
     // Profile
-    profileImage?: string;
+    avatar?: string;
     createdAt: string;
 };

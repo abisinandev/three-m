@@ -11,7 +11,7 @@ import type { IFetchUserDetails } from "../../interfaces/admin/fetch-user-detail
 export class FetchUserDetails implements IFetchUserDetails {
   constructor(
     @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
-  ) {}
+  ) { }
 
   async execute(data: QueryOptions): Promise<FetchDataResponseDTO<UserDTO>> {
     const allUsers = await this._userRepository.findWithFilters({
@@ -23,12 +23,19 @@ export class FetchUserDetails implements IFetchUserDetails {
     });
 
     const { totalCount } = await this._userRepository.count();
+    const { totalActiveUsersCount } = await this._userRepository.CountActiveUsers();
+    const { totalInActiveUsersCount } = await this._userRepository.CountInActiveUsers();
+    const { totalVerifiedUsersCount } = await this._userRepository.CountVerifiedUsers();
+
     return {
       data: allUsers.map((user) => toUserResponse(user)),
       total: totalCount,
       page: data.page || 1,
       limit: data.limit || 10,
       totalPages: Math.ceil(totalCount / (data.limit || 10)),
+      totalActiveUsersCount,
+      totalInActiveUsersCount,
+      totalVerifiedUsersCount,
     };
   }
 }

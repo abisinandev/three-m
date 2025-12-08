@@ -23,11 +23,8 @@ export class GoogleAuthUseCase implements IGoogleAuthUseCase {
     @inject(AUTH_TYPES.IJwtProvider) private readonly _jwtProvider: IJwtProvider,
   ) { }
 
-  async execute(data: {
-    provider: "google";
-    token: string;
-  }): Promise<GoogleResponseDTO> {
-    console.log("data==", data);
+  async execute(data: { provider: "google", token: string; }): Promise<GoogleResponseDTO> {
+
     const { email, emailVerified, id, name, avatar } =
       await this._googleAuthServie.verifyToken(data.token);
 

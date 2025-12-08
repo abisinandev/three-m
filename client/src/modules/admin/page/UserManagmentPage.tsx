@@ -13,6 +13,7 @@ import type { Column } from "@shared/components/interfaces/ITableColumn";
 import type { Action } from "@shared/components/interfaces/ITableActions";
 import type { User } from "@shared/components/interfaces/IUserTable";
 import { useDebouncedCallback } from "use-debounce";
+import ConfirmModal from "@shared/components/modals/ConfirmModal";
 
 const columns: Column<User>[] = [
     { header: "User ID", accessor: "userCode" },
@@ -31,27 +32,6 @@ const columns: Column<User>[] = [
     { header: "Joined", accessor: "createdAt" },
 ];
 
-
-const actions: Action<User>[] = [
-    {
-        label: "Block",
-        className:
-            "px-3 py-1 text-xs font-medium border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded transition",
-        onClick: async (user) => {
-            if (window.confirm("Block this user?")) await BlockUserDataApi(user.userCode);
-        },
-    },
-    {
-        label: "Unblock",
-        className:
-            "px-3 py-1 text-xs font-medium border border-green-500/20 bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded transition",
-        onClick: async (user) => {
-            if (window.confirm("Unblock this user?")) await UnblockUserApi(user.userCode);
-        },
-    },
-];
-
-
 export default function UserManagement() {
     const [filters, setFilters] = useState<UserFilters>({
         page: 1,
@@ -61,6 +41,13 @@ export default function UserManagement() {
         sortBy: "createdAt",
         sortOrder: "desc",
     });
+
+    const [blockModal, setBlockModal] = useState<{ open: boolean; userCode: string | null; isBlock: boolean }>({
+        open: false,
+        userCode: null,
+        isBlock: true,
+    });
+
     const queryClient = useQueryClient();
     const { data, isLoading, isError } = useQuery({
         queryKey: ["admin-users", filters],
@@ -69,14 +56,13 @@ export default function UserManagement() {
     });
 
     const users = data?.data.data ?? [];
-    console.log(data)
     const total = data?.data.total ?? 0;
 
     const stats = {
         total,
-        active: users.filter((u: User) => !u.isBlocked).length,
-        blocked: users.filter((u: User) => u.isBlocked).length,
-        verified: users.filter((user: User) => user.isVerified).length,
+        active: data?.data.totalActiveUsersCount ?? 0,
+        blocked: data?.data.totalInActiveUsersCount ?? 0,
+        verified: data?.data.totalVerifiedUsersCount ?? 0,
     };
 
     const debouncedSearch = useDebouncedCallback((search: string) => {
@@ -90,6 +76,38 @@ export default function UserManagement() {
         queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     };
 
+    const handleBlockUnblock = async () => {
+        if (!blockModal.userCode) return;
+
+        try {
+            if (blockModal.isBlock) {
+                await BlockUserDataApi(blockModal.userCode);
+            } else {
+                await UnblockUserApi(blockModal.userCode);
+            }
+            queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+        } finally {
+            setBlockModal({ open: false, userCode: null, isBlock: true });
+        }
+    };
+
+    const actions: Action<User>[] = [
+        {
+            label: "Block",
+            className:
+                "px-3 py-1 text-xs font-medium border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded transition",
+            onClick: (user) =>
+                setBlockModal({ open: true, userCode: user.userCode, isBlock: true }),
+        },
+        {
+            label: "Unblock",
+            className:
+                "px-3 py-1 text-xs font-medium border border-green-500/20 bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded transition",
+            onClick: (user) =>
+                setBlockModal({ open: true, userCode: user.userCode, isBlock: false }),
+        },
+    ];
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -99,7 +117,7 @@ export default function UserManagement() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 gap-4">
                 <StatsCard
                     title="Total Users"
                     value={stats.total.toString()}
@@ -170,10 +188,25 @@ export default function UserManagement() {
                             total={total}
                             onPageChange={(page) => updateFilters({ page })}
                         />
-
                     </>
                 )}
             </div>
+
+            {/* Block / Unblock Confirm Modal */}
+            <ConfirmModal
+                isOpen={blockModal.open}
+                onClose={() => setBlockModal({ open: false, userCode: null, isBlock: true })}
+                onConfirm={handleBlockUnblock}
+                title={blockModal.isBlock ? "Block User" : "Unblock User"}
+                message={
+                    blockModal.isBlock
+                        ? "This user will no longer be able to log in or use the platform."
+                        : "This user will regain access to the platform."
+                }
+                confirmText={blockModal.isBlock ? "Block User" : "Unblock User"}
+                cancelText="Cancel"
+                variant={blockModal.isBlock ? "destructive" : "success"}
+            />
         </div>
     );
 }

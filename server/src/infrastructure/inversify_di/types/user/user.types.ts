@@ -14,7 +14,7 @@ export const USER_TYPES = {
   EditProfileUseCase: Symbol.for("EditProfileUseCase"),
   ChangeEmailVerifyOtpUseCase: Symbol.for(" ChangeEmailVerifyOtpUseCase"),
   ChangeEmailSendOtpUseCase: Symbol.for('ChangeEmailSendOtpUseCase'),
-  
+  ProfileImageUploadUseCase: Symbol.for("ProfileImageUploadUseCase"),
 
   //providers
   SignatureUploadUseCase: Symbol.for("SignatureUploadUseCase"),

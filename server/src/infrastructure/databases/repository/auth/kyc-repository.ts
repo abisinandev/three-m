@@ -12,8 +12,7 @@ import { BaseRepository } from "../base.repository";
 @injectable()
 export class KycRepository
   extends BaseRepository<KycEntity, KycDocument>
-  implements IKycRepository
-{
+  implements IKycRepository {
   constructor() {
     super(KycModel, KycMapper);
   }
@@ -23,23 +22,20 @@ export class KycRepository
       page = 1,
       limit = 10,
       status,
-      // search = "",
-      // searchFields = ["fullName", "email", "userCode"],
       sortBy = "createdAt",
       sortOrder = "desc",
     } = options;
 
+    type KycFilter = {
+      status?: string;
+    };
+
     const skip = (page - 1) * limit;
 
-    const finalFilter: any = {};
-    if (status) finalFilter.status = !status.length ? "" : status;
-
-    // if (search.trim()) {
-    //     const regex = { $regex: search.trim(), $options: "i" };
-    //     finalFilter.$or = searchFields.map((field) => ({
-    //         [field]: regex
-    //     }));
-    // }
+    const finalFilter: KycFilter = {};
+    if (status) {
+      finalFilter.status = status.length ? status : "";
+    }
 
     const sort: Record<string, 1 | -1> = {
       [sortBy]: sortOrder === "asc" ? 1 : -1,

@@ -29,6 +29,8 @@ import { IChangeEmailSendOtpUseCase } from "@application/use_cases/interfaces/us
 import { ChangeEmailSendOtpUseCase } from "@application/use_cases/user/change-email-send-otp.usecase";
 import { IChangeEmailVerifyOtpUseCase } from "@application/use_cases/interfaces/user/change-email-verify-usecase.interface";
 import { ChangeEmailVerifyOtpUseCase } from "@application/use_cases/user/change-email-verify.usecase";
+import { IProfileImageUploadUseCase } from "@application/use_cases/interfaces/user/profile-image-upload-usecase.interface";
+import { ProfileImageUploadUseCase } from "@application/use_cases/user/profile-image-upload.usecase";
 
 export const UserModule = new ContainerModule(({ bind }) => {
   //Repository
@@ -49,6 +51,7 @@ export const UserModule = new ContainerModule(({ bind }) => {
   bind<IKycSubmitUseCase>(USER_TYPES.KycSubmitUseCase).to(KycSubmitUseCase);
   bind<IKycRepository>(USER_TYPES.KycRepository).to(KycRepository);
   bind<IEditProfileUseCase>(USER_TYPES.EditProfileUseCase).to(EditProfileUseCase);
-  bind<IChangeEmailSendOtpUseCase>(USER_TYPES.ChangeEmailSendOtpUseCase).to(ChangeEmailSendOtpUseCase)
-  bind<IChangeEmailVerifyOtpUseCase>(USER_TYPES.ChangeEmailVerifyOtpUseCase).to(ChangeEmailVerifyOtpUseCase)
+  bind<IChangeEmailSendOtpUseCase>(USER_TYPES.ChangeEmailSendOtpUseCase).to(ChangeEmailSendOtpUseCase);
+  bind<IChangeEmailVerifyOtpUseCase>(USER_TYPES.ChangeEmailVerifyOtpUseCase).to(ChangeEmailVerifyOtpUseCase);
+  bind<IProfileImageUploadUseCase>(USER_TYPES.ProfileImageUploadUseCase).to(ProfileImageUploadUseCase);
 });

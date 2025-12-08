@@ -31,7 +31,7 @@ const AuthenticationPage = () => {
                 replace:true
             })
         },
-        onError: (err: any) => {
+        onError: (err:unknown) => {
             toast.error(err.response?.data?.message || "Authentication failed");
         },
     });

@@ -45,5 +45,7 @@ export enum SuccessMessage {
 
   PROFILE_UPDATION_DONE = "Profile updated",
   EMAIL_UPDATION_OTP_SEND = 'Otp send to email, Please check your inbox to verify your email',
-  EMAIL_UPDATION_VERIFY_OTP = "Email updated successfully"
+  EMAIL_UPDATION_VERIFY_OTP = "Email updated successfully",
+
+  PROFILE_IMAGE_ADDED = "Profile image added"
 }

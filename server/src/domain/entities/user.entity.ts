@@ -115,7 +115,7 @@ export class UserEntity {
       kycStatus: KycStatusType.NULL,
       walletBalance: 0,
       isTwoFactorEnabled: false,
-      authProvider: AuthProvider.MANAUL,
+      authProvider: AuthProvider.MANUAL,
     });
   }
 
@@ -134,12 +134,12 @@ export class UserEntity {
       password: null,
       role: Role.USER,
       isEmailVerified: true,
-      isVerified: true,
+      isVerified: false,
       isBlocked: false,
       subscriptionStatus: SubscriptionStatus.INACTIVE,
       subscriptionPlan: SubscripionPlan.FREE,
       currency: CurrencyTypes.INR,
-      kycStatus: KycStatusType.NULL,
+      kycStatus: KycStatusType.NULL, 
       walletBalance: 0,
       isTwoFactorEnabled: false,
       authProvider: data.provider,

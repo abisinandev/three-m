@@ -1,5 +1,5 @@
 import type { IBaseRepository } from "@application/interfaces/repositories/base-repository.interface";
-import type { Model, QueryOptions, UpdateQuery } from "mongoose";
+import type { Model, UpdateQuery } from "mongoose";
 
 export abstract class BaseRepository<TDomain, TDocument>
   implements IBaseRepository<TDomain> {
@@ -32,7 +32,7 @@ export abstract class BaseRepository<TDomain, TDocument>
   }
 
   async count(): Promise<{ totalCount: number }> {
-    const totalCount = await this.model.find().countDocuments();
+    const totalCount = await this.model.countDocuments();
     return { totalCount };
   }
 

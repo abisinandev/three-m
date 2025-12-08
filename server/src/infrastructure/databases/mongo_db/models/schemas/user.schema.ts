@@ -17,15 +17,15 @@ const UserSchema = new Schema<UserDocument>(
     email: { type: String, required: true, unique: true, index: true },
     phone: {
       type: String,
-      required: function (this: any) {
-        return this.authProvider === "MANUAL";
+      required: function (this: UserDocument) {
+        return this.authProvider ===   AuthProvider.MANUAL;
       },
       default: null,
     },
     password: {
       type: String,
-      required: function (this: any) {
-        return this.authProvider === "MANUAL";
+      required: function (this: UserDocument) {
+        return this.authProvider === "manual";
       },
       default: null,
     },
@@ -64,7 +64,7 @@ const UserSchema = new Schema<UserDocument>(
     authProvider: {
       type: String,
       enum: Object.values(AuthProvider),
-      default: AuthProvider.MANAUL,
+      default: AuthProvider.MANUAL,
     },
     avatar: { type: String },
     googleId: { type: String },

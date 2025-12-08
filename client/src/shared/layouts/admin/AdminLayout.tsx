@@ -186,13 +186,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* System Status */}
-            <div className="hidden lg:block text-right text-xs">
-              <div className="text-gray-400">
-                Uptime: <span className="text-teal-green font-medium">99.91%</span>
-              </div>
-              <div className="text-gray-500 text-[10px]">Updated 2m ago</div>
-            </div>
 
             <button
               className="relative p-2 hover:bg-white/5 rounded-lg transition"

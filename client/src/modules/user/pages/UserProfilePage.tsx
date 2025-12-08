@@ -3,14 +3,21 @@ import { useState } from 'react';
 import { Camera, CheckCircle } from 'lucide-react';
 import ChangePasswordModal from '@shared/components/modals/ChangePasswordModal';
 import { format } from 'date-fns';
-import { useNavigate } from '@tanstack/react-router';
+
 import EditProfileModal from '@shared/components/modals/UserProfileEditModal';
+import { useNavigate } from '@tanstack/react-router';
+import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
+import { GetSignatureApi } from '@shared/services/user/GetSignatureApi';
+import api from '@lib/axiosUser';
+import { UPLOAD_PROFILE_IMAGE } from '@shared/constants/userContants';
+
 
 const UserProfilePage = () => {
-  const { user } = useUserStore();
-
+  const { user, setUser } = useUserStore();
+  const [twoFAEnabled, setTwoFAEnabled] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
   const getInitials = (name: string) =>
@@ -81,6 +88,28 @@ const UserProfilePage = () => {
     ? `XXXX-XXXX-${user.aadhaarNumber.slice(-4)}`
     : "Not added";
 
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user?.id) return;
+
+    setUploading(true);
+    try {
+      const signatureData = await GetSignatureApi("profile", user.id);
+      console.log('signatureData: ', signatureData.data)
+      const result = await uploadToCloudinary(file, signatureData.data);
+      console.log('result: ', result)
+      await api.patch(UPLOAD_PROFILE_IMAGE, {
+        userId: user?.id,
+        url: result.secure_url
+      });
+      setUser({ ...user, avatar: result.secure_url });
+    } catch (err) {
+      console.error("Profile image upload failed", err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <>
       <div className="max-w-3xl mx-auto px-4 py-6">
@@ -100,14 +129,27 @@ const UserProfilePage = () => {
 
             <div className="relative inline-block group mb-5">
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#22C55E] via-[#16a34a] to-[#15803d] p-1 shadow-2xl ring-4 ring-[#22C55E]/20">
-                <div className="w-full h-full rounded-full bg-[#0f0f0f] flex items-center justify-center text-3xl font-bold text-white">
-                  {user?.fullName ? getInitials(user.fullName) : 'U'}
+                <div className="w-full h-full rounded-full bg-[#0f0f0f] flex items-center justify-center text-3xl font-bold text-white overflow-hidden">
+                  {user?.avatar ? (
+                    <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    user?.fullName ? getInitials(user.fullName) : 'U'
+                  )}
                 </div>
               </div>
+
               <div className="absolute inset-0 rounded-full bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-sm">
                 <Camera className="w-6 h-6 text-white" />
+                {uploading && <div className="absolute inset-0 flex items-center justify-center"><div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div></div>}
               </div>
-              <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" />
+
+              <input
+                type="file"
+                accept="image/*"
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                onChange={handleImageChange}
+                disabled={uploading}
+              />
             </div>
 
             <h1 className="text-2xl font-bold text-white tracking-tight">{user?.fullName || 'User'}</h1>
@@ -117,6 +159,7 @@ const UserProfilePage = () => {
               Member since {formatJoinDate(user?.createdAt)}
             </span>
           </div>
+
           <div className="p-6 space-y-6">
 
             <section className="bg-[#111111] rounded-xl p-5 border border-[#222]">
@@ -188,9 +231,22 @@ const UserProfilePage = () => {
                     <p className="text-white text-xs font-medium">Two-Factor Authentication</p>
                     <p className="text-gray-500 text-xs">Add extra security with authenticator app</p>
                   </div>
-                  <div className="relative w-11 h-6 bg-gray-700 rounded-full">
-                    <span className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition" />
-                  </div>
+
+                  {/* Toggle */}
+                  <button
+                    onClick={() => setTwoFAEnabled(!twoFAEnabled)}
+                    className={`
+                    relative w-12 h-6 rounded-full transition-colors 
+                    ${twoFAEnabled ? 'bg-green-500' : 'bg-gray-700'}
+                  `}
+                  >
+                    <span
+                      className={`
+                      absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-all
+                      ${twoFAEnabled ? 'translate-x-6' : 'translate-x-0'}
+                    `}
+                    />
+                  </button>
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-[#333]">

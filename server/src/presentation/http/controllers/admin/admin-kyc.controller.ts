@@ -5,20 +5,16 @@ import type { IViewKycDetailsUseCase } from "@application/use_cases/interfaces/a
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
-import e, { type NextFunction, type Request, type Response } from "express";
+import  { type NextFunction, type Request, type Response } from "express";
 import { inject, injectable } from "inversify";
 
 @injectable()
 export class AdminKycController {
   constructor(
-    @inject(ADMIN_TYPES.FetchAllKycDocsUseCase)
-    private readonly _fetchAllKycDocs: IFetchAllKycDocsUseCase,
-    @inject(ADMIN_TYPES.ViewKycDetailsUseCase)
-    private readonly _viewKycDetails: IViewKycDetailsUseCase,
-    @inject(ADMIN_TYPES.VerifyKycUseCase)
-    private readonly _verifyKycUseCase: IVerifyKycUseCase,
-    @inject(ADMIN_TYPES.RejectKycUseCase)
-    private readonly _rejectKycUseCase: IRejectKycUseCase,
+    @inject(ADMIN_TYPES.FetchAllKycDocsUseCase) private readonly _fetchAllKycDocs: IFetchAllKycDocsUseCase,
+    @inject(ADMIN_TYPES.ViewKycDetailsUseCase) private readonly _viewKycDetails: IViewKycDetailsUseCase,
+    @inject(ADMIN_TYPES.VerifyKycUseCase) private readonly _verifyKycUseCase: IVerifyKycUseCase,
+    @inject(ADMIN_TYPES.RejectKycUseCase) private readonly _rejectKycUseCase: IRejectKycUseCase,
   ) {}
 
   async fetchAllKycDocs(req: Request, res: Response, next: NextFunction) {
@@ -54,7 +50,7 @@ export class AdminKycController {
       const { kycId } = req.params;
       const data = { ...req.body };
       console.log(data.reason, "Reason");
-      const result = await this._rejectKycUseCase.execute({
+      await this._rejectKycUseCase.execute({
         kycId,
         reason: data.reason,
       });
