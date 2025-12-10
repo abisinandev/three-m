@@ -1,7 +1,7 @@
-import type { ILogger } from "./logger.interface";
-import { logger } from "./winston.logger";
+import { ILogger } from "./logger.interface";
+import { logger } from "./pino.logger";
 
-export class WinstonLoggerService implements ILogger {
+export class PinoLoggerService implements ILogger {
   info(message: string): void {
     logger.info(message);
   }

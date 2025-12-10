@@ -36,7 +36,6 @@ export class FetchAllKycDocsUseCase implements IFetchAllKycDocsUseCase {
       page: options.page || 1,
       limit: options.limit || 10,
       totalPages: Math.ceil(totalCount / (options.limit || 10)),
-      
     };
   }
 }

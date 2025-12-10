@@ -2,7 +2,6 @@ import type { IUserRepository } from "@application/interfaces/repositories/user-
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
-import { logger } from "@infrastructure/providers/logger/winston.logger";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import jwt from "jsonwebtoken";
@@ -12,6 +11,7 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from "../utils/error-handling";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 
 @injectable()
 export class AuthMiddleware {

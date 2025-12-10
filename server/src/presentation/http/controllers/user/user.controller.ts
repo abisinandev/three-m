@@ -10,7 +10,7 @@ import type { IUserProfileInterface } from "@application/use_cases/interfaces/us
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
-import { logger } from "@infrastructure/providers/logger/winston.logger";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 

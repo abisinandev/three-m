@@ -5,9 +5,9 @@ import { toUserResponse } from "@application/mappers/user/user.mapper";
 import type { KycEntity } from "@domain/entities/kyc.entity";
 import type { UserEntity } from "@domain/entities/user.entity";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
-import { logger } from "@infrastructure/providers/logger/winston.logger";
 import { inject, injectable } from "inversify";
 import type { IUserProfileInterface } from "../interfaces/user/user-profile-usecase.interface";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 
 @injectable()
 export class GetUserProfileUseCase implements IUserProfileInterface {

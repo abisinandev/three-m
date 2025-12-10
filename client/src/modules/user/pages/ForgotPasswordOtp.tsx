@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 export default function ForgotPasswordOTP() {
   const { email, setData } = useAuthStore();
-
+  const expirationTime = Date.now() + 5 * 60 * 1000;
   const controls = useOtpControls(email as string);
   const navigate = useNavigate();
 
@@ -20,10 +20,10 @@ export default function ForgotPasswordOTP() {
 
     onSuccess: (res) => {
       toast.success(res.data.message || "Otp verified. You can reset your password");
-      console.log("Forgot otp verify: ",res.data)
       controls.resetOtpState();
+      console.log("Forgot otp verify: ",res.data)
       localStorage.removeItem(controls.storageKey);
-      setData(email as string, Date.now(), res.data.data.resetToken);
+      setData(email as string, expirationTime, res.data.data.resetToken);
       navigate({ to: "/auth/reset-password" })
     },
 

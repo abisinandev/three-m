@@ -27,14 +27,14 @@ export class AdminAuthUseCase implements IAdminAuthUseCase {
     const isExist = await this._adminRepository.findOne({
       adminCode: data.adminCode,
     });
-    console.log("=========", isExist?.email);
+
     if (!isExist) throw new NotFoundError(ErrorMessage.ADMIN_NOT_FOUND);
 
     const isMatch = await this._passwordHashing.verify(
       data.password,
       isExist.password,
     );
-    if (!isMatch) throw new ValidationError(ErrorMessage.INVALID_PASSWORD);
+    if (!isMatch) throw new ValidationError(ErrorMessage.INVALID_CREDENTIALS);
 
     const otp = generateOtp();
     const expiryTime = 5 * 60;
