@@ -26,7 +26,6 @@ jobs:
           npm run build
 
       - name: Backend Test
-        if: exists('backend/package.json')
         run: |
           cd backend
           npm test
