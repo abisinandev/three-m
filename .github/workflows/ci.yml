@@ -43,7 +43,6 @@ jobs:
           npm run build
 
       - name: Frontend Test
-        if: exists('frontend/package.json')
         run: |
           cd frontend
           npm test
