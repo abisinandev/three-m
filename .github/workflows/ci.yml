@@ -1,0 +1,49 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["dev"]       # run CI when dev branch is pushed
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # BACKEND
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Backend Build
+        run: |
+          cd backend
+          npm run build
+
+      - name: Backend Test
+        if: exists('backend/package.json')
+        run: |
+          cd backend
+          npm test
+
+      # FRONTEND
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Frontend Build
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Frontend Test
+        if: exists('frontend/package.json')
+        run: |
+          cd frontend
+          npm test
