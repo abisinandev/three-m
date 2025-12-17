@@ -25,13 +25,13 @@ import type { IRejectKycUseCase } from "@application/use_cases/interfaces/admin/
 import type { IUnblockUserUsecase } from "@application/use_cases/interfaces/admin/unblock-user-usecase.interface";
 import type { IVerifyKycUseCase } from "@application/use_cases/interfaces/admin/verify-kyc-usecase.interface";
 import type { IViewKycDetailsUseCase } from "@application/use_cases/interfaces/admin/view-kyc-details-usecase.interface";
-import { AdminRepository } from "@infrastructure/databases/repository/auth/admin.repository";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
 import { AdminController } from "@presentation/http/controllers/admin/admin.controller";
 import { AdminAuthController } from "@presentation/http/controllers/admin/admin-auth.controller";
 import { AdminKycController } from "@presentation/http/controllers/admin/admin-kyc.controller";
 import { AdminUserController } from "@presentation/http/controllers/admin/admin-user.controller";
 import { ContainerModule } from "inversify";
+import { AdminRepository } from "@infrastructure/databases/repository/user/admin.repository";
 
 export const AdminModule = new ContainerModule(({ bind }) => {
   //Usecases

@@ -41,14 +41,12 @@ export function TableComponent<T>({ columns, data, actions }: TableProps<T>) {
                     </tr>
                 </thead>
 
-                {/* Table Body */}
                 <tbody>
                     {data.map((row, idx) => (
                         <tr
                             key={idx}
                             className="border-b border-neutral-800/50 hover:bg-white/[0.02] transition-colors"
                         >
-                            {/* Render each column */}
                             {columns.map((col) => (
                                 <td key={String(col.accessor)} className="py-3 px-4 text-sm text-gray-300">
                                     {col.render
@@ -57,7 +55,6 @@ export function TableComponent<T>({ columns, data, actions }: TableProps<T>) {
                                 </td>
                             ))}
 
-                            {/* Render action buttons */}
                             {actions && actions.length > 0 && (
                                 <td className="py-3 px-4">
                                     <div className="flex items-center justify-end gap-2">
@@ -67,7 +64,11 @@ export function TableComponent<T>({ columns, data, actions }: TableProps<T>) {
                                                 onClick={() => action.onClick(row)}
                                                 className={`px-3 py-1 rounded text-xs font-medium transition-all border ${action.className}`}
                                             >
-                                                {action.label}
+                                                {
+                                                    typeof action.label === "function"
+                                                        ? action.label(row)
+                                                        : action.label
+                                                }
                                             </button>
                                         ))}
                                     </div>

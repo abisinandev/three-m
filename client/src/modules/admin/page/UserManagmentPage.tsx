@@ -1,7 +1,7 @@
 import { Users, Lock } from "lucide-react";
 import { useState } from "react";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
-import { TableComponent } from "@shared/components/table/UserTable";
+import { TableComponent } from "@shared/components/table/TableComponent";
 import { Pagination } from "@shared/components/pagination/Pagination";
 import { FiltersRow } from "@shared/components/filter/FilterComponent";
 import { StatsCard } from "@shared/components/cards/UserManagementStatCards";
@@ -93,30 +93,31 @@ export default function UserManagement() {
 
     const actions: Action<User>[] = [
         {
-            label: "Block",
-            className:
-                "px-3 py-1 text-xs font-medium border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded transition",
-            onClick: (user) =>
-                setBlockModal({ open: true, userCode: user.userCode, isBlock: true }),
-        },
-        {
-            label: "Unblock",
-            className:
-                "px-3 py-1 text-xs font-medium border border-green-500/20 bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded transition",
-            onClick: (user) =>
-                setBlockModal({ open: true, userCode: user.userCode, isBlock: false }),
-        },
+            label: (user) => (user.isBlocked ? "Unblock" : "Block"),
+            className: (user) =>
+                user.isBlocked
+                    ? "px-3 py-1 text-xs font-medium border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded transition"
+                    : "px-3 py-1 text-xs font-medium border border-green-500/20 bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded transition",
+            onClick: (user) => {
+                setBlockModal({
+                    open: true,
+                    userCode: user.userCode,
+                    isBlock: !user.isBlocked
+                });
+            },
+        }
     ];
+
 
     return (
         <div className="space-y-6">
-            {/* Header */}
+
             <div>
                 <h1 className="text-2xl font-bold text-white">User Management</h1>
                 <p className="text-sm text-gray-500 mt-1">Manage user accounts and permissions</p>
             </div>
 
-            {/* Stats Cards */}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 gap-4">
                 <StatsCard
                     title="Total Users"
@@ -192,7 +193,7 @@ export default function UserManagement() {
                 )}
             </div>
 
-            {/* Block / Unblock Confirm Modal */}
+
             <ConfirmModal
                 isOpen={blockModal.open}
                 onClose={() => setBlockModal({ open: false, userCode: null, isBlock: true })}

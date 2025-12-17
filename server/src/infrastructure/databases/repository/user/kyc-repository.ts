@@ -10,9 +10,8 @@ import type { QueryOptions } from "mongoose";
 import { BaseRepository } from "../base.repository";
 
 @injectable()
-export class KycRepository
-  extends BaseRepository<KycEntity, KycDocument>
-  implements IKycRepository {
+export class KycRepository extends BaseRepository<KycEntity, KycDocument> implements IKycRepository {
+  
   constructor() {
     super(KycModel, KycMapper);
   }

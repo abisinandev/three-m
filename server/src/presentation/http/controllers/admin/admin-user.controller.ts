@@ -17,8 +17,6 @@ export class AdminUserController {
 
   async fetchUserDetails(req: Request, res: Response, next: NextFunction) {
     try {
-      // const { page, limit, search, role, sortBy, sortOrder } = req.query;
-
       const result = await this._fetchUserDetails.execute(req.query);
       return res.status(HttpStatus.OK).json({
         success: true,
@@ -32,8 +30,8 @@ export class AdminUserController {
 
   async blockUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
-      await this._blockUserUsecase.execute(id);
+      const { userId } = req.params;
+      await this._blockUserUsecase.execute(userId);
       return res.status(HttpStatus.OK).json({
         success: true,
         message: SuccessMessage.BLOCKED_MSG,

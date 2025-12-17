@@ -10,8 +10,8 @@ export const logger = pino({
         options: {
           colorize: true,
           translateTime: "yyyy-mm-dd HH:MM:ss",
-          messageFormat: "{msg}",
-          charset: "utf8"
+          // messageFormat: "{msg}",
+          // charset: "utf8",
         },
       },
 

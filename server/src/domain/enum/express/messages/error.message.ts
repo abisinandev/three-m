@@ -36,4 +36,6 @@ export enum ErrorMessage {
   ACCOUNT_BLOCKED_ADMIN = "Account is blocked",
 
   PROFILE_UPDATION_FAILED = "No valid fields provided to update",
+
+  WALLET_NOT_FOUND = "Wallet not found",
 }

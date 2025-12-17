@@ -6,7 +6,7 @@ import { SubscriptionStatus } from "@domain/enum/users/subscription-status.enum"
 import { Role } from "@domain/enum/users/user-role.enum";
 import type { Document } from "mongoose";
 import { model, Schema } from "mongoose";
-import type { IUserSchema } from "../interfaces/user.schema.interfact";
+import type { IUserSchema } from "../interfaces/user.schema.interface";
 
 export type UserDocument = Document & IUserSchema;
 

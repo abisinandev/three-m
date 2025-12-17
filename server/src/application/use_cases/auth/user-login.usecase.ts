@@ -20,7 +20,7 @@ export class UserLoginUseCase implements IUserLoginUseCase {
     @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
     @inject(AUTH_TYPES.IPasswordHashingService) private readonly _passwordHashing: IPasswordHashingService,
     @inject(AUTH_TYPES.TwoFactorAuthSetup) private readonly _twoFactorAuthSetup: ITwoFactorAuthSetup,
-  ) {}
+  ) { }
 
   async execute(user: UserLoginDTO): Promise<LoginReponseDTO> {
     const existingUser = await this._userRepository.findByField(
@@ -29,10 +29,8 @@ export class UserLoginUseCase implements IUserLoginUseCase {
     );
 
     if (!existingUser) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
-    if (existingUser.isBlocked)
-      throw new ForbiddenError(ErrorMessage.ACCOUNT_BLOCKED);
-    if (!existingUser.isEmailVerified)
-      new ForbiddenError(ErrorMessage.EMAIL_NOT_VERIFIED);
+    if (existingUser.isBlocked) throw new ForbiddenError(ErrorMessage.ACCOUNT_BLOCKED);
+    if (!existingUser.isEmailVerified) new ForbiddenError(ErrorMessage.EMAIL_NOT_VERIFIED);
 
     const isMatch = await this._passwordHashing.verify(
       user.password,
@@ -41,10 +39,12 @@ export class UserLoginUseCase implements IUserLoginUseCase {
     if (!isMatch) throw new UnauthorizedError(ErrorMessage.INVALID_CREDENTIALS);
 
     if (!existingUser.isTwoFactorEnabled) {
+
       const { secret, qrCode } = await this._twoFactorAuthSetup.setTwoFactor(
         existingUser.email,
         "three_M",
       );
+
       await this._userRepository.update(existingUser.id as string, {
         twoFactorSecret: secret,
         qrCodeUrl: qrCode,

@@ -5,6 +5,7 @@ import { FinalCTA } from '@shared/components/LandingPage/FinalCTA';
 import { Header } from '@shared/components/LandingPage/Header';
 import { HeroSection } from '@shared/components/LandingPage/HeroSection';
 import { PricingSection } from '@shared/components/LandingPage/PricingSection';
+import { Footer } from '@shared/components/LandingPage/Footer';
  
 
 export const LandingPage: React.FC = () => {
@@ -31,7 +32,7 @@ export const LandingPage: React.FC = () => {
       <BlockchainSection />
       <PricingSection />
       <FinalCTA />
-      {/* <Footer /> */}
+      <Footer/>
     </div>
   );
 };

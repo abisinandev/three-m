@@ -2,16 +2,16 @@ import { ILogger } from "./logger.interface";
 import { logger } from "./pino.logger";
 
 export class PinoLoggerService implements ILogger {
-  info(message: string): void {
+  info(message: string | object): void {
     logger.info(message);
   }
-  error(message: string): void {
+  error(message: string | object): void {
     logger.error(message);
   }
-  warn(message: string): void {
+  warn(message: string | object): void {
     logger.warn(message);
   }
-  debug(message: string): void {
+  debug(message: string | object): void {
     logger.debug(message);
   }
 }

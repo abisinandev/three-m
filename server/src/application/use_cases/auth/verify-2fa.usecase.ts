@@ -29,10 +29,12 @@ export class VerifyTwoFactorUseCase implements IVerifyTwoFactorUseCase {
     if (!user?.twoFactorSecret)
       throw new ForbiddenError(ErrorMessage.TWO_FA_NOT_CONFIGURED);
 
+
     const isValid = await this._twoFactorAuthVerify.verify(
       user.twoFactorSecret,
       data.token,
     );
+
     if (!isValid) throw new UnauthorizedError(ErrorMessage.INVALID_OTP);
 
     const payload: JwtPayload = {

@@ -9,11 +9,13 @@ import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { validateDTO } from "@presentation/express/middlewares/validation-dto.middlewares";
 import { Routes } from "@presentation/express/utils/constants/user-routes.constants";
 import type { UserController } from "@presentation/http/controllers/user/user.controller";
+import { WalletController } from "@presentation/http/controllers/wallet/wallet.controller";
 import { Router } from "express";
 
 const router = Router();
 
 const userController = container.get<UserController>(USER_TYPES.UserController);
+const walletController = container.get<WalletController>(USER_TYPES.WalletController);
 
 router.get(Routes.PROFILE, userController.getProfile.bind(userController));
 router.post(Routes.CHANGE_PASSWORD, validateDTO(ChangePasswordDTO), userController.ChangePassword.bind(userController));
@@ -23,6 +25,8 @@ router.patch(Routes.PROFILE_UPDATE, validateDTO(EditProfileDto), userController.
 router.post(Routes.EMAIL_UPDATE_OTP_SEND, validateDTO(ChangeEmailDTO), userController.changeEmailSendOtp.bind(userController));
 router.post(Routes.EMAIL_UPDATE_VERIFY, validateDTO(VerifyOtpDTO), userController.changeEmailVerifyOtp.bind(userController));
 router.patch(Routes.UPLOAD_PROFILE_IMAGE, validateDTO(UploadProfileImageDTO), userController.uploadProfile.bind(userController));
-router.post(Routes.LOGOUT, userController.logout.bind(userController));
 
+router.get(Routes.WALLET, walletController.getWallet.bind(walletController));
+
+router.post(Routes.LOGOUT, userController.logout.bind(userController));
 export default router;

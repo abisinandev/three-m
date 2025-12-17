@@ -21,3 +21,6 @@ export const UPDATE_PROFILE = "/user/profile/update";
 export const SEND_EMAIL_OTP = "/user/profile/update/email/send-otp";
 export const VERIFY_EMAIL_OTP = '/user/profile/update/email/verify-otp';
 export const UPLOAD_PROFILE_IMAGE = "/user/profile/update/profile-image";
+
+// export const PAYMENT_ROUTE = "/payments/create-intent";
+export const PAYMENT_ROUTE = "/payments/create-checkout-session";
