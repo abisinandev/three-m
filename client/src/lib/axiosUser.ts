@@ -9,6 +9,11 @@ const api = axios.create({
     headers: { "Content-Type": "application/json" },
 })
 
+const authFreeRoutes = [
+    "/auth/login",
+    "/auth/signup",
+    "/auth/refresh",
+];
 
 let isRefreshing = false;
 api.interceptors.response.use(
@@ -27,6 +32,10 @@ api.interceptors.response.use(
                 err.response.status === 0 ||
                 new Set([500, 502, 503]).has(err.response.status)
             ));
+
+        if (authFreeRoutes.some(route => originalRequest.url?.includes(route))) {
+            return Promise.reject(err);
+        }
 
         if (isServerRestart) {
             originalRequest._retryCount = originalRequest._retryCount || 0;

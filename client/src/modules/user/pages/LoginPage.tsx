@@ -45,7 +45,10 @@ export const LoginPage: React.FC = () => {
             setIs2faModalOpen(true);
             toast.info("Scan QR Code and verify your 2FA");
         },
-        onError: (err: any) => toast.error(err.response?.data?.message || "Login failed"),
+        onError: (err: any) => {
+            console.log(err,'==============')
+             toast.error(err.response?.data?.message || "Login failed")
+        },
     })
 
     const handleLogin = () => {

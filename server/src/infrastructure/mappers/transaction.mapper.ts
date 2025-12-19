@@ -1,10 +1,11 @@
 import { TransactionEntity } from "@domain/entities/transaction.entity"
 import { TransactionDocument } from "@infrastructure/databases/mongo_db/models/schemas/transaction.schema"
+import { Types } from "mongoose";
 
 export const toDomain = (doc: TransactionDocument): TransactionEntity => {
     return TransactionEntity.fromPersistence({
         id: doc.id,
-        userId: doc.userId,
+        userId: doc.userId.toString(),
         amount: doc.amount,
         currency: doc.currency,
         type: doc.type,
@@ -13,15 +14,19 @@ export const toDomain = (doc: TransactionDocument): TransactionEntity => {
         fundId: doc.fundId ?? undefined,
         units: doc.units ?? undefined,
         status: doc.status,
-        referencetype: doc.referenceType,
+        referenceType: doc.referenceType,
         createdAt: doc.createdAt,
-        receipt_url: doc.receipt_url,
+        receipt_url: doc.receipt_url as string,
+        paymentIntentId: doc.paymentIntentId,
     });
 };
 
 export const toPersistance = (data: TransactionEntity): Partial<TransactionDocument> => {
+    const toObjectId = (id?: string | null) =>
+        id ? new Types.ObjectId(id) : undefined;
+
     return {
-        userId: data.userId,
+        userId: toObjectId(data.userId),
         amount: data.amount,
         currency: data.currency,
         type: data.type,
@@ -33,6 +38,7 @@ export const toPersistance = (data: TransactionEntity): Partial<TransactionDocum
         referenceType: data.referenceType,
         receipt_url: data.receipt_url,
         createdAt: data.createdAt ?? undefined,
+        paymentIntentId: data.paymentIntentId,
     };
 };
 

@@ -12,7 +12,7 @@ import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import AppError from "@presentation/express/utils/error-handling/app.error";
-import { generateOtp } from "@shared/utils/otp-generator";
+import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
 
 @injectable()

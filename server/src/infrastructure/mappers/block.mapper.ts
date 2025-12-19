@@ -15,7 +15,7 @@ export const toDomain = (doc: BlockDocument): BlockEntity => {
 export const toPersistance = (block: BlockEntity): Partial<BlockDocument> => {
     return {
         index: block.index,
-        prevHash: block.prevHash,
+        prevHash: block.prevHash as string,
         txHash: block.txHash,
         blockHash: block.blockHash,
         timestamp: block.timestamp,

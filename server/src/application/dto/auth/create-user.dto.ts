@@ -27,6 +27,6 @@ export class CreateUserDTO {
   })
   confirmPassword!: string;
 
-  @IsString({ message: "Role must be a valid string." })
-  role: string = "user";
+  // @IsString({ message: "Role must be a valid string." })
+  // role: string = "USER";
 }

@@ -1,43 +1,83 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Smartphone, CreditCard, Building2, ChevronRight } from "lucide-react";
-import { toast } from "sonner";
 import api from "@lib/axiosUser";
 import { PAYMENT_ROUTE } from "@shared/constants/userContants";
+import { useUserStore } from "@stores/user/UserStore";
 
 const QUICK_AMOUNTS = [500, 1000, 2000, 5000, 10000];
 
+const MIN_AMOUNT = 100;
+const MAX_AMOUNT = 100000;
+
 const AddToWallet = () => {
     const navigate = useNavigate();
+    const { user } = useUserStore();
+
     const [amount, setAmount] = useState<number | "">("");
+    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    const currentBalance = 5500;
+    const currentBalance = user?.wallet?.balance ?? 0;
     const newBalance = amount ? currentBalance + Number(amount) : currentBalance;
 
+
+    const validateAmount = (value: number | ""): boolean => {
+        if (value === "") {
+            setError("Amount is required");
+            return false;
+        }
+
+        if (isNaN(value)) {
+            setError("Invalid amount");
+            return false;
+        }
+
+        if (value < MIN_AMOUNT) {
+            setError(`Minimum amount is ₹${MIN_AMOUNT}`);
+            return false;
+        }
+
+        if (value > MAX_AMOUNT) {
+            setError(`Maximum amount is ₹${MAX_AMOUNT.toLocaleString("en-IN")}`);
+            return false;
+        }
+
+        setError(null);
+        return true;
+    };
+
+
+    const handleAmountChange = (value: number | "") => {
+        setAmount(value);
+        validateAmount(value);
+    };
+
     const handlePayment = async () => {
-        if (!amount || loading) return;
+        if (!validateAmount(amount) || loading) return;
 
         setLoading(true);
         try {
             const res = await api.post(PAYMENT_ROUTE, {
                 amount: Number(amount),
-                purpose: "ADD_TO_WALLET",
+                purpose: "WALLET_TOP_UP",
             });
 
             window.location.href = res.data.checkoutUrl;
-
         } catch (err) {
-            console.error("Failed to create checkout session", err);
-            toast.error("Failed to proceed. Please try again.");
+            console.error("Payment error", err);
             navigate({ to: "/user/payment-failed", replace: true });
         } finally {
             setLoading(false);
         }
     };
 
+    const isDisabled = loading || !!error || !amount;
+
+
     return (
         <div className="min-h-screen bg-black text-white">
+            {/* Header */}
             <div className="sticky top-0 z-10 border-b border-[#1f1f1f] bg-black/80 backdrop-blur px-4 py-3 flex items-center gap-3">
                 <button
                     onClick={() => navigate({ to: "/user/wallet" })}
@@ -49,28 +89,45 @@ const AddToWallet = () => {
             </div>
 
             <div className="max-w-md mx-auto pt-6 px-4 pb-10 space-y-5">
-                <div className="bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-5">
-                    <h2 className="text-sm font-medium mb-3 text-gray-300">Enter amount</h2>
 
-                    <div className="relative mb-4">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-gray-500">₹</span>
+                <div className="bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-5">
+                    <h2 className="text-sm font-medium mb-3 text-gray-300">
+                        Enter amount
+                    </h2>
+
+                    <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-gray-500">
+                            ₹
+                        </span>
                         <input
                             type="number"
                             value={amount}
                             onChange={(e) =>
-                                setAmount(e.target.value ? Number(e.target.value) : "")
+                                handleAmountChange(
+                                    e.target.value ? Number(e.target.value) : ""
+                                )
                             }
                             placeholder="0"
-                            className="w-full bg-[#111] border border-[#333] rounded-lg pl-9 pr-3 py-3 text-xl font-semibold focus:outline-none focus:border-green-500 transition"
+                            className={`w-full bg-[#111] border rounded-lg pl-9 pr-3 py-3 text-xl font-semibold
+                                focus:outline-none transition
+                                ${error ? "border-red-500" : "border-[#333] focus:border-green-500"}
+                            `}
                         />
                     </div>
 
-                    <div className="flex flex-wrap gap-2 mb-4">
+                    {error && (
+                        <p className="text-xs text-red-400 mt-2">
+                            {error}
+                        </p>
+                    )}
+
+                    <div className="flex flex-wrap gap-2 mt-4 mb-4">
                         {QUICK_AMOUNTS.map((amt) => (
                             <button
                                 key={amt}
-                                onClick={() => setAmount(amt)}
-                                className={`px-3 py-1.5 rounded-lg text-xs transition ${amount === amt
+                                onClick={() => handleAmountChange(amt)}
+                                className={`px-3 py-1.5 rounded-lg text-xs transition
+                                    ${amount === amt
                                         ? "bg-green-500/20 text-green-400 border border-green-500/40"
                                         : "bg-[#1a1a1a] hover:bg-[#222] text-gray-300"
                                     }`}
@@ -80,6 +137,7 @@ const AddToWallet = () => {
                         ))}
                     </div>
 
+                    {/* Balance */}
                     <div className="flex items-center justify-between text-xs">
                         <div className="text-gray-400">
                             Current balance
@@ -98,12 +156,17 @@ const AddToWallet = () => {
 
                 <button
                     onClick={handlePayment}
-                    disabled={loading || !amount}
-                    className="w-full py-3 rounded-xl font-medium text-sm transition shadow-lg bg-gradient-to-r from-[#22C55E] to-[#16a34a] hover:from-[#1fa856] hover:to-[#15803d] shadow-green-500/20 disabled:opacity-50"
+                    disabled={isDisabled}
+                    className="w-full py-3 rounded-xl font-medium text-sm transition
+                        bg-gradient-to-r from-[#22C55E] to-[#16a34a]
+                        hover:from-[#1fa856] hover:to-[#15803d]
+                        disabled:opacity-50 disabled:cursor-not-allowed
+                    "
                 >
                     {loading ? "Redirecting..." : "Continue"}
                 </button>
 
+                {/* Payment methods */}
                 <div className="bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-5 space-y-3">
                     <h2 className="text-sm font-medium mb-3 text-gray-300">
                         Popular payment methods
@@ -112,14 +175,6 @@ const AddToWallet = () => {
                     <PaymentOption icon={<CreditCard size={16} />} title="Debit / Credit Card" subtitle="Visa • Mastercard • RuPay" />
                     <PaymentOption icon={<Building2 size={16} />} title="Net Banking" subtitle="All major banks" />
                 </div>
-
-                <button
-                    onClick={() => navigate({ to: "/user/wallet" })}
-                    className="text-xs text-gray-400 hover:text-white transition flex items-center gap-1.5 mx-auto"
-                >
-                    <ArrowLeft size={14} />
-                    Go back
-                </button>
             </div>
         </div>
     );

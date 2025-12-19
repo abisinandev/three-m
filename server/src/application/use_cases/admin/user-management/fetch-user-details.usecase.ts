@@ -1,11 +1,11 @@
 import type { FetchDataResponseDTO } from "@application/dto/admin/fetch-data.response.dto";
 import type { UserDTO } from "@application/dto/user/user-dto";
 import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
-import { toUserResponse } from "@application/mappers/user/user.mapper";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { inject, injectable } from "inversify";
 import type { QueryOptions } from "mongoose";
 import type { IFetchUserDetails } from "../../interfaces/admin/fetch-user-details";
+import { toUserResponse } from "@application/mappers/user/user.mapper";
 
 @injectable()
 export class FetchUserDetails implements IFetchUserDetails {

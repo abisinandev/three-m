@@ -1,6 +1,6 @@
-import { Schema, model, Document } from "mongoose";
-import { IBlockSchema } from "../interfaces/block.interface";
- 
+import { Schema, model, Document, Types } from "mongoose";
+import type { IBlockSchema } from "../interfaces/block.interface";
+
 export type BlockDocument = Document & IBlockSchema;
 
 const BlockSchema = new Schema<BlockDocument>(
@@ -13,7 +13,7 @@ const BlockSchema = new Schema<BlockDocument>(
 
         prevHash: {
             type: String,
-            // required: true,
+            default: null,  
         },
 
         txHash: {
@@ -25,7 +25,7 @@ const BlockSchema = new Schema<BlockDocument>(
         blockHash: {
             type: String,
             required: true,
-            unique: true,  
+            unique: true,
         },
 
         timestamp: {
@@ -34,8 +34,10 @@ const BlockSchema = new Schema<BlockDocument>(
         },
     },
     {
-        timestamps: true,     
+        timestamps: true,  
+        versionKey: false,  
     }
 );
 
+BlockSchema.index({ index: 1, blockHash: 1 }, { unique: true });
 export const BlockModel = model<BlockDocument>("Block", BlockSchema);

@@ -38,4 +38,6 @@ export enum ErrorMessage {
   PROFILE_UPDATION_FAILED = "No valid fields provided to update",
 
   WALLET_NOT_FOUND = "Wallet not found",
+
+  USER_NOT_VERIFIED = "User not verified",
 }

@@ -1,10 +1,12 @@
+import { Types } from "mongoose";
+
 export interface IBlockSchema {
-    _id: string;
+    _id: Types.ObjectId;
     index: number;   
     prevHash: string;       
     txHash: string;         
     blockHash: string;       
     timestamp: number;      
-    // createdAt?: Date;
-    // updatedAt?: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

@@ -27,7 +27,7 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
       { $set: { isEmailVerified: true } },
       { new: true },
     );
-    if (!userDoc) return null;
+    if (!userDoc) return null; 
     return this.mapper.toDomain(userDoc);
   }
 
@@ -88,5 +88,16 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
   async CountVerifiedUsers(): Promise<{ totalVerifiedUsersCount: number; }> {
     const totalVerifiedUsersCount = await this.model.countDocuments({ isVerified: true });
     return { totalVerifiedUsersCount }
+  }
+
+  async findAllWithRelations(userId: string): Promise<UserEntity | null> {
+    const user = await this.model
+      .findById(userId)
+      .populate("kycId")
+      .populate("walletId")
+      .exec();
+
+    if (!user) return null; 
+    return this.mapper.toDomain(user);
   }
 }

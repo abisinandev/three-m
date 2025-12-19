@@ -11,15 +11,16 @@ export class TxHash {
     static generate(data: {
         userId: string;
         amount: number;
+        paymentIntentId: string;
         fundId?: string;
         unit?: number;
-        // createdAt: Date;
     }): TxHash {
         const payload = JSON.stringify({
             userId: data.userId,
             amount: data.amount,
             fundId: data.fundId,
             unit: data.unit,
+            paymentIntentId: data.paymentIntentId,
             // createdAt: data.createdAt,
         })
 

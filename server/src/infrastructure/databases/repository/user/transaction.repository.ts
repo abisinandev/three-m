@@ -10,4 +10,18 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
     constructor() {
         super(TransactionModel, TransactionMapper)
     }
+
+    async findByPaymentId(paymentIntentId: string): Promise<TransactionEntity | null> {
+        const doc = await this.model.findOne({ paymentIntentId })
+        if (!doc) return null;
+        return this.mapper.toDomain(doc);
+    }
+
+    async findUserTransactions(userId: string): Promise<TransactionEntity[] | null> {
+        const docs = await this.model.find({userId});
+
+        if (!docs) return null;
+        return docs.map(doc => this.mapper.toDomain(doc));
+    }
+
 }

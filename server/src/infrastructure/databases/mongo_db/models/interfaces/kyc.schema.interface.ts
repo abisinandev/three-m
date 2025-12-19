@@ -1,8 +1,9 @@
 import type { KycStatusType } from "@domain/enum/users/kyc-status.enum";
+import { Types } from "mongoose";
 
 export interface IKycSchema {
-  id: string;
-  userId: string | null;
+  _id: Types.ObjectId;  
+  userId: string | null; 
   documents: {
     type: string;
     fileName: string;
@@ -10,8 +11,8 @@ export interface IKycSchema {
   }[];
   status: KycStatusType;
   isKycVerified: boolean;
-  panNumber: string | null;
-  adhaarNumber: string | null;
+  panNumber?: string | null;
+  adhaarNumber?: string | null;
   address: {
     fullAddress: string;
     city: string;
@@ -19,5 +20,6 @@ export interface IKycSchema {
     pincode: string;
   };
   rejectionReason?: string | null;
-  createdAt: Date | null;
+  createdAt?: Date;  
+  updatedAt?: Date; 
 }

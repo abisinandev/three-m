@@ -1,61 +1,76 @@
 import type { CreateUserDTO } from "@application/dto/auth/create-user.dto";
 import type { UserDTO } from "@application/dto/user/user-dto";
-import type { KycEntity } from "@domain/entities/kyc.entity";
 import { UserEntity } from "@domain/entities/user.entity";
-import { SubscripionPlan } from "@domain/enum/users/subscription-plan.enum";
+import { Role } from "@domain/enum/users/user-role.enum";
 
 // Dto => Domain
-export function toEntity(
-  dto: CreateUserDTO,
-  hashedPassword: string,
-): UserEntity {
+export function toEntity(dto: CreateUserDTO, hashedPassword: string): UserEntity {
   return UserEntity.create({
     fullName: dto.fullName,
     email: dto.email,
     phone: dto.phone,
     password: hashedPassword,
-    role: dto.role,
+    role: Role.USER,
   });
 }
 
-export function toUserResponse(
-  entity: UserEntity,
-  kycDetails?: KycEntity,
-): UserDTO {
+export function toUserResponse(user: UserEntity): UserDTO {
+
   return {
-    id: entity.id as string,
-    userCode: entity.userCode,
-    fullName: entity.fullName,
-    email: entity.email,
-    phone: entity.phone,
-    role: entity.role,
-    authProvider: entity.authProvider ?? null,
-    kycStatus: kycDetails?.status,
-    walletBalance: entity.walletBalance ?? 0,
-    subscriptionPlan: entity.subscriptionPlan ?? null,
-    walletId: entity.walletId ?? null,
-    kycId: kycDetails?.id ?? null,
-    avatar: entity.avatar ?? null,
-    googleId: entity.googleId ?? null,
-    isEmailVerified: entity.isEmailVerified ?? false,
-    isVerified: entity.isVerified ?? false,
-    isBlocked: entity.isBlocked ?? false,
-    subscriptionStatus: entity.subscriptionStatus ?? SubscripionPlan.FREE,
-    createdAt: (entity.createdAt?.toLocaleDateString() as string) ?? null,
-    panNumber: kycDetails?.panNumber ?? null,
-    aadhaarNumber: kycDetails?.adhaarNumber ?? null,
-    address: kycDetails?.address
+    id: user.id!,
+    userCode: user.userCode,
+    fullName: user.fullName,
+    email: user.email,
+    phone: user.phone ?? null,
+
+    role: user.role,
+    authProvider: user.authProvider,
+
+    isEmailVerified: user.isEmailVerified,
+    isVerified: user.isVerified,
+    isBlocked: user.isBlocked,
+
+    subscription: {
+      status: user.subscriptionStatus,
+      plan: user.subscriptionPlan,
+    },
+    
+    walletId: user.walletId as string,
+    wallet: user.wallet
       ? {
-          fullAddress: kycDetails.address.fullAddress,
-          city: kycDetails.address.city,
-          state: kycDetails.address.state,
-          pinCode: kycDetails.address.pincode,
-        }
-      : {
-          fullAddress: "",
-          city: "",
-          state: "",
-          pinCode: "",
-        },
+        id: user.wallet.id,
+        balance: user.wallet.balance,
+        currency: user.wallet.currency,
+        isVerified: user.wallet.isVerified,
+        status: user.wallet.status,
+        createdAt: user.wallet.createdAt,
+        updatedAt: user.wallet.updatedAt,
+      }
+      : undefined,
+
+    kyc: user.kyc
+      ? {
+        id: user.kyc.id!,
+        status: user.kyc.status,
+        panNumber: user.kyc.panNumber ?? null,
+        aadhaarNumber: user.kyc.aadhaarNumber ?? null,
+        address: user.kyc.address
+          ? {
+            fullAddress: user.kyc.address.fullAddress,
+            city: user.kyc.address.city,
+            state: user.kyc.address.state,
+            pinCode: user.kyc.address.pinCode,
+          }
+          : undefined,
+      }
+      : undefined,
+
+    kycStatus: user.kycStatus,
+    kycId: user.kycId as string,
+    avatar: user.avatar ?? null,
+    googleId: user.googleId ?? null,
+
+    createdAt: user.createdAt.toISOString(),
   };
 }
+

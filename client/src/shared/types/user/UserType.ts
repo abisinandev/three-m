@@ -12,7 +12,9 @@ export type UserType = {
     kycId: string;
     isSubscribed: boolean;
     isBlocked: boolean;
-    
+    wallet: any;
+    kyc: any;
+    walletId: string;
     kycStatus: string;
     panNumber?: string;
     aadhaarNumber?: string; 

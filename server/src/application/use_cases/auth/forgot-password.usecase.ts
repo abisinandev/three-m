@@ -5,7 +5,7 @@ import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
-import { generateOtp } from "@shared/utils/otp-generator";
+import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
 import type { IForgotPasswordUseCase } from "../interfaces/user/forgot-password-usecase.interface";
 

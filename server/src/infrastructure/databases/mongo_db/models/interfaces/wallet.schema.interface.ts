@@ -1,13 +1,14 @@
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { WalletStatus } from "@domain/enum/wallet/wallet-status.enum";
+import { Types } from "mongoose";
 
 export interface IWalletSchema {
-    id: string;
-    userId: string | null;
+    _id: Types.ObjectId;
+    userId: Types.ObjectId;
     currency: CurrencyTypes;
     balance: number;
     status: WalletStatus;
     isVerified: boolean;
-    createdAt: Date | null;
-    updatedAt: Date | null;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

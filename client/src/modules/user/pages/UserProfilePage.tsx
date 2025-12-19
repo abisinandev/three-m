@@ -28,7 +28,7 @@ const UserProfilePage = () => {
 
   const kycStatus = user?.kycStatus;
   const hasKycStarted = user?.kycId || kycStatus;
-console.log(user,'---')
+  console.log(user, '---')
   const kycInfo = (() => {
     if (!hasKycStarted) {
       return {

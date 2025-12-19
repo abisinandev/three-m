@@ -10,20 +10,17 @@ import { inject, injectable } from "inversify";
 export class WalletController {
     constructor(
         @inject(USER_TYPES.UserWalletUseCase) private readonly _walletUseCase: IUserWalletUseCase,
-        // @inject(USER_TYPES.TransactionUseCase) private readonly _transactionUsecase: ITransactionUseCase,
     ) { }
 
     async getWallet(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.user?.id
-            const result = await this._walletUseCase.execute(userId as string)
-
-            // await this._transactionUsecase.execute();
+            const result = await this._walletUseCase.execute(userId as string);
             return res.status(HttpStatus.OK).json({
                 success: true,
                 message: SuccessMessage.DATA_FETCHED,
                 data: result
-            })
+            });
         } catch (error) {
             next(error)
         }

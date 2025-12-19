@@ -4,8 +4,7 @@ import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
 import { SubscripionPlan } from "@domain/enum/users/subscription-plan.enum";
 import { SubscriptionStatus } from "@domain/enum/users/subscription-status.enum";
 import { Role } from "@domain/enum/users/user-role.enum";
-import type { Document } from "mongoose";
-import { model, Schema } from "mongoose";
+import { Schema, model, type Document } from "mongoose";
 import type { IUserSchema } from "../interfaces/user.schema.interface";
 
 export type UserDocument = Document & IUserSchema;
@@ -13,63 +12,106 @@ export type UserDocument = Document & IUserSchema;
 const UserSchema = new Schema<UserDocument>(
   {
     userCode: { type: String, unique: true, index: true },
+
     fullName: { type: String, required: true },
+
     email: { type: String, required: true, unique: true, index: true },
+
     phone: {
       type: String,
       required: function (this: UserDocument) {
-        return this.authProvider ===   AuthProvider.MANUAL;
-      },
-      default: null,
-    },
-    password: {
-      type: String,
-      required: function (this: UserDocument) {
-        return this.authProvider === "manual";
+        return this.authProvider === AuthProvider.MANUAL;
       },
       default: null,
     },
 
-    role: { type: String, enum: Object.values(Role), default: Role.USER },
+    password: {
+      type: String,
+      required: function (this: UserDocument) {
+        return this.authProvider === AuthProvider.MANUAL;
+      },
+      // select: false,
+      default: null,
+    },
+
+    role: {
+      type: String,
+      enum: Object.values(Role),
+      default: Role.USER,
+    },
 
     isVerified: { type: Boolean, default: false },
     isEmailVerified: { type: Boolean, default: false },
     isBlocked: { type: Boolean, default: false },
 
-    kycId: { type: String },
+    kycId: {
+      type: Schema.Types.ObjectId,
+      ref: "KycDetails",
+      default: null,
+    },
+
     kycStatus: {
       type: String,
-      enum: KycStatusType,
+      enum: Object.values(KycStatusType),
       default: KycStatusType.NULL,
     },
-    walletId: { type: String },
-    walletBalance: { type: Number, default: 0 },
-    currency: { type: String, enum: CurrencyTypes, default: CurrencyTypes.INR },
 
-    subscriptionId: { type: String },
+    walletId: {
+      type: Schema.Types.ObjectId,
+      ref: "Wallet",
+      index: true,
+      default: null,
+    },
+
+    currency: {
+      type: String,
+      enum: Object.values(CurrencyTypes),
+      default: CurrencyTypes.INR,
+    },
+
+    subscriptionId: {
+      type: Schema.Types.ObjectId,
+      ref: "Subscription",
+      default: null,
+    },
+
     subscriptionStatus: {
       type: String,
       enum: Object.values(SubscriptionStatus),
       default: SubscriptionStatus.INACTIVE,
     },
+
     subscriptionPlan: {
       type: String,
       enum: Object.values(SubscripionPlan),
       default: SubscripionPlan.FREE,
     },
+
     isTwoFactorEnabled: { type: Boolean, default: false },
-    twoFactorSecret: { type: String },
-    qrCodeUrl: { type: String },
+
+    twoFactorSecret: {
+      type: String,
+      // select: false,
+      default: null,
+    },
+
+    qrCodeUrl: { type: String, default: null },
 
     authProvider: {
       type: String,
       enum: Object.values(AuthProvider),
       default: AuthProvider.MANUAL,
     },
-    avatar: { type: String },
-    googleId: { type: String },
+
+    avatar: { type: String, default: null },
+
+    googleId: {
+      type: String,
+      index: true,
+      default: null,
+    },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const UserModel = model<UserDocument>("User", UserSchema);

@@ -1,16 +1,16 @@
-import { Schema, model, Document } from "mongoose";
-import { CurrencyTypes } from "@domain/enum/users/currency-enum";
+import { Schema, model, Document, Types } from "mongoose";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
-import { ITransactionSchema } from "../interfaces/transaction.schema.interface";
 import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
+import { ITransactionSchema } from "../interfaces/transaction.schema.interface";
 
 export type TransactionDocument = Document & ITransactionSchema;
 
 const TransactionSchema = new Schema<TransactionDocument>(
     {
         userId: {
-            type: String,
+            type: Schema.Types.ObjectId,
+            ref: "User",
             required: true,
             index: true,
         },
@@ -23,7 +23,6 @@ const TransactionSchema = new Schema<TransactionDocument>(
 
         currency: {
             type: String,
-            enum: Object.values(CurrencyTypes),
             required: true,
         },
 
@@ -35,7 +34,8 @@ const TransactionSchema = new Schema<TransactionDocument>(
 
         status: {
             type: String,
-            enum: Object.values(TransactionStatus.SUCCESSFUL),
+            enum: Object.values(TransactionStatus),
+            required: true,
         },
 
         isVerified: {
@@ -44,7 +44,8 @@ const TransactionSchema = new Schema<TransactionDocument>(
         },
 
         fundId: {
-            type: String,
+            type: Schema.Types.ObjectId,
+            ref: "Fund",
             default: null,
         },
 
@@ -59,12 +60,30 @@ const TransactionSchema = new Schema<TransactionDocument>(
             unique: true,
             index: true,
         },
-        referenceType: { type: String, enum: ReferenceType },
-        receipt_url: { type: String },
+
+        referenceType: {
+            type: String,
+            enum: Object.values(ReferenceType),
+            required: true,
+        },
+
+        receipt_url: {
+            type: String,
+            default: null,
+        },
+
+        paymentIntentId: {
+            type: String,
+            required: true,
+            unique: true,
+        },
     },
     {
         timestamps: true,
     }
 );
 
-export const TransactionModel = model<TransactionDocument>("Transaction", TransactionSchema);
+export const TransactionModel = model<TransactionDocument>(
+    "Transaction",
+    TransactionSchema
+);

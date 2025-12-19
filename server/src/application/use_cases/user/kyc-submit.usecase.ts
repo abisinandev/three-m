@@ -22,12 +22,12 @@ export class KycSubmitUseCase implements IKycSubmitUseCase {
     const newKyc = toEntity(data);
 
     if (!existingKyc) {
-      const existingKyc = await this._kycRepository.findOne({
+      await this._kycRepository.create(newKyc);
+      const kyc = await this._kycRepository.findOne({
         userId: data.userId,
       });
-      await this._kycRepository.create(newKyc);
       await this._userRepository.update(data.userId, {
-        kycId: existingKyc?.id,
+        kycId: kyc?.id,
         kycStatus: KycStatusType.PENDING,
       });
       return;
@@ -35,7 +35,7 @@ export class KycSubmitUseCase implements IKycSubmitUseCase {
 
     if (existingKyc?.status === KycStatusType.REJECTED) {
       await this._kycRepository.update(existingKyc.id as string, newKyc);
-      await this._userRepository.update(data.userId, newKyc);
+      await this._userRepository.update(data.userId, { kycId: newKyc.id });
       return;
     }
 

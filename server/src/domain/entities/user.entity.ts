@@ -8,35 +8,49 @@ import { Email } from "@domain/value-objects/user/email.vo";
 import { Password } from "@domain/value-objects/user/password.vo";
 import { Phone } from "@domain/value-objects/user/phone.vo";
 import { UserCode } from "@domain/value-objects/user/user-code.vo";
+import { WalletSummary } from "@domain/types/wallet-summery";
+import { KycSummary } from "@domain/types/kyc-summery";
 
 export class UserEntity {
-  private readonly _id?: string;
+  private readonly _id: string | null;
   private readonly _userCode: UserCode;
+
   private _fullName: string;
   private readonly _email: Email;
-  private _phone?: Phone | null;
-  private _password?: Password | null;
+  private _phone: Phone | null;
+  private _password: Password | null;
+
   private _role: Role;
+
   private _isEmailVerified: boolean;
   private _isVerified: boolean;
   private _isBlocked: boolean;
+
   private _subscriptionStatus: SubscriptionStatus;
   private _subscriptionPlan: SubscripionPlan;
   private _currency: CurrencyTypes;
-  private readonly _kycId?: string | null;
+
+  private _kycId: string | null;
   private _kycStatus: KycStatusType;
-  private readonly _walletId?: string | null;
-  private _walletBalance: number;
+
+  private _walletId: string | null;
+
+  private readonly _wallet?: WalletSummary | null;
+  private readonly _kyc?: KycSummary | null;
+
   private _isTwoFactorEnabled: boolean;
-  private _twoFactorSecret?: string | null;
-  private _qrCodeUrl?: string | null;
-  private _createdAt?: Date | null;
+  private _twoFactorSecret: string | null;
+  private _qrCodeUrl: string | null;
+
+  private readonly _createdAt: Date;
+  private _updatedAt: Date;
+
   private _authProvider: AuthProvider;
-  private _avatar?: string | null;
-  private _googleId?: string | null;
+  private _avatar: string | null;
+  private _googleId: string | null;
 
   private constructor(props: {
-    id?: string;
+    id?: string | null;
     userCode: UserCode;
     fullName: string;
     email: Email;
@@ -52,40 +66,51 @@ export class UserEntity {
     kycId?: string | null;
     kycStatus: KycStatusType;
     walletId?: string | null;
-    walletBalance: number;
+    kyc?: KycSummary | null;
+    wallet?: WalletSummary | null;
     isTwoFactorEnabled: boolean;
     twoFactorSecret?: string | null;
     qrCodeUrl?: string | null;
-    createdAt?: Date | null;
+    createdAt?: Date;
+    updatedAt?: Date;
     authProvider: AuthProvider;
     avatar?: string | null;
     googleId?: string | null;
   }) {
-    if (!props.fullName || props.fullName.length < 2) {
+    if (props.fullName.length < 2) {
       throw new Error("Full name must be at least 2 characters");
     }
 
-    this._id = props.id;
+    this._id = props.id ?? null;
     this._userCode = props.userCode;
+
     this._fullName = props.fullName;
     this._email = props.email;
     this._phone = props.phone ?? null;
     this._password = props.password ?? null;
+
     this._role = props.role;
     this._isEmailVerified = props.isEmailVerified;
     this._isVerified = props.isVerified;
     this._isBlocked = props.isBlocked;
+
     this._subscriptionStatus = props.subscriptionStatus;
     this._subscriptionPlan = props.subscriptionPlan;
     this._currency = props.currency;
+
     this._kycId = props.kycId ?? null;
     this._kycStatus = props.kycStatus;
+
     this._walletId = props.walletId ?? null;
-    this._walletBalance = props.walletBalance;
+    this._wallet = props.wallet;
+    this._kyc = props.kyc;
     this._isTwoFactorEnabled = props.isTwoFactorEnabled;
     this._twoFactorSecret = props.twoFactorSecret ?? null;
     this._qrCodeUrl = props.qrCodeUrl ?? null;
-    this._createdAt = props.createdAt ?? null;
+
+    this._createdAt = props.createdAt ?? new Date();
+    this._updatedAt = props.updatedAt ?? new Date();
+
     this._authProvider = props.authProvider;
     this._avatar = props.avatar ?? null;
     this._googleId = props.googleId ?? null;
@@ -96,7 +121,7 @@ export class UserEntity {
     email: string;
     phone: string;
     password: string;
-    role?: string;
+    role?: Role;
     currency?: CurrencyTypes;
   }): UserEntity {
     return new UserEntity({
@@ -105,7 +130,7 @@ export class UserEntity {
       email: Email.create(data.email),
       phone: Phone.create(data.phone),
       password: Password.create(data.password),
-      role: (data.role as Role) ?? Role.USER,
+      role: data.role ?? Role.USER,
       isEmailVerified: false,
       isVerified: false,
       isBlocked: false,
@@ -113,7 +138,6 @@ export class UserEntity {
       subscriptionPlan: SubscripionPlan.FREE,
       currency: data.currency ?? CurrencyTypes.INR,
       kycStatus: KycStatusType.NULL,
-      walletBalance: 0,
       isTwoFactorEnabled: false,
       authProvider: AuthProvider.MANUAL,
     });
@@ -122,8 +146,8 @@ export class UserEntity {
   static createSocialUser(data: {
     fullName: string;
     email: string;
-    avatar?: string;
     provider: AuthProvider;
+    avatar?: string;
     googleId?: string;
   }): UserEntity {
     return new UserEntity({
@@ -139,8 +163,7 @@ export class UserEntity {
       subscriptionStatus: SubscriptionStatus.INACTIVE,
       subscriptionPlan: SubscripionPlan.FREE,
       currency: CurrencyTypes.INR,
-      kycStatus: KycStatusType.NULL, 
-      walletBalance: 0,
+      kycStatus: KycStatusType.NULL,
       isTwoFactorEnabled: false,
       authProvider: data.provider,
       avatar: data.avatar ?? null,
@@ -163,44 +186,31 @@ export class UserEntity {
     subscriptionPlan: SubscripionPlan;
     currency: CurrencyTypes;
     kycId?: string | null;
+    kyc?: KycSummary | null;
     kycStatus: KycStatusType;
+
     walletId?: string | null;
-    walletBalance: number;
+    wallet?: WalletSummary | null;
+
     isTwoFactorEnabled: boolean;
     twoFactorSecret?: string | null;
     qrCodeUrl?: string | null;
-    createdAt?: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
     authProvider: AuthProvider;
     avatar?: string | null;
     googleId?: string | null;
   }): UserEntity {
     return new UserEntity({
-      id: props.id,
+      ...props,
       userCode: UserCode.rebuild(props.userCode),
-      fullName: props.fullName,
       email: Email.create(props.email),
       phone: props.phone ? Phone.create(props.phone) : null,
       password: props.password ? Password.rebuild(props.password) : null,
-      role: props.role,
-      isEmailVerified: props.isEmailVerified,
-      isVerified: props.isVerified,
-      isBlocked: props.isBlocked,
-      subscriptionStatus: props.subscriptionStatus,
-      subscriptionPlan: props.subscriptionPlan,
-      currency: props.currency,
-      kycId: props.kycId ?? null,
-      kycStatus: props.kycStatus,
-      walletId: props.walletId ?? null,
-      walletBalance: props.walletBalance,
-      isTwoFactorEnabled: props.isTwoFactorEnabled,
-      twoFactorSecret: props.twoFactorSecret ?? null,
-      qrCodeUrl: props.qrCodeUrl ?? null,
-      createdAt: props.createdAt ?? null,
-      authProvider: props.authProvider,
-      avatar: props.avatar ?? null,
-      googleId: props.googleId ?? null,
     });
   }
+
+
 
   get id() {
     return this._id;
@@ -226,9 +236,6 @@ export class UserEntity {
   get currency() {
     return this._currency;
   }
-  get walletBalance() {
-    return this._walletBalance;
-  }
   get kycStatus() {
     return this._kycStatus;
   }
@@ -250,11 +257,20 @@ export class UserEntity {
   get subscriptionPlan() {
     return this._subscriptionPlan;
   }
-  get walletId() {
-    return this._walletId ?? null;
-  }
   get kycId() {
     return this._kycId ?? null;
+  }
+
+  get walletId(): string | null {
+    return this._walletId ?? null;
+  }
+
+  get wallet(): WalletSummary | null {
+    return this._wallet ?? null;
+  }
+
+  get kyc() {
+    return this._kyc;
   }
   get twoFactorSecret() {
     return this._twoFactorSecret ?? null;
@@ -307,14 +323,5 @@ export class UserEntity {
     this._kycStatus = status;
   }
 
-  creditWallet(amount: number): void {
-    if (amount <= 0) throw new Error("Amount must be positive");
-    this._walletBalance += amount;
-  }
 
-  debitWallet(amount: number): void {
-    if (amount <= 0) throw new Error("Amount must be positive");
-    if (this._walletBalance < amount) throw new Error("Insufficient balance");
-    this._walletBalance -= amount;
-  }
 }

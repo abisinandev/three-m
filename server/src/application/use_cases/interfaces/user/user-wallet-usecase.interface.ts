@@ -1,5 +1,5 @@
-import { UserWalletDTO } from "@application/dto/user/user-wallet.dto";
+import { WalletResponseDTO } from "@application/dto/user/wallet-response.dto";
 
 export interface IUserWalletUseCase {
-    execute(userId: string): Promise<UserWalletDTO>;
+    execute(userId: string): Promise<WalletResponseDTO>;
 }

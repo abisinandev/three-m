@@ -44,7 +44,7 @@ import { AddToWalletUseCase } from "@application/use_cases/user/add-to-wallet.us
 import { IAddToWalletUseCase } from "@application/use_cases/interfaces/user/add-to-wallet-usecase.interface";
 import { PaymentController } from "@presentation/http/controllers/payment/payment.controller";
  
-import { StripePaymentHandler } from "@presentation/express/utils/payments/payment.handler";
+import { StripePaymentHandler } from "@shared/utils/payments/payment.handler";
 import { WebhookController } from "@presentation/http/controllers/payment/webhook.controller";
 
 export const UserModule = new ContainerModule(({ bind }) => {

@@ -1,29 +1,33 @@
+import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
+import { KycSummary } from "@domain/types/kyc-summery";
+import { WalletSummary } from "@domain/types/wallet-summery";
+
 export type UserDTO = {
   id: string;
   userCode: string;
   fullName: string;
   email: string;
   phone: string | null;
+
   role: string;
-  authProvider?: string | null;
-  kycStatus?: string | null;
-  walletBalance?: number;
-  subscriptionPlan?: string;
-  walletId?: string | null;
-  kycId?: string | null;
-  avatar?: string | null;
-  googleId?: string | null;
-  isEmailVerified?: boolean;
-  isVerified?: boolean;
-  isBlocked?: boolean;
-  subscriptionStatus?: string;
-  createdAt?: string | null;
-  panNumber?: string | null;
-  aadhaarNumber?: string | null;
-  address?: {
-    fullAddress: string;
-    city: string;
-    state: string;
-    pinCode: string;
+  authProvider: string;
+
+  isEmailVerified: boolean;
+  isVerified: boolean;
+  isBlocked: boolean;
+
+  subscription: {
+    status: string;
+    plan: string;
   };
+  kycId: string;
+  kyc?: KycSummary;
+  kycStatus?: KycStatusType;
+  wallet?: WalletSummary;
+  walletId: string;
+
+  avatar: string | null;
+  googleId: string | null;
+
+  createdAt: string;
 };

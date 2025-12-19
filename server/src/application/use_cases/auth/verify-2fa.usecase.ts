@@ -26,9 +26,7 @@ export class VerifyTwoFactorUseCase implements IVerifyTwoFactorUseCase {
 
   async execute(data: Verify2faDTO): Promise<VerifyOtpResponseDTO> {
     const user = await this._userRepository.findByField("email", data.email);
-    if (!user?.twoFactorSecret)
-      throw new ForbiddenError(ErrorMessage.TWO_FA_NOT_CONFIGURED);
-
+    if (!user?.twoFactorSecret) throw new ForbiddenError(ErrorMessage.TWO_FA_NOT_CONFIGURED);
 
     const isValid = await this._twoFactorAuthVerify.verify(
       user.twoFactorSecret,
@@ -46,7 +44,7 @@ export class VerifyTwoFactorUseCase implements IVerifyTwoFactorUseCase {
     };
 
     const accessToken = this._jwtProvider.generateAccessToken(payload);
-    const refreshToken = this._jwtProvider.generateRefreshToken(payload);
+    const refreshToken = this._jwtProvider.generateRefreshToken(payload); 
 
     const key = `refresh_token:${user.id}`;
     const ttl = Number(env.REFRESH_EXPIRES_IN);
