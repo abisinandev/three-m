@@ -35,9 +35,7 @@ export class WebhookController {
             );
 
             const intent = await extractPaymentIntent(event);
-            if (!intent) {
-                return res.json({ received: true });
-            }
+            if (!intent) return res.json({ received: true });
 
             const paymentDTO = mapIntentToDTO(intent);
             await this.stripePaymentHandler.handleSuccess(paymentDTO);

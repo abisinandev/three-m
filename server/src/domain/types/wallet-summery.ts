@@ -4,7 +4,6 @@ export type WalletSummary = {
     id: string;
     balance: number;
     currency: string;
-    isVerified: boolean;
     status: WalletStatus;
     createdAt: Date;
     updatedAt: Date;

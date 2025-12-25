@@ -8,7 +8,6 @@ export interface IWalletSchema {
     currency: CurrencyTypes;
     balance: number;
     status: WalletStatus;
-    isVerified: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }

@@ -8,7 +8,7 @@ import { useUserStore } from "@stores/user/UserStore";
 const QUICK_AMOUNTS = [500, 1000, 2000, 5000, 10000];
 
 const MIN_AMOUNT = 100;
-const MAX_AMOUNT = 100000;
+const MAX_AMOUNT = 10000;
 
 const AddToWallet = () => {
     const navigate = useNavigate();
@@ -60,7 +60,7 @@ const AddToWallet = () => {
         try {
             const res = await api.post(PAYMENT_ROUTE, {
                 amount: Number(amount),
-                purpose: "WALLET_TOP_UP",
+                purpose: "TOPUP",
             });
 
             window.location.href = res.data.checkoutUrl;

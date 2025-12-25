@@ -1,4 +1,4 @@
-import { Document, Schema, model, Types } from "mongoose";
+import { Document, Schema, model } from "mongoose";
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { WalletStatus } from "@domain/enum/wallet/wallet-status.enum";
 import { IWalletSchema } from "../interfaces/wallet.schema.interface";
@@ -18,6 +18,7 @@ const WalletSchema = new Schema<WalletDocument>(
       type: Number,
       required: true,
       min: 0,
+      max: 50000,
     },
 
     currency: {
@@ -32,10 +33,6 @@ const WalletSchema = new Schema<WalletDocument>(
       default: WalletStatus.ACTIVE,
     },
 
-    isVerified: {
-      type: Boolean,
-      default: false,
-    },
   },
   { timestamps: true }
 );

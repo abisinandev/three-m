@@ -43,7 +43,6 @@ import { BlockRepository } from "@infrastructure/databases/repository/user/block
 import { AddToWalletUseCase } from "@application/use_cases/user/add-to-wallet.usecase";
 import { IAddToWalletUseCase } from "@application/use_cases/interfaces/user/add-to-wallet-usecase.interface";
 import { PaymentController } from "@presentation/http/controllers/payment/payment.controller";
- 
 import { StripePaymentHandler } from "@shared/utils/payments/payment.handler";
 import { WebhookController } from "@presentation/http/controllers/payment/webhook.controller";
 
@@ -56,10 +55,10 @@ export const UserModule = new ContainerModule(({ bind }) => {
   //Controller
   bind<UserController>(USER_TYPES.UserController).to(UserController);
   bind<WalletController>(USER_TYPES.WalletController).to(WalletController);
-  bind<PaymentController>(USER_TYPES.PaymentController).to(PaymentController)
-  bind<WebhookController>(USER_TYPES.WebhookController).to(WebhookController),
+  bind<PaymentController>(USER_TYPES.PaymentController).to(PaymentController);
+  bind<WebhookController>(USER_TYPES.WebhookController).to(WebhookController);
 
-    //Usecases
+  //Usecases
   bind<IUserLoginUseCase>(USER_TYPES.UserLoginUseCase).to(UserLoginUseCase);
   bind<IUserSignupUseCase>(USER_TYPES.UserSignupUseCase).to(UserSignupUseCase);
   bind<IUserProfileInterface>(USER_TYPES.GetUserProfileUseCase).to(GetUserProfileUseCase);

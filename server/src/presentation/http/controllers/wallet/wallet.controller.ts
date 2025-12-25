@@ -2,9 +2,9 @@ import { IUserWalletUseCase } from "@application/use_cases/interfaces/user/user-
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
-
 
 @injectable()
 export class WalletController {
@@ -15,14 +15,17 @@ export class WalletController {
     async getWallet(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.user?.id
-            const result = await this._walletUseCase.execute(userId as string);
-            return res.status(HttpStatus.OK).json({
-                success: true,
-                message: SuccessMessage.DATA_FETCHED,
-                data: result
-            });
+            const result = await this._walletUseCase.execute(userId as string, req.query);
+            return ResponseHelper.success(
+                res,
+                SuccessMessage.DATA_FETCHED,
+                result,
+                HttpStatus.OK,
+            );
         } catch (error) {
             next(error)
         }
     }
+
+
 }

@@ -42,9 +42,9 @@ export default function UserManagement() {
         sortOrder: "desc",
     });
 
-    const [blockModal, setBlockModal] = useState<{ open: boolean; userCode: string | null; isBlock: boolean }>({
+    const [blockModal, setBlockModal] = useState<{ open: boolean; userId: string | null; isBlock: boolean }>({
         open: false,
-        userCode: null,
+        userId: null,
         isBlock: true,
     });
 
@@ -77,17 +77,17 @@ export default function UserManagement() {
     };
 
     const handleBlockUnblock = async () => {
-        if (!blockModal.userCode) return;
+        if (!blockModal.userId) return;
 
         try {
             if (blockModal.isBlock) {
-                await BlockUserDataApi(blockModal.userCode);
+                await BlockUserDataApi(blockModal.userId);
             } else {
-                await UnblockUserApi(blockModal.userCode);
+                await UnblockUserApi(blockModal.userId);
             }
             queryClient.invalidateQueries({ queryKey: ["admin-users"] });
         } finally {
-            setBlockModal({ open: false, userCode: null, isBlock: true });
+            setBlockModal({ open: false, userId: null, isBlock: true });
         }
     };
 
@@ -101,7 +101,7 @@ export default function UserManagement() {
             onClick: (user) => {
                 setBlockModal({
                     open: true,
-                    userCode: user.userCode,
+                    userId: user.id,
                     isBlock: !user.isBlocked
                 });
             },
@@ -165,7 +165,6 @@ export default function UserManagement() {
                 />
             </div>
 
-            {/* Filters */}
             <FiltersRow
                 onSearch={debouncedSearch}
                 onFilterChange={(key, value) => updateFilters({ [key]: value, page: 1 })}
@@ -173,7 +172,6 @@ export default function UserManagement() {
                 onRefresh={handleRefresh}
             />
 
-            {/* Table + Pagination */}
             <div className="bg-[#111111] border border-neutral-800 rounded-lg overflow-hidden">
                 {isLoading ? (
                     <div className="py-12 text-center text-gray-400">Loading users...</div>
@@ -196,7 +194,7 @@ export default function UserManagement() {
 
             <ConfirmModal
                 isOpen={blockModal.open}
-                onClose={() => setBlockModal({ open: false, userCode: null, isBlock: true })}
+                onClose={() => setBlockModal({ open: false, userId: null, isBlock: true })}
                 onConfirm={handleBlockUnblock}
                 title={blockModal.isBlock ? "Block User" : "Unblock User"}
                 message={

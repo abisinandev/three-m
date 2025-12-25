@@ -17,7 +17,7 @@ export function toEntity(dto: CreateUserDTO, hashedPassword: string): UserEntity
 export function toUserResponse(user: UserEntity): UserDTO {
 
   return {
-    id: user.id!,
+    id: user.id as string,
     userCode: user.userCode,
     fullName: user.fullName,
     email: user.email,
@@ -41,7 +41,6 @@ export function toUserResponse(user: UserEntity): UserDTO {
         id: user.wallet.id,
         balance: user.wallet.balance,
         currency: user.wallet.currency,
-        isVerified: user.wallet.isVerified,
         status: user.wallet.status,
         createdAt: user.wallet.createdAt,
         updatedAt: user.wallet.updatedAt,
@@ -50,7 +49,7 @@ export function toUserResponse(user: UserEntity): UserDTO {
 
     kyc: user.kyc
       ? {
-        id: user.kyc.id!,
+        id: user.kyc.id,
         status: user.kyc.status,
         panNumber: user.kyc.panNumber ?? null,
         aadhaarNumber: user.kyc.aadhaarNumber ?? null,

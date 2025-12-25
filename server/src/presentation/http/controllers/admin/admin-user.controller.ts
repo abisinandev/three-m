@@ -4,6 +4,7 @@ import type { IUnblockUserUsecase } from "@application/use_cases/interfaces/admi
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
+import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { type NextFunction, type Request, type Response } from "express";
 import { inject, injectable } from "inversify";
 
@@ -13,16 +14,19 @@ export class AdminUserController {
     @inject(ADMIN_TYPES.FetchUserDetails) private readonly _fetchUserDetails: IFetchUserDetails,
     @inject(ADMIN_TYPES.BlockUserUseCase) private readonly _blockUserUsecase: IBlockUserUseCase,
     @inject(ADMIN_TYPES.UnblockUserUsecase) private readonly _unblockUserUsecase: IUnblockUserUsecase,
-  ) {}
+  ) { }
 
   async fetchUserDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await this._fetchUserDetails.execute(req.query);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.DATA_FETCHED,
-        data: result,
-      });
+
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.DATA_FETCHED,
+        result,
+        HttpStatus.OK,
+      );
+
     } catch (error) {
       next(error);
     }
@@ -32,10 +36,13 @@ export class AdminUserController {
     try {
       const { userId } = req.params;
       await this._blockUserUsecase.execute(userId);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.BLOCKED_MSG,
-      });
+
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.BLOCKED_MSG,
+        HttpStatus.OK,
+      );
+
     } catch (error) {
       next(error);
     }
@@ -43,12 +50,15 @@ export class AdminUserController {
 
   async unblockUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
-      await this._unblockUserUsecase.execute(id);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.UNBLOCK_MSG,
-      });
+      const { userId } = req.params;
+      await this._unblockUserUsecase.execute(userId);
+
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.UNBLOCK_MSG,
+        HttpStatus.OK,
+      );
+
     } catch (error) {
       next(error);
     }

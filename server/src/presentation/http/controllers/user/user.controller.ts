@@ -11,6 +11,7 @@ import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
+import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
@@ -34,11 +35,13 @@ export class UserController {
       const result = await this._getUserProfile.execute({
         userId: user?.id as string,
       });
-      res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.DATA_FETCHED,
-        data: result,
-      });
+
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.DATA_FETCHED,
+        result,
+        HttpStatus.OK,
+      );
     } catch (error) {
       next(error);
     }
@@ -54,10 +57,13 @@ export class UserController {
         userId,
         data: req.body,
       });
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.PASSWORD_CHANGED,
-      });
+
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.PASSWORD_CHANGED,
+        HttpStatus.OK,
+      );
+
     } catch (error) {
       next(error);
     }
@@ -73,11 +79,12 @@ export class UserController {
       });
 
       logger.info(`result : ${result}`);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.UPLOAD_SUCCESS,
-        data: result,
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.UPLOAD_SUCCESS,
+        result,
+        HttpStatus.OK,
+      );
     } catch (error) {
       next(error);
     }
@@ -100,10 +107,11 @@ export class UserController {
       const userId = req.user?.id;
 
       await this._editProfileUseCase.execute(userId as string, dto);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.PROFILE_UPDATION_DONE,
-      })
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.PROFILE_UPDATION_DONE,
+        HttpStatus.OK,
+      );
     } catch (error) {
       next(error)
     }
@@ -113,10 +121,11 @@ export class UserController {
     try {
       const dto = { ...req.body };
       await this._profileImageUploadUseCase.execute(dto);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.PROFILE_IMAGE_ADDED
-      })
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.PROFILE_IMAGE_ADDED,
+        HttpStatus.OK,
+      );
     } catch (error) {
       next(error)
     }
@@ -128,10 +137,12 @@ export class UserController {
       const userId = req?.user?.id;
 
       await this._changeEmailSendOtp.execute(userId as string, dto);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.EMAIL_UPDATION_OTP_SEND
-      })
+
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.EMAIL_UPDATION_OTP_SEND,
+        HttpStatus.OK,
+      );
     } catch (error) {
       next(error)
     }
@@ -143,10 +154,11 @@ export class UserController {
       const userId = req?.user?.id;
       await this._changeEmailVerifyOtpUseCase.execute(userId as string, dto);
 
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.EMAIL_UPDATION_VERIFY_OTP
-      })
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.EMAIL_UPDATION_VERIFY_OTP,
+        HttpStatus.OK,
+      );
     } catch (error) {
       next(error)
     }
@@ -161,10 +173,11 @@ export class UserController {
       res.clearCookie("accessToken", { httpOnly: true, sameSite: "lax" });
       res.clearCookie("refreshToken", { httpOnly: true, sameSite: "lax" });
 
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.LOGGED_OUT,
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.LOGGED_OUT,
+        HttpStatus.OK,
+      );
     } catch (error) {
       next(error);
     }

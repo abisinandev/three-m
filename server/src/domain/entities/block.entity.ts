@@ -1,7 +1,9 @@
 import { BlockHash } from "@domain/value-objects/wallet/block-hash.vo";
+import { BlockId } from "@domain/value-objects/wallet/block_id.vo";
 
 export class BlockEntity {
   private readonly _id?: string;
+  private readonly _blockId: BlockId;
   private readonly _index: number;
   private readonly _prevHash: string | null;
   private readonly _txHash: string;
@@ -10,6 +12,7 @@ export class BlockEntity {
 
   private constructor(props: {
     id?: string;
+    blockId: BlockId;
     index: number;
     prevHash: string | null;
     txHash: string;
@@ -17,6 +20,7 @@ export class BlockEntity {
     timestamp: number;
   }) {
     this._id = props.id;
+    this._blockId = BlockId.create(props.blockId.value);
     this._index = props.index;
     this._prevHash = props.prevHash;
     this._txHash = props.txHash;
@@ -27,6 +31,7 @@ export class BlockEntity {
   /**
    * Creates a new block (for the domain logic)
    */
+  
   static create(data: {
     index: number;
     prevHash: string | null;
@@ -42,6 +47,7 @@ export class BlockEntity {
     }).value;
 
     return new BlockEntity({
+      blockId: BlockId.create(),
       index: data.index,
       prevHash: data.prevHash,
       txHash: data.txHash,
@@ -56,6 +62,7 @@ export class BlockEntity {
   static fromPersistence(data: {
     id: string;
     index: number;
+    blockId: string;
     prevHash: string | null;
     txHash: string;
     blockHash: string;
@@ -64,6 +71,7 @@ export class BlockEntity {
     return new BlockEntity({
       id: data.id,
       index: data.index,
+      blockId: BlockId.rebuild(data.blockId),
       prevHash: data.prevHash,
       txHash: data.txHash,
       blockHash: data.blockHash,
@@ -77,6 +85,10 @@ export class BlockEntity {
 
   get index(): number {
     return this._index;
+  }
+
+  get blockId(): string {
+    return this._blockId.value;
   }
 
   get prevHash(): string | null {

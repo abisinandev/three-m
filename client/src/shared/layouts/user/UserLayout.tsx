@@ -50,7 +50,7 @@ const UserLayout = () => {
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between text-sm">
 
                     {/* Logo */}
-                    <Link to="/user" className="flex items-center">
+                    <Link to="/user/home" className="flex items-center">
                         <h1 className="text-xl font-bold tracking-tighter">
                             <span className="text-white">three</span>
                             <span className="text-[#22C55E]">M</span>
@@ -62,7 +62,7 @@ const UserLayout = () => {
                             { to: '/user/home', label: 'Dashboard' },
                             { to: '/user/expenses', label: 'Expense tracker' },
                             { to: '/user/wallet', label: 'Wallet' },
-                            { to: '/user/mutual-funds', label: 'Funds' },
+                            { to: '/user/mutual-funds', label: 'Mutual Funds' },
                             { to: '/user/sip', label: 'SIP' },
                             { to: '/user/algo', label: 'Algo trading' },
                             { to: '/user/portfolio', label: 'Portfolio' },

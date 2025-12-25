@@ -19,7 +19,7 @@ export class ResendOtpUseCase implements ISignupResendOtpUseCase {
     private readonly _emailVerifyService: IEmailService,
   ) {}
   async execute(data: ResendOtpDTO): Promise<ResendOtpResponseDTO> {
-    console.log("========", data.email);
+
     const user = await this._userRepository.findByField("email", data.email);
 
     const otp = generateOtp();

@@ -1,6 +1,7 @@
 import { StripePaymentDTO } from "@application/dto/user/stripe-payment-dto";
 import { IAddToWalletUseCase } from "@application/use_cases/interfaces/user/add-to-wallet-usecase.interface";
 import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
+import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { mapStripeStatusToTransactionStatus } from "@shared/utils/payments/stripe-payment.utils";
 import { inject, injectable } from "inversify";
@@ -19,10 +20,9 @@ export class StripePaymentHandler {
 
     async handleSuccess(payment: StripePaymentDTO) {
 
-        const status = mapStripeStatusToTransactionStatus(payment.status);
-
+        const paymentStatus = mapStripeStatusToTransactionStatus(payment.status);
         switch (payment.purpose) {
-            case "WALLET_TOP_UP":
+            case "TOPUP":
                 await this.addToWallet.execute({
                     userId: payment.userId,
                     amount: payment.amount,
@@ -30,11 +30,12 @@ export class StripePaymentHandler {
                     currency: payment.currency,
                     receipt_url: "",
                     referenceType: ReferenceType.STRIPE,
-                    status,
+                    status: TransactionStatus.PENDING,
+                    paymentStatus,
                 });
                 break;
 
-            case "INVEST_FUND":
+            case "INVEST":
                 // future
                 break;
 

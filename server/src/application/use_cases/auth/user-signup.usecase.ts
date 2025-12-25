@@ -72,7 +72,6 @@ export class UserSignupUseCase implements IUserSignupUseCase {
       lastResendAt: now,
     });
     await redisClient.expire(redisKey, 300);
-
     return { expiresAt, isAlreadyCreated: false };
   }
 }

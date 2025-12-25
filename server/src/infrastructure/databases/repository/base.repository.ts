@@ -1,5 +1,5 @@
 import type { IBaseRepository } from "@application/interfaces/repositories/base-repository.interface";
-import type { Model, UpdateQuery } from "mongoose";
+import type { ClientSession, Model, UpdateQuery } from "mongoose";
 
 export abstract class BaseRepository<TDomain, TDocument>
   implements IBaseRepository<TDomain> {
@@ -11,9 +11,13 @@ export abstract class BaseRepository<TDomain, TDocument>
     },
   ) { }
 
-  async create(entity: TDomain): Promise<void> {
-    const data = await this.mapper.toPersistance(entity);
-    await this.model.create(data);
+  async create(entity: TDomain, session?: ClientSession): Promise<void> {
+    const data = this.mapper.toPersistance(entity);
+    if (session) {
+      await this.model.create([data], { session });
+    } else {
+      await this.model.create(data);
+    }
   }
 
   async findById(id: string): Promise<TDomain | null> {

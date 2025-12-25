@@ -20,6 +20,7 @@ export enum ErrorMessage {
   RESET_TOKEN_INVALID = "RESET TOKEN IS INVALID",
   INVALID_PASSWORD = "Invalid old password",
   ADMIN_NOT_FOUND = "Admin not found",
+  NOT_FOUND = 'Not found',
 
   REFRESH_TOKEN_MISSING = "Refresh token is missing",
   REFRESH_TOKEN_EXPIRED = "Invalid or expired refresh token",
@@ -40,4 +41,7 @@ export enum ErrorMessage {
   WALLET_NOT_FOUND = "Wallet not found",
 
   USER_NOT_VERIFIED = "User not verified",
+  WALLET_BALANCE_EXCEEDED = "Wallet balance cannot exceed ₹50,000.",
+
+  TRANSACTION_FAILED = "Transaction verification failed",
 }

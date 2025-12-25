@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 import type { IBlockSchema } from "../interfaces/block.interface";
 
 export type BlockDocument = Document & IBlockSchema;
@@ -10,10 +10,13 @@ const BlockSchema = new Schema<BlockDocument>(
             required: true,
             unique: true,
         },
-
+        blockId: {
+            type: String,
+            required: true,
+        },
         prevHash: {
             type: String,
-            default: null,  
+            default: null,
         },
 
         txHash: {
@@ -34,8 +37,8 @@ const BlockSchema = new Schema<BlockDocument>(
         },
     },
     {
-        timestamps: true,  
-        versionKey: false,  
+        timestamps: true,
+        versionKey: false,
     }
 );
 

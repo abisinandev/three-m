@@ -290,6 +290,10 @@ export class UserEntity {
   get googleId() {
     return this._googleId ?? null;
   }
+  
+  get updatedAt() {
+    return this._updatedAt ?? null;
+  }
 
   changePassword(newPassword: string): void {
     this._password = Password.create(newPassword);

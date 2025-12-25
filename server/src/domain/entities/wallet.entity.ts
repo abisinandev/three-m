@@ -7,7 +7,6 @@ export class WalletEntity {
   private _balance: number;
   private _currency: CurrencyTypes;
   private _status: WalletStatus;
-  private _isVerified: boolean;
   private _createdAt: Date;
   private _updatedAt: Date;
 
@@ -26,17 +25,19 @@ export class WalletEntity {
     this._balance = props.balance;
     this._currency = props.currency;
     this._status = props.status ?? WalletStatus.ACTIVE;
-    this._isVerified = props.isVerified ?? false;
     this._createdAt = props.createdAt ?? new Date();
     this._updatedAt = props.updatedAt ?? new Date();
   }
 
   static create(data: {
     userId: string;
-    balance?: number;
+    balance: number;
     currency: CurrencyTypes;
     status?: WalletStatus;
   }): WalletEntity {
+
+    if (data.balance > 50000) throw new Error("Wallet balance cannot exceed ₹50,000.");
+
     return new WalletEntity({
       userId: data.userId,
       balance: data.balance ?? 0,
@@ -52,7 +53,6 @@ export class WalletEntity {
     balance: number;
     currency: CurrencyTypes;
     status: WalletStatus;
-    isVerified: boolean;
     createdAt?: Date;
     updatedAt?: Date;
   }): WalletEntity {
@@ -62,7 +62,6 @@ export class WalletEntity {
       balance: data.balance,
       currency: data.currency,
       status: data.status,
-      isVerified: data.isVerified,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });
@@ -86,10 +85,6 @@ export class WalletEntity {
 
   get status() {
     return this._status;
-  }
-
-  get isVerified() {
-    return this._isVerified;
   }
 
   get createdAt() {

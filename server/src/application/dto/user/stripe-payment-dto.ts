@@ -10,7 +10,7 @@ import Stripe from "stripe";
 
 export interface StripePaymentDTO {
     userId: string;
-    purpose: "WALLET_TOP_UP" | "INVEST_FUND" | "SUBSCRIPTION";
+    purpose: "TOPUP" | "INVEST" | "SUBSCRIPTION";
     amount: number;
     currency: string;
     paymentIntentId: string;

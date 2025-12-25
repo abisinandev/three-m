@@ -10,11 +10,14 @@ export enum PROTECTED_ROUTES {
   LOGOUT = "/logout",
 
   FETCH_USER = "/users",
-  BLOCK_USER = "/user/block/:id",
-  UNBLOCK_USER = "/user/unblock/:id",
+  BLOCK_USER = "/user/block/:userId",
+  UNBLOCK_USER = "/user/unblock/:userId",
 
   FETCH_KYC_DATAS = "/kyc-management",
   VIEW_KYC_DETAILS = "/view-kyc/:kycId",
   VERIFY_KYC = "/verify-kyc/:kycId",
   REJECT_KYC = "/reject-kyc/:kycId",
+
+  FETCH_TRANSACTIONS = "/transactions",
+  VERIFY_TRANSACTIONS = "/transaction-verify/:txId"
 }

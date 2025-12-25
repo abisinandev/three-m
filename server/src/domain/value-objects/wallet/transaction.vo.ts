@@ -1,28 +1,26 @@
-import { AdminUserController } from "@presentation/http/controllers/admin/admin-user.controller";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 export class TxHash {
     private readonly _value: string;
 
     private constructor(value: string) {
         this._value = value;
-    }
+    };
 
     static generate(data: {
         userId: string;
         amount: number;
         paymentIntentId: string;
         fundId?: string;
-        unit?: number;
+        units?: number;
     }): TxHash {
         const payload = JSON.stringify({
             userId: data.userId,
             amount: data.amount,
             fundId: data.fundId,
-            unit: data.unit,
+            unit: data.units,
             paymentIntentId: data.paymentIntentId,
-            // createdAt: data.createdAt,
-        })
+        });
 
         const hash = crypto
             .createHash('sha256')
@@ -30,16 +28,17 @@ export class TxHash {
             .digest('hex');
 
         return new TxHash(hash);
-    }
+    };
+
 
     static fromExisting(hash: string): TxHash {
         if (!hash || hash.length !== 64) {
             throw new Error("Invalid transaction hash");
         }
         return new TxHash(hash);
-    }
+    };
 
     get value(): string {
         return this._value;
-    }
+    };
 }

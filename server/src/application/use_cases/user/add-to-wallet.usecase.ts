@@ -1,35 +1,32 @@
-import { IBlockRepository } from "@application/interfaces/repositories/block-repository.interface";
-import { ITransactionRepository } from "@application/interfaces/repositories/transaction-repository.interface";
-import { BlockEntity } from "@domain/entities/block.entity";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
-import { inject, injectable } from "inversify";
-import { IAddToWalletUseCase } from "../interfaces/user/add-to-wallet-usecase.interface";
-import { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
-import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
-import { AddToWalletDTO } from "@application/dto/user/add-to-wallet.dto";
+import type { ITransactionRepository } from "@application/interfaces/repositories/transaction-repository.interface";
+import type { AddToWalletDTO } from "@application/dto/user/add-to-wallet.dto";
+import type { IAddToWalletUseCase } from "../interfaces/user/add-to-wallet-usecase.interface";
+import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
+import type { IWalletRepository } from "@application/interfaces/repositories/wallet-repository.interface";
+import { NotFoundError, UnauthorizedError, ValidationError } from "@presentation/express/utils/error-handling";
 import { toEntity } from "@application/mappers/user/transaction-mapper";
-import { IWalletRepository } from "@application/interfaces/repositories/wallet-repository.interface";
-
+import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { inject, injectable } from "inversify";
+import { WalletStatus } from "@domain/enum/wallet/wallet-status.enum";
 
 /**
- * Adds funds to a user's wallet after a successful Stripe payment.
+ * Adds funds to a user's wallet after a successful payment.
  *
- * This use case validates the user and wallet, ensures the transaction
- * is processed only once using the Stripe payment intent ID (idempotency),
- * records the transaction, creates a corresponding blockchain block,
- * and updates the wallet balance accordingly.
+ * Validates the user and wallet, ensures the transaction is processed
+ * only once using the payment intent ID, and records the transaction.
  *
- * If the transaction already exists, the operation is safely ignored.
- *
+ * @param data - The wallet top-up details.
  * @returns Promise<void>
+ * @throws NotFoundError - If the user is not found.
+ * @throws ValidationError - If the user is not verified or wallet limits are exceeded.
  */
+
 
 @injectable()
 export class AddToWalletUseCase implements IAddToWalletUseCase {
     constructor(
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
-        @inject(USER_TYPES.BlockRepository) private readonly _blockRepository: IBlockRepository,
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
     ) { }
@@ -38,11 +35,17 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
 
         const user = await this._userRepository.findById(data.userId);
         if (!user) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
-        if(!user.isVerified) throw new ValidationError(ErrorMessage.USER_NOT_VERIFIED)
+        if (!user.isVerified) throw new ValidationError(ErrorMessage.USER_NOT_VERIFIED)
 
-        const wallet = await this._walletRepository.findById(user.walletId as string);
+        const wallet = await this._walletRepository.findOne({ userId: user.id as string });
+        if (wallet?.status === WalletStatus.FROZEN)
+            throw new UnauthorizedError("We detected an inconsistency in your wallet. Please contact support");
+        
+        if (wallet && wallet.balance > 50000) {
+            throw new ValidationError(ErrorMessage.WALLET_BALANCE_EXCEEDED);
+        }
 
-        const transaction = toEntity(data);
+        const transaction = toEntity({ ...data, userCode: user.userCode });
         const isExists = await this._transactionRepository.findByPaymentId(data.paymentIntentId);
         if (isExists) return;
 
@@ -53,15 +56,5 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
             throw error;
         }
 
-        const lastBlock = await this._blockRepository.getLastBlock();
-        const block = BlockEntity.create({
-            index: lastBlock ? Number(lastBlock?.index) + 1 : 0,
-            prevHash: lastBlock?.blockHash ?? "GENISIS",
-            txHash: transaction.txHash
-        });
-        await this._blockRepository.create(block)
-        let balance = wallet?.balance || 0;
-        balance += data.amount
-        await this._walletRepository.update(wallet?.id as string, { balance })
     }
 }

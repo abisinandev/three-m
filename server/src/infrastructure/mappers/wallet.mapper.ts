@@ -9,7 +9,6 @@ export const toDomain = (doc: WalletDocument): WalletEntity => {
         currency: doc.currency,
         balance: doc.balance,
         status: doc.status,
-        isVerified: doc.isVerified,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
     })

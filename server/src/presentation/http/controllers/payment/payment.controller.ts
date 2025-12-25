@@ -16,7 +16,6 @@ import { injectable } from "inversify";
 
 @injectable()
 export class PaymentController {
-    constructor() { }
 
     async createCheckoutSession(req: Request, res: Response, next: NextFunction) {
         try {
@@ -29,6 +28,10 @@ export class PaymentController {
 
             if (!amount || amount <= 0) {
                 throw new ValidationError("Invalid amount");
+            }
+
+            if (amount > 10000) {
+                throw new ValidationError("Transaction amount exceeds the allowed limit of ₹10,000.");
             }
 
             const session = await stripe.checkout.sessions.create({

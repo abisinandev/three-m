@@ -16,14 +16,14 @@ app.use(helmet());
 
 //stripe webhook
 import webhookRoutes from "@presentation/http/routes/user/webhook.routes";
-app.use('/api/payments/webhooks', webhookRoutes);
+import { Routes } from "../utils/constants/routes.constants";
+app.use(Routes.WEBHOOK_ROUTE, webhookRoutes);
 
 app.use(cookieParser());
 app.use(express.json());
 
 //protected routes
 RegisterRoutes(app);
-
 
 //AppError middleware
 app.use(errorMiddleware);

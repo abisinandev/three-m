@@ -6,8 +6,7 @@ export interface WalletResponseDTO {
     balance: number;
     currency: string;
     status: string;
-    isVerified: boolean;
     createdAt: string;
     updatedAt: string;
-    transactions: TransactionResponseDTO[] | null;
+    transactions: TransactionResponseDTO[];
 }

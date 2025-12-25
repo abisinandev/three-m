@@ -1,5 +1,3 @@
-import { UserWalletUseCase } from "@application/use_cases/user/user-wallet.usecase";
-
 export const USER_TYPES = {
   // Repository
   UserRepository: Symbol.for("UserRepository"),
@@ -32,5 +30,5 @@ export const USER_TYPES = {
   WalletController: Symbol.for('WalletController'),
   PaymentController: Symbol.for("PaymentController"),
   WebhookController: Symbol.for("WebhookController"),
-  StripePaymentHandler: Symbol.for('StripePaymentHandler')
+  StripePaymentHandler: Symbol.for('StripePaymentHandler'),
 };

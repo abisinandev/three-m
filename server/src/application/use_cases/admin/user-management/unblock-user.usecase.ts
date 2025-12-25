@@ -14,8 +14,9 @@ export class UnblockUserUsecase implements IUnblockUserUsecase {
     @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
   ) {}
 
-  async execute(id: string): Promise<void> {
-    const user = await this._userRepository.findOne({ userCode: id });
+  async execute(userId: string): Promise<void> {
+    const user = await this._userRepository.findById(userId);
+    console.log(user,'=======')
     if (!user) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
 
     if (!user.isBlocked)

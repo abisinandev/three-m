@@ -6,7 +6,6 @@ import { logger } from "@infrastructure/providers/logger/pino.logger";
 const bootstrap = async () => {
   try {
     await connectDB();
-
     app.listen(env.PORT, () => {
       logger.info(`Server running on PORT: ${env.PORT}`);
     });

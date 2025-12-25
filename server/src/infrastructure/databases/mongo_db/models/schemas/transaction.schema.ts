@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
@@ -13,8 +13,11 @@ const TransactionSchema = new Schema<TransactionDocument>(
             ref: "User",
             required: true,
             index: true,
+            immutable: true,
         },
-
+        userCode: {
+            type: String,
+        },
         amount: {
             type: Number,
             required: true,
@@ -25,7 +28,10 @@ const TransactionSchema = new Schema<TransactionDocument>(
             type: String,
             required: true,
         },
-
+        transactionId: {
+            type: String,
+            required: true,
+        },
         type: {
             type: String,
             enum: Object.values(TransactionTypes),
@@ -33,6 +39,12 @@ const TransactionSchema = new Schema<TransactionDocument>(
         },
 
         status: {
+            type: String,
+            enum: Object.values(TransactionStatus),
+            required: true,
+        },
+
+        paymentStatus: {
             type: String,
             enum: Object.values(TransactionStatus),
             required: true,
@@ -61,6 +73,12 @@ const TransactionSchema = new Schema<TransactionDocument>(
             index: true,
         },
 
+        signature: {
+            type: String,
+            required: true,
+            unique: true,
+            index: true,
+        },
         referenceType: {
             type: String,
             enum: Object.values(ReferenceType),

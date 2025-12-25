@@ -8,7 +8,6 @@ interface TableProps<T> {
 }
 
 export function TableComponent<T>({ columns, data, actions }: TableProps<T>) {
-    // Handle empty state
     if (!data || data.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-12 px-4">
@@ -21,7 +20,6 @@ export function TableComponent<T>({ columns, data, actions }: TableProps<T>) {
     return (
         <div className="overflow-x-auto">
             <table className="w-full">
-                {/* Table Header */}
                 <thead>
                     <tr className="border-b border-neutral-800">
                         {columns.map((col) => (
