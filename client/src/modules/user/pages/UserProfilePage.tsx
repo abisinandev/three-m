@@ -3,14 +3,12 @@ import { useState } from 'react';
 import { Camera, CheckCircle } from 'lucide-react';
 import ChangePasswordModal from '@shared/components/modals/ChangePasswordModal';
 import { format } from 'date-fns';
-
 import EditProfileModal from '@shared/components/modals/UserProfileEditModal';
 import { useNavigate } from '@tanstack/react-router';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { GetSignatureApi } from '@shared/services/user/GetSignatureApi';
 import api from '@lib/axiosUser';
 import { UPLOAD_PROFILE_IMAGE } from '@shared/constants/userContants';
-
 
 const UserProfilePage = () => {
   const { user, setUser } = useUserStore();
@@ -28,7 +26,6 @@ const UserProfilePage = () => {
 
   const kycStatus = user?.kycStatus;
   const hasKycStarted = user?.kycId || kycStatus;
-
   const kycInfo = (() => {
     if (!hasKycStarted) {
       return {
@@ -84,8 +81,8 @@ const UserProfilePage = () => {
   })();
 
   const isKycVerified = user?.kycStatus === "verified";
-  const maskedAadhaar = user?.aadhaarNumber
-    ? `XXXX-XXXX-${user.aadhaarNumber.slice(-4)}`
+  const maskedAadhaar = user?.kyc.aadhaarNumber
+    ? `XXXX-XXXX-${user?.kyc.aadhaarNumber.slice(-4)}`
     : "Not added";
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,6 +90,7 @@ const UserProfilePage = () => {
     if (!file || !user?.id) return;
 
     setUploading(true);
+    
     try {
       const signatureData = await GetSignatureApi("profile", user.id);
       console.log('signatureData: ', signatureData.data)
@@ -180,7 +178,7 @@ const UserProfilePage = () => {
                 <div className="flex justify-between">
                   <span className="text-gray-500">PAN</span>
                   <span>
-                    {isKycVerified ? user?.panNumber : "Not added"}
+                    {isKycVerified ? user?.kyc.panNumber : "Not added"}
                   </span>
                 </div>
 

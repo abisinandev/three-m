@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import api from '@lib/axiosUser';
 import { useUserStore } from '@stores/user/UserStore';
-import { Wallet, ChevronDown, LogOut, User, Menu } from 'lucide-react';
+import { Wallet, ChevronDown, LogOut, User, Menu, Bell } from 'lucide-react';
 import { Footer } from '@shared/components/LandingPage/Footer';
 import { LOGOUT } from '@shared/constants/userContants';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
@@ -12,7 +12,7 @@ const UserLayout = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
-    
+
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { user, logout } = useUserStore();
     const navigate = useNavigate();
@@ -50,7 +50,7 @@ const UserLayout = () => {
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between text-sm">
 
                     {/* Logo */}
-                    <Link to="/user" className="flex items-center">
+                    <Link to="/user/home" className="flex items-center">
                         <h1 className="text-xl font-bold tracking-tighter">
                             <span className="text-white">three</span>
                             <span className="text-[#22C55E]">M</span>
@@ -59,10 +59,10 @@ const UserLayout = () => {
 
                     <nav className="hidden lg:flex items-center gap-8 font-medium text-gray-400">
                         {[
-                            { to: '/user', label: 'Dashboard' },
+                            { to: '/user/home', label: 'Dashboard' },
                             { to: '/user/expenses', label: 'Expense tracker' },
                             { to: '/user/wallet', label: 'Wallet' },
-                            { to: '/user/mutual-funds', label: 'Funds' },
+                            { to: '/user/mutual-funds', label: 'Mutual Funds' },
                             { to: '/user/sip', label: 'SIP' },
                             { to: '/user/algo', label: 'Algo trading' },
                             { to: '/user/portfolio', label: 'Portfolio' },
@@ -88,7 +88,15 @@ const UserLayout = () => {
                             <Wallet className="w-3.5 h-3.5 text-[#22C55E]" />
                             <span>₹1,24,500</span>
                         </div>
+                        <button className="relative p-2 rounded-lg hover:bg-[#1a1a1a] transition-colors group">
+                            <Bell className="w-4.5 h-4.5 text-gray-400 group-hover:text-gray-200 transition" />
 
+                            <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-[#0f0f0f]">
+                                3
+                            </span>
+
+                            <span className="absolute inset-0 rounded-lg ring-2 ring-transparent group-hover:ring-[#22C55E]/20 transition-all" />
+                        </button>
                         <div className="relative" ref={dropdownRef}>
                             <button
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -97,13 +105,12 @@ const UserLayout = () => {
                                 <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#22C55E] to-[#16a34a] flex items-center justify-center text-xs font-bold text-black">
                                     {user?.fullName ? user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
                                 </div>
-                                <span className="text-gray-300">
+                                <span className="text-gray-300 hidden sm:block">
                                     {user?.userCode || user?.fullName?.split(' ')[0] || 'User'}
                                 </span>
                                 <ChevronDown size={14} className={`text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
 
-                            {/* Dropdown Menu */}
                             {isDropdownOpen && (
                                 <div className="absolute right-0 mt-2 w-48 bg-[#111] rounded-lg shadow-2xl border border-[#2a2a2a] overflow-hidden z-50">
                                     <div className="py-1">
@@ -114,6 +121,14 @@ const UserLayout = () => {
                                         >
                                             <User size={16} />
                                             Profile
+                                        </Link>
+                                        <Link
+                                            to="/user/home"
+                                            onClick={() => setIsDropdownOpen(false)}
+                                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] transition"
+                                        >
+                                            <Bell size={16} />
+                                            Notifications
                                         </Link>
                                         <div className="h-px bg-[#2a2a2a]" />
                                         <button

@@ -9,7 +9,7 @@ import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { ConflictError } from "@presentation/express/utils/error-handling/index";
-import { generateOtp } from "@shared/utils/otp-generator";
+import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
 import type { IUserSignupUseCase } from "../interfaces/user/user-signup.usecase.interface";
 
@@ -72,7 +72,6 @@ export class UserSignupUseCase implements IUserSignupUseCase {
       lastResendAt: now,
     });
     await redisClient.expire(redisKey, 300);
-
     return { expiresAt, isAlreadyCreated: false };
   }
 }

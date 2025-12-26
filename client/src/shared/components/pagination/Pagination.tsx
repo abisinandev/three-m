@@ -30,48 +30,42 @@ export const Pagination = ({ page, limit, total, onPageChange }: PaginationProps
 
   return (
     <div className="flex items-center justify-between border-t border-neutral-800 px-6 py-4">
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-neutral-500">
         Showing {startItem}–{endItem} of {total.toLocaleString()} results
       </p>
 
       <div className="flex items-center gap-1">
-        {/* Previous */}
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
-          className={`p-2 rounded-lg transition ${
-            page === 1
-              ? "text-gray-600 cursor-not-allowed"
-              : "text-gray-400 hover:bg-white/10"
-          }`}
+          className={`p-2 rounded-lg transition ${page === 1
+              ? "text-neutral-600 cursor-not-allowed"
+              : "text-neutral-400 hover:bg-neutral-700"
+            }`}
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        {/* Page Numbers */}
         {pages.map((p) => (
           <button
             key={p}
             onClick={() => onPageChange(p)}
-            className={`min-w-10 px-3 py-2 rounded-lg text-xs font-medium transition ${
-              page === p
-                ? "bg-teal-500/20 border border-teal-500/40 text-teal-400"
-                : "text-gray-400 hover:bg-white/10"
-            }`}
+            className={`min-w-10 px-3 py-2 rounded-lg text-xs font-medium transition ${page === p
+                ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-400"
+                : "text-neutral-400 hover:bg-neutral-700"
+              }`}
           >
             {p}
           </button>
         ))}
 
-        {/* Next */}
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
-          className={`p-2 rounded-lg transition ${
-            page === totalPages
-              ? "text-gray-600 cursor-not-allowed"
-              : "text-gray-400 hover:bg-white/10"
-          }`}
+          className={`p-2 rounded-lg transition ${page === totalPages
+              ? "text-neutral-600 cursor-not-allowed"
+              : "text-neutral-400 hover:bg-neutral-700"
+            }`}
         >
           <ChevronRight className="w-4 h-4" />
         </button>

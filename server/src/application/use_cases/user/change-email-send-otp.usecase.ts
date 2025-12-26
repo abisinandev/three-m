@@ -6,7 +6,7 @@ import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
 import { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
-import { generateOtp } from "@shared/utils/otp-generator";
+import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 
 @injectable()

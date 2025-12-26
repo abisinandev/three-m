@@ -14,8 +14,9 @@ export class BlockUserUseCase implements IBlockUserUseCase {
     @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
   ) {}
 
-  async execute(id: string): Promise<void> {
-    const user = await this._userRepository.findOne({ userCode: id });
+  async execute(userId: string): Promise<void> {
+    const user = await this._userRepository.findById(userId);
+    console.log(userId, '=======');
     if (!user) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
 
     if (user.isBlocked)
@@ -23,6 +24,5 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 
     user.block();
     await this._userRepository.update(user.id as string, user);
-    console.log("udpate ", user);
   }
 }

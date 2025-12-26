@@ -71,7 +71,7 @@ export const SignupPage: React.FC = () => {
 
         onSuccess: (res) => {
             setUser(res.data.user);
-            navigate({ to: "/user", replace: true });
+            navigate({ to: "/user/home", replace: true });
         },
 
         onError: (err) => {

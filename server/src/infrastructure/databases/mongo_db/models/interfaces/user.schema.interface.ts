@@ -1,39 +1,47 @@
+import type { Types } from "mongoose";
 import type { AuthProvider } from "@domain/enum/users/auth-provider.enum";
 import type { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import type { KycStatusType } from "@domain/enum/users/kyc-status.enum";
 import type { SubscripionPlan } from "@domain/enum/users/subscription-plan.enum";
 import type { SubscriptionStatus } from "@domain/enum/users/subscription-status.enum";
 import type { Role } from "@domain/enum/users/user-role.enum";
+import { WalletDocument } from "../schemas/wallet.schema";
+import { KycDocument } from "../schemas/kyc.schema";
 
 export interface IUserSchema {
-  _id: string;
+  _id: Types.ObjectId;
+
   userCode: string;
   fullName: string;
   email: string;
+
   phone: string | null;
   password: string | null;
+
   role: Role;
 
   isVerified: boolean;
   isEmailVerified: boolean;
   isBlocked: boolean;
 
-  kycId?: string | null;
-  kycStatus?: KycStatusType;
-  walletId?: string | null;
-  walletBalance?: number;
-  currency?: CurrencyTypes;
+  kycId: Types.ObjectId | KycDocument | null;
+  kycStatus: KycStatusType;
 
-  subscriptionId?: string;
-  subscriptionStatus?: SubscriptionStatus;
+  walletId: Types.ObjectId | WalletDocument | null;
+  currency: CurrencyTypes;
+
+  subscriptionId: Types.ObjectId | null;
+  subscriptionStatus: SubscriptionStatus;
   subscriptionPlan: SubscripionPlan;
 
-  isTwoFactorEnabled?: boolean;
-  twoFactorSecret?: string | null;
-  qrCodeUrl?: string | null;
-  createdAt?: Date | null;
+  isTwoFactorEnabled: boolean;
+  twoFactorSecret: string | null;
+  qrCodeUrl: string | null;
 
   authProvider: AuthProvider;
   avatar: string | null;
   googleId: string | null;
+
+  createdAt: Date;
+  updatedAt: Date;
 }

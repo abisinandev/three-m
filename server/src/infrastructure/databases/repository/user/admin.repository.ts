@@ -9,9 +9,7 @@ import { injectable } from "inversify";
 import { BaseRepository } from "../base.repository";
 
 @injectable()
-export class AdminRepository
-  extends BaseRepository<AdminEntity, AdminDocument>
-  implements IAdminRepository
+export class AdminRepository extends BaseRepository<AdminEntity, AdminDocument> implements IAdminRepository
 {
   constructor() {
     super(AdminModel, AdminMapper);

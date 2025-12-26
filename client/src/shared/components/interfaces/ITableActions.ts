@@ -1,5 +1,5 @@
 export interface Action<T> {
-    label: string;
-    className: string;
+    label: string | ((row: T) => string);
+    className?: string | ((row: T) => string);
     onClick: (row: T) => void;
 }

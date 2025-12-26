@@ -21,6 +21,7 @@ export class VerifyKycUseCase implements IVerifyKycUseCase {
       isKycVerified: true,
       status: KycStatusType.VERIFIED,
     });
+    
     await this._userRepository.update(kyc.userId, {
       kycStatus: KycStatusType.VERIFIED,
       isVerified: true,

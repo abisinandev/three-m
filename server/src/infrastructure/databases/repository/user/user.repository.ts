@@ -73,20 +73,31 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
       .exec();
 
     return Promise.all(docs.map((doc) => this.mapper.toDomain(doc)));
-  }
+  };
 
   async CountActiveUsers(): Promise<{ totalActiveUsersCount: number; }> {
     const totalActiveUsersCount = await this.model.countDocuments({ isBlocked: false });
     return { totalActiveUsersCount };
-  }
+  };
 
   async CountInActiveUsers(): Promise<{ totalInActiveUsersCount: number; }> {
     const totalInActiveUsersCount = await this.model.countDocuments({ isBlocked: true });
     return { totalInActiveUsersCount }
-  }
+  };
 
   async CountVerifiedUsers(): Promise<{ totalVerifiedUsersCount: number; }> {
     const totalVerifiedUsersCount = await this.model.countDocuments({ isVerified: true });
     return { totalVerifiedUsersCount }
-  }
+  };
+
+  async findAllWithRelations(userId: string): Promise<UserEntity | null> {
+    const user = await this.model
+      .findById(userId)
+      .populate("kycId")
+      .populate("walletId")
+      .exec();
+
+    if (!user) return null;
+    return this.mapper.toDomain(user);
+  };
 }

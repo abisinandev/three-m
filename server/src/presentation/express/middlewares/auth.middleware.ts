@@ -16,9 +16,8 @@ import { logger } from "@infrastructure/providers/logger/pino.logger";
 @injectable()
 export class AuthMiddleware {
   constructor(
-    @inject(USER_TYPES.UserRepository)
-    private readonly _userRepository: IUserRepository,
-  ) {}
+    @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
+  ) { }
 
   async handle(req: Request, res: Response, next: NextFunction) {
     try {

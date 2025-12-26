@@ -1,5 +1,7 @@
+import { ClientSession } from "mongoose";
+
 export interface IBaseRepository<T> {
-  create(entity: T): Promise<void>;
+  create(entity: T, session?: ClientSession): Promise<void>;
   findById(id: string): Promise<T | null>;
   findAll(): Promise<T[]>;
   findOne(data: Partial<T>): Promise<T | null>;

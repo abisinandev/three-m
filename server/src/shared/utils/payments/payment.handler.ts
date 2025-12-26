@@ -1,0 +1,51 @@
+import { StripePaymentDTO } from "@application/dto/user/stripe-payment-dto";
+import { IAddToWalletUseCase } from "@application/use_cases/interfaces/user/add-to-wallet-usecase.interface";
+import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
+import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
+import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { mapStripeStatusToTransactionStatus } from "@shared/utils/payments/stripe-payment.utils";
+import { inject, injectable } from "inversify";
+
+
+/**
+ * Handles successful Stripe payments and updates the system accordingly.
+ */
+
+@injectable()
+export class StripePaymentHandler {
+    constructor(
+        @inject(USER_TYPES.AddToWalletUseCase)
+        private addToWallet: IAddToWalletUseCase,
+    ) { }
+
+    async handleSuccess(payment: StripePaymentDTO) {
+
+        const paymentStatus = mapStripeStatusToTransactionStatus(payment.status);
+        switch (payment.purpose) {
+            case "TOPUP":
+                await this.addToWallet.execute({
+                    userId: payment.userId,
+                    amount: payment.amount,
+                    paymentIntentId: payment.paymentIntentId,
+                    currency: payment.currency,
+                    receipt_url: "",
+                    referenceType: ReferenceType.STRIPE,
+                    status: TransactionStatus.PENDING,
+                    paymentStatus,
+                });
+                break;
+
+            case "INVEST":
+                // future
+                break;
+
+            case "SUBSCRIPTION":
+                // future
+                break;
+
+            default:
+                throw new Error(`Unknown purpose: ${payment.purpose}`);
+        }
+    }
+}
+

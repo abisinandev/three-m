@@ -1,5 +1,5 @@
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
-import type { UserRepository } from "@infrastructure/databases/repository/auth/user.repository";
+import type { UserRepository } from "@infrastructure/databases/repository/user/user.repository";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";

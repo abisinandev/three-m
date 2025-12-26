@@ -14,6 +14,7 @@ import { HttpStatus } from "@domain/enum/express/status-code";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { ValidationError } from "@presentation/express/utils/error-handling";
+import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
@@ -39,18 +40,21 @@ export class AuthController {
       const result = await this._userSignupUseCase.execute(dto);
 
       if (result.isAlreadyCreated) {
-        return res.status(HttpStatus.CREATED).json({
-          success: true,
-          message: SuccessMessage.ACCOUNT_EXISTS_EMAIL_NOT_VERIFIED,
-          data: { expiresAt: result.expiresAt },
-        });
+        return ResponseHelper.success(
+          res,
+          SuccessMessage.ACCOUNT_EXISTS_EMAIL_NOT_VERIFIED,
+          { expiresAt: result.expiresAt },
+          HttpStatus.OK,
+        );
       }
 
-      return res.status(HttpStatus.CREATED).json({
-        success: true,
-        message: SuccessMessage.OTP_SEND,
-        data: { expiresAt: result.expiresAt },
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.OTP_SEND,
+        { expiresAt: result.expiresAt },
+        HttpStatus.OK,
+      );
+
     } catch (error) {
       next(error);
     }
@@ -62,18 +66,21 @@ export class AuthController {
       const result = await this._userLoginUseCase.execute(dto);
 
       if (result.required2FASetup) {
-        return res.status(HttpStatus.CREATED).json({
-          success: true,
-          message: SuccessMessage.TWO_FA_REQUIRED,
-          data: { qrCode: result.qrCode },
-        });
+        return ResponseHelper.success(
+          res,
+          SuccessMessage.TWO_FA_REQUIRED,
+          { qrCode: result.qrCode },
+          HttpStatus.CREATED,
+        );
       }
 
-      return res.status(HttpStatus.CREATED).json({
-        success: true,
-        message: SuccessMessage.PLEASE_VERIFY_2FA_CODE,
-        data: { qrCode: result.qrCode },
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.PLEASE_VERIFY_2FA_CODE,
+        { qrCode: result.qrCode },
+        HttpStatus.CREATED,
+      );
+
     } catch (error) {
       next(error);
     }
@@ -103,24 +110,29 @@ export class AuthController {
         maxAge: 15 * 60 * 1000, // 15 minutes
       });
 
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.LOGGED_IN_SUCCESS,
-        data: { accessToken: "Created" },
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.LOGGED_IN_SUCCESS,
+        { accessToken: "Created" },
+        HttpStatus.OK,
+      );
+
     } catch (error) {
       next(error);
     }
   }
 
-  async verifySignupOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async verifySignupOtp(req: Request, res: Response, next: NextFunction) {
     try {
       const dto = { ...req.body };
       await this._verifyOtpUseCase.execute(dto);
-      res.status(HttpStatus.OK).json({
-        success: HttpStatus.OK,
-        message: SuccessMessage.EMAIL_VERIFIED,
-      });
+
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.EMAIL_VERIFIED,
+        HttpStatus.OK,
+      );
+
     } catch (err) {
       next(err);
     }
@@ -131,11 +143,13 @@ export class AuthController {
       const dto = { ...req.body };
       const result = await this._resendOtpUseCase.execute(dto);
 
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.RESEND_OTP_MSG,
-        data: { ...result },
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.RESEND_OTP_MSG,
+        { ...result },
+        HttpStatus.OK,
+      );
+
     } catch (err) {
       next(err);
     }
@@ -156,10 +170,12 @@ export class AuthController {
         maxAge: 15 * 60 * 1000, // 15 minutes
       });
 
-      return res.status(HttpStatus.CREATED).json({
-        success: true,
-        message: SuccessMessage.ACCESS_TOKEN_UPDATED,
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.ACCESS_TOKEN_UPDATED,
+        HttpStatus.CREATED,
+      );
+
     } catch (error) {
       next(error);
     }
@@ -169,10 +185,12 @@ export class AuthController {
     try {
       const dto = { ...req.body };
       await this._forgotPasswordUseCase.execute(dto);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.VERIFYCATION_CODE_SEND,
-      });
+
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.VERIFYCATION_CODE_SEND,
+        HttpStatus.OK,
+      );
     } catch (error) {
       next(error);
     }
@@ -183,11 +201,13 @@ export class AuthController {
       const dto = { ...req.body };
       const result = await this._forgotPassVerifyOtp.execute(dto);
 
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.OTP_VERIFIED,
-        data: { resetToken: result.resetToken },
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.OTP_VERIFIED,
+        { resetToken: result.resetToken },
+        HttpStatus.OK,
+      );
+
     } catch (error) {
       next(error);
     }
@@ -196,16 +216,15 @@ export class AuthController {
   async forgotPasswordResendOtp(req: Request, res: Response, next: NextFunction) {
     try {
       const dto = { ...req.body };
-      const result = await this._forgotPasswordResendOtp.execute(dto);
+      const { resendCount, expiresAt } = await this._forgotPasswordResendOtp.execute(dto);
 
-      res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.RESEND_OTP_MSG,
-        data: {
-          expiresAt: result.expiresAt,
-          resendCount: result.resendCount,
-        },
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.RESEND_OTP_MSG,
+        { resendCount, expiresAt },
+        HttpStatus.OK,
+      );
+
     } catch (err) {
       next(err);
     }
@@ -216,10 +235,12 @@ export class AuthController {
       const dto = { ...req.body };
       await this._resetPassword.execute(dto);
 
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.PASSWORD_RESET_SUCCESS,
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.PASSWORD_RESET_SUCCESS,
+        HttpStatus.OK,
+      );
+
     } catch (error) {
       next(error);
     }
@@ -244,11 +265,12 @@ export class AuthController {
         maxAge: 15 * 60 * 1000, // 15 minutes
       });
 
-      return res.status(200).json({
-        success: true,
-        message: SuccessMessage.LOGGED_IN_SUCCESS,
-        data: { accessToken: "created" },
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.LOGGED_IN_SUCCESS,
+        { accessToken: "created" },
+        HttpStatus.OK,
+      );
     } catch (error) {
       next(error);
     }

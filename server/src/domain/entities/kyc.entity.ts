@@ -4,70 +4,65 @@ import type { KycDocumentVO } from "@domain/value-objects/user/kyc-documents.vo"
 export class KycEntity {
   private readonly _id?: string;
   private readonly _userId: string;
-  private readonly _isKycVerified?: boolean;
-  private readonly _panNumber: string | null;
-  private readonly _status: KycStatusType;
-  private readonly _adhaarNumber: string | null;
-  private readonly _documents: KycDocumentVO[] | null;
-  private readonly _address: {
+  private _isKycVerified: boolean;
+  private _status: KycStatusType;
+  private _documents: KycDocumentVO[];
+  private _panNumber?: string | null;
+  private _adhaarNumber?: string | null;
+  private _address: {
     fullAddress: string;
     city: string;
     state: string;
     pincode: string;
-  } | null;
-  private readonly _rejectionReason?: string | null;
-  private readonly _createdAt?: Date | null;
+  };
+  private _rejectionReason?: string | null;
+  private readonly _createdAt?: Date;
 
   private constructor(props: {
     id?: string;
     userId: string;
-    isKycVerified?: boolean;
+    isKycVerified: boolean;
     status: KycStatusType;
     documents: KycDocumentVO[];
-    panNumber: string;
-    adhaarNumber: string;
+    panNumber?: string | null;
+    adhaarNumber?: string | null;
     address: {
       fullAddress: string;
       city: string;
       state: string;
       pincode: string;
     };
-    rejectionReason: string;
-    createdAt?: Date | null;
+    rejectionReason?: string | null;
+    createdAt?: Date;
   }) {
     this._id = props.id;
     this._userId = props.userId;
     this._isKycVerified = props.isKycVerified;
     this._status = props.status;
-    this._documents = props.documents ?? null;
+    this._documents = props.documents;
     this._panNumber = props.panNumber ?? null;
     this._adhaarNumber = props.adhaarNumber ?? null;
-    this._address = props.address ?? null;
+    this._address = props.address;
     this._rejectionReason = props.rejectionReason ?? null;
-    this._createdAt = props.createdAt ?? null;
+    this._createdAt = props.createdAt;
   }
 
   static create(data: {
     userId: string;
     documents: KycDocumentVO[];
-    panNumber: string;
-    adhaarNumber: string;
-    address: {
-      fullAddress: string;
-      city: string;
-      state: string;
-      pincode: string;
-    };
+    panNumber?: string;
+    adhaarNumber?: string;
+    address: { fullAddress: string; city: string; state: string; pincode: string };
   }): KycEntity {
     return new KycEntity({
       userId: data.userId,
       isKycVerified: false,
       status: KycStatusType.PENDING,
       documents: data.documents,
-      panNumber: data.panNumber,
-      adhaarNumber: data.adhaarNumber,
+      panNumber: data.panNumber ?? null,
+      adhaarNumber: data.adhaarNumber ?? null,
       address: data.address,
-      rejectionReason: "",
+      rejectionReason: null,
     });
   }
 
@@ -77,28 +72,23 @@ export class KycEntity {
     isKycVerified: boolean;
     status: KycStatusType;
     documents: KycDocumentVO[];
-    panNumber: string;
-    adhaarNumber: string;
-    address: {
-      fullAddress: string;
-      city: string;
-      state: string;
-      pincode: string;
-    };
-    createdAt?: Date | null;
-    rejectionReason: string;
+    panNumber?: string | null;
+    adhaarNumber?: string | null;
+    address: { fullAddress: string; city: string; state: string; pincode: string };
+    rejectionReason?: string | null;
+    createdAt?: Date;
   }): KycEntity {
     return new KycEntity({
       id: data.id,
       userId: data.userId,
-      isKycVerified: data.isKycVerified ?? "PENDING",
-      status: data.status ?? KycStatusType.NULL,
+      isKycVerified: data.isKycVerified,
+      status: data.status,
       documents: data.documents ?? [],
       panNumber: data.panNumber ?? null,
       adhaarNumber: data.adhaarNumber ?? null,
-      address: data.address ?? null,
+      address: data.address,
       rejectionReason: data.rejectionReason ?? null,
-      createdAt: data.createdAt ?? null,
+      createdAt: data.createdAt,
     });
   }
 
@@ -132,4 +122,24 @@ export class KycEntity {
   get createdAt() {
     return this._createdAt;
   }
+
+  verifyKyc() {
+    this._isKycVerified = true;
+    this._status = KycStatusType.VERIFIED;
+  }
+
+  rejectKyc(reason: string) {
+    this._isKycVerified = false;
+    this._status = KycStatusType.REJECTED;
+    this._rejectionReason = reason;
+  }
+
+  updateDocuments(documents: KycDocumentVO[]) {
+    this._documents = documents;
+  }
+
+  updateAddress(address: { fullAddress: string; city: string; state: string; pincode: string }) {
+    this._address = address;
+  }
+  
 }

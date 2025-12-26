@@ -7,34 +7,31 @@ import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
 import { ValidationError } from "@presentation/express/utils/error-handling";
-import { HttpStatusCode } from "axios";
+import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
 @injectable()
 export class AdminAuthController {
   constructor(
-    @inject(ADMIN_TYPES.AdminAuthUseCase)
-    private readonly _adminAuthUseCase: IAdminAuthUseCase,
-    @inject(ADMIN_TYPES.AdminAuthVerifyOtpUseCase)
-    private readonly _adminVerifyOtpUseCase: IAdminAuthVerifyOtpUseCase,
-    @inject(ADMIN_TYPES.AdminRefreshTokenUseCase)
-    private readonly _refreshToken: IRefreshTokenUseCase,
-    @inject(ADMIN_TYPES.AdminLogoutUseCase)
-    private readonly _adminLogoutUseCase: IAdminLogoutUseCase,
-    @inject(ADMIN_TYPES.AdminResendOtpUseCase)
-    private readonly _adminResendOtpUsecase: IAdminResendOtpUseCase,
-  ) {}
+    @inject(ADMIN_TYPES.AdminAuthUseCase) private readonly _adminAuthUseCase: IAdminAuthUseCase,
+    @inject(ADMIN_TYPES.AdminAuthVerifyOtpUseCase) private readonly _adminVerifyOtpUseCase: IAdminAuthVerifyOtpUseCase,
+    @inject(ADMIN_TYPES.AdminRefreshTokenUseCase) private readonly _refreshToken: IRefreshTokenUseCase,
+    @inject(ADMIN_TYPES.AdminLogoutUseCase) private readonly _adminLogoutUseCase: IAdminLogoutUseCase,
+    @inject(ADMIN_TYPES.AdminResendOtpUseCase) private readonly _adminResendOtpUsecase: IAdminResendOtpUseCase,
+  ) { }
 
   async authentication(req: Request, res: Response, next: NextFunction) {
     try {
       const { expiresAt, resendCount, email } =
         await this._adminAuthUseCase.execute(req.body);
-      res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.OTP_SEND,
-        data: { expiresAt, resendCount, email },
-      });
+
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.OTP_SEND,
+        { expiresAt, resendCount, email },
+        HttpStatus.OK
+      );
     } catch (error) {
       next(error);
     }
@@ -59,11 +56,13 @@ export class AdminAuthController {
         maxAge: 15 * 60 * 1000, // 15 minutes
       });
 
-      res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.AUTHENTICATION_DONE,
-        data: { accessToken: "created" },
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.AUTHENTICATION_DONE,
+        { accessToken: "created" },
+        HttpStatus.OK
+      );
+
     } catch (error) {
       next(error);
     }
@@ -72,27 +71,35 @@ export class AdminAuthController {
   async resendOtp(req: Request, res: Response, next: NextFunction) {
     try {
       const dto = { ...req.body };
-      const result = await this._adminResendOtpUsecase.execute(dto);
+      await this._adminResendOtpUsecase.execute(dto);
 
-      res.cookie("refreshToken", result.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      });
+      // res.cookie("refreshToken", result.refreshToken, {
+      //   httpOnly: true,
+      //   secure: true,
+      //   sameSite: "lax",
+      //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      // });
 
-      res.cookie("accessToken", result.accessToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-        maxAge: 15 * 60 * 1000, // 15 minutes
-      });
+      // res.cookie("accessToken", result.accessToken, {
+      //   httpOnly: true,
+      //   secure: true,
+      //   sameSite: "lax",
+      //   maxAge: 15 * 60 * 1000, // 15 minutes
+      // });
 
-      res.status(HttpStatus.OK).json({
-        success: true,
-        message: SuccessMessage.AUTHENTICATION_DONE,
-        data: { accessToken: "created" },
-      });
+      // res.status(HttpStatus.OK).json({
+      //   success: true,
+      //   message: SuccessMessage.AUTHENTICATION_DONE,
+      //   // data: { accessToken: "created" },
+      // });
+
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.AUTHENTICATION_DONE,
+        { accessToken: "created" },
+        HttpStatus.OK,
+      );
+
     } catch (error) {
       next(error);
     }
@@ -114,10 +121,12 @@ export class AdminAuthController {
         maxAge: 15 * 60 * 1000, // 15 minutes
       });
 
-      res.status(HttpStatus.CREATED).json({
-        success: true,
-        message: SuccessMessage.ACCESS_TOKEN_UPDATED,
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.ACCESS_TOKEN_UPDATED,
+        HttpStatus.OK,
+      );
+
     } catch (error) {
       next(error);
     }
@@ -132,10 +141,12 @@ export class AdminAuthController {
       res.clearCookie("accessToken", { httpOnly: true, sameSite: "lax" });
       res.clearCookie("refreshToken", { httpOnly: true, sameSite: "lax" });
 
-      return res.status(HttpStatusCode.Ok).json({
-        success: true,
-        message: SuccessMessage.LOGGED_OUT,
-      });
+      return ResponseHelper.success(
+        res,
+        SuccessMessage.LOGGED_OUT,
+        HttpStatus.OK,
+      );
+
     } catch (error) {
       next(error);
     }

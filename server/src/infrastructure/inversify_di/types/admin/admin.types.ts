@@ -16,9 +16,13 @@ export const ADMIN_TYPES = {
   ViewKycDetailsUseCase: Symbol.for("ViewKycDetailsUseCase"),
   VerifyKycUseCase: Symbol.for("VerifyKycUseCase"),
   RejectKycUseCase: Symbol.for("RejectKycUseCase"),
+  FetchTransactionsUseCase: Symbol.for("FetchTransactionsUseCase"),
+  VerifyTransactionUseCase: Symbol.for("VerifyTransactionUseCase"),
+
 
   AdminAuthController: Symbol.for("AdminAuthController"),
   AdminController: Symbol.for("AdminController"),
   AdminUserController: Symbol.for("AdminUserController"),
   AdminKycController: Symbol.for("AdminKycController"),
+  AdminTransactionsController: Symbol.for("adminTransactionsController"),
 };

@@ -1,0 +1,15 @@
+import { container } from "@infrastructure/inversify_di/inversify.di";
+import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { PaymentController } from "@presentation/http/controllers/payment/payment.controller";
+import { Router } from "express";
+
+const router = Router();
+
+const paymentController = container.get<PaymentController>(USER_TYPES.PaymentController);
+
+// router.post('/create-intent', paymentController.createPaymentIntent.bind(paymentController));
+router.post(
+    '/create-checkout-session',
+    paymentController.createCheckoutSession.bind(paymentController)
+);
+export default router;

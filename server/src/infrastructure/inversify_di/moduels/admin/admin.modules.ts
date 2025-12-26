@@ -25,57 +25,43 @@ import type { IRejectKycUseCase } from "@application/use_cases/interfaces/admin/
 import type { IUnblockUserUsecase } from "@application/use_cases/interfaces/admin/unblock-user-usecase.interface";
 import type { IVerifyKycUseCase } from "@application/use_cases/interfaces/admin/verify-kyc-usecase.interface";
 import type { IViewKycDetailsUseCase } from "@application/use_cases/interfaces/admin/view-kyc-details-usecase.interface";
-import { AdminRepository } from "@infrastructure/databases/repository/auth/admin.repository";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
 import { AdminController } from "@presentation/http/controllers/admin/admin.controller";
 import { AdminAuthController } from "@presentation/http/controllers/admin/admin-auth.controller";
 import { AdminKycController } from "@presentation/http/controllers/admin/admin-kyc.controller";
 import { AdminUserController } from "@presentation/http/controllers/admin/admin-user.controller";
 import { ContainerModule } from "inversify";
+import { AdminRepository } from "@infrastructure/databases/repository/user/admin.repository";
+import { IFetchTransactionsUseCase } from "@application/use_cases/interfaces/admin/fetch-transactions-usecase.interface";
+import { FetchTransactionsUseCase } from "@application/use_cases/admin/transactions-management/fetch-transactions.usecase";
+import { AdminTransactionsController } from "@presentation/http/controllers/admin/admin-transactions.controller";
+import { IVerifyTransactionUseCase } from "@application/use_cases/interfaces/user/verify-transaction-usecase.interface";
+import { VerifyTransactionUseCase } from "@application/use_cases/admin/transactions-management/verify-transaction.usecase";
 
 export const AdminModule = new ContainerModule(({ bind }) => {
   //Usecases
   bind<IAdminAuthUseCase>(ADMIN_TYPES.AdminAuthUseCase).to(AdminAuthUseCase);
-  bind<IAdminAuthVerifyOtpUseCase>(ADMIN_TYPES.AdminAuthVerifyOtpUseCase).to(
-    AdminAuthVerifyOtpUseCase,
-  );
-  bind<IRefreshTokenUseCase>(ADMIN_TYPES.AdminRefreshTokenUseCase).to(
-    AdminRefreshTokenUseCase,
-  );
-  bind<IAdminLogoutUseCase>(ADMIN_TYPES.AdminLogoutUseCase).to(
-    AdminLogoutUseCase,
-  );
-  bind<IAdminProfileUseCase>(ADMIN_TYPES.AdminProfileUseCase).to(
-    AdminProfileUseCase,
-  );
-  bind<IAdminResendOtpUseCase>(ADMIN_TYPES.AdminResendOtpUseCase).to(
-    AdminResendOtpUseCase,
-  );
+  bind<IAdminAuthVerifyOtpUseCase>(ADMIN_TYPES.AdminAuthVerifyOtpUseCase).to(AdminAuthVerifyOtpUseCase);
+  bind<IRefreshTokenUseCase>(ADMIN_TYPES.AdminRefreshTokenUseCase).to(AdminRefreshTokenUseCase);
+  bind<IAdminLogoutUseCase>(ADMIN_TYPES.AdminLogoutUseCase).to(AdminLogoutUseCase);
+  bind<IAdminProfileUseCase>(ADMIN_TYPES.AdminProfileUseCase).to(AdminProfileUseCase);
+  bind<IAdminResendOtpUseCase>(ADMIN_TYPES.AdminResendOtpUseCase).to(AdminResendOtpUseCase);
   bind<IFetchUserDetails>(ADMIN_TYPES.FetchUserDetails).to(FetchUserDetails);
   bind<IBlockUserUseCase>(ADMIN_TYPES.BlockUserUseCase).to(BlockUserUseCase);
-  bind<IUnblockUserUsecase>(ADMIN_TYPES.UnblockUserUsecase).to(
-    UnblockUserUsecase,
-  );
-  bind<IFetchAllKycDocsUseCase>(ADMIN_TYPES.FetchAllKycDocsUseCase).to(
-    FetchAllKycDocsUseCase,
-  );
+  bind<IUnblockUserUsecase>(ADMIN_TYPES.UnblockUserUsecase).to(UnblockUserUsecase);
+  bind<IFetchAllKycDocsUseCase>(ADMIN_TYPES.FetchAllKycDocsUseCase).to(FetchAllKycDocsUseCase);
+  bind<IFetchTransactionsUseCase>(ADMIN_TYPES.FetchTransactionsUseCase).to(FetchTransactionsUseCase);
+  bind<IViewKycDetailsUseCase>(ADMIN_TYPES.ViewKycDetailsUseCase).to(ViewKycDetailsUseCase);
+  bind<IVerifyKycUseCase>(ADMIN_TYPES.VerifyKycUseCase).to(VerifyKycUseCase);
+  bind<IRejectKycUseCase>(ADMIN_TYPES.RejectKycUseCase).to(RejectKycUseCase);
+  bind<IVerifyTransactionUseCase>(ADMIN_TYPES.VerifyTransactionUseCase).to(VerifyTransactionUseCase);
 
   //Repository
   bind<IAdminRepository>(ADMIN_TYPES.AdminRepository).to(AdminRepository);
 
-  bind<AdminAuthController>(ADMIN_TYPES.AdminAuthController).to(
-    AdminAuthController,
-  );
+  bind<AdminAuthController>(ADMIN_TYPES.AdminAuthController).to(AdminAuthController);
   bind<AdminController>(ADMIN_TYPES.AdminController).to(AdminController);
-  bind<AdminUserController>(ADMIN_TYPES.AdminUserController).to(
-    AdminUserController,
-  );
-  bind<AdminKycController>(ADMIN_TYPES.AdminKycController).to(
-    AdminKycController,
-  );
-  bind<IViewKycDetailsUseCase>(ADMIN_TYPES.ViewKycDetailsUseCase).to(
-    ViewKycDetailsUseCase,
-  );
-  bind<IVerifyKycUseCase>(ADMIN_TYPES.VerifyKycUseCase).to(VerifyKycUseCase);
-  bind<IRejectKycUseCase>(ADMIN_TYPES.RejectKycUseCase).to(RejectKycUseCase);
+  bind<AdminUserController>(ADMIN_TYPES.AdminUserController).to(AdminUserController);
+  bind<AdminKycController>(ADMIN_TYPES.AdminKycController).to(AdminKycController);
+  bind<AdminTransactionsController>(ADMIN_TYPES.AdminTransactionsController).to(AdminTransactionsController);
 });

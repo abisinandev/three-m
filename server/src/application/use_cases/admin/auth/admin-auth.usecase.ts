@@ -12,7 +12,7 @@ import {
   NotFoundError,
   ValidationError,
 } from "@presentation/express/utils/error-handling";
-import { generateOtp } from "@shared/utils/otp-generator";
+import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
 
 @injectable()

@@ -4,7 +4,7 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { BadgeCheck, Eye, Loader2 } from "lucide-react";
-import { TableComponent } from "@shared/components/table/UserTable";
+import { TableComponent } from "@shared/components/table/TableComponent";
 import { Pagination } from "@shared/components/pagination/Pagination";
 import { useNavigate } from "@tanstack/react-router";
 import type { KycUser } from "@shared/types/user/KycUserType";

@@ -7,6 +7,7 @@ export const Route = createFileRoute('/user')({
     beforeLoad: async ({ context }) => {
         try {
             const { data } = await ProfileApi();
+            console.log(data,'===== ')
             context.user.setUser(data);
         } catch (error) {
             throw redirect({ to: "/auth/login" })

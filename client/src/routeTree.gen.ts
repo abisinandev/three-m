@@ -14,16 +14,23 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminAuthRouteRouteImport } from './routes/_admin-auth/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UserIndexRouteImport } from './routes/user/index'
 import { Route as UserProfileRouteImport } from './routes/user/profile'
+import { Route as UserMutualFundsRouteImport } from './routes/user/mutual-funds'
 import { Route as UserKycVerificationRouteImport } from './routes/user/kyc-verification'
+import { Route as UserHomeRouteImport } from './routes/user/home'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AdminUsersManagementRouteImport } from './routes/admin/users-management'
+import { Route as AdminTransactionsManagementRouteImport } from './routes/admin/transactions-management'
 import { Route as AdminKycManagementRouteImport } from './routes/admin/kyc-management'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as UserWalletIndexRouteImport } from './routes/user/wallet/index'
 import { Route as AuthSignupIndexRouteImport } from './routes/auth/signup/index'
 import { Route as AuthResetPasswordIndexRouteImport } from './routes/auth/reset-password/index'
 import { Route as AuthForgotPasswordIndexRouteImport } from './routes/auth/forgot-password/index'
+import { Route as UserWalletWithdrawRouteImport } from './routes/user/wallet/withdraw'
+import { Route as UserWalletAddToWalletRouteImport } from './routes/user/wallet/add-to-wallet'
+import { Route as UserPaymentPaymentSuccessRouteImport } from './routes/user/_payment/payment-success'
+import { Route as UserPaymentPaymentFailedRouteImport } from './routes/user/_payment/payment-failed'
 import { Route as AuthSignupVerifyOtpRouteImport } from './routes/auth/signup/verify-otp'
 import { Route as AuthForgotPasswordVerifyOtpRouteImport } from './routes/auth/forgot-password/verify-otp'
 import { Route as AdminViewKycKycIdRouteImport } from './routes/admin/view-kyc/$kycId'
@@ -54,19 +61,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UserIndexRoute = UserIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => UserRoute,
-} as any)
 const UserProfileRoute = UserProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
   getParentRoute: () => UserRoute,
 } as any)
+const UserMutualFundsRoute = UserMutualFundsRouteImport.update({
+  id: '/mutual-funds',
+  path: '/mutual-funds',
+  getParentRoute: () => UserRoute,
+} as any)
 const UserKycVerificationRoute = UserKycVerificationRouteImport.update({
   id: '/kyc-verification',
   path: '/kyc-verification',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserHomeRoute = UserHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => UserRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -79,6 +91,12 @@ const AdminUsersManagementRoute = AdminUsersManagementRouteImport.update({
   path: '/users-management',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminTransactionsManagementRoute =
+  AdminTransactionsManagementRouteImport.update({
+    id: '/transactions-management',
+    path: '/transactions-management',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminKycManagementRoute = AdminKycManagementRouteImport.update({
   id: '/kyc-management',
   path: '/kyc-management',
@@ -88,6 +106,11 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AdminRoute,
+} as any)
+const UserWalletIndexRoute = UserWalletIndexRouteImport.update({
+  id: '/wallet/',
+  path: '/wallet/',
+  getParentRoute: () => UserRoute,
 } as any)
 const AuthSignupIndexRoute = AuthSignupIndexRouteImport.update({
   id: '/signup/',
@@ -104,6 +127,28 @@ const AuthForgotPasswordIndexRoute = AuthForgotPasswordIndexRouteImport.update({
   path: '/forgot-password/',
   getParentRoute: () => AuthRoute,
 } as any)
+const UserWalletWithdrawRoute = UserWalletWithdrawRouteImport.update({
+  id: '/wallet/withdraw',
+  path: '/wallet/withdraw',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserWalletAddToWalletRoute = UserWalletAddToWalletRouteImport.update({
+  id: '/wallet/add-to-wallet',
+  path: '/wallet/add-to-wallet',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserPaymentPaymentSuccessRoute =
+  UserPaymentPaymentSuccessRouteImport.update({
+    id: '/_payment/payment-success',
+    path: '/payment-success',
+    getParentRoute: () => UserRoute,
+  } as any)
+const UserPaymentPaymentFailedRoute =
+  UserPaymentPaymentFailedRouteImport.update({
+    id: '/_payment/payment-failed',
+    path: '/payment-failed',
+    getParentRoute: () => UserRoute,
+  } as any)
 const AuthSignupVerifyOtpRoute = AuthSignupVerifyOtpRouteImport.update({
   id: '/signup/verify-otp',
   path: '/signup/verify-otp',
@@ -140,17 +185,24 @@ export interface FileRoutesByFullPath {
   '/user': typeof UserRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/kyc-management': typeof AdminKycManagementRoute
+  '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
+  '/user/home': typeof UserHomeRoute
   '/user/kyc-verification': typeof UserKycVerificationRoute
+  '/user/mutual-funds': typeof UserMutualFundsRoute
   '/user/profile': typeof UserProfileRoute
-  '/user/': typeof UserIndexRoute
   '/admin/view-kyc/$kycId': typeof AdminViewKycKycIdRoute
   '/auth/forgot-password/verify-otp': typeof AuthForgotPasswordVerifyOtpRoute
   '/auth/signup/verify-otp': typeof AuthSignupVerifyOtpRoute
+  '/user/payment-failed': typeof UserPaymentPaymentFailedRoute
+  '/user/payment-success': typeof UserPaymentPaymentSuccessRoute
+  '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
+  '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/auth/reset-password': typeof AuthResetPasswordIndexRoute
   '/auth/signup': typeof AuthSignupIndexRoute
+  '/user/wallet': typeof UserWalletIndexRoute
   '/admin/authentication/verify-otp': typeof AdminAuthAdminAuthenticationVerifyOtpRoute
   '/admin/authentication': typeof AdminAuthAdminAuthenticationIndexRoute
 }
@@ -158,19 +210,27 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/user': typeof UserRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/kyc-management': typeof AdminKycManagementRoute
+  '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
+  '/user/home': typeof UserHomeRoute
   '/user/kyc-verification': typeof UserKycVerificationRoute
+  '/user/mutual-funds': typeof UserMutualFundsRoute
   '/user/profile': typeof UserProfileRoute
-  '/user': typeof UserIndexRoute
   '/admin/view-kyc/$kycId': typeof AdminViewKycKycIdRoute
   '/auth/forgot-password/verify-otp': typeof AuthForgotPasswordVerifyOtpRoute
   '/auth/signup/verify-otp': typeof AuthSignupVerifyOtpRoute
+  '/user/payment-failed': typeof UserPaymentPaymentFailedRoute
+  '/user/payment-success': typeof UserPaymentPaymentSuccessRoute
+  '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
+  '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/auth/reset-password': typeof AuthResetPasswordIndexRoute
   '/auth/signup': typeof AuthSignupIndexRoute
+  '/user/wallet': typeof UserWalletIndexRoute
   '/admin/authentication/verify-otp': typeof AdminAuthAdminAuthenticationVerifyOtpRoute
   '/admin/authentication': typeof AdminAuthAdminAuthenticationIndexRoute
 }
@@ -183,17 +243,24 @@ export interface FileRoutesById {
   '/user': typeof UserRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/kyc-management': typeof AdminKycManagementRoute
+  '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
+  '/user/home': typeof UserHomeRoute
   '/user/kyc-verification': typeof UserKycVerificationRoute
+  '/user/mutual-funds': typeof UserMutualFundsRoute
   '/user/profile': typeof UserProfileRoute
-  '/user/': typeof UserIndexRoute
   '/admin/view-kyc/$kycId': typeof AdminViewKycKycIdRoute
   '/auth/forgot-password/verify-otp': typeof AuthForgotPasswordVerifyOtpRoute
   '/auth/signup/verify-otp': typeof AuthSignupVerifyOtpRoute
+  '/user/_payment/payment-failed': typeof UserPaymentPaymentFailedRoute
+  '/user/_payment/payment-success': typeof UserPaymentPaymentSuccessRoute
+  '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
+  '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/auth/reset-password/': typeof AuthResetPasswordIndexRoute
   '/auth/signup/': typeof AuthSignupIndexRoute
+  '/user/wallet/': typeof UserWalletIndexRoute
   '/_admin-auth/admin/authentication/verify-otp': typeof AdminAuthAdminAuthenticationVerifyOtpRoute
   '/_admin-auth/admin/authentication/': typeof AdminAuthAdminAuthenticationIndexRoute
 }
@@ -206,17 +273,24 @@ export interface FileRouteTypes {
     | '/user'
     | '/admin/dashboard'
     | '/admin/kyc-management'
+    | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
+    | '/user/home'
     | '/user/kyc-verification'
+    | '/user/mutual-funds'
     | '/user/profile'
-    | '/user/'
     | '/admin/view-kyc/$kycId'
     | '/auth/forgot-password/verify-otp'
     | '/auth/signup/verify-otp'
+    | '/user/payment-failed'
+    | '/user/payment-success'
+    | '/user/wallet/add-to-wallet'
+    | '/user/wallet/withdraw'
     | '/auth/forgot-password'
     | '/auth/reset-password'
     | '/auth/signup'
+    | '/user/wallet'
     | '/admin/authentication/verify-otp'
     | '/admin/authentication'
   fileRoutesByTo: FileRoutesByTo
@@ -224,19 +298,27 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/user'
     | '/admin/dashboard'
     | '/admin/kyc-management'
+    | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
+    | '/user/home'
     | '/user/kyc-verification'
+    | '/user/mutual-funds'
     | '/user/profile'
-    | '/user'
     | '/admin/view-kyc/$kycId'
     | '/auth/forgot-password/verify-otp'
     | '/auth/signup/verify-otp'
+    | '/user/payment-failed'
+    | '/user/payment-success'
+    | '/user/wallet/add-to-wallet'
+    | '/user/wallet/withdraw'
     | '/auth/forgot-password'
     | '/auth/reset-password'
     | '/auth/signup'
+    | '/user/wallet'
     | '/admin/authentication/verify-otp'
     | '/admin/authentication'
   id:
@@ -248,17 +330,24 @@ export interface FileRouteTypes {
     | '/user'
     | '/admin/dashboard'
     | '/admin/kyc-management'
+    | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
+    | '/user/home'
     | '/user/kyc-verification'
+    | '/user/mutual-funds'
     | '/user/profile'
-    | '/user/'
     | '/admin/view-kyc/$kycId'
     | '/auth/forgot-password/verify-otp'
     | '/auth/signup/verify-otp'
+    | '/user/_payment/payment-failed'
+    | '/user/_payment/payment-success'
+    | '/user/wallet/add-to-wallet'
+    | '/user/wallet/withdraw'
     | '/auth/forgot-password/'
     | '/auth/reset-password/'
     | '/auth/signup/'
+    | '/user/wallet/'
     | '/_admin-auth/admin/authentication/verify-otp'
     | '/_admin-auth/admin/authentication/'
   fileRoutesById: FileRoutesById
@@ -308,13 +397,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user/': {
-      id: '/user/'
-      path: '/'
-      fullPath: '/user/'
-      preLoaderRoute: typeof UserIndexRouteImport
-      parentRoute: typeof UserRoute
-    }
     '/user/profile': {
       id: '/user/profile'
       path: '/profile'
@@ -322,11 +404,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserProfileRouteImport
       parentRoute: typeof UserRoute
     }
+    '/user/mutual-funds': {
+      id: '/user/mutual-funds'
+      path: '/mutual-funds'
+      fullPath: '/user/mutual-funds'
+      preLoaderRoute: typeof UserMutualFundsRouteImport
+      parentRoute: typeof UserRoute
+    }
     '/user/kyc-verification': {
       id: '/user/kyc-verification'
       path: '/kyc-verification'
       fullPath: '/user/kyc-verification'
       preLoaderRoute: typeof UserKycVerificationRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/home': {
+      id: '/user/home'
+      path: '/home'
+      fullPath: '/user/home'
+      preLoaderRoute: typeof UserHomeRouteImport
       parentRoute: typeof UserRoute
     }
     '/auth/login': {
@@ -343,6 +439,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersManagementRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/transactions-management': {
+      id: '/admin/transactions-management'
+      path: '/transactions-management'
+      fullPath: '/admin/transactions-management'
+      preLoaderRoute: typeof AdminTransactionsManagementRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/kyc-management': {
       id: '/admin/kyc-management'
       path: '/kyc-management'
@@ -356,6 +459,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/user/wallet/': {
+      id: '/user/wallet/'
+      path: '/wallet'
+      fullPath: '/user/wallet'
+      preLoaderRoute: typeof UserWalletIndexRouteImport
+      parentRoute: typeof UserRoute
     }
     '/auth/signup/': {
       id: '/auth/signup/'
@@ -377,6 +487,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordIndexRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/user/wallet/withdraw': {
+      id: '/user/wallet/withdraw'
+      path: '/wallet/withdraw'
+      fullPath: '/user/wallet/withdraw'
+      preLoaderRoute: typeof UserWalletWithdrawRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/wallet/add-to-wallet': {
+      id: '/user/wallet/add-to-wallet'
+      path: '/wallet/add-to-wallet'
+      fullPath: '/user/wallet/add-to-wallet'
+      preLoaderRoute: typeof UserWalletAddToWalletRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/_payment/payment-success': {
+      id: '/user/_payment/payment-success'
+      path: '/payment-success'
+      fullPath: '/user/payment-success'
+      preLoaderRoute: typeof UserPaymentPaymentSuccessRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/_payment/payment-failed': {
+      id: '/user/_payment/payment-failed'
+      path: '/payment-failed'
+      fullPath: '/user/payment-failed'
+      preLoaderRoute: typeof UserPaymentPaymentFailedRouteImport
+      parentRoute: typeof UserRoute
     }
     '/auth/signup/verify-otp': {
       id: '/auth/signup/verify-otp'
@@ -435,6 +573,7 @@ const AdminAuthRouteRouteWithChildren = AdminAuthRouteRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminKycManagementRoute: typeof AdminKycManagementRoute
+  AdminTransactionsManagementRoute: typeof AdminTransactionsManagementRoute
   AdminUsersManagementRoute: typeof AdminUsersManagementRoute
   AdminViewKycKycIdRoute: typeof AdminViewKycKycIdRoute
 }
@@ -442,6 +581,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminDashboardRoute: AdminDashboardRoute,
   AdminKycManagementRoute: AdminKycManagementRoute,
+  AdminTransactionsManagementRoute: AdminTransactionsManagementRoute,
   AdminUsersManagementRoute: AdminUsersManagementRoute,
   AdminViewKycKycIdRoute: AdminViewKycKycIdRoute,
 }
@@ -469,15 +609,27 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface UserRouteChildren {
+  UserHomeRoute: typeof UserHomeRoute
   UserKycVerificationRoute: typeof UserKycVerificationRoute
+  UserMutualFundsRoute: typeof UserMutualFundsRoute
   UserProfileRoute: typeof UserProfileRoute
-  UserIndexRoute: typeof UserIndexRoute
+  UserPaymentPaymentFailedRoute: typeof UserPaymentPaymentFailedRoute
+  UserPaymentPaymentSuccessRoute: typeof UserPaymentPaymentSuccessRoute
+  UserWalletAddToWalletRoute: typeof UserWalletAddToWalletRoute
+  UserWalletWithdrawRoute: typeof UserWalletWithdrawRoute
+  UserWalletIndexRoute: typeof UserWalletIndexRoute
 }
 
 const UserRouteChildren: UserRouteChildren = {
+  UserHomeRoute: UserHomeRoute,
   UserKycVerificationRoute: UserKycVerificationRoute,
+  UserMutualFundsRoute: UserMutualFundsRoute,
   UserProfileRoute: UserProfileRoute,
-  UserIndexRoute: UserIndexRoute,
+  UserPaymentPaymentFailedRoute: UserPaymentPaymentFailedRoute,
+  UserPaymentPaymentSuccessRoute: UserPaymentPaymentSuccessRoute,
+  UserWalletAddToWalletRoute: UserWalletAddToWalletRoute,
+  UserWalletWithdrawRoute: UserWalletWithdrawRoute,
+  UserWalletIndexRoute: UserWalletIndexRoute,
 }
 
 const UserRouteWithChildren = UserRoute._addFileChildren(UserRouteChildren)

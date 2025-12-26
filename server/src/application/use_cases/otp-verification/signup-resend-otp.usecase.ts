@@ -6,7 +6,7 @@ import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import AppError from "@presentation/express/utils/error-handling/app.error";
-import { generateOtp } from "@shared/utils/otp-generator";
+import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
 import type { ISignupResendOtpUseCase } from "../interfaces/user/singup-resend-otp-usecase.interface";
 
@@ -19,7 +19,7 @@ export class ResendOtpUseCase implements ISignupResendOtpUseCase {
     private readonly _emailVerifyService: IEmailService,
   ) {}
   async execute(data: ResendOtpDTO): Promise<ResendOtpResponseDTO> {
-    console.log("========", data.email);
+
     const user = await this._userRepository.findByField("email", data.email);
 
     const otp = generateOtp();

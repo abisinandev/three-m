@@ -1,5 +1,6 @@
 import { errorMiddleware } from "@presentation/express/middlewares/error-middleware";
 import { env } from "@presentation/express/utils/constants/env.constants";
+import { RegisterRoutes } from "@presentation/http/routes";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import cors from "cors";
@@ -7,18 +8,21 @@ import express from "express";
 import morgan from "morgan";
 
 const app = express();
-  
+
 //middlewares configs
 app.use(morgan("dev"));
-
 app.use(cors({ origin: env.FRONTEND_URL, credentials: true }));
 app.use(helmet());
-app.use(express.json());
+
+//stripe webhook
+import webhookRoutes from "@presentation/http/routes/user/webhook.routes";
+import { Routes } from "../utils/constants/routes.constants";
+app.use(Routes.WEBHOOK_ROUTE, webhookRoutes);
+
 app.use(cookieParser());
+app.use(express.json());
 
 //protected routes
-import { RegisterRoutes } from "@presentation/http/routes";
-
 RegisterRoutes(app);
 
 //AppError middleware

@@ -17,8 +17,8 @@ import { CheckUserBlockedUseCase } from "@application/use_cases/user/check-user-
 import { KycSubmitUseCase } from "@application/use_cases/user/kyc-submit.usecase";
 import { SignatureUploadUseCase } from "@application/use_cases/user/signature-upload.usecase";
 import { GetUserProfileUseCase } from "@application/use_cases/user/user-profile.usecase";
-import { KycRepository } from "@infrastructure/databases/repository/auth/kyc-repository";
-import { UserRepository } from "@infrastructure/databases/repository/auth/user.repository";
+import { KycRepository } from "@infrastructure/databases/repository/user/kyc-repository";
+import { UserRepository } from "@infrastructure/databases/repository/user/user.repository";
 import { CloudinaryStorageProvider } from "@infrastructure/providers/storage-providers/cloudinary.provider";
 import { UserController } from "@presentation/http/controllers/user/user.controller";
 import { ContainerModule } from "inversify";
@@ -31,13 +31,32 @@ import { IChangeEmailVerifyOtpUseCase } from "@application/use_cases/interfaces/
 import { ChangeEmailVerifyOtpUseCase } from "@application/use_cases/user/change-email-verify.usecase";
 import { IProfileImageUploadUseCase } from "@application/use_cases/interfaces/user/profile-image-upload-usecase.interface";
 import { ProfileImageUploadUseCase } from "@application/use_cases/user/profile-image-upload.usecase";
+import { IWalletRepository } from "@application/interfaces/repositories/wallet-repository.interface";
+import { WalletRepository } from "@infrastructure/databases/repository/user/wallet.repository";
+import { IUserWalletUseCase } from "@application/use_cases/interfaces/user/user-wallet-usecase.interface";
+import { UserWalletUseCase } from "@application/use_cases/user/user-wallet.usecase";
+import { WalletController } from "@presentation/http/controllers/wallet/wallet.controller";
+import { ITransactionRepository } from "@application/interfaces/repositories/transaction-repository.interface";
+import { TransactionRepository } from "@infrastructure/databases/repository/user/transaction.repository";
+import { IBlockRepository } from "@application/interfaces/repositories/block-repository.interface";
+import { BlockRepository } from "@infrastructure/databases/repository/user/block.repository";
+import { AddToWalletUseCase } from "@application/use_cases/user/add-to-wallet.usecase";
+import { IAddToWalletUseCase } from "@application/use_cases/interfaces/user/add-to-wallet-usecase.interface";
+import { PaymentController } from "@presentation/http/controllers/payment/payment.controller";
+import { StripePaymentHandler } from "@shared/utils/payments/payment.handler";
+import { WebhookController } from "@presentation/http/controllers/payment/webhook.controller";
 
 export const UserModule = new ContainerModule(({ bind }) => {
   //Repository
   bind<IUserRepository>(USER_TYPES.UserRepository).to(UserRepository);
+  bind<IKycRepository>(USER_TYPES.KycRepository).to(KycRepository);
+  bind<IWalletRepository>(USER_TYPES.WalletRepository).to(WalletRepository);
 
   //Controller
   bind<UserController>(USER_TYPES.UserController).to(UserController);
+  bind<WalletController>(USER_TYPES.WalletController).to(WalletController);
+  bind<PaymentController>(USER_TYPES.PaymentController).to(PaymentController);
+  bind<WebhookController>(USER_TYPES.WebhookController).to(WebhookController);
 
   //Usecases
   bind<IUserLoginUseCase>(USER_TYPES.UserLoginUseCase).to(UserLoginUseCase);
@@ -49,9 +68,13 @@ export const UserModule = new ContainerModule(({ bind }) => {
   bind<ISignatureUploadUseCase>(USER_TYPES.SignatureUploadUseCase).to(SignatureUploadUseCase);
   bind<IStorageProvider>(USER_TYPES.CloudinaryStorageProvider).to(CloudinaryStorageProvider);
   bind<IKycSubmitUseCase>(USER_TYPES.KycSubmitUseCase).to(KycSubmitUseCase);
-  bind<IKycRepository>(USER_TYPES.KycRepository).to(KycRepository);
   bind<IEditProfileUseCase>(USER_TYPES.EditProfileUseCase).to(EditProfileUseCase);
   bind<IChangeEmailSendOtpUseCase>(USER_TYPES.ChangeEmailSendOtpUseCase).to(ChangeEmailSendOtpUseCase);
   bind<IChangeEmailVerifyOtpUseCase>(USER_TYPES.ChangeEmailVerifyOtpUseCase).to(ChangeEmailVerifyOtpUseCase);
   bind<IProfileImageUploadUseCase>(USER_TYPES.ProfileImageUploadUseCase).to(ProfileImageUploadUseCase);
+  bind<IUserWalletUseCase>(USER_TYPES.UserWalletUseCase).to(UserWalletUseCase);
+  bind<ITransactionRepository>(USER_TYPES.TransactionRepository).to(TransactionRepository);
+  bind<IBlockRepository>(USER_TYPES.BlockRepository).to(BlockRepository);
+  bind<IAddToWalletUseCase>(USER_TYPES.AddToWalletUseCase).to(AddToWalletUseCase);
+  bind<StripePaymentHandler>(USER_TYPES.StripePaymentHandler).to(StripePaymentHandler);
 });
