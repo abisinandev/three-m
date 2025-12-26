@@ -17,31 +17,31 @@ jobs:
       # BACKEND
       - name: Install Backend Dependencies
         run: |
-          cd backend
+          cd server
           npm install
 
       - name: Backend Build
         run: |
-          cd backend
+          cd server
           npm run build
 
       - name: Backend Test
         run: |
-          cd backend
+          cd server
           npm test
 
       # FRONTEND
       - name: Install Frontend Dependencies
         run: |
-          cd frontend
+          cd client
           npm install
 
       - name: Frontend Build
         run: |
-          cd frontend
+          cd client
           npm run build
 
       - name: Frontend Test
         run: |
-          cd frontend
+          cd client
           npm test

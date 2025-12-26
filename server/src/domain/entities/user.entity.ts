@@ -88,7 +88,7 @@ export class UserEntity {
     this._email = props.email;
     this._phone = props.phone ?? null;
     this._password = props.password ?? null;
-
+ 
     this._role = props.role;
     this._isEmailVerified = props.isEmailVerified;
     this._isVerified = props.isVerified;
