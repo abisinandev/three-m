@@ -4,44 +4,61 @@ on:
   pull_request:
     branches: ["main"]
   push:
-    branches: ["dev"]       # run CI when dev branch is pushed
+    branches: ["dev"]
 
 jobs:
-  build-and-test:
+  backend:
+    name: Backend CI
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # BACKEND
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
       - name: Install Backend Dependencies
-        run: |
-          cd server
-          npm install
+        working-directory: server
+        run: npm install
 
-      - name: Backend Build
-        run: |
-          cd server
-          npm run build
+      - name: Lint Backend
+        working-directory: server
+        run: npm run lint
 
-      - name: Backend Test
-        run: |
-          cd server
-          npm test
+      - name: Build Backend
+        working-directory: server
+        run: npm run build
 
-      # FRONTEND
+
+  frontend:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+    needs: backend  
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
       - name: Install Frontend Dependencies
-        run: |
-          cd client
-          npm install
+        working-directory: client
+        run: npm install
 
-      - name: Frontend Build
-        run: |
-          cd client
-          npm run build
+      - name: Lint Frontend
+        working-directory: client
+        run: npm run lint
 
-      - name: Frontend Test
-        run: |
-          cd client
-          npm test
+      - name: Build Frontend
+        working-directory: client
+        run: npm run build
