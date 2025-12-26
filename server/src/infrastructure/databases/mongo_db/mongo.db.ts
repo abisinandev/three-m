@@ -1,15 +1,15 @@
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { HttpStatus } from "@domain/enum/express/status-code";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import AppError from "@presentation/express/utils/error-handling/app.error";
-import { HttpStatusCode } from "axios";
 import mongoose from "mongoose";
 
 const connectDB = async () => {
   if (!env.MONGO_URI) {
     throw new AppError(
       ErrorMessage.DB_CONNECTION_FAILED,
-      HttpStatusCode.InternalServerError,
+      HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }
 
