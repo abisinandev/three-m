@@ -200,6 +200,7 @@ export class UserEntity {
     authProvider: AuthProvider;
     avatar?: string | null;
     googleId?: string | null;
+    
   }): UserEntity {
     return new UserEntity({
       ...props,

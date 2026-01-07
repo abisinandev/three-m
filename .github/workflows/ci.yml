@@ -62,3 +62,4 @@ jobs:
       - name: Build Frontend
         working-directory: client
         run: npm run build
+cd 

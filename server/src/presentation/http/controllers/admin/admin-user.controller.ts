@@ -19,7 +19,6 @@ export class AdminUserController {
   async fetchUserDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await this._fetchUserDetails.execute(req.query);
-
       return ResponseHelper.success(
         res,
         SuccessMessage.DATA_FETCHED,

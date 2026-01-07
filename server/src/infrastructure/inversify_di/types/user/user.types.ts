@@ -21,9 +21,7 @@ export const USER_TYPES = {
   UserWalletUseCase: Symbol.for('UserWalletUseCase'),
   AddToWalletUseCase: Symbol.for("AddToWalletUseCase"),
 
-  //providers
-  SignatureUploadUseCase: Symbol.for("SignatureUploadUseCase"),
-  CloudinaryStorageProvider: Symbol.for("CloudinaryStorageProvider"),
+
 
   //Controller
   UserController: Symbol.for("UserController"),

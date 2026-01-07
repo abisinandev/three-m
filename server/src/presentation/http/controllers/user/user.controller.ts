@@ -9,6 +9,7 @@ import type { IUserLogoutUseCase } from "@application/use_cases/interfaces/user/
 import type { IUserProfileInterface } from "@application/use_cases/interfaces/user/user-profile-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
+import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
@@ -21,7 +22,7 @@ export class UserController {
     @inject(USER_TYPES.GetUserProfileUseCase) private readonly _getUserProfile: IUserProfileInterface,
     @inject(USER_TYPES.ChangePasswordUseCase) private readonly _changePassword: IChangePasswordUseCase,
     @inject(USER_TYPES.LogoutUseCase) private readonly _logoutUseCase: IUserLogoutUseCase,
-    @inject(USER_TYPES.SignatureUploadUseCase) private readonly _signUploadUseCase: ISignatureUploadUseCase,
+    @inject(FEATURE_TYPES.SignatureUploadUseCase) private readonly _signUploadUseCase: ISignatureUploadUseCase,
     @inject(USER_TYPES.KycSubmitUseCase) private readonly _kycSubmitUseCase: IKycSubmitUseCase,
     @inject(USER_TYPES.EditProfileUseCase) private readonly _editProfileUseCase: IEditProfileUseCase,
     @inject(USER_TYPES.ChangeEmailSendOtpUseCase) private readonly _changeEmailSendOtp: IChangeEmailSendOtpUseCase,

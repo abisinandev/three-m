@@ -42,7 +42,6 @@ const StatusBadge = ({ status }: { status: KycUser["status"] }) => {
   }
 };
 
-// Table Columns - Cleaned & Enhanced
 const columns = [
   { header: "User ID", accessor: "userCode" as const },
   { header: "Name", accessor: "fullName" as const },

@@ -44,4 +44,5 @@ export enum ErrorMessage {
   WALLET_BALANCE_EXCEEDED = "Wallet balance cannot exceed ₹50,000.",
 
   TRANSACTION_FAILED = "Transaction verification failed",
+  ALREADY_EXISTS = "Already exists",
 }

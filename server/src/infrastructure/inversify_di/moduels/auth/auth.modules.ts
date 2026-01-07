@@ -36,43 +36,27 @@ import { ContainerModule } from "inversify";
 export const AuthModule = new ContainerModule(({ bind }) => {
   //Providers
   bind<IEmailService>(AUTH_TYPES.IEmailService).to(NodeMailerService);
-  bind<IPasswordHashingService>(AUTH_TYPES.IPasswordHashingService).to(
-    PasswordHashingService,
-  );
+  bind<IPasswordHashingService>(AUTH_TYPES.IPasswordHashingService).to(PasswordHashingService);
   bind<IJwtProvider>(AUTH_TYPES.IJwtProvider).to(JwtProvider);
-  bind<ITwoFactorAuthSetup>(AUTH_TYPES.TwoFactorAuthSetup).to(
-    TwoFactorAuthSetup,
-  );
-  bind<ITwoFactorAuthVerify>(AUTH_TYPES.TwoFactorAuthVerify).to(
-    TwoFactorAuthVerify,
-  );
+  bind<ITwoFactorAuthSetup>(AUTH_TYPES.TwoFactorAuthSetup).to(TwoFactorAuthSetup);
+  bind<ITwoFactorAuthVerify>(AUTH_TYPES.TwoFactorAuthVerify).to(TwoFactorAuthVerify);
   bind<IGoogleAuthService>(AUTH_TYPES.GoogleAuthService).to(GoogleAuthService);
 
   //Usecases
-  bind<ISignupVerifyOtpUseCase>(AUTH_TYPES.SignupVerifyOtpUseCase).to(
-    SignupVerifyOtpUseCase,
-  );
-  bind<ISignupResendOtpUseCase>(AUTH_TYPES.ResendOtpUseCase).to(
-    ResendOtpUseCase,
-  );
-  bind<IVerifyTwoFactorUseCase>(AUTH_TYPES.VerifyTwoFactorUseCase).to(
-    VerifyTwoFactorUseCase,
-  );
-  bind<IRefreshTokenUseCase>(AUTH_TYPES.RefreshTokenUseCase).to(
-    RefreshTokenUseCase,
-  );
-  bind<IForgotPasswordUseCase>(AUTH_TYPES.ForgotPasswordUseCase).to(
-    ForgotPasswordUseCase,
-  );
-  bind<IForgotPasswordVerifyOtpUseCase>(
-    AUTH_TYPES.ForgotPasswordOtpVerifyUseCase,
-  ).to(ForgotPasswordOtpVerifyUseCase);
-  bind<IForgotPasswordResendOtpUseCase>(
-    AUTH_TYPES.ForgotPasswordResendOtpUseCase,
-  ).to(ForgotPasswordResendOtpUseCase);
-  bind<IResetPasswordUseCase>(AUTH_TYPES.ResetPasswordUseCase).to(
-    ResetPasswordUseCase,
-  );
+  bind<ISignupVerifyOtpUseCase>(AUTH_TYPES.SignupVerifyOtpUseCase).to(SignupVerifyOtpUseCase);
+  bind<ISignupResendOtpUseCase>(AUTH_TYPES.ResendOtpUseCase).to(ResendOtpUseCase);
+  bind<IVerifyTwoFactorUseCase>(AUTH_TYPES.VerifyTwoFactorUseCase).to(VerifyTwoFactorUseCase);
+  
+  bind<IRefreshTokenUseCase>(AUTH_TYPES.RefreshTokenUseCase).to(RefreshTokenUseCase);
+
+  bind<IForgotPasswordUseCase>(AUTH_TYPES.ForgotPasswordUseCase).to(ForgotPasswordUseCase);
+
+  bind<IForgotPasswordVerifyOtpUseCase>(AUTH_TYPES.ForgotPasswordOtpVerifyUseCase).to(ForgotPasswordOtpVerifyUseCase);
+
+  bind<IForgotPasswordResendOtpUseCase>(AUTH_TYPES.ForgotPasswordResendOtpUseCase).to(ForgotPasswordResendOtpUseCase);
+
+  bind<IResetPasswordUseCase>(AUTH_TYPES.ResetPasswordUseCase).to(ResetPasswordUseCase);
+
   bind<IGoogleAuthUseCase>(AUTH_TYPES.GoogleAuthUseCase).to(GoogleAuthUseCase);
 
   //Controllers

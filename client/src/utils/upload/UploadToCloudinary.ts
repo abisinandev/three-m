@@ -2,7 +2,8 @@ import type { SignatureDataType } from "@shared/types/user/SignatureDataType";
 
 export const uploadToCloudinary = async (file: File, signatureData: SignatureDataType) => {
   const { timestamp, signature, apiKey, cloudName, folder } = signatureData;
-
+  
+  console.log("signatureData: ",signatureData)
   if (!timestamp || !signature || !apiKey || !cloudName) {
     throw new Error("Invalid Cloudinary signature data");
   }
@@ -23,8 +24,8 @@ export const uploadToCloudinary = async (file: File, signatureData: SignatureDat
     method: "POST",
     body: formData,
   });
-
   const data = await res.json();
+  console.log(" UPdladod,",data)
 
   if (!res.ok) {
     console.error("Cloudinary upload failed:", data);

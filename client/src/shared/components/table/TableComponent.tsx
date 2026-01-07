@@ -11,7 +11,7 @@ export function TableComponent<T>({ columns, data, actions }: TableProps<T>) {
     if (!data || data.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-12 px-4">
-                <div className="text-gray-500 text-sm mb-2">No users found</div>
+                <div className="text-gray-500 text-sm mb-2">No results found</div>
                 <div className="text-gray-600 text-xs">Try adjusting your filters or search</div>
             </div>
         );

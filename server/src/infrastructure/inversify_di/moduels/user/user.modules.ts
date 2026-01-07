@@ -15,7 +15,7 @@ import type { IUserSignupUseCase } from "@application/use_cases/interfaces/user/
 import { ChangePasswordUseCase } from "@application/use_cases/user/change-password.usecase";
 import { CheckUserBlockedUseCase } from "@application/use_cases/user/check-user-blocked.usecase";
 import { KycSubmitUseCase } from "@application/use_cases/user/kyc-submit.usecase";
-import { SignatureUploadUseCase } from "@application/use_cases/user/signature-upload.usecase";
+import { SignatureUploadUseCase } from "@application/use_cases/file-upload/signature-upload.usecase";
 import { GetUserProfileUseCase } from "@application/use_cases/user/user-profile.usecase";
 import { KycRepository } from "@infrastructure/databases/repository/user/kyc-repository";
 import { UserRepository } from "@infrastructure/databases/repository/user/user.repository";
@@ -65,8 +65,7 @@ export const UserModule = new ContainerModule(({ bind }) => {
   bind<IChangePasswordUseCase>(USER_TYPES.ChangePasswordUseCase).to(ChangePasswordUseCase);
   bind<IUserLogoutUseCase>(USER_TYPES.LogoutUseCase).to(LogoutUseCase);
   bind<ICheckUserBlockedUseCase>(USER_TYPES.CheckUserBlockedUseCase).to(CheckUserBlockedUseCase);
-  bind<ISignatureUploadUseCase>(USER_TYPES.SignatureUploadUseCase).to(SignatureUploadUseCase);
-  bind<IStorageProvider>(USER_TYPES.CloudinaryStorageProvider).to(CloudinaryStorageProvider);
+
   bind<IKycSubmitUseCase>(USER_TYPES.KycSubmitUseCase).to(KycSubmitUseCase);
   bind<IEditProfileUseCase>(USER_TYPES.EditProfileUseCase).to(EditProfileUseCase);
   bind<IChangeEmailSendOtpUseCase>(USER_TYPES.ChangeEmailSendOtpUseCase).to(ChangeEmailSendOtpUseCase);

@@ -2,10 +2,15 @@ import connectDB from "@infrastructure/databases/mongo_db/mongo.db";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import app from "./app";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
+import { NavUpdateScheduler } from "@infrastructure/providers/cron-scheduler/nav-cron.scheduler";
 
 const bootstrap = async () => {
   try {
     await connectDB();
+
+    //cron-scheduler
+    NavUpdateScheduler();
+    
     app.listen(env.PORT, () => {
       logger.info(`Server running on PORT: ${env.PORT}`);
     });

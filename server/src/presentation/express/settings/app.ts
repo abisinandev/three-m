@@ -16,7 +16,7 @@ app.use(helmet());
 
 //stripe webhook
 import webhookRoutes from "@presentation/http/routes/user/webhook.routes";
-import { Routes } from "../utils/constants/routes.constants";
+import { Routes } from "../utils/constants/feature-routes.constants";
 app.use(Routes.WEBHOOK_ROUTE, webhookRoutes);
 
 app.use(cookieParser());

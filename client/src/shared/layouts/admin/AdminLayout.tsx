@@ -28,7 +28,7 @@ const navItems = [
   { to: '/admin/users-management', label: 'Users', icon: Users },
   { to: '/admin/kyc-management', label: 'KYC Verification', icon: BadgeCheck },
   { to: '/admin/sips', label: 'SIPs', icon: DollarSign },
-  { to: '/admin/mutual-funds', label: 'Mutual Funds', icon: TrendingUp },
+  { to: '/admin/mutual-funds-management', label: 'Mutual Funds', icon: TrendingUp },
   { to: '/admin/transactions-management', label: 'Transactions', icon: Receipt },
   { to: '/admin/stocks', label: 'Stocks', icon: BarChart3 },
   { to: '/admin/notifications', label: 'Notifications', icon: Bell },

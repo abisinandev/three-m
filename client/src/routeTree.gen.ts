@@ -34,6 +34,8 @@ import { Route as UserPaymentPaymentFailedRouteImport } from './routes/user/_pay
 import { Route as AuthSignupVerifyOtpRouteImport } from './routes/auth/signup/verify-otp'
 import { Route as AuthForgotPasswordVerifyOtpRouteImport } from './routes/auth/forgot-password/verify-otp'
 import { Route as AdminViewKycKycIdRouteImport } from './routes/admin/view-kyc/$kycId'
+import { Route as AdminMutualFundMutualFundsManagementRouteImport } from './routes/admin/_mutual-fund/mutual-funds-management'
+import { Route as AdminMutualFundAddNewFundRouteImport } from './routes/admin/_mutual-fund/add-new-fund'
 import { Route as AdminAuthAdminAuthenticationIndexRouteImport } from './routes/_admin-auth/admin/authentication/index'
 import { Route as AdminAuthAdminAuthenticationVerifyOtpRouteImport } from './routes/_admin-auth/admin/authentication/verify-otp'
 
@@ -165,6 +167,18 @@ const AdminViewKycKycIdRoute = AdminViewKycKycIdRouteImport.update({
   path: '/view-kyc/$kycId',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMutualFundMutualFundsManagementRoute =
+  AdminMutualFundMutualFundsManagementRouteImport.update({
+    id: '/_mutual-fund/mutual-funds-management',
+    path: '/mutual-funds-management',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminMutualFundAddNewFundRoute =
+  AdminMutualFundAddNewFundRouteImport.update({
+    id: '/_mutual-fund/add-new-fund',
+    path: '/add-new-fund',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminAuthAdminAuthenticationIndexRoute =
   AdminAuthAdminAuthenticationIndexRouteImport.update({
     id: '/admin/authentication/',
@@ -192,6 +206,8 @@ export interface FileRoutesByFullPath {
   '/user/kyc-verification': typeof UserKycVerificationRoute
   '/user/mutual-funds': typeof UserMutualFundsRoute
   '/user/profile': typeof UserProfileRoute
+  '/admin/add-new-fund': typeof AdminMutualFundAddNewFundRoute
+  '/admin/mutual-funds-management': typeof AdminMutualFundMutualFundsManagementRoute
   '/admin/view-kyc/$kycId': typeof AdminViewKycKycIdRoute
   '/auth/forgot-password/verify-otp': typeof AuthForgotPasswordVerifyOtpRoute
   '/auth/signup/verify-otp': typeof AuthSignupVerifyOtpRoute
@@ -220,6 +236,8 @@ export interface FileRoutesByTo {
   '/user/kyc-verification': typeof UserKycVerificationRoute
   '/user/mutual-funds': typeof UserMutualFundsRoute
   '/user/profile': typeof UserProfileRoute
+  '/admin/add-new-fund': typeof AdminMutualFundAddNewFundRoute
+  '/admin/mutual-funds-management': typeof AdminMutualFundMutualFundsManagementRoute
   '/admin/view-kyc/$kycId': typeof AdminViewKycKycIdRoute
   '/auth/forgot-password/verify-otp': typeof AuthForgotPasswordVerifyOtpRoute
   '/auth/signup/verify-otp': typeof AuthSignupVerifyOtpRoute
@@ -250,6 +268,8 @@ export interface FileRoutesById {
   '/user/kyc-verification': typeof UserKycVerificationRoute
   '/user/mutual-funds': typeof UserMutualFundsRoute
   '/user/profile': typeof UserProfileRoute
+  '/admin/_mutual-fund/add-new-fund': typeof AdminMutualFundAddNewFundRoute
+  '/admin/_mutual-fund/mutual-funds-management': typeof AdminMutualFundMutualFundsManagementRoute
   '/admin/view-kyc/$kycId': typeof AdminViewKycKycIdRoute
   '/auth/forgot-password/verify-otp': typeof AuthForgotPasswordVerifyOtpRoute
   '/auth/signup/verify-otp': typeof AuthSignupVerifyOtpRoute
@@ -280,6 +300,8 @@ export interface FileRouteTypes {
     | '/user/kyc-verification'
     | '/user/mutual-funds'
     | '/user/profile'
+    | '/admin/add-new-fund'
+    | '/admin/mutual-funds-management'
     | '/admin/view-kyc/$kycId'
     | '/auth/forgot-password/verify-otp'
     | '/auth/signup/verify-otp'
@@ -308,6 +330,8 @@ export interface FileRouteTypes {
     | '/user/kyc-verification'
     | '/user/mutual-funds'
     | '/user/profile'
+    | '/admin/add-new-fund'
+    | '/admin/mutual-funds-management'
     | '/admin/view-kyc/$kycId'
     | '/auth/forgot-password/verify-otp'
     | '/auth/signup/verify-otp'
@@ -337,6 +361,8 @@ export interface FileRouteTypes {
     | '/user/kyc-verification'
     | '/user/mutual-funds'
     | '/user/profile'
+    | '/admin/_mutual-fund/add-new-fund'
+    | '/admin/_mutual-fund/mutual-funds-management'
     | '/admin/view-kyc/$kycId'
     | '/auth/forgot-password/verify-otp'
     | '/auth/signup/verify-otp'
@@ -537,6 +563,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminViewKycKycIdRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/_mutual-fund/mutual-funds-management': {
+      id: '/admin/_mutual-fund/mutual-funds-management'
+      path: '/mutual-funds-management'
+      fullPath: '/admin/mutual-funds-management'
+      preLoaderRoute: typeof AdminMutualFundMutualFundsManagementRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/_mutual-fund/add-new-fund': {
+      id: '/admin/_mutual-fund/add-new-fund'
+      path: '/add-new-fund'
+      fullPath: '/admin/add-new-fund'
+      preLoaderRoute: typeof AdminMutualFundAddNewFundRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin-auth/admin/authentication/': {
       id: '/_admin-auth/admin/authentication/'
       path: '/admin/authentication'
@@ -575,6 +615,8 @@ interface AdminRouteChildren {
   AdminKycManagementRoute: typeof AdminKycManagementRoute
   AdminTransactionsManagementRoute: typeof AdminTransactionsManagementRoute
   AdminUsersManagementRoute: typeof AdminUsersManagementRoute
+  AdminMutualFundAddNewFundRoute: typeof AdminMutualFundAddNewFundRoute
+  AdminMutualFundMutualFundsManagementRoute: typeof AdminMutualFundMutualFundsManagementRoute
   AdminViewKycKycIdRoute: typeof AdminViewKycKycIdRoute
 }
 
@@ -583,6 +625,9 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminKycManagementRoute: AdminKycManagementRoute,
   AdminTransactionsManagementRoute: AdminTransactionsManagementRoute,
   AdminUsersManagementRoute: AdminUsersManagementRoute,
+  AdminMutualFundAddNewFundRoute: AdminMutualFundAddNewFundRoute,
+  AdminMutualFundMutualFundsManagementRoute:
+    AdminMutualFundMutualFundsManagementRoute,
   AdminViewKycKycIdRoute: AdminViewKycKycIdRoute,
 }
 
