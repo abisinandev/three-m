@@ -1,5 +1,4 @@
 import type { VerifyOtpDTO } from "@application/dto/auth/verify-otp.dto";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
@@ -9,6 +8,7 @@ import {
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
 import type { ISignupVerifyOtpUseCase } from "../interfaces/user/signup-verify-otp-usecase.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class SignupVerifyOtpUseCase implements ISignupVerifyOtpUseCase {

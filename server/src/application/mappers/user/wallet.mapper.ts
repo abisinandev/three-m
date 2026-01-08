@@ -1,7 +1,7 @@
 import { TransactionResponseDTO } from "@application/dto/user/transaction-response.dto";
 import { UserWalletDTO } from "@application/dto/user/user-wallet.dto";
 import { WalletResponseDTO } from "@application/dto/user/wallet-response.dto";
-import { WalletEntity } from "@domain/entities/wallet.entity";
+import { WalletEntity } from "@domain/entities/user/wallet.entity";
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { WalletStatus } from "@domain/enum/wallet/wallet-status.enum";
 

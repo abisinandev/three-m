@@ -1,5 +1,4 @@
 import type { ChangePasswordDTO } from "@application/dto/user/change-password.dto";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import type { IPasswordHashingService } from "@application/interfaces/services/externals/password-hashing.service.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
@@ -10,6 +9,7 @@ import {
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
 import type { IChangePasswordUseCase } from "../interfaces/user/change-password.usecase.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class ChangePasswordUseCase implements IChangePasswordUseCase {

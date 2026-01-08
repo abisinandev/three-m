@@ -1,8 +1,5 @@
-import type { IBlockRepository } from "@application/interfaces/repositories/block-repository.interface";
-import type { ITransactionRepository } from "@application/interfaces/repositories/transaction-repository.interface";
-import type { IWalletRepository } from "@application/interfaces/repositories/wallet-repository.interface";
 import type { IVerifyTransactionUseCase } from "@application/use_cases/interfaces/user/verify-transaction-usecase.interface";
-import { BlockEntity } from "@domain/entities/block.entity";
+import { BlockEntity } from "@domain/entities/transaction/block.entity";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { SignatureKey } from "@domain/value-objects/wallet/signature-key.vo";
@@ -12,6 +9,9 @@ import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
 import mongoose from "mongoose";
 import stripe from "@infrastructure/providers/stripe/stripe.client";
+import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
+import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
+import { IBlockRepository } from "@application/interfaces/repositories/feature/block-repository.interface";
 
 /**
  * Verifies a pending transaction.

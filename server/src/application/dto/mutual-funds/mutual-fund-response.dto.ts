@@ -8,7 +8,12 @@ export interface FundListDTO {
   risk: string;
   status: string;
   logo?: string;
-
+  cagr: {
+    cagr1Y: number,
+    cagr3Y: number,
+    cagr4Y: number,
+    updatedAt: Date,
+  }
   nav: number;
   navDate: Date;
 

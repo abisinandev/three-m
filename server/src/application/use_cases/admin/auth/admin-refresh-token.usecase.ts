@@ -1,6 +1,5 @@
 import type { RefreshDTO } from "@application/dto/auth/refresh.dto";
 import type { RefreshResponseDTO } from "@application/dto/auth/refresh-response.dto";
-import type { IAdminRepository } from "@application/interfaces/repositories/admin.repository.interface";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
 import type { IRefreshTokenUseCase } from "@application/use_cases/interfaces/admin/admin-refresh-token.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
@@ -13,6 +12,7 @@ import {
   ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
+import { IAdminRepository } from "@application/interfaces/repositories/admin/admin.repository.interface";
 
 @injectable()
 export class AdminRefreshTokenUseCase implements IRefreshTokenUseCase {

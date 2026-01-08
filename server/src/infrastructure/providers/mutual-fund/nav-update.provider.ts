@@ -4,8 +4,6 @@ import { IHttpClient } from "@application/interfaces/services/externals/http-cli
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { MfApiNavResponse } from "./nav-interfaces";
 
-
-
 @injectable()
 export class NavUpdateProvider implements IMutualFundNavUpdateProvider {
 
@@ -25,14 +23,6 @@ export class NavUpdateProvider implements IMutualFundNavUpdateProvider {
         if (!response?.data?.length) {
             throw new Error(`NAV data not found for schemeCode ${schemeCode}`);
         }
-
-        // const latest = response.data[0];
-
-        // return {
-        //     schemeCode,
-        //     nav: Number(latest.nav),
-        //     navDate: this.normalizeDate(latest.date),
-        // };
 
         return response.data.map(item => ({
             schemeCode,

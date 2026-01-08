@@ -1,5 +1,5 @@
 import { MutualFundNavDTO } from "@application/dto/mutual-funds/mutual-fund-nav-dto";
-import { MutualFundNavEntity } from "@domain/entities/mutual-fund-nav-entity";
+import { MutualFundNavEntity } from "@domain/entities/mutual-fund/mutual-fund-nav-entity";
 
 export const toEntity = (dto: MutualFundNavDTO) => {
     return MutualFundNavEntity.create({

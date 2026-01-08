@@ -1,6 +1,5 @@
 import type { Verify2faDTO } from "@application/dto/auth/2fa-verify-dto";
 import type { VerifyOtpResponseDTO } from "@application/dto/auth/verify-otp-response.dto";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import type { ITwoFactorAuthVerify } from "@application/interfaces/services/externals/2fa-auth-verify.interface";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
@@ -15,6 +14,7 @@ import {
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
 import type { IVerifyTwoFactorUseCase } from "../interfaces/user/verify-2fa-usecase.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class VerifyTwoFactorUseCase implements IVerifyTwoFactorUseCase {

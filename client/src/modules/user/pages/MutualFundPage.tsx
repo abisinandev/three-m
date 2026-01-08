@@ -25,6 +25,8 @@ const MutualFundPage = () => {
         placeholderData: p => p,
     });
 
+    console.log("DAta: ", data);
+
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
@@ -150,7 +152,7 @@ const MutualFundPage = () => {
                             </p>
                             <p className="text-[11px] flex items-center justify-end gap-1 mt-0.5 text-[#22C55E]">
                                 <TrendingUp size={12} />
-                                {fund.nav.toFixed(2)}%
+                                {fund.cagr.cagr1Y}%
                             </p>
                         </div>
                     </div>

@@ -1,11 +1,11 @@
 import { injectable } from "inversify";
 import { BaseRepository } from "../base.repository";
-import { IMutualFundRepository } from "@application/interfaces/repositories/mutual-fund-repository.interface";
-import { MutualFundEntity } from "@domain/entities/mutual-fund-entity";
-import { MutualFundModel } from '@infrastructure/databases/mongo_db/models/schemas/mutual-fund.schema'
-import { MutualFundMapper } from "@infrastructure/mappers/mutual-fund.mapper";
-import { MutualFundDocument } from "@infrastructure/databases/mongo_db/models/interfaces/mutual-fund-schema.interface";
+import { MutualFundEntity } from "@domain/entities/mutual-fund/mutual-fund-entity";
+import { MutualFundModel } from '@infrastructure/databases/mongo_db/models/schemas/mutual-fund/mutual-fund.schema'
+import { MutualFundMapper } from "@infrastructure/mappers/mutual-fund/mutual-fund.mapper";
+import { MutualFundDocument } from "@infrastructure/databases/mongo_db/models/interfaces/mutual-fund/mutual-fund-schema.interface";
 import { ClientSession, QueryOptions } from "mongoose";
+import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 
 @injectable()
 export class MutualFundRepository extends BaseRepository<MutualFundEntity, MutualFundDocument> implements IMutualFundRepository {

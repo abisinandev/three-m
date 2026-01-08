@@ -1,13 +1,10 @@
-import type { IKycRepository } from "@application/interfaces/repositories/kyc-repository.interface";
-import type { KycEntity } from "@domain/entities/kyc.entity";
-import {
-  type KycDocument,
-  KycModel,
-} from "@infrastructure/databases/mongo_db/models/schemas/kyc.schema";
-import { KycMapper } from "@infrastructure/mappers/kyc.mapper";
+import { KycMapper } from "@infrastructure/mappers/user/kyc.mapper";
 import { injectable } from "inversify";
 import type { QueryOptions } from "mongoose";
 import { BaseRepository } from "../base.repository";
+import { IKycRepository } from "@application/interfaces/repositories/user/kyc-repository.interface";
+import { KycEntity } from "@domain/entities/user/kyc.entity";
+import { KycDocument, KycModel } from "@infrastructure/databases/mongo_db/models/schemas/user/kyc.schema";
 
 @injectable()
 export class KycRepository extends BaseRepository<KycEntity, KycDocument> implements IKycRepository {

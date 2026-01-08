@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
 import { IMutualFundNavUpdatesUseCase } from "../interfaces/features/mutual-funds/mutual-fund-nav-udpate-usecase.interface";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
-import { IMutualFundNavRepository } from "@application/interfaces/repositories/mutual-fund-nav-repository.interface";
-import { IMutualFundRepository } from "@application/interfaces/repositories/mutual-fund-repository.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { toEntity } from "@application/mappers/mutual-fund/mf-nav.mapper";
+import { IMutualFundNavRepository } from "@application/interfaces/repositories/feature/mutual-fund-nav-repository.interface";
+import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 
 @injectable()
 export class MutualFundNavUpdate implements IMutualFundNavUpdatesUseCase {
@@ -16,7 +16,7 @@ export class MutualFundNavUpdate implements IMutualFundNavUpdatesUseCase {
 
     async execute(): Promise<void> {
 
-        const { funds } = await this._mutualFundRepository.findInactiveFunds();
+        const { funds } = await this._mutualFundRepository.findActiveFunds();
         for (const fund of funds) {
             const result = await this._navUpdateProvider.fetchLatestNav(fund.schemeCode);
 

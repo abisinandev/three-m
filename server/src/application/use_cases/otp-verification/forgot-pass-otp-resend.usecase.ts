@@ -1,6 +1,5 @@
 import type { ResendOtpDTO } from "@application/dto/auth/resend-otp.dto";
 import type { ResendOtpResponseDTO } from "@application/dto/auth/resend-otp-response.dto";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
@@ -12,6 +11,7 @@ import AppError from "@presentation/express/utils/error-handling/app.error";
 import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
 import type { IForgotPasswordResendOtpUseCase } from "../interfaces/user/forgot-pass-resend-otp-usecase.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class ForgotPasswordResendOtpUseCase

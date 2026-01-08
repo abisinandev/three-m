@@ -81,7 +81,7 @@ const UserProfilePage = () => {
   })();
 
   const isKycVerified = user?.kycStatus === "verified";
-  const maskedAadhaar = user?.kyc.aadhaarNumber 
+  const maskedAadhaar = user?.kyc.aadhaarNumber
     ? `XXXX-XXXX-${user?.kyc.aadhaarNumber.slice(-4)}`
     : "Not added";
 
@@ -90,7 +90,7 @@ const UserProfilePage = () => {
     if (!file || !user?.id) return;
 
     setUploading(true);
-    
+
     try {
       const signatureData = await GetSignatureApi("profile", user.id);
       console.log('signatureData: ', signatureData.data)

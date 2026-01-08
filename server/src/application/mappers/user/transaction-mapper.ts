@@ -1,6 +1,6 @@
 import { AddToWalletDTO } from "@application/dto/user/add-to-wallet.dto";
 import { TransactionResponseDTO } from "@application/dto/user/transaction-response.dto";
-import { TransactionEntity } from "@domain/entities/transaction.entity";
+import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 
 export const toEntity = (data: AddToWalletDTO) => {

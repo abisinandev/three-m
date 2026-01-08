@@ -1,6 +1,6 @@
 'use client';
 
-import { DataTable } from '@shared/components/table/MutualFundTable';
+import { DataTable } from '@shared/components/table/DataTableComponent';
 import type { MutualFundType } from '@shared/types/mutual-funds/MutualFundType';
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
     isLoading?: boolean;
     onDelete?: (fund: MutualFundType) => void;
     onEdit?: (fund: MutualFundType) => void;
-    onStatusToggle?: (fund: MutualFundType, status: 'ACTIVE' | 'INACTIVE') => void;
+    onStatusToggle?: (fund: MutualFundType, status: 'Active' | 'Inactive') => void;
 }
 
 export function MutualFundsTable({
@@ -27,6 +27,20 @@ export function MutualFundsTable({
             onStatusChange={onStatusToggle}
             columns={[
                 {
+                    key: 'Icon',
+                    label: 'Logo',
+                    render: (f) => (
+                        <div className="flex">
+                            <img
+                                src={f.logo}
+                                alt={`${f.schemeName} logo`}
+                                className="h-8 w-8 rounded-full"
+                                loading="lazy"
+                            />
+                        </div>
+                    ),
+                },
+                {
                     key: 'schemeCode',
                     label: 'Code',
                     className: 'font-mono text-neutral-400',
@@ -44,10 +58,10 @@ export function MutualFundsTable({
                     render: f => (
                         <span
                             className={`rounded border px-2 py-0.5 text-[10px] ${f.risk === 'High'
-                                    ? 'border-red-500/30 text-red-400'
-                                    : f.risk === 'Medium'
-                                        ? 'border-orange-500/30 text-orange-400'
-                                        : 'border-emerald-500/30 text-emerald-400'
+                                ? 'border-red-500/30 text-red-400'
+                                : f.risk === 'Medium'
+                                    ? 'border-orange-500/30 text-orange-400'
+                                    : 'border-emerald-500/30 text-emerald-400'
                                 }`}
                         >
                             {f.risk}

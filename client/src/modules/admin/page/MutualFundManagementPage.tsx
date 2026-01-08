@@ -5,22 +5,20 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDebounce } from 'use-debounce';
 import { Plus, Download, Search, ChevronDown, CheckCheck, Clock, Ban, Layers } from 'lucide-react';
-
-import adminApi from '@lib/axiosAdmin';
 import type {
     MutualFundType,
     PaginatedMutualFundsResponse,
 } from '@shared/types/mutual-funds/MutualFundType';
 import { Pagination } from '@shared/components/pagination/Pagination';
 import { MutualFundsTable } from '../components/MutualFundTable';
-import { fetchMutualFunds } from '@shared/services/admin/mutual-fund-management/MutualFundAdminSide';
+import { fetchMutualFunds, updateStatus } from '@shared/services/admin/mutual-fund-management/MutualFundAdminSide';
 import { StatsCard } from '@shared/components/cards/UserManagementStatCards';
 
-const ITEMS_PER_PAGE = 10;
 
 export default function MutualFundsPage() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const ITEMS_PER_PAGE = 10;
 
     const [page, setPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
@@ -40,7 +38,6 @@ export default function MutualFundsPage() {
             }),
         placeholderData: p => p,
     });
-
 
     const {
         funds,
@@ -68,23 +65,15 @@ export default function MutualFundsPage() {
         };
     }, [data]);
 
-    const handleStatusToggle = async (
-        fund: MutualFundType,
-        newStatus: 'ACTIVE' | 'INACTIVE'
-    ) => {
+    const handleStatusToggle = async (fund: MutualFundType, newStatus: 'Active' | 'Inactive') => {
         if (!confirm(`Change status to ${newStatus}?`)) return;
-
         try {
-            await adminApi.patch(`/mutual-funds/${fund.id}/status`, {
-                status: newStatus,
-            });
-
+            await updateStatus(fund, newStatus);
             queryClient.invalidateQueries({ queryKey: ['mutual-funds'] });
         } catch {
             alert('Failed to update status');
         }
     };
-
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {

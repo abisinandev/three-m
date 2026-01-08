@@ -1,8 +1,7 @@
 import type { GoogleResponseDTO } from "@application/dto/auth/google-auth-reseponse.dto";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import type { IGoogleAuthService } from "@application/interfaces/services/externals/google-auth.service.interface";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
-import { UserEntity } from "@domain/entities/user.entity";
+import { UserEntity } from "@domain/entities/user/user.entity";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { AuthProvider } from "@domain/enum/users/auth-provider.enum";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
@@ -14,6 +13,7 @@ import {
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
 import type { IGoogleAuthUseCase } from "../interfaces/user/google-auth.usecase.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class GoogleAuthUseCase implements IGoogleAuthUseCase {

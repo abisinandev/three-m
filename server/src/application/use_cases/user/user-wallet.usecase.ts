@@ -1,9 +1,6 @@
 import type { IUserWalletUseCase } from "../interfaces/user/user-wallet-usecase.interface";
 import type { FetchWalletDTO } from "@application/dto/user/fetch-wallet.dto";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
-import type { IWalletRepository } from "@application/interfaces/repositories/wallet-repository.interface";
 import type { WalletResponseDTO } from "@application/dto/user/wallet-response.dto";
-import type { ITransactionRepository } from "@application/interfaces/repositories/transaction-repository.interface";
 import type { TransactionResponseDTO } from "@application/dto/user/transaction-response.dto";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
@@ -14,6 +11,9 @@ import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { toTransactionResponse } from "@application/mappers/user/transaction-mapper";
 import { QueryOptions } from "mongoose";
 import { inject, injectable } from "inversify";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
+import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
+import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 
 @injectable()
 export class UserWalletUseCase implements IUserWalletUseCase {

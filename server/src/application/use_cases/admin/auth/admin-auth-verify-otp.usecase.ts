@@ -1,6 +1,5 @@
 import type { VerifyOtpDTO } from "@application/dto/auth/verify-otp.dto";
 import type { VerifyOtpResponseDTO } from "@application/dto/auth/verify-otp-response.dto";
-import type { IAdminRepository } from "@application/interfaces/repositories/admin.repository.interface";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
 import type { IAdminAuthVerifyOtpUseCase } from "@application/use_cases/interfaces/admin/admin-auth-verify-otp.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
@@ -14,6 +13,7 @@ import {
   ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
+import { IAdminRepository } from "@application/interfaces/repositories/admin/admin.repository.interface";
 
 @injectable()
 export class AdminAuthVerifyOtpUseCase implements IAdminAuthVerifyOtpUseCase {

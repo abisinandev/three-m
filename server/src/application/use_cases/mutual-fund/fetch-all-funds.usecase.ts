@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
 import { IFetchAllFundsUseCases } from "../interfaces/features/mutual-funds/fetch-all-funds-usecase.interface";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
-import { IMutualFundRepository } from "@application/interfaces/repositories/mutual-fund-repository.interface";
 import { toMutualFundResponse } from "@application/mappers/mutual-fund/mutual-fund.mapper";
 import { QueryOptions } from "mongoose";
 import { FundListDTO } from "@application/dto/mutual-funds/mutual-fund-response.dto";
+import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 
 @injectable()
 export class FetchAllFundUseCases implements IFetchAllFundsUseCases {

@@ -1,5 +1,5 @@
 import adminApi from "@lib/axiosAdmin";
-import type { PaginatedMutualFundsResponse } from "@shared/types/mutual-funds/MutualFundType";
+import type { MutualFundType, PaginatedMutualFundsResponse } from "@shared/types/mutual-funds/MutualFundType";
 
 export type AddFundPayload = {
     schemeCode: string;
@@ -45,3 +45,11 @@ export const fetchMutualFunds = async ({
 
     return res.data.data;
 };
+
+
+
+export const updateStatus = async (fund: MutualFundType, newStatus:string) => {
+    await adminApi.patch(`/mutual-funds/${fund.id}/status`, {
+        status: newStatus ,
+    });
+}

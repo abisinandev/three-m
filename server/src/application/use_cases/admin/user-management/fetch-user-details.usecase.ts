@@ -1,11 +1,11 @@
 import type { FetchDataResponseDTO } from "@application/dto/admin/fetch-data.response.dto";
 import type { UserDTO } from "@application/dto/user/user-dto";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { inject, injectable } from "inversify";
 import type { QueryOptions } from "mongoose";
 import type { IFetchUserDetails } from "../../interfaces/admin/fetch-user-details";
 import { toUserResponse } from "@application/mappers/user/user.mapper";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class FetchUserDetails implements IFetchUserDetails {
@@ -14,6 +14,7 @@ export class FetchUserDetails implements IFetchUserDetails {
   ) { }
 
   async execute(data: QueryOptions): Promise<FetchDataResponseDTO<UserDTO>> {
+    
     const allUsers = await this._userRepository.findWithFilters({
       search: data.search,
       page: data.page,

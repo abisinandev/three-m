@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from '@tanstack/react-router';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import api from '@lib/axiosUser';
 import { useUserStore } from '@stores/user/UserStore';
@@ -7,15 +7,23 @@ import { Wallet, ChevronDown, LogOut, User, Menu, Bell } from 'lucide-react';
 import { Footer } from '@shared/components/LandingPage/Footer';
 import { LOGOUT } from '@shared/constants/userContants';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
+import { useProfileQuery } from '@shared/services/user/ProfileApi';
 
 const UserLayout = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
-
+    const {setUser} = useUserStore()
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { user, logout } = useUserStore();
     const navigate = useNavigate();
+
+    const { data } = useProfileQuery()
+    useEffect(() => {
+        if (data) {
+            setUser(data);
+        }
+    },[]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

@@ -1,13 +1,13 @@
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
-import type { UserEntity } from "@domain/entities/user.entity";
+import type { UserEntity } from "@domain/entities/user/user.entity";
 import {
   type UserDocument,
   UserModel,
-} from "@infrastructure/databases/mongo_db/models/schemas/user.schema";
-import { UserMapper } from "@infrastructure/mappers/user.mapper";
+} from "@infrastructure/databases/mongo_db/models/schemas/user/user.schema";
+import { UserMapper } from "@infrastructure/mappers/user/user.mapper";
 import { injectable } from "inversify";
 import type { QueryOptions } from "mongoose";
 import { BaseRepository } from "../base.repository";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class UserRepository extends BaseRepository<UserEntity, UserDocument> implements IUserRepository {

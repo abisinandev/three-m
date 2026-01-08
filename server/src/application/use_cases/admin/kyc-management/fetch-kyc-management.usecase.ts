@@ -1,10 +1,10 @@
 import type { FetchDataResponseDTO } from "@application/dto/admin/fetch-data.response.dto";
 import type { KycResponseDTO } from "@application/dto/user/kyc-response.dto";
-import type { IKycRepository } from "@application/interfaces/repositories/kyc-repository.interface";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
+import { IKycRepository } from "@application/interfaces/repositories/user/kyc-repository.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { toKycResponse } from "@application/mappers/user/kyc.mapper";
 import type { IFetchAllKycDocsUseCase } from "@application/use_cases/interfaces/admin/kyc-management-usecase.interface";
-import type { UserEntity } from "@domain/entities/user.entity";
+import type { UserEntity } from "@domain/entities/user/user.entity";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { inject, injectable } from "inversify";
 import type { QueryOptions } from "mongoose";

@@ -1,5 +1,5 @@
 import type { AdminDTO } from "@application/dto/admin/admin-data.dto";
-import type { IAdminRepository } from "@application/interfaces/repositories/admin.repository.interface";
+import { IAdminRepository } from "@application/interfaces/repositories/admin/admin.repository.interface";
 import type { IAdminProfileUseCase } from "@application/use_cases/interfaces/admin/admin-profile-usecase.interface";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
 import { inject, injectable } from "inversify";

@@ -1,5 +1,5 @@
-import type { IKycRepository } from "@application/interfaces/repositories/kyc-repository.interface";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
+import { IKycRepository } from "@application/interfaces/repositories/user/kyc-repository.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import type { IVerifyKycUseCase } from "@application/use_cases/interfaces/admin/verify-kyc-usecase.interface";
 import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";

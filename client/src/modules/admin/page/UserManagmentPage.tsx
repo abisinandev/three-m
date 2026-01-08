@@ -1,34 +1,29 @@
-import { Users, Lock } from "lucide-react";
-import { useState, useMemo } from "react";
-import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useDebouncedCallback } from "use-debounce";
-import { TableComponent } from "@shared/components/table/TableComponent";
-import { Pagination } from "@shared/components/pagination/Pagination";
-import { FiltersRow } from "@shared/components/filter/FilterComponent";
-import { StatsCard } from "@shared/components/cards/UserManagementStatCards";
-import ConfirmModal from "@shared/components/modals/ConfirmModal";
+'use client';
+
+import { Users, Lock } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useDebouncedCallback } from 'use-debounce';
+import { Pagination } from '@shared/components/pagination/Pagination';
+import { FiltersRow } from '@shared/components/filter/FilterComponent';
+import ConfirmModal from '@shared/components/modals/ConfirmModal';
 import {
     FetchUserDetail,
     type UserFilters,
-} from "@shared/services/admin/user-management/FetchUserDataApi";
-import type { Action } from "@shared/components/interfaces/ITableActions";
-import type { User } from "@shared/components/interfaces/IUserTable";
-import { BlockUserDataApi } from "@shared/services/admin/user-management/BlockUserDataApi";
-import { UnblockUserApi } from "@shared/services/admin/user-management/UnblockUserApi";
-import { columns } from "../utils/UserTableUtils";
+} from '@shared/services/admin/user-management/FetchUserDataApi';
+import { BlockUserDataApi } from '@shared/services/admin/user-management/BlockUserDataApi';
+import { UnblockUserApi } from '@shared/services/admin/user-management/UnblockUserApi';
+import { StatsCard } from '@shared/components/cards/UserManagementStatCards';
+import { UserTable } from '../components/UserTable';
+import type { User } from '@shared/components/interfaces/IUserTable';
 
 
-const calculateUserStats = (data: any) => {
-    const total = data?.total ?? 0;
-
-    return {
-        total,
-        active: data?.totalActiveUsersCount ?? 0,
-        blocked: data?.totalInActiveUsersCount ?? 0,
-        verified: data?.totalVerifiedUsersCount ?? 0,
-    };
-};
-
+const calculateUserStats = (data: any) => ({
+    total: data?.total ?? 0,
+    active: data?.totalActiveUsersCount ?? 0,
+    blocked: data?.totalInActiveUsersCount ?? 0,
+    verified: data?.totalVerifiedUsersCount ?? 0,
+});
 
 export default function UserManagement() {
     const queryClient = useQueryClient();
@@ -36,36 +31,29 @@ export default function UserManagement() {
     const [filters, setFilters] = useState<UserFilters>({
         page: 1,
         limit: 10,
-        search: "",
-        role: "",
-        sortBy: "createdAt",
-        sortOrder: "desc",
+        search: '',
+        role: '',
+        sortBy: 'createdAt',
+        sortOrder: 'desc',
     });
 
     const [blockModal, setBlockModal] = useState<{
         open: boolean;
-        userId: string | null;
-        isBlock: boolean;
+        user: User | null;
     }>({
         open: false,
-        userId: null,
-        isBlock: true,
+        user: null,
     });
 
-
     const { data, isLoading, isError } = useQuery({
-        queryKey: ["admin-users", filters],
+        queryKey: ['admin-users', filters],
         queryFn: () => FetchUserDetail(filters),
         placeholderData: keepPreviousData,
     });
 
     const users = useMemo(() => data?.data.data ?? [], [data]);
     const total = data?.data.total ?? 0;
-
-    const stats = useMemo(
-        () => calculateUserStats(data?.data),
-        [data]
-    );
+    const stats = useMemo(() => calculateUserStats(data?.data), [data]);
 
     const updateFilters = (updates: Partial<UserFilters>) => {
         setFilters((prev) => ({
@@ -75,52 +63,31 @@ export default function UserManagement() {
         }));
     };
 
-    const debouncedSearch = useDebouncedCallback((search: string) => {
-        updateFilters({ search, page: 1 });
-    }, 400);
+    const debouncedSearch = useDebouncedCallback(
+        (search: string) => updateFilters({ search }),
+        400
+    );
 
-    const handleRefresh = () => {
-        queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-    };
-
-    const handleBlockUnblock = async () => {
-        if (!blockModal.userId) return;
+    const handleBlockConfirm = async () => {
+        if (!blockModal.user) return;
 
         try {
-            if (blockModal.isBlock) {
-                await BlockUserDataApi(blockModal.userId);
-            } else {
-                await UnblockUserApi(blockModal.userId);
-            }
+            blockModal.user.isBlocked
+                ? await UnblockUserApi(blockModal.user.id)
+                : await BlockUserDataApi(blockModal.user.id);
 
-            queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+            queryClient.invalidateQueries({ queryKey: ['admin-users'] });
         } finally {
-            setBlockModal({ open: false, userId: null, isBlock: true });
+            setBlockModal({ open: false, user: null });
         }
     };
 
-    const actions: Action<User>[] = [
-        {
-            label: (user:User) => (user.isBlocked ? "Unblock" : "Block"),
-            className: (user) =>
-                user.isBlocked
-                    ? "px-3 py-1 text-xs font-medium border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded transition"
-                    : "px-3 py-1 text-xs font-medium border border-green-500/20 bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded transition",
-            onClick: (user) =>
-                setBlockModal({
-                    open: true,
-                    userId: user.id,
-                    isBlock: !user.isBlocked,
-                }),
-        },
-    ];
-
-
     return (
         <div className="space-y-6">
+
             <div>
-                <h1 className="text-2xl font-bold text-white">User Management</h1>
-                <p className="text-sm text-gray-500 mt-1">
+                <h1 className="text-xl font-semibold text-white">User Management</h1>
+                <p className="text-xs text-neutral-400">
                     Manage user accounts and permissions
                 </p>
             </div>
@@ -128,42 +95,46 @@ export default function UserManagement() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatsCard
                     title="Total Users"
-                    value={stats.total.toString()}
-                    icon={<Users className="w-5 h-5 text-blue-400" />}
-                    color="text-blue-400"
-                    subtitle="All registered users"
+                    value={stats.total}
+                    icon={<Users />}
+                    color="text-emerald-400"
+                    subtitle={
+                        total > 0
+                            ? `${((total / total) * 100).toFixed(1)}% active`
+                            : "No active funds"
+                    }
                 />
                 <StatsCard
                     title="Active Users"
-                    value={stats.active.toString()}
-                    icon={<Users className="w-5 h-5 text-emerald-400" />}
+                    value={stats.active}
+                    icon={<Users />}
                     color="text-emerald-400"
                     subtitle={
-                        stats.total
-                            ? `${((stats.active / stats.total) * 100).toFixed(1)}% active`
-                            : "0% active"
+                        total > 0
+                            ? `${((stats.active / total) * 100).toFixed(1)}% active`
+                            : "No active funds"
                     }
                 />
                 <StatsCard
                     title="Blocked Users"
-                    value={stats.blocked.toString()}
-                    icon={<Lock className="w-5 h-5 text-red-400" />}
-                    color="text-red-400"
+                    value={stats.blocked}
+                    icon={<Lock />}
+                    color="text-emerald-400"
                     subtitle={
-                        stats.total
-                            ? `${((stats.blocked / stats.total) * 100).toFixed(1)}% blocked`
-                            : "0% blocked"
+                        total > 0
+                            ? `${((stats.blocked / total) * 100).toFixed(1)}% active`
+                            : "No active funds"
                     }
                 />
                 <StatsCard
                     title="Verified Users"
-                    value={stats.verified.toString()}
-                    icon={<Users className="w-5 h-5 text-cyan-400" />}
-                    color="text-cyan-400"
+                    value={stats.verified}
+                    icon={<Users />}
+                    color="text-emerald-400"
                     subtitle={
-                        stats.total
-                            ? `${((stats.verified / stats.total) * 100).toFixed(1)}% verified`
-                            : "0% verified"
+                        total > 0
+                            ? `${((stats.verified / total) * 100).toFixed(1)}% active`
+                            : "No active funds"
                     }
                 />
             </div>
@@ -171,54 +142,57 @@ export default function UserManagement() {
             <FiltersRow
                 onSearch={debouncedSearch}
                 onFilterChange={(key, value) =>
-                    updateFilters({ [key]: value, page: 1 })
+                    updateFilters({ [key]: value })
                 }
                 currentFilters={filters}
-                onRefresh={handleRefresh}
+                onRefresh={() =>
+                    queryClient.invalidateQueries({ queryKey: ['admin-users'] })
+                }
             />
 
-            <div className="bg-[#111111] border border-neutral-800 rounded-lg overflow-hidden">
-                {isLoading ? (
-                    <div className="py-12 text-center text-gray-400">
-                        Loading users...
-                    </div>
-                ) : isError ? (
-                    <div className="py-12 text-center text-red-400">
+            <div className="bg-[#111] border border-neutral-800 rounded-xl overflow-hidden">
+
+                {isError && (
+                    <div className="py-12 text-center text-xs text-red-400">
                         Failed to load users
                     </div>
-                ) : (
+                )}
+
+                {!isError && (
                     <>
-                        <TableComponent
-                            columns={columns}
-                            data={users}
-                            actions={actions}
+                        <UserTable
+                            users={users}
+                            isLoading={isLoading}
+                            onBlockToggle={(user) =>
+                                setBlockModal({ open: true, user })
+                            }
                         />
 
-                        <Pagination
-                            page={filters.page as number}
-                            limit={filters.limit as number}
-                            total={total}
-                            onPageChange={(page) => updateFilters({ page })}
-                        />
+                        {!isLoading && users.length > 0 && (
+                            <Pagination
+                                page={filters.page as number}
+                                limit={filters.limit as number}
+                                total={total}
+                                onPageChange={(page) => updateFilters({ page })}
+                            />
+                        )}
                     </>
                 )}
             </div>
 
             <ConfirmModal
                 isOpen={blockModal.open}
-                onClose={() =>
-                    setBlockModal({ open: false, userId: null, isBlock: true })
-                }
-                onConfirm={handleBlockUnblock}
-                title={blockModal.isBlock ? "Block User" : "Unblock User"}
+                onClose={() => setBlockModal({ open: false, user: null })}
+                onConfirm={handleBlockConfirm}
+                title={blockModal.user?.isBlocked ? 'Unblock User' : 'Block User'}
                 message={
-                    blockModal.isBlock
-                        ? "This user will no longer be able to log in or use the platform."
-                        : "This user will regain access to the platform."
+                    blockModal.user?.isBlocked
+                        ? 'This user will regain access.'
+                        : 'This user will be blocked from the platform.'
                 }
-                confirmText={blockModal.isBlock ? "Block User" : "Unblock User"}
+                confirmText={blockModal.user?.isBlocked ? 'Unblock' : 'Block'}
                 cancelText="Cancel"
-                variant={blockModal.isBlock ? "destructive" : "success"}
+                variant={blockModal.user?.isBlocked ? 'success' : 'destructive'}
             />
         </div>
     );

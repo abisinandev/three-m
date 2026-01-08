@@ -1,14 +1,14 @@
-import type { ITransactionRepository } from "@application/interfaces/repositories/transaction-repository.interface";
 import type { AddToWalletDTO } from "@application/dto/user/add-to-wallet.dto";
 import type { IAddToWalletUseCase } from "../interfaces/user/add-to-wallet-usecase.interface";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
-import type { IWalletRepository } from "@application/interfaces/repositories/wallet-repository.interface";
 import { NotFoundError, UnauthorizedError, ValidationError } from "@presentation/express/utils/error-handling";
 import { toEntity } from "@application/mappers/user/transaction-mapper";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { inject, injectable } from "inversify";
 import { WalletStatus } from "@domain/enum/wallet/wallet-status.enum";
+import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
+import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 
 /**
  * Adds funds to a user's wallet after a successful payment.

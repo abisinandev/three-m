@@ -1,4 +1,3 @@
-import type { IAdminRepository } from "@application/interfaces/repositories/admin.repository.interface";
 import { AdminAuthUseCase } from "@application/use_cases/admin/auth/admin-auth.usecase";
 import { AdminAuthVerifyOtpUseCase } from "@application/use_cases/admin/auth/admin-auth-verify-otp.usecase";
 import { AdminLogoutUseCase } from "@application/use_cases/admin/auth/admin-logout.usecase";
@@ -31,12 +30,13 @@ import { AdminAuthController } from "@presentation/http/controllers/admin/admin-
 import { AdminKycController } from "@presentation/http/controllers/admin/admin-kyc.controller";
 import { AdminUserController } from "@presentation/http/controllers/admin/admin-user.controller";
 import { ContainerModule } from "inversify";
-import { AdminRepository } from "@infrastructure/databases/repository/user/admin.repository";
+import { AdminRepository } from "@infrastructure/databases/repository/admin/admin.repository";
 import { IFetchTransactionsUseCase } from "@application/use_cases/interfaces/admin/fetch-transactions-usecase.interface";
 import { FetchTransactionsUseCase } from "@application/use_cases/admin/transactions-management/fetch-transactions.usecase";
 import { AdminTransactionsController } from "@presentation/http/controllers/admin/admin-transactions.controller";
 import { IVerifyTransactionUseCase } from "@application/use_cases/interfaces/user/verify-transaction-usecase.interface";
 import { VerifyTransactionUseCase } from "@application/use_cases/admin/transactions-management/verify-transaction.usecase";
+import { IAdminRepository } from "@application/interfaces/repositories/admin/admin.repository.interface";
 
 export const AdminModule = new ContainerModule(({ bind }) => {
   //Usecases

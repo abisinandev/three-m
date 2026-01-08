@@ -1,6 +1,5 @@
 import type { CreateUserDTO } from "@application/dto/auth/create-user.dto";
 import type { SignupResponseDTO } from "@application/dto/auth/signup-response.dto";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
 import type { IPasswordHashingService } from "@application/interfaces/services/externals/password-hashing.service.interface";
 import { toEntity } from "@application/mappers/user/user.mapper";
@@ -12,6 +11,7 @@ import { ConflictError } from "@presentation/express/utils/error-handling/index"
 import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
 import type { IUserSignupUseCase } from "../interfaces/user/user-signup.usecase.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class UserSignupUseCase implements IUserSignupUseCase {

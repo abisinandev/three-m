@@ -1,4 +1,3 @@
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
@@ -12,6 +11,7 @@ import {
   UnauthorizedError,
 } from "../utils/error-handling";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class AuthMiddleware {

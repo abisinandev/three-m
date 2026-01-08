@@ -1,6 +1,6 @@
 import { FetchTransactionDTO } from "@application/dto/user/fetch-transactions.dto";
 import { TransactionResponseDTO } from "@application/dto/user/transaction-response.dto";
-import { ITransactionRepository } from "@application/interfaces/repositories/transaction-repository.interface";
+import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { toTransactionResponse } from "@application/mappers/user/transaction-mapper";
 import { IFetchTransactionsUseCase } from "@application/use_cases/interfaces/admin/fetch-transactions-usecase.interface";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";

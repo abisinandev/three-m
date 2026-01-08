@@ -21,7 +21,12 @@ export type MutualFundType = {
     schemeName: string;
     source: string;
     amc: string;
-
+    cagr: {
+        cagr1Y?: number;
+        cagr3Y?: number;
+        cagr5Y?: number;
+        updatedAt: string;
+    },
     category: FundCategory;
     subCategory: SubCategory;
     risk: RiskLevel;

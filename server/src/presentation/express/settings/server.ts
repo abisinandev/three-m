@@ -3,6 +3,7 @@ import { env } from "@presentation/express/utils/constants/env.constants";
 import app from "./app";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
 import { NavUpdateScheduler } from "@infrastructure/providers/cron-scheduler/nav-cron.scheduler";
+import { CagrUpdateScheduler } from "@infrastructure/providers/cron-scheduler/cagr-cron-scheduler";
 
 const bootstrap = async () => {
   try {
@@ -10,6 +11,7 @@ const bootstrap = async () => {
 
     //cron-scheduler
     NavUpdateScheduler();
+    CagrUpdateScheduler();
     
     app.listen(env.PORT, () => {
       logger.info(`Server running on PORT: ${env.PORT}`);

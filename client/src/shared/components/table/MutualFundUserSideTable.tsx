@@ -1,6 +1,6 @@
 'use client';
 
-import { DataTable } from '@shared/components/table/MutualFundTable';
+import { DataTable } from '@shared/components/table/DataTableComponent';
 import type { MutualFundType, FundStatus } from '@shared/types/mutual-funds/MutualFundType';
 
 interface Props {
@@ -16,7 +16,6 @@ export function MutualFundsTable({
     isLoading,
     onDelete,
     onEdit,
-    onStatusToggle,
 }: Props) {
     return (
         <DataTable
@@ -26,14 +25,12 @@ export function MutualFundsTable({
             onEdit={onEdit}
    
             columns={[
-                /* -------- Code -------- */
                 {
                     key: 'schemeCode',
                     label: 'Code',
                     className: 'font-mono text-neutral-400',
                 },
 
-                /* -------- Fund Name + Logo -------- */
                 {
                     key: 'schemeName',
                     label: 'Fund',
@@ -49,19 +46,16 @@ export function MutualFundsTable({
                     ),
                 },
 
-                /* -------- AMC -------- */
                 {
                     key: 'amc',
                     label: 'AMC',
                 },
 
-                /* -------- Category -------- */
                 {
                     key: 'subCategory',
                     label: 'Category',
                 },
 
-                /* -------- Risk -------- */
                 {
                     key: 'risk',
                     label: 'Risk',
@@ -79,7 +73,6 @@ export function MutualFundsTable({
                     ),
                 },
 
-                /* -------- NAV -------- */
                 {
                     key: 'nav',
                     label: 'NAV',
@@ -95,7 +88,6 @@ export function MutualFundsTable({
                     ),
                 },
 
-                /* -------- Status -------- */
                 {
                     key: 'status',
                     label: 'Status',
