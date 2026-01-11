@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { MutualFundNavDocument } from "../../interfaces/mutual-fund/mutual-fund.schema.interface";
+import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
 
 const MutualFundNavSchema = new Schema<MutualFundNavDocument>(
     {
@@ -20,6 +21,10 @@ const MutualFundNavSchema = new Schema<MutualFundNavDocument>(
             type: Date,
             required: true,
         },
+        interval: {
+            type: String,
+            enum: Object.values(NavInterval)
+        },
 
         source: {
             type: String,
@@ -34,7 +39,7 @@ const MutualFundNavSchema = new Schema<MutualFundNavDocument>(
 );
 
 MutualFundNavSchema.index(
-    { schemeCode: 1, navDate: 1 },
+    { schemeCode: 1, navDate: 1, interval: 1 },
     { unique: true }
 );
 

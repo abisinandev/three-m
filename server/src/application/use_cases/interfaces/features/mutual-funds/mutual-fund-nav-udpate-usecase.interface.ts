@@ -1,5 +1,5 @@
-import { MutualFundNavDTO } from "@application/dto/mutual-funds/mutual-fund-nav-dto";
+import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
 
 export interface IMutualFundNavUpdatesUseCase {
-    execute(): Promise<void>;
+    execute(interval: NavInterval): Promise<void>;
 }

@@ -1,5 +1,5 @@
 export interface CagrDTO {
-    schemeCode: string;
+    schemeCode?: string;
 
     cagr1Y?: number;
     cagr3Y?: number;

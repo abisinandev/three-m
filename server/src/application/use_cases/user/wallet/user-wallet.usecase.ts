@@ -1,4 +1,4 @@
-import type { IUserWalletUseCase } from "../interfaces/user/user-wallet-usecase.interface";
+import type { IUserWalletUseCase } from "../../interfaces/user/user-wallet-usecase.interface";
 import type { FetchWalletDTO } from "@application/dto/user/fetch-wallet.dto";
 import type { WalletResponseDTO } from "@application/dto/user/wallet-response.dto";
 import type { TransactionResponseDTO } from "@application/dto/user/transaction-response.dto";

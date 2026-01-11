@@ -13,7 +13,7 @@ import {
 } from '@shared/services/admin/user-management/FetchUserDataApi';
 import { BlockUserDataApi } from '@shared/services/admin/user-management/BlockUserDataApi';
 import { UnblockUserApi } from '@shared/services/admin/user-management/UnblockUserApi';
-import { StatsCard } from '@shared/components/cards/UserManagementStatCards';
+import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { UserTable } from '../components/UserTable';
 import type { User } from '@shared/components/interfaces/IUserTable';
 
@@ -93,7 +93,7 @@ export default function UserManagement() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatsCard
+                <StatsCardComponent
                     title="Total Users"
                     value={stats.total}
                     icon={<Users />}
@@ -104,7 +104,7 @@ export default function UserManagement() {
                             : "No active funds"
                     }
                 />
-                <StatsCard
+                <StatsCardComponent
                     title="Active Users"
                     value={stats.active}
                     icon={<Users />}
@@ -115,7 +115,7 @@ export default function UserManagement() {
                             : "No active funds"
                     }
                 />
-                <StatsCard
+                <StatsCardComponent
                     title="Blocked Users"
                     value={stats.blocked}
                     icon={<Lock />}
@@ -126,7 +126,7 @@ export default function UserManagement() {
                             : "No active funds"
                     }
                 />
-                <StatsCard
+                <StatsCardComponent
                     title="Verified Users"
                     value={stats.verified}
                     icon={<Users />}

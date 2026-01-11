@@ -1,4 +1,12 @@
-export const StatsCard = ({ title, value, icon, color, subtitle }: any) => (
+type Props = {
+    title: string;
+    value: number | string;
+    icon?: any;
+    color?: any;
+    subtitle?: string;
+}
+
+export const StatsCardComponent = ({ title, value, icon, color, subtitle }: Props) => (
     <div className="bg-[#111111] border border-neutral-800 rounded-lg p-4">
         <div className="flex items-center justify-between">
             <div>

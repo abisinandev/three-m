@@ -1,5 +1,5 @@
 export interface IMutualFundNavUpdateProvider {
-    fetchLatestNav(schemeCode: string): Promise<{
+    fetchNavHistories(schemeCode: string): Promise<{
         schemeCode: string;
         nav: number;
         navDate: string;

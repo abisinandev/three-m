@@ -29,7 +29,7 @@ import { Route as AuthResetPasswordIndexRouteImport } from './routes/auth/reset-
 import { Route as AuthForgotPasswordIndexRouteImport } from './routes/auth/forgot-password/index'
 import { Route as UserWalletWithdrawRouteImport } from './routes/user/wallet/withdraw'
 import { Route as UserWalletAddToWalletRouteImport } from './routes/user/wallet/add-to-wallet'
-import { Route as UserMutualFundsDetailsRouteImport } from './routes/user/mutual-funds/details'
+import { Route as UserMutualFundsSchemeCodeRouteImport } from './routes/user/mutual-funds/$schemeCode'
 import { Route as UserPaymentPaymentSuccessRouteImport } from './routes/user/_payment/payment-success'
 import { Route as UserPaymentPaymentFailedRouteImport } from './routes/user/_payment/payment-failed'
 import { Route as AuthSignupVerifyOtpRouteImport } from './routes/auth/signup/verify-otp'
@@ -140,11 +140,12 @@ const UserWalletAddToWalletRoute = UserWalletAddToWalletRouteImport.update({
   path: '/wallet/add-to-wallet',
   getParentRoute: () => UserRoute,
 } as any)
-const UserMutualFundsDetailsRoute = UserMutualFundsDetailsRouteImport.update({
-  id: '/mutual-funds/details',
-  path: '/mutual-funds/details',
-  getParentRoute: () => UserRoute,
-} as any)
+const UserMutualFundsSchemeCodeRoute =
+  UserMutualFundsSchemeCodeRouteImport.update({
+    id: '/mutual-funds/$schemeCode',
+    path: '/mutual-funds/$schemeCode',
+    getParentRoute: () => UserRoute,
+  } as any)
 const UserPaymentPaymentSuccessRoute =
   UserPaymentPaymentSuccessRouteImport.update({
     id: '/_payment/payment-success',
@@ -218,7 +219,7 @@ export interface FileRoutesByFullPath {
   '/auth/signup/verify-otp': typeof AuthSignupVerifyOtpRoute
   '/user/payment-failed': typeof UserPaymentPaymentFailedRoute
   '/user/payment-success': typeof UserPaymentPaymentSuccessRoute
-  '/user/mutual-funds/details': typeof UserMutualFundsDetailsRoute
+  '/user/mutual-funds/$schemeCode': typeof UserMutualFundsSchemeCodeRoute
   '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
   '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
@@ -249,7 +250,7 @@ export interface FileRoutesByTo {
   '/auth/signup/verify-otp': typeof AuthSignupVerifyOtpRoute
   '/user/payment-failed': typeof UserPaymentPaymentFailedRoute
   '/user/payment-success': typeof UserPaymentPaymentSuccessRoute
-  '/user/mutual-funds/details': typeof UserMutualFundsDetailsRoute
+  '/user/mutual-funds/$schemeCode': typeof UserMutualFundsSchemeCodeRoute
   '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
   '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
@@ -282,7 +283,7 @@ export interface FileRoutesById {
   '/auth/signup/verify-otp': typeof AuthSignupVerifyOtpRoute
   '/user/_payment/payment-failed': typeof UserPaymentPaymentFailedRoute
   '/user/_payment/payment-success': typeof UserPaymentPaymentSuccessRoute
-  '/user/mutual-funds/details': typeof UserMutualFundsDetailsRoute
+  '/user/mutual-funds/$schemeCode': typeof UserMutualFundsSchemeCodeRoute
   '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
   '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
@@ -315,7 +316,7 @@ export interface FileRouteTypes {
     | '/auth/signup/verify-otp'
     | '/user/payment-failed'
     | '/user/payment-success'
-    | '/user/mutual-funds/details'
+    | '/user/mutual-funds/$schemeCode'
     | '/user/wallet/add-to-wallet'
     | '/user/wallet/withdraw'
     | '/auth/forgot-password'
@@ -346,7 +347,7 @@ export interface FileRouteTypes {
     | '/auth/signup/verify-otp'
     | '/user/payment-failed'
     | '/user/payment-success'
-    | '/user/mutual-funds/details'
+    | '/user/mutual-funds/$schemeCode'
     | '/user/wallet/add-to-wallet'
     | '/user/wallet/withdraw'
     | '/auth/forgot-password'
@@ -378,7 +379,7 @@ export interface FileRouteTypes {
     | '/auth/signup/verify-otp'
     | '/user/_payment/payment-failed'
     | '/user/_payment/payment-success'
-    | '/user/mutual-funds/details'
+    | '/user/mutual-funds/$schemeCode'
     | '/user/wallet/add-to-wallet'
     | '/user/wallet/withdraw'
     | '/auth/forgot-password/'
@@ -540,11 +541,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserWalletAddToWalletRouteImport
       parentRoute: typeof UserRoute
     }
-    '/user/mutual-funds/details': {
-      id: '/user/mutual-funds/details'
-      path: '/mutual-funds/details'
-      fullPath: '/user/mutual-funds/details'
-      preLoaderRoute: typeof UserMutualFundsDetailsRouteImport
+    '/user/mutual-funds/$schemeCode': {
+      id: '/user/mutual-funds/$schemeCode'
+      path: '/mutual-funds/$schemeCode'
+      fullPath: '/user/mutual-funds/$schemeCode'
+      preLoaderRoute: typeof UserMutualFundsSchemeCodeRouteImport
       parentRoute: typeof UserRoute
     }
     '/user/_payment/payment-success': {
@@ -678,7 +679,7 @@ interface UserRouteChildren {
   UserProfileRoute: typeof UserProfileRoute
   UserPaymentPaymentFailedRoute: typeof UserPaymentPaymentFailedRoute
   UserPaymentPaymentSuccessRoute: typeof UserPaymentPaymentSuccessRoute
-  UserMutualFundsDetailsRoute: typeof UserMutualFundsDetailsRoute
+  UserMutualFundsSchemeCodeRoute: typeof UserMutualFundsSchemeCodeRoute
   UserWalletAddToWalletRoute: typeof UserWalletAddToWalletRoute
   UserWalletWithdrawRoute: typeof UserWalletWithdrawRoute
   UserMutualFundsIndexRoute: typeof UserMutualFundsIndexRoute
@@ -691,7 +692,7 @@ const UserRouteChildren: UserRouteChildren = {
   UserProfileRoute: UserProfileRoute,
   UserPaymentPaymentFailedRoute: UserPaymentPaymentFailedRoute,
   UserPaymentPaymentSuccessRoute: UserPaymentPaymentSuccessRoute,
-  UserMutualFundsDetailsRoute: UserMutualFundsDetailsRoute,
+  UserMutualFundsSchemeCodeRoute: UserMutualFundsSchemeCodeRoute,
   UserWalletAddToWalletRoute: UserWalletAddToWalletRoute,
   UserWalletWithdrawRoute: UserWalletWithdrawRoute,
   UserMutualFundsIndexRoute: UserMutualFundsIndexRoute,

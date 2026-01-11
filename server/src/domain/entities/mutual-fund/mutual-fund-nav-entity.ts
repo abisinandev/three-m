@@ -1,9 +1,12 @@
+import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
+
 export class MutualFundNavEntity {
     private readonly _id?: string;
     private readonly _schemeCode: string;
     private readonly _nav: number;
     private readonly _navDate: Date;
     private readonly _source: string;
+    private readonly _interval: NavInterval;
     private readonly _createdAt?: Date;
     private readonly _updatedAt?: Date;
 
@@ -13,6 +16,7 @@ export class MutualFundNavEntity {
         nav: number;
         navDate: Date;
         source: string;
+        interval: NavInterval;
         createdAt?: Date;
         updatedAt?: Date;
     }) {
@@ -21,6 +25,7 @@ export class MutualFundNavEntity {
         this._nav = props.nav;
         this._navDate = props.navDate;
         this._source = props.source;
+        this._interval = props.interval;
         this._createdAt = props.createdAt;
         this._updatedAt = props.updatedAt;
     }
@@ -30,21 +35,24 @@ export class MutualFundNavEntity {
         nav: number;
         navDate: Date;
         source: string;
+        interval: NavInterval;
     }): MutualFundNavEntity {
         return new MutualFundNavEntity({
             schemeCode: data.schemeCode,
             nav: data.nav,
             source: data.source,
             navDate: data.navDate,
+            interval: data.interval,
         });
     }
 
     static fromPersistance(props: {
-        id: string;
+        id?: string;
         schemeCode: string;
         nav: number;
         navDate: Date;
         source: string;
+        interval: NavInterval;
         createdAt: Date;
         updatedAt: Date;
     }): MutualFundNavEntity {
@@ -54,6 +62,7 @@ export class MutualFundNavEntity {
             nav: props.nav,
             navDate: props.navDate,
             source: props.source,
+            interval: props.interval,
             createdAt: props.createdAt,
             updatedAt: props.updatedAt
         })
@@ -75,8 +84,12 @@ export class MutualFundNavEntity {
         return this._navDate;
     };
 
-    get source(): string{
+    get source(): string {
         return this._source;
+    }
+
+    get interval(): NavInterval{
+        return this._interval;
     }
 
     get createdAt(): Date | undefined {

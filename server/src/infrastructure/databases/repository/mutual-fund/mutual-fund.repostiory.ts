@@ -58,7 +58,16 @@ export class MutualFundRepository extends BaseRepository<MutualFundEntity, Mutua
                     from: "mutualfundnavs",
                     let: { schemeCode: "$schemeCode" },
                     pipeline: [
-                        { $match: { $expr: { $eq: ["$schemeCode", "$$schemeCode"] } } },
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$schemeCode", "$$schemeCode"] },
+                                        { $eq: ["$interval", "DAILY"] }
+                                    ]
+                                }
+                            }
+                        },
                         { $sort: { navDate: -1 } },
                         { $limit: 1 },
                     ],
@@ -74,23 +83,23 @@ export class MutualFundRepository extends BaseRepository<MutualFundEntity, Mutua
         ]);
 
         return docs.map((doc) => this.mapper.toDomain(doc));
-    }
+    };
 
 
     async createFund(entities: MutualFundEntity, session?: ClientSession): Promise<void> {
         const doc = this.mapper.toPersistance(entities);
         await this.model.create(doc);
-    }
+    };
 
     async findBySchemeCode(schemeCode: string): Promise<MutualFundEntity | null> {
         const doc = await this.model.findOne({ schemeCode });
         if (!doc) return null;
         return this.mapper.toDomain(doc);
-    }
+    };
 
     async saveFunds(date: Date, nav: number): Promise<void> {
         await this.model.create({});
-    }
+    };
 
 
     async findActiveFunds(): Promise<{ funds: MutualFundEntity[], countActiveFunds: number }> {
@@ -100,7 +109,7 @@ export class MutualFundRepository extends BaseRepository<MutualFundEntity, Mutua
             funds: docs.map(doc => this.mapper.toDomain(doc)),
             countActiveFunds: count,
         };
-    }
+    };
 
     async findInactiveFunds(): Promise<{ funds: MutualFundEntity[]; countInactiveFunds: number; }> {
         const docs = await this.model.find({ status: "Inactive" });
@@ -109,5 +118,5 @@ export class MutualFundRepository extends BaseRepository<MutualFundEntity, Mutua
             funds: docs.map(doc => this.mapper.toDomain(doc)),
             countInactiveFunds: count,
         };
-    }
-}  
+    };
+};

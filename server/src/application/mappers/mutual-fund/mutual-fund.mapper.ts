@@ -39,6 +39,6 @@ export const toMutualFundResponse = (data: MutualFundEntity, cagr?: CagrDTO): Fu
             cagr3Y: Number(cagr?.cagr3Y),
             cagr4Y: Number(cagr?.cagr5Y),
             updatedAt: cagr?.updatedAt as Date,
-        }
+        },
     }
 }

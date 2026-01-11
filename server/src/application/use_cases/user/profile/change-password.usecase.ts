@@ -8,7 +8,7 @@ import {
   ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { IChangePasswordUseCase } from "../interfaces/user/change-password.usecase.interface";
+import type { IChangePasswordUseCase } from "../../interfaces/user/change-password.usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()

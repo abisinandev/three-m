@@ -1,3 +1,5 @@
+import { MutualFundNavDTO } from "./mutual-fund-nav-dto";
+
 export interface FundListDTO {
   id: string;
   schemeCode: string;
@@ -19,4 +21,5 @@ export interface FundListDTO {
 
   createdAt?: Date,
   updatedAt?: Date,
+  navHistory?:MutualFundNavDTO[],
 };

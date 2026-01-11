@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IListFundsUserSideUseCase } from "../interfaces/features/mutual-funds/list-fund-usecase.interface";
+import { IListFundsUserSideUseCase } from "../../interfaces/features/mutual-funds/list-fund-usecase.interface";
 import { FundListDTO } from "@application/dto/mutual-funds/mutual-fund-response.dto";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { toMutualFundResponse } from "@application/mappers/mutual-fund/mutual-fund.mapper";

@@ -1,8 +1,8 @@
 import { Schema, model, Types } from "mongoose";
-import { InvestmentDocument } from "../interfaces/mutual-fund/investment.schema.interface";
 import { InvestmentStatus, InvestmentType } from "@domain/enum/funds/investment.enums";
+import { InvestmentDocument } from "../../interfaces/mutual-fund/investment.schema.interface";
 
-const InvestmentSchema = new Schema<InvestmentDocument>(
+const InvestmentSchema = new Schema<InvestmentDocument  >(
     {
         userId: {
             type: Schema.Types.ObjectId,

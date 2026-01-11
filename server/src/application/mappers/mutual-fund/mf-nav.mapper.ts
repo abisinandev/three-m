@@ -7,6 +7,7 @@ export const toEntity = (dto: MutualFundNavDTO) => {
         navDate: dto.navDate,
         schemeCode: dto.schemeCode,
         source: dto.source,
+        interval: dto.interval,
     })
 }
 
@@ -18,6 +19,7 @@ export const toNavResponse = (data: MutualFundNavEntity): MutualFundNavDTO => {
         nav: data.nav,
         navDate: data.navDate,
         source: data.source,
+        interval: data.interval,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
     }

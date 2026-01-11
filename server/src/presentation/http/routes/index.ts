@@ -6,9 +6,9 @@ import adminAuthRoute from "@presentation/http/routes/admin/admin-auth.routes";
 import authRoute from "@presentation/http/routes/auth/auth.routes";
 import userRoute from "@presentation/http/routes/user/user.routes";
 import paymentRoutes from "@presentation/http/routes/user/payment.routes";
-import mutualFundRoutes from '@presentation/http/routes/features/mutual-fund-admin.routes';
+import mutualFundRoutes from '@presentation/http/routes/admin/mutual-fund-admin.routes';
 import fileUploadRoutes from '@presentation/http/routes/file-upload/file-upload.routes';
-import mutualFundUserRoues from '@presentation/http/routes/features/mutual-fund-user.routes';
+import mutualFundUserRoues from '@presentation/http/routes/user/mutual-fund-user.routes';
 import type { Application } from "express";
 
 export const RegisterRoutes = (app: Application) => {

@@ -19,10 +19,9 @@ export class MfCagrUseCase implements IMfCagrUseCase {
 
     async execute(): Promise<void> {
         const { funds } = await this._mutualFundRepository.findActiveFunds();
+
         for (const fund of funds) {
-            const result = await this._navUpdateProvider.fetchLatestNav(fund.schemeCode);
-
-
+            const result = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
             const parsedNavs: ParsedNav[] = result.map(item => ({
                 date: new Date(item.navDate),
                 nav: item.nav

@@ -5,33 +5,34 @@ import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/e
 import { toEntity } from "@application/mappers/mutual-fund/mf-nav.mapper";
 import { IMutualFundNavRepository } from "@application/interfaces/repositories/feature/mutual-fund-nav-repository.interface";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
+import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
 
 @injectable()
 export class MutualFundNavUpdate implements IMutualFundNavUpdatesUseCase {
     constructor(
         @inject(FEATURE_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
-        @inject(FEATURE_TYPES.MutualFundNavRepsitory) private readonly _mutualFundNavRepository: IMutualFundNavRepository,
+        @inject(FEATURE_TYPES.MutualFundNavRepository) private readonly _mutualFundNavRepository: IMutualFundNavRepository,
         @inject(FEATURE_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
     ) { }
 
-    async execute(): Promise<void> {
-
+    async execute(interval: NavInterval): Promise<void> {
         const { funds } = await this._mutualFundRepository.findActiveFunds();
         for (const fund of funds) {
-            const result = await this._navUpdateProvider.fetchLatestNav(fund.schemeCode);
-
-            const entity = toEntity({
-                nav: result[0].nav,
-                navDate: new Date(result[0].navDate),
-                schemeCode: result[0].schemeCode,
-                source: "MF_API",
-            });
-
-            try {
-                await this._mutualFundNavRepository.create(entity);
-            } catch (error) {
-                return
+            const navs = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
+            for (let data of navs) {
+                const entity = toEntity({
+                    nav: data.nav,
+                    navDate: new Date(data.navDate),
+                    schemeCode: data.schemeCode,
+                    interval,
+                    source: "MF_API",
+                });
+                try {
+                    await this._mutualFundNavRepository.upsertDocument(entity);
+                } catch (error) {
+                    return
+                }
             }
         }
     }
-}
+}   

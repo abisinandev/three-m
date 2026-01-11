@@ -11,7 +11,7 @@ export class NavUpdateProvider implements IMutualFundNavUpdateProvider {
         @inject(FEATURE_TYPES.HttpClient) private readonly httpClient: IHttpClient
     ) { }
 
-    async fetchLatestNav(schemeCode: string): Promise<{
+    async fetchNavHistories(schemeCode: string): Promise<{
         schemeCode: string;
         nav: number;
         navDate: string;

@@ -2,17 +2,21 @@ import connectDB from "@infrastructure/databases/mongo_db/mongo.db";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import app from "./app";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
-import { NavUpdateScheduler } from "@infrastructure/providers/cron-scheduler/nav-cron.scheduler";
+import { NavDailyScheduler } from "@infrastructure/providers/cron-scheduler/nav-cron.scheduler";
 import { CagrUpdateScheduler } from "@infrastructure/providers/cron-scheduler/cagr-cron-scheduler";
+import { NavMontlyScheduler } from "@infrastructure/providers/cron-scheduler/nav-monthly-scheduler";
+import { NavYearScheduler } from "@infrastructure/providers/cron-scheduler/nav-yearly.scheduler";
 
 const bootstrap = async () => {
   try {
     await connectDB();
 
     //cron-scheduler
-    NavUpdateScheduler();
+    NavDailyScheduler();
+    NavMontlyScheduler();
+    NavYearScheduler();
     CagrUpdateScheduler();
-    
+
     app.listen(env.PORT, () => {
       logger.info(`Server running on PORT: ${env.PORT}`);
     });

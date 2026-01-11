@@ -3,7 +3,7 @@ import { NavInterval } from '@domain/enum/funds/nav-intervals.enums';
 import { container } from '@infrastructure/inversify_di/inversify.di';
 import cron from 'node-cron';
 
-export function NavDailyScheduler() {
+export function NavMontlyScheduler() {
     cron.schedule(
         "0 22,23 * * *",
         async () => {
@@ -11,7 +11,7 @@ export function NavDailyScheduler() {
 
             try {
                 const useCase = container.get<MutualFundNavUpdate>(MutualFundNavUpdate);
-                await useCase.execute(NavInterval.DAILY);
+                await useCase.execute(NavInterval.MONTHLY);
 
                 console.log("[NAV-CRON] NAV sync completed");
             } catch (error) {
@@ -22,4 +22,4 @@ export function NavDailyScheduler() {
             timezone: "Asia/Kolkata",
         }
     );
-}   
+}

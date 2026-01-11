@@ -6,7 +6,6 @@ export function CagrUpdateScheduler() {
     cron.schedule("0 22,23 * * *",
         async () => {
             console.log("CAGR updated");
-
             try {
                 const useCase = container.get<MfCagrUseCase>(MfCagrUseCase);
                 await useCase.execute();
@@ -15,5 +14,6 @@ export function CagrUpdateScheduler() {
             } catch (error) {
                 console.error("CAGR updation failed", error);
             }
-        });
+        }
+    );
 }

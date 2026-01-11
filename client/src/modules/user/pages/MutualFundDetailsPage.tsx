@@ -1,207 +1,221 @@
-import React from 'react';
-import { Wallet, ChevronDown, Menu, Bell } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+'use client';
+
+import { useMemo, useState } from 'react';
+import { Star, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import api from '@lib/axiosUser';
+import { useParams } from '@tanstack/react-router';
+import ApexChart from 'react-apexcharts';
+
+type NavHistory = {
+  nav: number;
+  navDate: string;
+  interval: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+};
+
+type FundDetails = {
+  id: string;
+  schemeCode: string;
+  schemeName: string;
+  amc: string;
+  category: string;
+  subCategory: string;
+  risk: string;
+  status: string;
+  nav: number;
+  navDate: string;
+  logo: string;
+  navHistory: NavHistory[];
+};
+
+type ChartPoint = { date: string; nav: number; };
+
+function buildChartData(navHistory: NavHistory[]): ChartPoint[] {
+  return [...navHistory]
+    .sort((a, b) => new Date(a.navDate).getTime() - new Date(b.navDate).getTime())
+    .map(n => ({
+      date: new Date(n.navDate).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
+      nav: n.nav,
+    }));
+}
+
+function calculateReturn(history: NavHistory[]) {
+  if (history.length < 2) return 0;
+  const start = history[0].nav;
+  const end = history[history.length - 1].nav;
+  return ((end - start) / start) * 100;
+}
 
 const MutualFundDetailsPage = () => {
-  // Mock performance data for the chart (growth over time)
-  const performanceData = [
-    { name: 'Jan 21', fund: 100, benchmark: 100 },
-    { name: 'Jan 22', fund: 115, benchmark: 112 },
-    { name: 'Jan 23', fund: 128, benchmark: 125 },
-    { name: 'Jan 24', fund: 145, benchmark: 140 },
-    { name: 'Jan 25', fund: 162, benchmark: 155 },
-    { name: 'Jan 26', fund: 180, benchmark: 170 },
-  ];
+  const { schemeCode } = useParams({ from: '/user/mutual-funds/$schemeCode' });
+
+  const [activePeriod, setActivePeriod] = useState<'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY'>('MONTHLY');
+
+  const { data, isLoading, error } = useQuery<FundDetails>({
+    queryKey: ['fund-details', schemeCode, activePeriod],
+    queryFn: async () => {
+      const res = await api.get(`/user/mutual-funds/${schemeCode}`, {
+        params: { interval: activePeriod },
+      });
+      return res.data.data;
+    },
+    staleTime: 60000,
+  });
+
+  const chartData = useMemo(() => data?.navHistory ? buildChartData(data.navHistory) : [], [data?.navHistory]);
+  const periodReturn = useMemo(() => data?.navHistory ? calculateReturn(data.navHistory) : 0, [data?.navHistory]);
+
+  const periods = ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'] as const;
+
+  if (isLoading) return <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><div className="animate-spin h-8 w-8 border-b-2 border-emerald-500" /></div>;
+  if (error || !data) return <div className="min-h-screen bg-[#0a0a0a] text-red-400 flex items-center justify-center">Failed to load</div>;
+
+  const isPositive = periodReturn >= 0;
 
   return (
-    <div className="min-h-screen bg-black text-white font-inter antialiased">
-      {/* Header - Matching your app theme */}
-      <header className="bg-[#0f0f0f] border-b border-[#1f1f1f]">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between text-sm">
-          <div className="flex items-center">
-            <h1 className="text-xl font-bold tracking-tighter">
-              <span className="text-white">three</span>
-              <span className="text-[#22C55E]">M</span>
-            </h1>
-          </div>
+    <div className="min-h-screen bg-[#0a0a0a] text-white pb-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-5 py-6 space-y-6 text-sm">
 
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 bg-[#171717] px-3 py-1.5 rounded-full border border-[#2a2a2a] text-xs font-medium">
-              <Wallet className="w-3.5 h-3.5 text-[#22C55E]" />
-              <span>₹1,24,500</span>
+        {/* Header - compact */}
+        <div className="bg-[#111] border border-[#222] rounded-xl p-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <img src={data.logo} alt="" className="w-12 h-12 rounded-lg" />
+              <div>
+                <h1 className="text-lg font-semibold">{data.schemeName}</h1>
+                <p className="text-xs text-gray-400">{data.category} • {data.subCategory}</p>
+                <div className="flex gap-2 mt-1.5">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-yellow-900/40 text-yellow-400 border border-yellow-800/30">
+                    {data.risk}
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-900/40 text-emerald-400 border border-emerald-800/30">
+                    {data.status}
+                  </span>
+                </div>
+              </div>
             </div>
-            <button className="relative p-2 rounded-lg hover:bg-[#1a1a1a] transition-colors group">
-              <Bell className="w-4.5 h-4.5 text-gray-400 group-hover:text-gray-200" />
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-[#0f0f0f]">3</span>
-            </button>
-            <button className="lg:hidden">
-              <Menu size={20} className="text-gray-400" />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 py-6">
-        {/* Fund Header - Compact like Figma */}
-        <div className="mb-6">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center text-xl font-bold">H</div>
-            <div>
-              <h1 className="text-xl font-bold">HDFC Top 100 Fund</h1>
-              <p className="text-sm text-gray-400">Direct Plan • Large Cap Equity Returns</p>
-            </div>
-            <div className="ml-auto flex items-center gap-2 text-xs">
-              <span className="text-gray-400">5 Star</span>
-              <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-xs font-bold">5</div>
-            </div>
+            <Star className="text-emerald-500 h-5 w-5" />
           </div>
         </div>
 
-        {/* Time Period Tabs - Compact */}
-        <div className="flex gap-2 mb-6 overflow-x-auto">
-          {['1D', '1W', '1M', '3M', '6M', '1Y', '3Y', '5Y', 'MAX'].map((period) => (
-            <button
-              key={period}
-              className={`px-3 py-1.5 text-xs rounded-lg border ${period === '1Y' ? 'bg-[#22C55E] text-black border-[#22C55E]' : 'border-[#333] text-gray-400 hover:text-white'}`}
-            >
-              {period}
-            </button>
-          ))}
-        </div>
+        <div className="grid lg:grid-cols-12 gap-5">
 
-        {/* Performance Chart - Smaller height */}
-        <section className="mb-8">
-          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-xl p-4 h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={performanceData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1f1f1f" />
-                <XAxis dataKey="name" stroke="#666" tick={{ fontSize: 10 }} />
-                <YAxis stroke="#666" tick={{ fontSize: 10 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#111', border: '1px solid #333', fontSize: 12 }} />
-                <Line type="monotone" dataKey="fund" stroke="#22C55E" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="benchmark" stroke="#666" strokeWidth={1.5} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </section>
+          {/* Main - Chart + Stats */}
+          <div className="lg:col-span-8 space-y-5">
 
-        {/* Period Returns Table - Compact */}
-        <section className="mb-8">
-          <h2 className="text-lg font-semibold mb-3">Period Returns</h2>
-          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-xl overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-[#171717] text-gray-400 text-xs">
-                <tr>
-                  <th className="px-4 py-2 text-left">Period</th>
-                  <th className="px-4 py-2 text-right">Fund</th>
-                  <th className="px-4 py-2 text-right">Benchmark</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-t border-[#1f1f1f]">
-                  <td className="px-4 py-2 text-gray-400">1 Month</td>
-                  <td className="px-4 py-2 text-right text-green-400">+3.2%</td>
-                  <td className="px-4 py-2 text-right text-green-400">+2.8%</td>
-                </tr>
-                <tr className="border-t border-[#1f1f1f]">
-                  <td className="px-4 py-2 text-gray-400">3 Months</td>
-                  <td className="px-4 py-2 text-right text-green-400">+6.5%</td>
-                  <td className="px-4 py-2 text-right text-green-400">+7.1%</td>
-                </tr>
-                <tr className="border-t border-[#1f1f1f]">
-                  <td className="px-4 py-2 text-gray-400">6 Months</td>
-                  <td className="px-4 py-2 text-right text-green-400">+12.8%</td>
-                  <td className="px-4 py-2 text-right text-green-400">+11.2%</td>
-                </tr>
-                <tr className="border-t border-[#1f1f1f]">
-                  <td className="px-4 py-2 text-gray-400">1 Year</td>
-                  <td className="px-4 py-2 text-right text-green-400">+20.2%</td>
-                  <td className="px-4 py-2 text-right text-green-400">+18.5%</td>
-                </tr>
-                <tr className="border-t border-[#1f1f1f]">
-                  <td className="px-4 py-2 text-gray-400">3 Years</td>
-                  <td className="px-4 py-2 text-right text-green-400">+15.8%</td>
-                  <td className="px-4 py-2 text-right text-green-400">+14.2%</td>
-                </tr>
-                <tr className="border-t border-[#1f1f1f]">
-                  <td className="px-4 py-2 text-gray-400">5 Years</td>
-                  <td className="px-4 py-2 text-right text-green-400">+13.5%</td>
-                  <td className="px-4 py-2 text-right text-green-400">+12.8%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+            {/* Chart Card */}
+            <div className="bg-[#111] border border-[#222] rounded-xl overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[#222]">
+                <h2 className="text-base font-medium">NAV Trend</h2>
+                <div className="flex gap-1.5">
+                  {periods.map(p => (
+                    <button
+                      key={p}
+                      onClick={() => setActivePeriod(p)}
+                      className={`px-3 py-1.5 text-xs rounded-md font-medium transition-colors ${
+                        p === activePeriod
+                          ? 'bg-emerald-600 text-white'
+                          : 'text-gray-400 hover:bg-[#1a1a1a]'
+                      }`}
+                    >
+                      {p.charAt(0) + p.slice(1).toLowerCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-        {/* Top Holdings - Compact */}
-        <section className="mb-8">
-          <h2 className="text-lg font-semibold mb-3">Top Holdings</h2>
-          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-xl p-4 space-y-3">
-            <div className="flex justify-between text-sm">
-              <span>Reliance Industries</span>
-              <span className="text-green-400">+1.2%</span>
+              <div className="p-3">
+                <ApexChart
+                  type="area"
+                  height={260}
+                  options={{
+                    chart: {
+                      toolbar: { show: false },
+                      zoom: { enabled: false },
+                      fontFamily: 'system-ui, sans-serif',
+                    },
+                    colors: ['#10b981'],
+                    stroke: { curve: 'smooth', width: 2.5 },
+                    fill: {
+                      type: 'gradient',
+                      gradient: { opacityFrom: 0.55, opacityTo: 0.08, shadeIntensity: 0.4 },
+                    },
+                    grid: { borderColor: '#1f2937', strokeDashArray: 3 },
+                    xaxis: {
+                      categories: chartData.map(d => d.date),
+                      labels: { style: { colors: '#6b7280', fontSize: '11px' } },
+                      tickAmount: 6,
+                    },
+                    yaxis: {
+                      labels: {
+                        formatter: val => `₹${Math.round(val)}`,
+                        style: { colors: '#6b7280', fontSize: '11px' },
+                      },
+                    },
+                    tooltip: {
+                      theme: 'dark',
+                      x: { show: false },           // ← hide date in tooltip
+                      y: { formatter: val => `₹${val.toFixed(2)}` },
+                      marker: { show: true },
+                      style: { fontSize: '13px' },
+                    },
+                  }}
+                  series={[{ name: 'NAV', data: chartData.map(d => d.nav) }]}
+                />
+              </div>
             </div>
-            <div className="flex justify-between text-sm">
-              <span>HDFC Bank <span className="text-xs text-gray-500">(7.82% of AUM)</span></span>
-              <span className="text-green-400">+0.8%</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Infosys <span className="text-xs text-gray-500">(6.01% of AUM)</span></span>
-              <span className="text-red-400">-0.3%</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>TCS <span className="text-xs text-gray-500">(6.23% of AUM)</span></span>
-              <span className="text-green-400">+0.5%</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>ICICI Bank <span className="text-xs text-gray-500">(5.67% of AUM)</span></span>
-              <span className="text-green-400">+1.1%</span>
-            </div>
-          </div>
-        </section>
 
-        {/* Key Metrics Row */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold">1296.12</p>
-            <p className="text-xs text-gray-400">NAV</p>
-            <p className="text-xs text-green-400">+0.32%</p>
+            {/* Stats - smaller */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-[#111] border border-[#222] rounded-lg p-3.5 text-center">
+                <p className="text-xl font-bold">₹{data.nav.toFixed(2)}</p>
+                <p className="text-xs text-gray-400 mt-0.5">NAV</p>
+              </div>
+              <div className="bg-[#111] border border-[#222] rounded-lg p-3.5 text-center">
+                <p className={`text-xl font-bold ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {isPositive ? '+' : ''}{periodReturn.toFixed(1)}%
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">{activePeriod}</p>
+              </div>
+              <div className="bg-[#111] border border-[#222] rounded-lg p-3.5 text-center">
+                <p className="text-xl font-bold">10,390 Cr</p>
+                <p className="text-xs text-gray-400 mt-0.5">AUM</p>
+              </div>
+              <div className="bg-[#111] border border-[#222] rounded-lg p-3.5 text-center">
+                <p className="text-xl font-bold">0.75%</p>
+                <p className="text-xs text-gray-400 mt-0.5">Exp Ratio</p>
+              </div>
+            </div>
           </div>
-          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold">40,617 Cr</p>
-            <p className="text-xs text-gray-400">AUM</p>
-          </div>
-          <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold">0.96%</p>
-            <p className="text-xs text-gray-400">Expense Ratio</p>
+
+          {/* Right side - compact */}
+          <div className="lg:col-span-4 space-y-5">
+
+            <div className="bg-[#111] border border-[#222] rounded-xl p-4 text-xs">
+              <h3 className="text-sm font-medium mb-3">Asset Allocation</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between"><span className="text-gray-300">Equity</span><span className="text-emerald-400">92.4%</span></div>
+                <div className="flex justify-between"><span className="text-gray-300">Debt</span><span className="text-blue-400">4.1%</span></div>
+                <div className="flex justify-between"><span className="text-gray-300">Cash</span><span className="text-amber-400">3.5%</span></div>
+              </div>
+            </div>
+
+            <div className="bg-[#111] border border-[#222] rounded-xl p-4 text-xs">
+              <h3 className="text-sm font-medium mb-3">Recent NAV</h3>
+              <div className="space-y-2">
+                {data.navHistory.slice(-5).reverse().map((item, i) => (
+                  <div key={i} className="flex justify-between py-1 border-b border-[#222] last:border-0">
+                    <span className="text-gray-300">
+                      {new Date(item.navDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                    </span>
+                    <span>₹{item.nav.toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* CTA Buttons */}
-        <div className="flex gap-4 justify-center mb-8">
-          <button className="bg-[#22C55E] hover:bg-[#16a34a] text-black font-bold py-3 px-10 rounded-xl transition text-base">
-            Buy
-          </button>
-          <button className="bg-[#22C55E] hover:bg-[#16a34a] text-black font-bold py-3 px-10 rounded-xl transition text-base">
-            SIP
-          </button>
-        </div>
-
-        {/* Fund Manager - Bottom */}
-        <div className="flex items-center justify-between bg-[#0f0f0f] border border-[#1f1f1f] rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-sm font-bold">H</div>
-            <div>
-              <p className="text-sm font-semibold">HDFC Top 100 Fund</p>
-              <p className="text-xs text-gray-400">Direct Plan • Large Cap Equity Returns</p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-sm font-semibold">Fund Manager</p>
-            <p className="text-sm text-gray-400">Rahul Baijal</p>
-          </div>
-        </div>
-      </main>
+      </div>
     </div>
   );
 };

@@ -12,7 +12,7 @@ import type {
 import { Pagination } from '@shared/components/pagination/Pagination';
 import { MutualFundsTable } from '../components/MutualFundTable';
 import { fetchMutualFunds, updateStatus } from '@shared/services/admin/mutual-fund-management/MutualFundAdminSide';
-import { StatsCard } from '@shared/components/cards/UserManagementStatCards';
+import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 
 
 export default function MutualFundsPage() {
@@ -122,7 +122,7 @@ export default function MutualFundsPage() {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatsCard
+                <StatsCardComponent
                     title="Total Funds"
                     value={total.toLocaleString()}
                     icon={<Layers className="w-5 h-5 text-blue-400" />}
@@ -130,7 +130,7 @@ export default function MutualFundsPage() {
                     subtitle="All listed mutual funds"
                 />
 
-                <StatsCard
+                <StatsCardComponent
                     title="Active Funds"
                     value={totalActive.toLocaleString()}
                     icon={<CheckCheck className="w-5 h-5 text-emerald-400" />}
@@ -142,7 +142,7 @@ export default function MutualFundsPage() {
                     }
                 />
 
-                <StatsCard
+                <StatsCardComponent
                     title="Inactive Funds"
                     value={totalInactive.toLocaleString()}
                     icon={<Ban className="w-5 h-5 text-orange-400" />}
@@ -154,7 +154,7 @@ export default function MutualFundsPage() {
                     }
                 />
 
-                <StatsCard
+                <StatsCardComponent
                     title="Updated Today"
                     value={todayUpdated.toLocaleString()}
                     icon={<Clock className="w-5 h-5 text-cyan-400" />}
