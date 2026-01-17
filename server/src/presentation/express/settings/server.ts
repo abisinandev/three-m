@@ -6,6 +6,7 @@ import { NavDailyScheduler } from "@infrastructure/providers/cron-scheduler/nav-
 import { CagrUpdateScheduler } from "@infrastructure/providers/cron-scheduler/cagr-cron-scheduler";
 import { NavMontlyScheduler } from "@infrastructure/providers/cron-scheduler/nav-monthly-scheduler";
 import { NavYearScheduler } from "@infrastructure/providers/cron-scheduler/nav-yearly.scheduler";
+import { NavAllocationScheduler } from "@infrastructure/providers/cron-scheduler/nav-allocatation-scheduler";
 
 const bootstrap = async () => {
   try {
@@ -16,6 +17,7 @@ const bootstrap = async () => {
     NavMontlyScheduler();
     NavYearScheduler();
     CagrUpdateScheduler();
+    NavAllocationScheduler();
 
     app.listen(env.PORT, () => {
       logger.info(`Server running on PORT: ${env.PORT}`);
@@ -25,5 +27,5 @@ const bootstrap = async () => {
     process.exit(1);
   }
 };
-
+   
 bootstrap();

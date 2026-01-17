@@ -42,11 +42,13 @@ const MutualFundDashboard = () => {
         [debouncedSearch, selectedFilters]
     );
 
-    const { data: funds = [], isLoading } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey,
         queryFn: () => fetchMutualFunds(debouncedSearch, selectedFilters),
         placeholderData: (prev) => prev,
     });
+
+    const funds = data?.data ?? [];
 
     const portfolioAllocation = [
         { name: 'Equity', value: 65, color: '#3B82F6' },
@@ -78,7 +80,7 @@ const MutualFundDashboard = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <StatCard
                         title="Invested"
-                        value="₹24.45L"
+                        value={"₹" + data?.totalInvestments}
                         subtitle="Total invested"
                         icon={<Wallet size={20} className="text-blue-400" />}
                         colorClass="bg-blue-950/30 border-blue-900/40"

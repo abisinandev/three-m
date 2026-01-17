@@ -3,7 +3,7 @@ import { container } from '@infrastructure/inversify_di/inversify.di';
 import cron from 'node-cron'
 
 export function CagrUpdateScheduler() {
-    cron.schedule("0 22,23 * * *",
+    cron.schedule("0 2,3 * * *",
         async () => {
             console.log("CAGR updated");
             try {

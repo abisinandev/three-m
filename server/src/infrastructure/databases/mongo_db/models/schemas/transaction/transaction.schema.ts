@@ -64,7 +64,7 @@ const TransactionSchema = new Schema<TransactionDocument>(
         units: {
             type: Number,
             default: null,
-        },
+        },//Not necessary to store units its make verdict
 
         txHash: {
             type: String,
@@ -92,8 +92,8 @@ const TransactionSchema = new Schema<TransactionDocument>(
 
         paymentIntentId: {
             type: String,
-            required: true,
-            unique: true,
+            // required: true,
+            // unique: true,
         },
     },
     {

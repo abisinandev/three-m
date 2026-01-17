@@ -1,19 +1,21 @@
-import { InvestmentStatus, InvestmentType } from "@domain/enum/funds/investment.enums";
+import { InvestmentStatus, InvestmentType, PaymentMethod } from "@domain/enum/funds/investment.enums";
 import { Document, Types } from "mongoose";
 
 export interface InvestmentDocument extends Document {
-    id: Types.ObjectId;
+    _id: Types.ObjectId;
 
-    userId: Types.ObjectId;  
-    schemeCode: string;              
+    userId: Types.ObjectId;
+    schemeCode: string;
 
-    type: InvestmentType;
     amount: number;
     units: number;
-
+    remainingUnits: number;
+    redeemedUnits: number;
+    redeemedAt: Date;
     nav: number;
     navDate: Date;
-
+    investmentType: InvestmentType,
+    paymentMethod: PaymentMethod
     status: InvestmentStatus;
 
     createdAt: Date;

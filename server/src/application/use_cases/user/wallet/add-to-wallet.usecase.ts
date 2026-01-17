@@ -1,7 +1,7 @@
-import type { AddToWalletDTO } from "@application/dto/user/add-to-wallet.dto";
+import type { WalletDTO } from "@application/dto/user/add-to-wallet.dto";
 import type { IAddToWalletUseCase } from "../../interfaces/user/add-to-wallet-usecase.interface";
 import { NotFoundError, UnauthorizedError, ValidationError } from "@presentation/express/utils/error-handling";
-import { toEntity } from "@application/mappers/user/transaction-mapper";
+import { toTransactionEntity } from "@application/mappers/user/transaction-mapper";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { inject, injectable } from "inversify";
@@ -31,7 +31,7 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
     ) { }
 
-    async execute(data: AddToWalletDTO): Promise<void> {
+    async execute(data: WalletDTO): Promise<void> {
 
         const user = await this._userRepository.findById(data.userId);
         if (!user) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
@@ -40,13 +40,13 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
         const wallet = await this._walletRepository.findOne({ userId: user.id as string });
         if (wallet?.status === WalletStatus.FROZEN)
             throw new UnauthorizedError("We detected an inconsistency in your wallet. Please contact support");
-        
+
         if (wallet && wallet.balance > 50000) {
             throw new ValidationError(ErrorMessage.WALLET_BALANCE_EXCEEDED);
         }
 
-        const transaction = toEntity({ ...data, userCode: user.userCode });
-        const isExists = await this._transactionRepository.findByPaymentId(data.paymentIntentId);
+        const transaction = toTransactionEntity({ ...data, userCode: user.userCode });
+        const isExists = await this._transactionRepository.findByPaymentId(data.paymentIntentId as string);
         if (isExists) return;
 
         try {

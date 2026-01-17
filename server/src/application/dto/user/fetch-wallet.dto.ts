@@ -4,7 +4,4 @@ export interface FetchWalletDTO<T> {
   page: number;
   limit: number;
   totalPages: number;
-//   totalActiveUsersCount?: number;
-//   totalInActiveUsersCount?: number;
-//   totalVerifiedUsersCount?:number
 }

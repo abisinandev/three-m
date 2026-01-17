@@ -2,6 +2,7 @@ import { StripePaymentDTO } from "@application/dto/user/stripe-payment-dto";
 import { IAddToWalletUseCase } from "@application/use_cases/interfaces/user/add-to-wallet-usecase.interface";
 import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
+import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { mapStripeStatusToTransactionStatus } from "@shared/utils/payments/stripe-payment.utils";
 import { inject, injectable } from "inversify";
@@ -32,6 +33,7 @@ export class StripePaymentHandler {
                     referenceType: ReferenceType.STRIPE,
                     status: TransactionStatus.PENDING,
                     paymentStatus,
+                    type:TransactionTypes.ADD_TO_WALLET,
                 });
                 break;
 

@@ -3,18 +3,22 @@ import { InvestmentDocument } from "@infrastructure/databases/mongo_db/models/in
 import { Types } from "mongoose";
 
 const toDomain = (doc: InvestmentDocument): InvestmentEntity => {
-    return InvestmentEntity.fromPersistance({
-        id: doc.id.toString(),
+    return InvestmentEntity.fromPersistence({
+        id: doc._id.toString(),
         schemeCode: doc.schemeCode,
         amount: doc.amount,
         status: doc.status,
         nav: doc.nav,
         navDate: doc.navDate,
-        type: doc.type,
+        investmentType: doc.investmentType,
+        paymentMethod: doc.paymentMethod,
         units: doc.units,
         createdAt: doc.createdAt,
         userId: doc.userId.toString(),
-        updatedAt: doc.updatedAt
+        updatedAt: doc.updatedAt,
+        remainingUnits: doc.remainingUnits,
+        redeemedAt: doc.redeemedAt,
+        redeemedUnits: doc.redeemedUnits,
     })
 }
 
@@ -26,8 +30,10 @@ const toPersistance = (data: InvestmentEntity): Partial<InvestmentDocument> => {
         units: data.units,
         nav: data.nav,
         navDate: data.navDate,
-        type: data.type,
         userId: new Types.ObjectId(data.userId),
+        remainingUnits: data.remainingUnits,
+        redeemedUnits: data.redeemedUnits ,
+        redeemedAt: data.redeemedAt,
     }
 }
 

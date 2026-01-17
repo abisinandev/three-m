@@ -12,11 +12,19 @@ export class WalletRepository extends BaseRepository<WalletEntity, WalletDocumen
         super(WalletModel, WalletMapper)
     }
 
-    async updateWallet(userId: string, balance: number, session: ClientSession): Promise<void> {
+    async debit(userId: string, amount: number, session: ClientSession): Promise<void> {
         await this.model.findOneAndUpdate(
             { userId },
-            { $inc: { balance: balance } },
+            { $inc: { balance: -amount } },
             { session }
         );
     };
+
+    async credit(userId: string, amount: number, session: ClientSession): Promise<void> {
+        await this.model.findOneAndUpdate(
+            { userId },
+            { $inc: { balance: amount } },
+            { session }
+        );
+    }
 }

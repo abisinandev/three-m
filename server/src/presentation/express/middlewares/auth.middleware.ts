@@ -44,6 +44,6 @@ export class AuthMiddleware {
       next();
     } catch (error) {
       next(error);
-    }
+    } 
   }
 }

@@ -23,12 +23,14 @@ import { Route as AdminTransactionsManagementRouteImport } from './routes/admin/
 import { Route as AdminKycManagementRouteImport } from './routes/admin/kyc-management'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as UserWalletIndexRouteImport } from './routes/user/wallet/index'
+import { Route as UserPortfolioIndexRouteImport } from './routes/user/portfolio/index'
 import { Route as UserMutualFundsIndexRouteImport } from './routes/user/mutual-funds/index'
 import { Route as AuthSignupIndexRouteImport } from './routes/auth/signup/index'
 import { Route as AuthResetPasswordIndexRouteImport } from './routes/auth/reset-password/index'
 import { Route as AuthForgotPasswordIndexRouteImport } from './routes/auth/forgot-password/index'
 import { Route as UserWalletWithdrawRouteImport } from './routes/user/wallet/withdraw'
 import { Route as UserWalletAddToWalletRouteImport } from './routes/user/wallet/add-to-wallet'
+import { Route as UserPortfolioRedeemProfitRouteImport } from './routes/user/portfolio/redeem-profit'
 import { Route as UserMutualFundsSchemeCodeRouteImport } from './routes/user/mutual-funds/$schemeCode'
 import { Route as UserPaymentPaymentSuccessRouteImport } from './routes/user/_payment/payment-success'
 import { Route as UserPaymentPaymentFailedRouteImport } from './routes/user/_payment/payment-failed'
@@ -110,6 +112,11 @@ const UserWalletIndexRoute = UserWalletIndexRouteImport.update({
   path: '/wallet/',
   getParentRoute: () => UserRoute,
 } as any)
+const UserPortfolioIndexRoute = UserPortfolioIndexRouteImport.update({
+  id: '/portfolio/',
+  path: '/portfolio/',
+  getParentRoute: () => UserRoute,
+} as any)
 const UserMutualFundsIndexRoute = UserMutualFundsIndexRouteImport.update({
   id: '/mutual-funds/',
   path: '/mutual-funds/',
@@ -140,6 +147,12 @@ const UserWalletAddToWalletRoute = UserWalletAddToWalletRouteImport.update({
   path: '/wallet/add-to-wallet',
   getParentRoute: () => UserRoute,
 } as any)
+const UserPortfolioRedeemProfitRoute =
+  UserPortfolioRedeemProfitRouteImport.update({
+    id: '/portfolio/redeem-profit',
+    path: '/portfolio/redeem-profit',
+    getParentRoute: () => UserRoute,
+  } as any)
 const UserMutualFundsSchemeCodeRoute =
   UserMutualFundsSchemeCodeRouteImport.update({
     id: '/mutual-funds/$schemeCode',
@@ -220,12 +233,14 @@ export interface FileRoutesByFullPath {
   '/user/payment-failed': typeof UserPaymentPaymentFailedRoute
   '/user/payment-success': typeof UserPaymentPaymentSuccessRoute
   '/user/mutual-funds/$schemeCode': typeof UserMutualFundsSchemeCodeRoute
+  '/user/portfolio/redeem-profit': typeof UserPortfolioRedeemProfitRoute
   '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
   '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/auth/reset-password': typeof AuthResetPasswordIndexRoute
   '/auth/signup': typeof AuthSignupIndexRoute
   '/user/mutual-funds': typeof UserMutualFundsIndexRoute
+  '/user/portfolio': typeof UserPortfolioIndexRoute
   '/user/wallet': typeof UserWalletIndexRoute
   '/admin/authentication/verify-otp': typeof AdminAuthAdminAuthenticationVerifyOtpRoute
   '/admin/authentication': typeof AdminAuthAdminAuthenticationIndexRoute
@@ -251,12 +266,14 @@ export interface FileRoutesByTo {
   '/user/payment-failed': typeof UserPaymentPaymentFailedRoute
   '/user/payment-success': typeof UserPaymentPaymentSuccessRoute
   '/user/mutual-funds/$schemeCode': typeof UserMutualFundsSchemeCodeRoute
+  '/user/portfolio/redeem-profit': typeof UserPortfolioRedeemProfitRoute
   '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
   '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/auth/reset-password': typeof AuthResetPasswordIndexRoute
   '/auth/signup': typeof AuthSignupIndexRoute
   '/user/mutual-funds': typeof UserMutualFundsIndexRoute
+  '/user/portfolio': typeof UserPortfolioIndexRoute
   '/user/wallet': typeof UserWalletIndexRoute
   '/admin/authentication/verify-otp': typeof AdminAuthAdminAuthenticationVerifyOtpRoute
   '/admin/authentication': typeof AdminAuthAdminAuthenticationIndexRoute
@@ -284,12 +301,14 @@ export interface FileRoutesById {
   '/user/_payment/payment-failed': typeof UserPaymentPaymentFailedRoute
   '/user/_payment/payment-success': typeof UserPaymentPaymentSuccessRoute
   '/user/mutual-funds/$schemeCode': typeof UserMutualFundsSchemeCodeRoute
+  '/user/portfolio/redeem-profit': typeof UserPortfolioRedeemProfitRoute
   '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
   '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/auth/reset-password/': typeof AuthResetPasswordIndexRoute
   '/auth/signup/': typeof AuthSignupIndexRoute
   '/user/mutual-funds/': typeof UserMutualFundsIndexRoute
+  '/user/portfolio/': typeof UserPortfolioIndexRoute
   '/user/wallet/': typeof UserWalletIndexRoute
   '/_admin-auth/admin/authentication/verify-otp': typeof AdminAuthAdminAuthenticationVerifyOtpRoute
   '/_admin-auth/admin/authentication/': typeof AdminAuthAdminAuthenticationIndexRoute
@@ -317,12 +336,14 @@ export interface FileRouteTypes {
     | '/user/payment-failed'
     | '/user/payment-success'
     | '/user/mutual-funds/$schemeCode'
+    | '/user/portfolio/redeem-profit'
     | '/user/wallet/add-to-wallet'
     | '/user/wallet/withdraw'
     | '/auth/forgot-password'
     | '/auth/reset-password'
     | '/auth/signup'
     | '/user/mutual-funds'
+    | '/user/portfolio'
     | '/user/wallet'
     | '/admin/authentication/verify-otp'
     | '/admin/authentication'
@@ -348,12 +369,14 @@ export interface FileRouteTypes {
     | '/user/payment-failed'
     | '/user/payment-success'
     | '/user/mutual-funds/$schemeCode'
+    | '/user/portfolio/redeem-profit'
     | '/user/wallet/add-to-wallet'
     | '/user/wallet/withdraw'
     | '/auth/forgot-password'
     | '/auth/reset-password'
     | '/auth/signup'
     | '/user/mutual-funds'
+    | '/user/portfolio'
     | '/user/wallet'
     | '/admin/authentication/verify-otp'
     | '/admin/authentication'
@@ -380,12 +403,14 @@ export interface FileRouteTypes {
     | '/user/_payment/payment-failed'
     | '/user/_payment/payment-success'
     | '/user/mutual-funds/$schemeCode'
+    | '/user/portfolio/redeem-profit'
     | '/user/wallet/add-to-wallet'
     | '/user/wallet/withdraw'
     | '/auth/forgot-password/'
     | '/auth/reset-password/'
     | '/auth/signup/'
     | '/user/mutual-funds/'
+    | '/user/portfolio/'
     | '/user/wallet/'
     | '/_admin-auth/admin/authentication/verify-otp'
     | '/_admin-auth/admin/authentication/'
@@ -499,6 +524,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserWalletIndexRouteImport
       parentRoute: typeof UserRoute
     }
+    '/user/portfolio/': {
+      id: '/user/portfolio/'
+      path: '/portfolio'
+      fullPath: '/user/portfolio'
+      preLoaderRoute: typeof UserPortfolioIndexRouteImport
+      parentRoute: typeof UserRoute
+    }
     '/user/mutual-funds/': {
       id: '/user/mutual-funds/'
       path: '/mutual-funds'
@@ -539,6 +571,13 @@ declare module '@tanstack/react-router' {
       path: '/wallet/add-to-wallet'
       fullPath: '/user/wallet/add-to-wallet'
       preLoaderRoute: typeof UserWalletAddToWalletRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/portfolio/redeem-profit': {
+      id: '/user/portfolio/redeem-profit'
+      path: '/portfolio/redeem-profit'
+      fullPath: '/user/portfolio/redeem-profit'
+      preLoaderRoute: typeof UserPortfolioRedeemProfitRouteImport
       parentRoute: typeof UserRoute
     }
     '/user/mutual-funds/$schemeCode': {
@@ -680,9 +719,11 @@ interface UserRouteChildren {
   UserPaymentPaymentFailedRoute: typeof UserPaymentPaymentFailedRoute
   UserPaymentPaymentSuccessRoute: typeof UserPaymentPaymentSuccessRoute
   UserMutualFundsSchemeCodeRoute: typeof UserMutualFundsSchemeCodeRoute
+  UserPortfolioRedeemProfitRoute: typeof UserPortfolioRedeemProfitRoute
   UserWalletAddToWalletRoute: typeof UserWalletAddToWalletRoute
   UserWalletWithdrawRoute: typeof UserWalletWithdrawRoute
   UserMutualFundsIndexRoute: typeof UserMutualFundsIndexRoute
+  UserPortfolioIndexRoute: typeof UserPortfolioIndexRoute
   UserWalletIndexRoute: typeof UserWalletIndexRoute
 }
 
@@ -693,9 +734,11 @@ const UserRouteChildren: UserRouteChildren = {
   UserPaymentPaymentFailedRoute: UserPaymentPaymentFailedRoute,
   UserPaymentPaymentSuccessRoute: UserPaymentPaymentSuccessRoute,
   UserMutualFundsSchemeCodeRoute: UserMutualFundsSchemeCodeRoute,
+  UserPortfolioRedeemProfitRoute: UserPortfolioRedeemProfitRoute,
   UserWalletAddToWalletRoute: UserWalletAddToWalletRoute,
   UserWalletWithdrawRoute: UserWalletWithdrawRoute,
   UserMutualFundsIndexRoute: UserMutualFundsIndexRoute,
+  UserPortfolioIndexRoute: UserPortfolioIndexRoute,
   UserWalletIndexRoute: UserWalletIndexRoute,
 }
 

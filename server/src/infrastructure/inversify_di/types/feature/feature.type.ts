@@ -3,6 +3,7 @@ export const FEATURE_TYPES = {
     MutualFundRepository: Symbol.for("MutualFundRepository"),
     MutualFundNavRepository: Symbol.for("MutualFundNavRepository"),
     MfCagrRepository: Symbol.for("IMfCagrRepository"),
+    InvestmentRepository: Symbol.for("InvestmentRepository"),
 
     // usecases
     MutualFundUsecase: Symbol.for("MutualFundUseCase"),
@@ -14,7 +15,12 @@ export const FEATURE_TYPES = {
     MutualFundDetailsUseCase: Symbol.for("MutualFundDetailsUseCase"),
     SignatureUploadUseCase: Symbol.for("SignatureUploadUseCase"),
     NavHistoryUseCase: Symbol.for("NavHistoryUseCase"),
-
+    InvestmentUseCase: Symbol.for("InvestmentUseCase"),
+    NavAllocateUseCase: Symbol.for("NavAllocateUseCase"),
+    PortfolioDetailsUseCase: Symbol.for("PortfolioDetailsUseCase"),
+    RadeemInvestmentUseCase: Symbol.for("RadeemInvestmentUseCase"),
+    ConfirmRedeemUseCase:Symbol.for("ConfirmRadeemUseCase"),
+    
 
     // providers
     NavUpdateProvider: Symbol.for("NavUpdateProvider"),
@@ -24,4 +30,5 @@ export const FEATURE_TYPES = {
     // controllers
     MutualFundsAdminController: Symbol.for("MutualFundsAdminController"),
     MutualFundsUserController: Symbol.for("MutualFundsUserController"),
+    PortFolioController: Symbol.for("PortFolioController"),
 };

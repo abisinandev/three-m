@@ -14,10 +14,8 @@ export class MutualFundsUseCase implements IMutualFundsUseCase {
     ) { }
 
     async execute(dto: MutualFundDTO): Promise<void> {
-
         const isExist = await this._mutualFundRepository.findBySchemeCode(dto.schemeCode);
         if (isExist) throw new ValidationError(ErrorMessage.ALREADY_EXISTS);
-
         const entity = toEntity(dto);
         await this._mutualFundRepository.create(entity);
     }

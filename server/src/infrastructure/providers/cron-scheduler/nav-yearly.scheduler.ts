@@ -5,7 +5,7 @@ import cron from 'node-cron';
 
 export function NavYearScheduler() {
     cron.schedule(
-        "0 22,23 * * *",
+        "0 2,3 * * *",
         async () => {
             console.log("[NAV-CRON] NAV sync started");
 

@@ -17,7 +17,7 @@ export class TransactionEntity {
     private readonly _txHash: TxHash;
     private readonly _signature: SignatureKey;
     private readonly _referenceType: ReferenceType;
-    private readonly _paymentIntentId: string;
+    private readonly _paymentIntentId?: string;
     private readonly _status: TransactionStatus;
     private readonly _paymentStatus: TransactionStatus;
     private readonly _fundId?: string;
@@ -37,7 +37,7 @@ export class TransactionEntity {
         txHash: TxHash;
         signature: SignatureKey;
         referenceType: ReferenceType;
-        paymentIntentId: string;
+        paymentIntentId?: string;
         status: TransactionStatus;
         paymentStatus: TransactionStatus;
         fundId?: string;
@@ -72,7 +72,7 @@ export class TransactionEntity {
         currency: string;
         type: TransactionTypes;
         referenceType: ReferenceType;
-        paymentIntentId: string;
+        paymentIntentId?: string;
         status: TransactionStatus;
         paymentStatus: TransactionStatus;
         fundId?: string;

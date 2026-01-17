@@ -1,6 +1,6 @@
+import { IInvestmentUseCase } from "@application/use_cases/interfaces/features/mutual-funds/investment-usecase.interface";
 import { IListFundsUserSideUseCase } from "@application/use_cases/interfaces/features/mutual-funds/list-fund-usecase.interface";
 import { IMutualFundDetailsUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mutual-fund-details-usecase.interface";
-import { INavHistoryUseCase } from "@application/use_cases/interfaces/features/mutual-funds/nav-history-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
@@ -14,7 +14,7 @@ export class MutualFundUserController {
     constructor(
         @inject(FEATURE_TYPES.ListFundUserSideUseCase) private readonly _listFundUseCase: IListFundsUserSideUseCase,
         @inject(FEATURE_TYPES.MutualFundDetailsUseCase) private readonly _mfDetailsUsecase: IMutualFundDetailsUseCase,
-        @inject(FEATURE_TYPES.NavHistoryUseCase) private readonly _navHistoryUseCase: INavHistoryUseCase,
+        @inject(FEATURE_TYPES.InvestmentUseCase) private readonly _investmentUseCase: IInvestmentUseCase,
     ) { }
 
     async fetchFunds(req: Request, res: Response, next: NextFunction) {
@@ -28,7 +28,9 @@ export class MutualFundUserController {
                 sortOrder,
             } = req.query;
 
-            const result = await this._listFundUseCase.execute({
+            const userId = req?.user?.id;
+            const result = await this._listFundUseCase.execute(
+                userId as string, {
                 page: page ? Number(page) : 1,
                 limit: limit ? Number(limit) : 10,
                 search: typeof search === "string" ? search : "",
@@ -40,7 +42,6 @@ export class MutualFundUserController {
                 sortOrder: sortOrder === "asc" ? "asc" : "desc",
             });
 
-            // const data = new a
             return ResponseHelper.success(
                 res,
                 SuccessMessage.DATA_FETCHED,
@@ -68,11 +69,20 @@ export class MutualFundUserController {
         }
     }
 
-    // async fetchNavHistory(req: Request, res: Response, next: NextFunction) {
-    //     try {
+    async investment(req: Request, res: Response, next: NextFunction) {
+        try {
+            const dto = { ...req.body };
+            const userId = req.user?.id
+            await this._investmentUseCase.execute(dto, userId as string);
+            return ResponseHelper.success(
+                res,
+                SuccessMessage.INVESTMENT_SUCCESS,
+                HttpStatus.CREATED
+            )
+        } catch (error) {
+            next(error)
+        }
+    }
 
-    //     } catch (error) {
-    //         next(error)
-    //     }
-    // }
+
 }

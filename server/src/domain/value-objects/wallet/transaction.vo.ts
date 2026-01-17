@@ -10,7 +10,7 @@ export class TxHash {
     static generate(data: {
         userId: string;
         amount: number;
-        paymentIntentId: string;
+        paymentIntentId?: string;
         fundId?: string;
         units?: number;
     }): TxHash {

@@ -1,18 +1,18 @@
-import { AddToWalletDTO } from "@application/dto/user/add-to-wallet.dto";
+import { WalletDTO } from "@application/dto/user/add-to-wallet.dto";
 import { TransactionResponseDTO } from "@application/dto/user/transaction-response.dto";
 import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
-import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 
-export const toEntity = (data: AddToWalletDTO) => {
+export const toTransactionEntity = (data: WalletDTO) => {
     return TransactionEntity.create({
         amount: data.amount,
         userId: data.userId,
         userCode: data.userCode as string,
         currency: data.currency,
-        type: TransactionTypes.ADD_TO_WALLET,
+        type: data.type,
         referenceType: data.referenceType,
         status: data.status,
         paymentStatus: data.paymentStatus,
+        fundId: data.fundId ?? undefined,
         receipt_url: data.receipt_url,
         paymentIntentId: data.paymentIntentId,
     });
@@ -27,7 +27,7 @@ export const toTransactionResponse = (transaction: TransactionEntity): Transacti
         amount: transaction.amount,
         currency: transaction.currency,
         isVerified: transaction.isVerified,
-        paymentIntentId: transaction.paymentIntentId,
+        paymentIntentId: transaction.paymentIntentId as string,
         referenceType: transaction.referenceType,
         status: transaction.status,
         paymentStatus: transaction.paymentStatus,

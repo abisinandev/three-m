@@ -21,7 +21,7 @@ export class MutualFundDTO {
 
     @IsString()
     amc!: string;
-
+        
     @IsString()
     category!: FundCategory;
 

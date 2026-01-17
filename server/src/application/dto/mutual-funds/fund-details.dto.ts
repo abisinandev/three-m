@@ -28,6 +28,6 @@ export interface FundDetailsDTO {
 
     createdAt: Date;
     updatedAt: Date;
-
+    absoluteReturn: number;
     navHistory: NavHistoryDTO[];
 }

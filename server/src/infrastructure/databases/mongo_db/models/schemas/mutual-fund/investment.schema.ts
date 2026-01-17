@@ -1,8 +1,8 @@
-import { Schema, model, Types } from "mongoose";
-import { InvestmentStatus, InvestmentType } from "@domain/enum/funds/investment.enums";
+import { Schema, model } from "mongoose";
+import { InvestmentStatus, InvestmentType, PaymentMethod } from "@domain/enum/funds/investment.enums";
 import { InvestmentDocument } from "../../interfaces/mutual-fund/investment.schema.interface";
 
-const InvestmentSchema = new Schema<InvestmentDocument  >(
+const InvestmentSchema = new Schema<InvestmentDocument>(
     {
         userId: {
             type: Schema.Types.ObjectId,
@@ -16,12 +16,6 @@ const InvestmentSchema = new Schema<InvestmentDocument  >(
             required: true,
             index: true,
             trim: true,
-        },
-
-        type: {
-            type: String,
-            enum: Object.values(InvestmentType),
-            required: true,
         },
 
         amount: {
@@ -38,27 +32,57 @@ const InvestmentSchema = new Schema<InvestmentDocument  >(
 
         nav: {
             type: Number,
-            required: true,
+            // required: true,
             min: 0,
         },
 
         navDate: {
             type: Date,
+            // required: true,
+        },
+
+        remainingUnits: {
+            type: Number,
             required: true,
+            min: 0,
+            index: true,
+        },
+
+        redeemedUnits: {
+            type: Number,
+            min: 0,
+        },
+
+        redeemedAt: {
+            type: Date,
         },
 
         status: {
             type: String,
             enum: Object.values(InvestmentStatus),
-            default: InvestmentStatus.PENDING,
+            required: true,
             index: true,
+        },
+
+        paymentMethod: {
+            type: String,
+            enum: Object.values(PaymentMethod),
+            // required: true,
+        },
+
+        investmentType: {
+            type: String,
+            enum: Object.values(InvestmentType),
+            // required: true,
         },
     },
     {
-        timestamps: true, 
+        timestamps: true,
         versionKey: false,
     }
 );
 
-
-export const InvestmentModel = model<InvestmentDocument>("Investment",InvestmentSchema)
+export const InvestmentModel = model<InvestmentDocument>(
+    "Investment",
+    InvestmentSchema
+);

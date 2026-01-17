@@ -17,6 +17,7 @@ export class MutualFundNavUpdate implements IMutualFundNavUpdatesUseCase {
 
     async execute(interval: NavInterval): Promise<void> {
         const { funds } = await this._mutualFundRepository.findActiveFunds();
+        console.log("INterval: ",interval)
         for (const fund of funds) {
             const navs = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
             for (let data of navs) {

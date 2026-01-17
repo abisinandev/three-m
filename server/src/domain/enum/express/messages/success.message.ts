@@ -50,4 +50,6 @@ export enum SuccessMessage {
   PROFILE_IMAGE_ADDED = "Profile image added",
 
   TRANSACTION_VERIFIED = "Transaction verified",
+
+  INVESTMENT_SUCCESS = "Investment successfully done",
 }

@@ -7,6 +7,7 @@ import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
 import { MutualFundRepository } from "@infrastructure/databases/repository/mutual-fund/mutual-fund.repostiory";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
+import { calculateReturn } from "@shared/utils/mutual-fund/return-calculation";
 import { inject, injectable } from "inversify";
 
 @injectable()
@@ -15,18 +16,15 @@ export class MutualFundDetailsUseCase implements IMutualFundDetailsUseCase {
         @inject(FEATURE_TYPES.MutualFundRepository) private readonly _mutualFundRepository: MutualFundRepository,
         @inject(FEATURE_TYPES.MfCagrRepository) private readonly _mfCagrRepository: IMfCagrRepository,
         @inject(FEATURE_TYPES.MutualFundNavRepository) private readonly _mfNavRepository: IMutualFundNavRepository,
-        // @inject(FEATURE_TYPES.MutualFundNavRepsitory) private readonly _mfNavRepository: IMutualFundNavRepository,
     ) { };
 
     async execute(schemeCode: string, interval: NavInterval): Promise<FundDetailsDTO> {
         const fund = await this._mutualFundRepository.findBySchemeCode(schemeCode);
-        if (!fund) {
-            throw new NotFoundError(ErrorMessage.NOT_FOUND);
-        }
-        console.log("INTERVALS: ", interval);
+        if (!fund) throw new NotFoundError(ErrorMessage.NOT_FOUND);
+
         const mfCagrs = await this._mfCagrRepository.findOne({ schemeCode });
         const navHistories = await this._mfNavRepository.findByInterval(schemeCode, interval, 300) ?? [];
-
+        const absoluteReturn = calculateReturn(navHistories);
         return {
             id: fund.id!,
             schemeCode: fund.schemeCode,
@@ -52,7 +50,7 @@ export class MutualFundDetailsUseCase implements IMutualFundDetailsUseCase {
             logo: fund.logo,
             createdAt: fund.createdAt!,
             updatedAt: fund.updatedAt!,
-
+            absoluteReturn,
             navHistory: navHistories.map(nav => ({
                 nav: nav.nav,
                 navDate: nav.navDate,

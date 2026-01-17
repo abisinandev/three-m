@@ -23,7 +23,6 @@ export class FetchAllFundUseCases implements IFetchAllFundsUseCases {
         recentNavUpdates?: number;
     }> {
         const mutualFunds = await this._mutualFundRepository.findAllFunds(data);
-        console.log(mutualFunds, 'DATA');
         const { countActiveFunds } = await this._mutualFundRepository.findActiveFunds();
         const { countInactiveFunds } = await this._mutualFundRepository.findInactiveFunds();
         const { totalCount } = await this._mutualFundRepository.count();

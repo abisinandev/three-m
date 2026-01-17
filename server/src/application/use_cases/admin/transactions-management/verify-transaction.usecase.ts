@@ -69,7 +69,7 @@ export class VerifyTransactionUseCase implements IVerifyTransactionUseCase {
                     session,
                 );
 
-                await this._walletRepository.updateWallet(
+                await this._walletRepository.debit(
                     storedTranx.userId as string,
                     storedTranx.amount,
                     session

@@ -19,7 +19,6 @@ export class NavUpdateProvider implements IMutualFundNavUpdateProvider {
         const response = await this.httpClient.get<MfApiNavResponse>(
             `https://api.mfapi.in/mf/${schemeCode}`
         );
-
         if (!response?.data?.length) {
             throw new Error(`NAV data not found for schemeCode ${schemeCode}`);
         }

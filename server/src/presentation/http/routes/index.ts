@@ -9,6 +9,7 @@ import paymentRoutes from "@presentation/http/routes/user/payment.routes";
 import mutualFundRoutes from '@presentation/http/routes/admin/mutual-fund-admin.routes';
 import fileUploadRoutes from '@presentation/http/routes/file-upload/file-upload.routes';
 import mutualFundUserRoues from '@presentation/http/routes/user/mutual-fund-user.routes';
+import userPortfoilo from '@presentation/http/routes/portfolio/portfolio.routes';
 import type { Application } from "express";
 
 export const RegisterRoutes = (app: Application) => {
@@ -22,4 +23,5 @@ export const RegisterRoutes = (app: Application) => {
   app.use('/api/admin/mutual-funds', mutualFundRoutes);
   app.use("/api/user/mutual-funds", (req, res, next) => authMiddleware.handle(req, res, next), mutualFundUserRoues)
   app.use("/api/file-upload", fileUploadRoutes);
+  app.use("/api/user/portfolio", (req, res, next) => authMiddleware.handle(req, res, next), userPortfoilo);
 };

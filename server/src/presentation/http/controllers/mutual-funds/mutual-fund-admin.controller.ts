@@ -1,5 +1,6 @@
 import { IChangeFundStatusUseCase } from "@application/use_cases/interfaces/features/mutual-funds/change-fund-status-usecase.interface";
 import { IFetchAllFundsUseCases } from "@application/use_cases/interfaces/features/mutual-funds/fetch-all-funds-usecase.interface";
+import { IMfCagrUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mf-cagr-usecse.interface";
 import { IMutualFundNavUpdatesUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mutual-fund-nav-udpate-usecase.interface";
 import { IMutualFundsUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mutual-fund-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
@@ -17,6 +18,7 @@ export class MutualFundsAdminController {
         @inject(FEATURE_TYPES.FetchAllFundUseCases) private readonly _fetchAllFundsUseCase: IFetchAllFundsUseCases,
         @inject(FEATURE_TYPES.ChangeStatusUseCase) private readonly _changeFundStatus: IChangeFundStatusUseCase,
         @inject(FEATURE_TYPES.MutualFundNavUpdateUseCase) private readonly _mutualFundNavUpdate: IMutualFundNavUpdatesUseCase,
+        @inject(FEATURE_TYPES.MfCagrUseCase) private readonly _mfCagrUpdateUseCase: IMfCagrUseCase,
     ) { }
 
     async addFunds(req: Request, res: Response, next: NextFunction) {
@@ -52,6 +54,11 @@ export class MutualFundsAdminController {
             const fundId = req.params.fundId
             await this._changeFundStatus.execute(fundId);
             await this._mutualFundNavUpdate.execute(NavInterval.DAILY);
+            await this._mutualFundNavUpdate.execute(NavInterval.WEEKLY);
+            await this._mutualFundNavUpdate.execute(NavInterval.MONTHLY);
+            await this._mutualFundNavUpdate.execute(NavInterval.YEARLY);
+            await this._mfCagrUpdateUseCase.execute();
+
             return ResponseHelper.success(
                 res,
                 SuccessMessage.DATA_UPDATED,
@@ -62,4 +69,4 @@ export class MutualFundsAdminController {
         }
     }
 
-}
+}  

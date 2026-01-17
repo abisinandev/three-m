@@ -2,7 +2,7 @@ import { FundListDTO } from "@application/dto/mutual-funds/mutual-fund-response.
 import { QueryOptions } from "mongoose";
 
 export interface IListFundsUserSideUseCase {
-    execute(data: QueryOptions): Promise<{
+    execute(userId: string, data: QueryOptions): Promise<{
         data: FundListDTO[];
         total: number;
         page: number;
@@ -10,5 +10,6 @@ export interface IListFundsUserSideUseCase {
         totalPages: number;
         totalActiveFunds?: number;
         recentNavUpdates?: number;
+        totalInvestments?: number;
     }>;
 }
