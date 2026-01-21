@@ -2,7 +2,7 @@ import { InvestmentDTO } from "@application/dto/mutual-funds/investment-dto";
 import { IInvestmentUseCase } from "../interfaces/features/mutual-funds/investment-usecase.interface";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
@@ -15,11 +15,14 @@ import { ITransactionRepository } from "@application/interfaces/repositories/fea
 import { toTransactionEntity } from "@application/mappers/user/transaction-mapper";
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
-import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { FundStatus } from "@domain/enum/funds/fund-status.enum";
+import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
+import { IInternalTransactionVerificationService } from "@application/interfaces/services/externals/internal-transaction-verify.interface";
+import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
 
+@injectable()
 export class InvestmentUseCase implements IInvestmentUseCase {
     constructor(
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
@@ -28,6 +31,8 @@ export class InvestmentUseCase implements IInvestmentUseCase {
         @inject(FEATURE_TYPES.MutualFundNavRepository) private readonly _navRepository: IMutualFundNavRepository,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(FEATURE_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
+        @inject(FEATURE_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService,
+
     ) { }
 
     async execute(data: InvestmentDTO, userId: string): Promise<void> {
@@ -51,9 +56,6 @@ export class InvestmentUseCase implements IInvestmentUseCase {
                     throw new ValidationError(ErrorMessage.INSUFFICIENT_BALANCE);
                 }
 
-                const latestNav = await this._navRepository.findBySchemeCode(schemeCode, session);
-                if (!latestNav) throw new ValidationError("NAV not available");
-
                 await this._walletRepository.debit(userId, amount, session);
 
                 const investment = InvestmentEntity.create({
@@ -63,20 +65,23 @@ export class InvestmentUseCase implements IInvestmentUseCase {
                     investmentType,
                     paymentMethod,
                 });
-                await this._investmentRepository.create(investment, session);
-                const transaction = toTransactionEntity({
-                    userId,
-                    userCode: user.userCode,
+                const inv = await this._investmentRepository.createInvestment(investment);
+                console.log("INvestmetn: ", inv);
+                const transaction = TransactionEntity.create({
+                    userId: user.id!,
+                    userCode: user.userCode!,
                     amount,
                     currency: CurrencyTypes.INR,
-                    paymentStatus: TransactionStatus.PENDING,
-                    referenceType: ReferenceType.WALLET,
-                    status: TransactionStatus.PROCESSING,
-                    type: TransactionTypes.INVEST,
+                    status: TransactionStatus.SUCCESSFUL,
+                    type: TransactionTypes.INVESTMENT,
+                    referenceType: TransactionReferenceType.SIP,
+                    referenceId: inv?.id as string,
                     fundId: fund.id,
-                });
-
-                await this._transactionRepository.create(transaction, session);
+                    paymentStatus: TransactionStatus.SUCCESSFUL,
+                    isVerified: true,
+                })
+                const txns = await this._transactionRepository.createTransaction(transaction, session);
+                // await this._internalTransactionVerify.verify(txns?.id as string);
             });
 
             await session.commitTransaction();
@@ -84,4 +89,4 @@ export class InvestmentUseCase implements IInvestmentUseCase {
             await session.endSession();
         }
     }
-} 
+}  

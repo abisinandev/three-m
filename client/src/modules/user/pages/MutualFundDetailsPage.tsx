@@ -8,6 +8,8 @@ import ApexChart from 'react-apexcharts';
 import type { FundDetails } from '../types/MutaulFundType';
 import { buildChartData, calculateUnitPrice } from '../helper/FundDetialsHelper';
 import { getMutualFundDetails } from '@shared/services/feature/mutual-fund/MutualFundApisUserSide';
+import { StartSipModal, type SipData } from '../components/mutual-fund/StartSipModal';
+import { useStartSip } from '../hooks/useStartSip';
 import { InvestModal } from '../components/mutual-fund/InvestModal';
 import { ConfirmModal } from '../components/mutual-fund/ConfirmModal';
 import { SuccessModal } from '../components/mutual-fund/SuccessModal';
@@ -50,6 +52,32 @@ const MutualFundDetailsPage = () => {
       alert(msg);
     }
   );
+
+  const { mutate: startSipMutate, isPending: isSipSubmitting } = useStartSip(
+    () => {
+      setShowSipModal(false);
+      setShowSuccessModal(true);
+      setErrorMsg('');
+    },
+    (msg) => { 
+      alert(msg);
+    }
+  );
+
+  const [showSipModal, setShowSipModal] = useState(false);
+
+  const handleSipProceed = (sipData: SipData) => {
+    if (!data) return;
+    setInvestment(sipData.amount);  
+    startSipMutate({
+      schemeCode: data.schemeCode,
+      amount: sipData.amount,
+      frequency: sipData.frequency,
+      startDate: sipData.startDate,
+      totalInstallments: sipData.totalInstallments,
+      paymentMethod: PAYMENT_METHOD,
+    });
+  };
 
   const handleProceedToConfirm = () => {
     setShowInvestModal(false);
@@ -277,7 +305,7 @@ const MutualFundDetailsPage = () => {
               One-time Investment
             </button>
             <button
-              onClick={() => setShowInvestModal(true)}
+              onClick={() => setShowSipModal(true)}
               className="flex-1 bg-transparent border border-green-600 text-green-400 hover:bg-green-950/50 font-medium py-3.5 rounded-xl transition-all"
             >
               Start SIP
@@ -298,6 +326,16 @@ const MutualFundDetailsPage = () => {
           units={units}
           onClose={() => setShowInvestModal(false)}
           onProceed={handleProceedToConfirm}
+        />
+      )}
+
+      {/* Start SIP Modal */}
+      {showSipModal && data && (
+        <StartSipModal
+          data={data}
+          onClose={() => setShowSipModal(false)}
+          onProceed={handleSipProceed}
+          isSubmitting={isSipSubmitting}
         />
       )}
 

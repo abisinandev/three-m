@@ -36,3 +36,14 @@ export const investOneTime = async (payload: {
 }) => {
     return await api.post('/user/mutual-funds/investment/one-time', payload);
 }
+
+export const startSip = async (payload: {
+    schemeCode: string;
+    amount: number;
+    frequency: string;
+    startDate: string;
+    totalInstallments: number;
+    paymentMethod: string;
+}) => {
+    return await api.post('/user/mutual-funds/sip/create', payload);
+}

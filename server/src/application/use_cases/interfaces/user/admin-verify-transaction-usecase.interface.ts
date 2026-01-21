@@ -1,3 +1,3 @@
-export interface IVerifyTransactionUseCase {
+export interface IAdminVerifyTransactionUseCase {
     execute(txId: string): Promise<{ isVerified: boolean }>;
 }

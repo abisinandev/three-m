@@ -1,7 +1,7 @@
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
-import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
-import { Types } from "mongoose";
+ import { Types } from "mongoose";
+import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 
 export interface ITransactionSchema {
   userId: Types.ObjectId;
@@ -17,7 +17,8 @@ export interface ITransactionSchema {
   units?: number | null;
   txHash: string;
   signature: string;
-  referenceType: ReferenceType;
+  referenceType: | TransactionReferenceType;
+  referenceId: string;
   paymentIntentId: string;
   receipt_url?: string | null;
   createdAt: Date;

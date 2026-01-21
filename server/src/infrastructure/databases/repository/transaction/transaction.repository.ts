@@ -13,6 +13,13 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
         super(TransactionModel, TransactionMapper)
     }
 
+    async createTransaction(entity: TransactionEntity): Promise<TransactionEntity | null> {
+        const persistenceData = this.mapper.toPersistance(entity);
+        const createdDoc = await this.model.create(persistenceData);
+        return this.mapper.toDomain(createdDoc);
+    }
+
+
     async findTransaction(id: string, session?: ClientSession): Promise<TransactionEntity | null> {
         const query = this.model.findById(id);
 
@@ -112,5 +119,15 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
             totalAmount: doc[0]?.totalAmount ?? 0
         };
 
+    }
+
+    async latestUserTransaction(userId: string): Promise<TransactionEntity | null> {
+        const doc = await this.model
+            .findOne({ userId })
+            .sort({ createdAt: -1 });
+
+        if (!doc) return null;
+
+        return this.mapper.toDomain(doc);
     }
 }

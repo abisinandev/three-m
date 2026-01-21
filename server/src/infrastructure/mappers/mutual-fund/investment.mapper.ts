@@ -18,6 +18,7 @@ const toDomain = (doc: InvestmentDocument): InvestmentEntity => {
         updatedAt: doc.updatedAt,
         remainingUnits: doc.remainingUnits,
         redeemedAt: doc.redeemedAt,
+        sipInstallmentId: doc.sipInstallmentId?.toString(),
         redeemedUnits: doc.redeemedUnits,
     })
 }
@@ -32,8 +33,12 @@ const toPersistance = (data: InvestmentEntity): Partial<InvestmentDocument> => {
         navDate: data.navDate,
         userId: new Types.ObjectId(data.userId),
         remainingUnits: data.remainingUnits,
-        redeemedUnits: data.redeemedUnits ,
+        redeemedUnits: data.redeemedUnits,
         redeemedAt: data.redeemedAt,
+        paymentMethod: data.paymentMethod,
+        investmentType: data.investmentType,
+        sipInstallmentId: new Types.ObjectId(data.sipInstallmentId),
+        createdAt: data.createdAt,
     }
 }
 

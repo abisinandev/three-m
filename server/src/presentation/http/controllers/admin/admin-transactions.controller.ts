@@ -1,9 +1,11 @@
 import { IFetchTransactionsUseCase } from "@application/use_cases/interfaces/admin/fetch-transactions-usecase.interface";
-import { IVerifyTransactionUseCase } from "@application/use_cases/interfaces/user/verify-transaction-usecase.interface";
+import { ISipDetailsUseCase } from "@application/use_cases/interfaces/features/sip/sip-details-usecase.interface";
+import { IAdminVerifyTransactionUseCase } from "@application/use_cases/interfaces/user/admin-verify-transaction-usecase.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
+import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
@@ -12,7 +14,7 @@ import { inject, injectable } from "inversify";
 export class AdminTransactionsController {
     constructor(
         @inject(ADMIN_TYPES.FetchTransactionsUseCase) private readonly _fetchTransactions: IFetchTransactionsUseCase,
-        @inject(ADMIN_TYPES.VerifyTransactionUseCase) private readonly _verifyTransaction: IVerifyTransactionUseCase,
+        @inject(ADMIN_TYPES.VerifyTransactionUseCase) private readonly _verifyTransaction: IAdminVerifyTransactionUseCase,
     ) { };
 
     async getTransactions(req: Request, res: Response, next: NextFunction) {
@@ -50,4 +52,7 @@ export class AdminTransactionsController {
             next(error)
         }
     }
+
+
+
 }

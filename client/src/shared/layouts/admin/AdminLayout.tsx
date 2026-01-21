@@ -25,14 +25,14 @@ import { useAdminStore } from '@stores/admin/useAdminStore';
 
 const navItems = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/admin/sip-management', label: 'SIP Management', icon: DollarSign },
+  // { to: '/admin/installments', label: 'Installments', icon: Receipt },
+  // { to: '/admin/nav-monitoring', label: 'NAV Monitoring', icon: BarChart3 },
   { to: '/admin/users-management', label: 'Users', icon: Users },
   { to: '/admin/kyc-management', label: 'KYC Verification', icon: BadgeCheck },
-  { to: '/admin/sips', label: 'SIPs', icon: DollarSign },
   { to: '/admin/mutual-funds-management', label: 'Mutual Funds', icon: TrendingUp },
   { to: '/admin/transactions-management', label: 'Transactions', icon: Receipt },
-  { to: '/admin/stocks', label: 'Stocks', icon: BarChart3 },
   { to: '/admin/notifications', label: 'Notifications', icon: Bell },
-  { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { to: '/admin/bot-management', label: 'Bot Management', icon: Bot },
   { to: '/admin/settings', label: 'Settings', icon: Settings },
 ];
@@ -104,9 +104,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-neutral-900 border-r border-neutral-800 transition-transform duration-300 lg:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-neutral-900 border-r border-neutral-800 transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         <div className="flex items-center justify-between px-5 h-16 border-b border-neutral-800">
           <h1 className="text-xl font-bold tracking-tight select-none">
@@ -132,11 +131,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 key={item.to}
                 to={item.to}
                 onClick={closeSidebar}
-                className={`flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
-                  active
+                className={`flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${active
                     ? 'text-emerald-500 bg-emerald-500/10'
                     : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
-                }`}
+                  }`}
               >
                 <Icon size={18} className="shrink-0" strokeWidth={2} />
                 <span>{item.label}</span>

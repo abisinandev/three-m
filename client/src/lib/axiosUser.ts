@@ -12,7 +12,7 @@ const api = axios.create({
 const authFreeRoutes = [
     "/auth/login",
     "/auth/signup",
-    "/auth/refresh",
+    // "/auth/refresh",
 ];
 
 let isRefreshing = false;

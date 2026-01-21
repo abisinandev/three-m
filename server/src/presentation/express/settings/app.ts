@@ -24,7 +24,7 @@ app.use(express.json());
 
 //protected routes
 RegisterRoutes(app);
-
+ 
 //AppError middleware
 app.use(errorMiddleware);
 

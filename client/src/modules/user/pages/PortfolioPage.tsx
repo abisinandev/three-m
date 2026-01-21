@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import {
     Search,
@@ -34,7 +33,7 @@ const recent = [
 
 const getStatusStyle = (status: string = '') => {
     const lower = status.toLowerCase();
-    if (['active', 'settled', 'credited', 'executed'].some(s => lower.includes(s))) {
+    if (['active', 'settled', 'credited', 'executed', 'allotted'].some(s => lower.includes(s))) {
         return 'bg-emerald-950/40 text-emerald-400 border-emerald-500/30';
     }
     if (['pending', 'processing'].some(s => lower.includes(s))) {
@@ -47,9 +46,8 @@ const getStatusStyle = (status: string = '') => {
 };
 
 const getProfitStyle = (profit: number = 0) => {
-    if (profit > 0) return 'text-emerald-400';
-    if (profit < 0) return 'text-rose-400';
-    return 'text-zinc-400';
+    if (profit >= 0) return 'text-emerald-400';
+    return 'text-rose-400';
 };
 
 const PortfolioDashboard = () => {
@@ -74,6 +72,9 @@ const PortfolioDashboard = () => {
     const totalInvestment = data?.totalInvestment ?? 0;
     const totalProfit = data?.totalProfit ?? 0;
     const currentValue = totalInvestment + totalProfit;
+
+    const totalRoi = totalInvestment > 0 ? (totalProfit / totalInvestment) * 100 : 0;
+
     const filteredInvestments = investments.filter((inv) =>
         inv.schemeName?.toLowerCase().includes(search.toLowerCase()) ||
         inv.schemeCode?.toLowerCase().includes(search.toLowerCase())
@@ -91,7 +92,7 @@ const PortfolioDashboard = () => {
     };
 
     return (
-        <div className="min-h-screen bg-black text-zinc-100">
+        <div className="min-h-screen bg-black text-zinc-100 pb-10">
             <div className="max-w-[1400px] mx-auto px-6 py-6 space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
@@ -107,37 +108,35 @@ const PortfolioDashboard = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <StatsCardComponent
                         title="Total Invested"
-                        value={`₹${totalInvestment.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        value={totalInvestment}
+                        prefix="₹"
                         subtitle="Cost basis"
                         icon={<Wallet size={20} className="text-zinc-400" strokeWidth={2} />}
                     />
                     <StatsCardComponent
                         title="Current Value"
                         value={currentValue}
-                        formattedValue={currentValue.toLocaleString('en-IN', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                        })}
+                        prefix="₹"
                         subtitle={
                             totalProfit !== 0
-                                ? `${totalProfit > 0 ? '+' : '-'}₹${Math.abs(totalProfit).toLocaleString('en-IN', {
-                                    minimumFractionDigits: 1,
-                                    maximumFractionDigits: 1,
-                                })} ${totalProfit > 0 ? 'gain' : 'loss'}`
+                                ? `${totalProfit > 0 ? '+' : ''}₹${totalProfit.toLocaleString('en-IN', {
+                                    maximumFractionDigits: 0,
+                                })} (${totalRoi > 0 ? '+' : ''}${totalRoi.toFixed(2)}%)`
                                 : 'No change'
                         }
-                        color={totalProfit > 0 ? 'emerald' : totalProfit < 0 ? 'rose' : 'gray'}
+                        color={totalProfit >= 0 ? 'emerald' : 'rose'}
                         icon={<TrendingUp size={20} strokeWidth={2} />}
                     />
                     <StatsCardComponent
                         title="Total Holdings"
-                        value={totalCount.toLocaleString('en-IN')}
+                        value={totalCount}
                         subtitle={`${activeCount} active`}
                         icon={<Layers size={20} className="text-blue-400" strokeWidth={2} />}
                     />
                     <StatsCardComponent
                         title="Available Cash"
-                        value="₹15,000"
+                        value={15000}
+                        prefix="₹"
                         subtitle="Ready to invest"
                         icon={<DollarSign size={20} className="text-zinc-400" strokeWidth={2} />}
                     />
@@ -183,6 +182,7 @@ const PortfolioDashboard = () => {
                                     {filteredInvestments.map((inv) => {
                                         const profit = inv.profit ?? 0;
                                         const profitClass = getProfitStyle(profit);
+                                        const holdingCurrentValue = (inv.amount ?? 0) + profit;
 
                                         return (
                                             <div
@@ -215,40 +215,40 @@ const PortfolioDashboard = () => {
                                                                 {inv.category || inv.investmentType || '—'}
                                                             </p>
                                                             <p className='text-[10px] text-zinc-600'>
-                                                                Started {formatDateTime(new Date(inv.createdAt))}
-                                                            </p>
-                                                            <p className="text-[10px] text-zinc-600">
-                                                                {inv.updatedAt
-                                                                    ? `Allocated ${formatDateTime(new Date(inv.updatedAt as Date))}`
-                                                                    : "Not allocated"}
+                                                                {inv.status?.toLowerCase().includes('allotted') && inv.updatedAt
+                                                                    ? `Allotted ${formatDateTime(new Date(inv.updatedAt))}`
+                                                                    : `Started ${formatDateTime(new Date(inv.createdAt))}`}
                                                             </p>
                                                         </div>
                                                     </div>
 
-                                                    <div className="hidden sm:block text-right min-w-[80px]">
-                                                        <p className="text-xs font-medium text-zinc-200">
-                                                            {inv.units != null ? inv.units.toFixed(2) : '—'}
+                                                    <div className="hidden sm:block text-right min-w-[100px]">
+                                                        <p className="text-xs font-semibold text-zinc-200">
+                                                            ₹{holdingCurrentValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                         </p>
-                                                        <p className="text-[10px] text-zinc-600 mt-0.5">
-                                                            {inv.category || inv.investmentType || '—'}
+                                                        <p className="text-[10px] text-zinc-500 mt-0.5">
+                                                            Current Value
                                                         </p>
                                                     </div>
 
-                                                    <div className="text-right min-w-[100px]">
-                                                        <p className={`text-sm font-semibold ${profitClass}`}>
-                                                            {profit >= 0 ? '+' : ''}{profit.toFixed(2)}
-                                                        </p>
-                                                        <p className="text-[10px] text-zinc-600 mt-0.5">
+                                                    <div className="text-right min-w-[120px]">
+                                                        <div className={`flex items-center justify-end gap-1 text-sm font-bold ${profitClass}`}>
+                                                            ₹{profit > 0 ? '+' : profit < 0 ? '-' : ''}
+                                                            {Math.abs(profit).toLocaleString('en-IN', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                                                            <span className="text-[10px] font-medium opacity-80">
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-[10px] text-zinc-500 mt-0.5">
                                                             Invested: ₹{inv.amount?.toLocaleString('en-IN') ?? '—'}
                                                         </p>
                                                     </div>
 
                                                     <div className="hidden lg:block text-right min-w-[90px]">
-                                                        <p className="text-xs font-medium text-zinc-200">
+                                                        <p className="text-xs font-medium text-zinc-300">
                                                             {inv.nav ? `₹${inv.nav.toFixed(2)}` : '—'}
                                                         </p>
                                                         <p className="text-[10px] text-zinc-600 mt-0.5">
-                                                            {inv.navDate ? new Date(inv.navDate).toLocaleDateString('en-IN') : 'NAV'}
+                                                            {inv.navDate ? new Date(inv.navDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : 'NAV'}
                                                         </p>
                                                     </div>
 

@@ -1,4 +1,4 @@
-import type { IBaseRepository } from "@application/interfaces/repositories/base-repository.interface";
+import { IBaseRepository } from "@application/interfaces/repositories/base-repository.interface";
 import type { ClientSession, Model, UpdateQuery } from "mongoose";
 
 export abstract class BaseRepository<TDomain, TDocument>
@@ -11,11 +11,12 @@ export abstract class BaseRepository<TDomain, TDocument>
     },
   ) { }
 
-  async create(entity: TDomain, session?: ClientSession): Promise<void> {
+  async create(entity: TDomain, session?: ClientSession): Promise<void | TDomain> {
     const data = this.mapper.toPersistance(entity);
     if (session) {
       await this.model.create([data], { session });
     } else {
+      console.log(data,'invesmtnee')
       await this.model.create(data);
     }
   }

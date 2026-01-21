@@ -9,11 +9,12 @@ import type { ISignupResendOtpUseCase } from "@application/use_cases/interfaces/
 import type { IUserLoginUseCase } from "@application/use_cases/interfaces/user/user-login-usecase.interface";
 import type { IUserSignupUseCase } from "@application/use_cases/interfaces/user/user-signup.usecase.interface";
 import type { IVerifyTwoFactorUseCase } from "@application/use_cases/interfaces/user/verify-2fa-usecase.interface";
+import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
-import { ValidationError } from "@presentation/express/utils/error-handling";
+import { ForbiddenError, ValidationError } from "@presentation/express/utils/error-handling";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
@@ -150,7 +151,7 @@ export class AuthController {
         HttpStatus.OK,
       );
 
-    } catch (err) {
+    } catch (err) { 
       next(err);
     }
   }
@@ -159,7 +160,7 @@ export class AuthController {
     try {
       const refreshToken = req.cookies.refreshToken;
       console.log("Refresh : ", refreshToken);
-      if (!refreshToken) throw new ValidationError("No refresh token provided");
+      if (!refreshToken) throw new ForbiddenError(ErrorMessage.REFRESH_TOKEN_EXPIRED);
 
       const result = await this._refreshTokenUseCase.execute({ refreshToken });
 
@@ -178,8 +179,8 @@ export class AuthController {
 
     } catch (error) {
       next(error);
-    }
-  }
+    } 
+  }  
 
   async forgotPassword(req: Request, res: Response, next: NextFunction) {
     try {

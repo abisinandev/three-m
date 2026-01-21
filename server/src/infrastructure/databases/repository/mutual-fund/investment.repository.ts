@@ -9,12 +9,19 @@ import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 import { ClientSession, QueryOptions, Types } from "mongoose";
 import { GroupedSchemeInvestments } from "@application/dto/portfolio/grouped-scheme-investments ";
 import { InvestmentRedeemResult } from "@domain/types/radeem-units.types";
-import { DEFAULT_EAGER_REFRESH_THRESHOLD_MILLIS } from "google-auth-library/build/src/auth/authclient";
 
 @injectable()
 export class InvestmentRepository extends BaseRepository<InvestmentEntity, InvestmentDocument> implements IInvestmentRepository {
     constructor() {
         super(InvestmentModel, InvestmentMapper);
+    }
+
+
+
+    async createInvestment(entity: InvestmentEntity): Promise<InvestmentEntity | null> {
+        const persistenceData = this.mapper.toPersistance(entity);
+        const createdDoc = await this.model.create(persistenceData);
+        return this.mapper.toDomain(createdDoc);
     }
 
     async findInitiatedFunds(): Promise<InvestmentEntity[] | null> {

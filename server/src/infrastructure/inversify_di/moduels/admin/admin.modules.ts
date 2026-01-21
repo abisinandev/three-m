@@ -34,9 +34,13 @@ import { AdminRepository } from "@infrastructure/databases/repository/admin/admi
 import { IFetchTransactionsUseCase } from "@application/use_cases/interfaces/admin/fetch-transactions-usecase.interface";
 import { FetchTransactionsUseCase } from "@application/use_cases/admin/transactions-management/fetch-transactions.usecase";
 import { AdminTransactionsController } from "@presentation/http/controllers/admin/admin-transactions.controller";
-import { IVerifyTransactionUseCase } from "@application/use_cases/interfaces/user/verify-transaction-usecase.interface";
-import { VerifyTransactionUseCase } from "@application/use_cases/admin/transactions-management/verify-transaction.usecase";
+import { IAdminVerifyTransactionUseCase } from "@application/use_cases/interfaces/user/admin-verify-transaction-usecase.interface";
+import { AdminVerifyTransactionUseCase } from "@application/use_cases/admin/transactions-management/admin-verify-transaction.usecase";
 import { IAdminRepository } from "@application/interfaces/repositories/admin/admin.repository.interface";
+import { AdminSipController } from "@presentation/http/controllers/admin/admin-sip.controller";
+import { ISipManagementUseCase } from "@application/use_cases/interfaces/features/sip/sip-management-usecase.interface";
+import { SipManagementUseCase } from "@application/use_cases/admin/sip-management/sip-management-usecase";
+import { AdminAuthMiddleware } from "@presentation/express/middlewares/admin-auth.middleware";
 
 export const AdminModule = new ContainerModule(({ bind }) => {
   //Usecases
@@ -54,7 +58,9 @@ export const AdminModule = new ContainerModule(({ bind }) => {
   bind<IViewKycDetailsUseCase>(ADMIN_TYPES.ViewKycDetailsUseCase).to(ViewKycDetailsUseCase);
   bind<IVerifyKycUseCase>(ADMIN_TYPES.VerifyKycUseCase).to(VerifyKycUseCase);
   bind<IRejectKycUseCase>(ADMIN_TYPES.RejectKycUseCase).to(RejectKycUseCase);
-  bind<IVerifyTransactionUseCase>(ADMIN_TYPES.VerifyTransactionUseCase).to(VerifyTransactionUseCase);
+  bind<IAdminVerifyTransactionUseCase>(ADMIN_TYPES.VerifyTransactionUseCase).to(AdminVerifyTransactionUseCase);
+  bind<ISipManagementUseCase>(ADMIN_TYPES.SipManagementUseCase).to(SipManagementUseCase);
+
 
   //Repository
   bind<IAdminRepository>(ADMIN_TYPES.AdminRepository).to(AdminRepository);
@@ -64,4 +70,7 @@ export const AdminModule = new ContainerModule(({ bind }) => {
   bind<AdminUserController>(ADMIN_TYPES.AdminUserController).to(AdminUserController);
   bind<AdminKycController>(ADMIN_TYPES.AdminKycController).to(AdminKycController);
   bind<AdminTransactionsController>(ADMIN_TYPES.AdminTransactionsController).to(AdminTransactionsController);
+  bind<AdminSipController>(ADMIN_TYPES.AdminSipController).to(AdminSipController);
+
+  bind<AdminAuthMiddleware>(ADMIN_TYPES.AdminAuthMiddleware).to(AdminAuthMiddleware);
 });

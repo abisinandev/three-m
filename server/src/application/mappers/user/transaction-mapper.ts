@@ -3,6 +3,7 @@ import { TransactionResponseDTO } from "@application/dto/user/transaction-respon
 import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
 
 export const toTransactionEntity = (data: WalletDTO) => {
+
     return TransactionEntity.create({
         amount: data.amount,
         userId: data.userId,
@@ -10,6 +11,7 @@ export const toTransactionEntity = (data: WalletDTO) => {
         currency: data.currency,
         type: data.type,
         referenceType: data.referenceType,
+        referenceId: data.referenceId,
         status: data.status,
         paymentStatus: data.paymentStatus,
         fundId: data.fundId ?? undefined,
@@ -34,6 +36,7 @@ export const toTransactionResponse = (transaction: TransactionEntity): Transacti
         type: transaction.type,
         fundId: transaction.fundId,
         receipt_url: transaction.receipt_url,
+        referenceId: transaction.referenceId?.toString(),
         units: transaction.units,
         createdAt: transaction.createdAt,
     }

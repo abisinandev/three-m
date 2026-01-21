@@ -2,6 +2,9 @@ export const ADMIN_TYPES = {
   //REPOSITORY
   AdminRepository: Symbol.for("AdminRepository"),
 
+  // Authmiddelware admin
+  AdminAuthMiddleware: Symbol.for("AdminAuthMiddleware"),
+
   //USECASES
   AdminAuthUseCase: Symbol.for("AdminAuthUseCase"),
   AdminAuthVerifyOtpUseCase: Symbol.for("AdminAuthVerifyOtpUseCase"),
@@ -18,11 +21,13 @@ export const ADMIN_TYPES = {
   RejectKycUseCase: Symbol.for("RejectKycUseCase"),
   FetchTransactionsUseCase: Symbol.for("FetchTransactionsUseCase"),
   VerifyTransactionUseCase: Symbol.for("VerifyTransactionUseCase"),
-
+  SipManagementUseCase: Symbol.for("SipManagementUseCase"),
 
   AdminAuthController: Symbol.for("AdminAuthController"),
   AdminController: Symbol.for("AdminController"),
   AdminUserController: Symbol.for("AdminUserController"),
   AdminKycController: Symbol.for("AdminKycController"),
   AdminTransactionsController: Symbol.for("adminTransactionsController"),
+  AdminSipController: Symbol.for("AdminSipController"),
+  
 };

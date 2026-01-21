@@ -23,9 +23,10 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
     getInvestmentForRadeem(userId: string, schemeCode: string): Promise<InvestmentEntity | null>;
     redeemInvestments(
         investmentId: string,
-        userId:string,
+        userId: string,
         update: InvestmentRedeemResult,
         session: ClientSession
     ): Promise<void>;
+    createInvestment(entity: InvestmentEntity): Promise<InvestmentEntity | null>;
 
 }

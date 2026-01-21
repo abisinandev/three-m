@@ -19,6 +19,10 @@ export const toDomain = (doc: TransactionDocument): TransactionEntity => {
         status: doc.status,
         paymentStatus: doc.paymentStatus,
         referenceType: doc.referenceType,
+        referenceId:
+            typeof doc.referenceId === 'string' && doc.referenceId.length > 0
+                ? doc.referenceId
+                : undefined,
         createdAt: doc.createdAt,
         receipt_url: doc.receipt_url as string,
         paymentIntentId: doc.paymentIntentId,
@@ -44,6 +48,7 @@ export const toPersistance = (data: TransactionEntity): Partial<TransactionDocum
         fundId: data.fundId ?? null,
         units: data.units ?? null,
         referenceType: data.referenceType,
+        referenceId: data.referenceId,
         receipt_url: data.receipt_url,
         createdAt: data.createdAt ?? undefined,
         paymentIntentId: data.paymentIntentId,

@@ -5,6 +5,7 @@ export interface InvestmentDocument extends Document {
     _id: Types.ObjectId;
 
     userId: Types.ObjectId;
+    sipInstallmentId?: Types.ObjectId;
     schemeCode: string;
 
     amount: number;

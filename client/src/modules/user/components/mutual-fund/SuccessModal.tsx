@@ -1,6 +1,6 @@
 
+import type { FundDetails } from '@modules/user/types/MutaulFundType';
 import { CheckCircle } from 'lucide-react';
-import type { FundDetails } from '../../../types/MutaulFundType';
 
 interface SuccessModalProps {
     data: FundDetails;

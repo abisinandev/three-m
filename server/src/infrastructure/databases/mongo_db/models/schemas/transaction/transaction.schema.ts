@@ -1,8 +1,8 @@
 import { Schema, model, Document } from "mongoose";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
-import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
 import { ITransactionSchema } from "../../interfaces/transaction/transaction.schema.interface";
+import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 
 export type TransactionDocument = Document & ITransactionSchema;
 
@@ -64,7 +64,7 @@ const TransactionSchema = new Schema<TransactionDocument>(
         units: {
             type: Number,
             default: null,
-        },//Not necessary to store units its make verdict
+        },
 
         txHash: {
             type: String,
@@ -81,9 +81,11 @@ const TransactionSchema = new Schema<TransactionDocument>(
         },
         referenceType: {
             type: String,
-            enum: Object.values(ReferenceType),
+            enum: Object.values(TransactionReferenceType),
             required: true,
         },
+
+        referenceId: { trpe: String },
 
         receipt_url: {
             type: String,
@@ -92,8 +94,6 @@ const TransactionSchema = new Schema<TransactionDocument>(
 
         paymentIntentId: {
             type: String,
-            // required: true,
-            // unique: true,
         },
     },
     {

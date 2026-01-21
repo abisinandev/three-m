@@ -49,8 +49,6 @@ export function mapIntentToDTO(intent: Stripe.PaymentIntent): StripePaymentDTO {
 }
 
 
-
-
 export function mapStripeStatusToTransactionStatus(
     stripeStatus: Stripe.PaymentIntent.Status
 ): TransactionStatus {

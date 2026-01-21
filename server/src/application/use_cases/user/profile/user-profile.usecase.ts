@@ -24,7 +24,6 @@ export class GetUserProfileUseCase implements IUserProfileInterface {
     if (!user) {
       throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
     }
-    console.log("Users: ", user)
     return toUserResponse(user)
   }
 }

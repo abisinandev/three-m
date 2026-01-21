@@ -7,11 +7,12 @@ export class InvestmentEntity {
     private readonly _schemeCode: string;
 
     private readonly _amount: number;
-    private readonly _units: number;
-    private readonly _nav: number;
-    private readonly _navDate: Date;
+    private readonly _units?: number;
+    private readonly _nav?: number;
+    private readonly _navDate?: Date;
+    private readonly _sipInstallmentId?: string;
 
-    private _remainingUnits: number;
+    private _remainingUnits?: number;
     private _redeemedUnits?: number;
     private _redeemedAt?: Date;
 
@@ -28,18 +29,19 @@ export class InvestmentEntity {
         schemeCode: string;
 
         amount: number;
-        units: number;
+        units?: number;
 
-        nav: number;
-        navDate: Date;
+        nav?: number;
+        navDate?: Date;
 
-        remainingUnits: number;
+        remainingUnits?: number;
         redeemedUnits?: number;
         redeemedAt?: Date;
 
         status: InvestmentStatus;
         paymentMethod: PaymentMethod;
         investmentType: InvestmentType;
+        sipInstallmentId?: string;
 
         createdAt: Date;
         updatedAt?: Date;
@@ -60,7 +62,7 @@ export class InvestmentEntity {
         this._status = props.status;
         this._paymentMethod = props.paymentMethod;
         this._investmentType = props.investmentType;
-
+        this._sipInstallmentId = props.sipInstallmentId;
         this._createdAt = props.createdAt;
         this._updatedAt = props.updatedAt;
     }
@@ -71,18 +73,16 @@ export class InvestmentEntity {
         amount: number;
         investmentType: InvestmentType;
         paymentMethod: PaymentMethod;
+        sipInstallmentId?: string;
     }): InvestmentEntity {
         return new InvestmentEntity({
             userId: data.userId,
             schemeCode: data.schemeCode,
             amount: data.amount,
-            units: 0,
-            nav: 0,
-            navDate: new Date(0),
-            remainingUnits: 0,
             status: InvestmentStatus.INITIATED,
             investmentType: data.investmentType,
             paymentMethod: data.paymentMethod,
+            sipInstallmentId: data.sipInstallmentId,
             createdAt: new Date(),
         });
     }
@@ -114,6 +114,7 @@ export class InvestmentEntity {
             status: InvestmentStatus.ALLOTTED,
             investmentType: investment._investmentType,
             paymentMethod: investment._paymentMethod,
+            sipInstallmentId: investment._sipInstallmentId,
             createdAt: investment._createdAt,
             updatedAt: new Date(),
         });
@@ -169,7 +170,7 @@ export class InvestmentEntity {
         status: InvestmentStatus;
         investmentType: InvestmentType;
         paymentMethod: PaymentMethod;
-
+        sipInstallmentId?: string;
         createdAt: Date;
         updatedAt?: Date;
     }): InvestmentEntity {
@@ -187,6 +188,7 @@ export class InvestmentEntity {
             status: props.status,
             investmentType: props.investmentType,
             paymentMethod: props.paymentMethod,
+            sipInstallmentId: props.sipInstallmentId ?? undefined,
             createdAt: props.createdAt,
             updatedAt: props.updatedAt,
         });
@@ -205,6 +207,7 @@ export class InvestmentEntity {
     get status() { return this._status; }
     get investmentType() { return this._investmentType; }
     get paymentMethod() { return this._paymentMethod; }
+    get sipInstallmentId() { return this._sipInstallmentId; }
     get createdAt(): Date { return this._createdAt; }
     get updatedAt() { return this._updatedAt; }
 }

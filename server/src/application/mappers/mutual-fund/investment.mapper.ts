@@ -2,7 +2,6 @@ import { InvestmentDTO } from '@application/dto/mutual-funds/investment-dto';
 import { InvestmentResponseDTO } from '@application/dto/mutual-funds/investment-response.dto';
 import { InvestmentEntity } from '@domain/entities/mutual-fund/investment.entity';
 import { MutualFundEntity } from '@domain/entities/mutual-fund/mutual-fund-entity';
-import { InvestmentStatus } from '@domain/enum/funds/investment.enums';
 
 /**
  * DTO → Domain Entity

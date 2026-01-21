@@ -5,6 +5,9 @@ import { IInvestmentRepository } from "@application/interfaces/repositories/feat
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { getNavDate, isSameDate } from "@shared/utils/mutual-fund/nav-allocation-utils";
 import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
+import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
+import { InvestmentType } from "@domain/enum/funds/investment.enums";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 
 @injectable()
 export class NavAllocateUseCase implements INavAllocateUseCase {
@@ -12,6 +15,7 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
     constructor(
         @inject(FEATURE_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
         @inject(FEATURE_TYPES.NavUpdateProvider) private readonly _navProvider: IMutualFundNavUpdateProvider,
+        @inject(FEATURE_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
     ) { }
     async execute(): Promise<void> {
         const investments = await this._investmentRepository.findInitiatedFunds();
@@ -30,7 +34,7 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
                 );
 
                 if (!navForDate) {
-                    console.log("No NAV found for date", navDate);
+                    logger.info(`No NAV found for date ${navDate}`);
                     continue;
                 }
 
@@ -42,6 +46,16 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
                     }
                 );
 
+                if (investment.investmentType === InvestmentType.SIP) {
+                    await this._sipInstallmentRepository.update(
+                        investment.sipInstallmentId as string,
+                        {
+                            units: updatedInvestment.units,
+                            nav: updatedInvestment.nav,
+                        }
+                    );
+                }
+                
                 await this._investmentRepository.update(
                     investment.id as string,
                     updatedInvestment,

@@ -6,14 +6,19 @@ const InvestmentSchema = new Schema<InvestmentDocument>(
     {
         userId: {
             type: Schema.Types.ObjectId,
-            required: true,
+            // required: true,
             ref: "User",
             index: true,
         },
 
+        sipInstallmentId: {
+            type: Schema.Types.ObjectId,
+            ref:"SipInstallment",
+        },
+        
         schemeCode: {
             type: String,
-            required: true,
+            // required: true,
             index: true,
             trim: true,
         },
@@ -26,7 +31,7 @@ const InvestmentSchema = new Schema<InvestmentDocument>(
 
         units: {
             type: Number,
-            required: true,
+            // required: true,
             min: 0,
         },
 
@@ -43,7 +48,7 @@ const InvestmentSchema = new Schema<InvestmentDocument>(
 
         remainingUnits: {
             type: Number,
-            required: true,
+            // required: true,
             min: 0,
             index: true,
         },
@@ -60,7 +65,7 @@ const InvestmentSchema = new Schema<InvestmentDocument>(
         status: {
             type: String,
             enum: Object.values(InvestmentStatus),
-            required: true,
+            // required: true,
             index: true,
         },
 

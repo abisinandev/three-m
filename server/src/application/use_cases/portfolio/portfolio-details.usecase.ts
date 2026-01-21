@@ -42,17 +42,20 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
             if (!fund) continue;
 
             let profit = 0;
-            if (inv.units > 0) {
-                profit = ((inv.units as number) * (latestNav[0]?.nav ?? 0) - inv.amount) || 0;
-            };
-
+            if (inv.status === InvestmentStatus.ALLOTTED && Number(inv.units) > 0) {
+                profit =
+                    Number(
+                        ((Number(inv.units) * latestNav[0].nav) - inv.amount).toFixed(2)
+                    );
+            }
+            console.log((inv.units as number), (latestNav[0]?.nav ?? 0), "===", (inv.units as number) * (latestNav[0]?.nav ?? 0), inv.amount, ((Number(inv.units) * latestNav[0].nav) - inv.amount), '0000000000')
             if (inv.status === InvestmentStatus.ALLOTTED) {
                 totalProfit += profit;
             }
-            
+
             data.push(toInvestmentResponse(inv, fund, profit));
         }
-
+        console.log(totalProfit, '--------------------')
         return {
             data,
             page,

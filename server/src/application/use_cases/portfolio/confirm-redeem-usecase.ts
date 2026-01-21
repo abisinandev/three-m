@@ -87,12 +87,12 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
                 if (remainingUnitsToRedeem <= 0) break;
 
                 const redeemableUnits = Math.min(
-                    inv.remainingUnits,
+                    inv.remainingUnits as number,
                     remainingUnitsToRedeem
                 );
 
                 const updated = InvestmentEntity.redeemUnits(
-                    inv.remainingUnits,
+                    inv.remainingUnits as number,
                     inv.redeemedUnits,
                     redeemableUnits
                 );
@@ -129,4 +129,4 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
         }
 
     }
-};
+}; 

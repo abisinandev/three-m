@@ -1,4 +1,4 @@
-import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
+import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { SignatureKey } from "@domain/value-objects/wallet/signature-key.vo";
@@ -16,7 +16,8 @@ export class TransactionEntity {
     private readonly _isVerified: boolean;
     private readonly _txHash: TxHash;
     private readonly _signature: SignatureKey;
-    private readonly _referenceType: ReferenceType;
+    private readonly _referenceType: TransactionReferenceType;
+    private readonly _referenceId?: string;
     private readonly _paymentIntentId?: string;
     private readonly _status: TransactionStatus;
     private readonly _paymentStatus: TransactionStatus;
@@ -36,7 +37,8 @@ export class TransactionEntity {
         isVerified: boolean;
         txHash: TxHash;
         signature: SignatureKey;
-        referenceType: ReferenceType;
+        referenceType: TransactionReferenceType;
+        referenceId?: string;
         paymentIntentId?: string;
         status: TransactionStatus;
         paymentStatus: TransactionStatus;
@@ -56,6 +58,7 @@ export class TransactionEntity {
         this._txHash = props.txHash;
         this._signature = props.signature;
         this._referenceType = props.referenceType;
+        this._referenceId = props.referenceId;
         this._paymentIntentId = props.paymentIntentId;
         this._status = props.status;
         this._paymentStatus = props.paymentStatus;
@@ -71,26 +74,28 @@ export class TransactionEntity {
         amount: number;
         currency: string;
         type: TransactionTypes;
-        referenceType: ReferenceType;
+        referenceType: TransactionReferenceType;
+        referenceId?: string;
         paymentIntentId?: string;
         status: TransactionStatus;
         paymentStatus: TransactionStatus;
         fundId?: string;
         units?: number;
         receipt_url?: string;
+        isVerified?: boolean;
     }): TransactionEntity {
         if (data.amount <= 0) throw new Error("Transaction amount must be positive");
-        if (data.type === TransactionTypes.INVEST && !data.fundId)
+        if (data.type === TransactionTypes.INVESTMENT && !data.fundId)
             throw new Error("FundId is required for investment transactions");
 
         const txHash = TxHash.generate({
+            txType: data.type,
             amount: data.amount,
             userId: data.userId,
             paymentIntentId: data.paymentIntentId,
-            fundId: data.fundId,
-            units: data.units,
+            referenceType: data.referenceType,
+            referenceId: data.referenceId ?? undefined,
         });
-
         const signature = SignatureKey.generate(txHash.value);
 
         return new TransactionEntity({
@@ -101,6 +106,7 @@ export class TransactionEntity {
             transactionId: TransactionId.create(),
             type: data.type,
             referenceType: data.referenceType,
+            referenceId: data.referenceId,
             txHash,
             signature,
             paymentIntentId: data.paymentIntentId,
@@ -109,7 +115,7 @@ export class TransactionEntity {
             fundId: data.fundId,
             units: data.units,
             receipt_url: data.receipt_url,
-            isVerified: false,
+            isVerified: data.isVerified ? true : false,
         });
     }
 
@@ -124,7 +130,8 @@ export class TransactionEntity {
         isVerified: boolean;
         txHash: string;
         signature: string;
-        referenceType: ReferenceType;
+        referenceType: TransactionReferenceType;
+        referenceId?: string;
         paymentIntentId: string;
         status: TransactionStatus;
         paymentStatus: TransactionStatus;
@@ -149,6 +156,7 @@ export class TransactionEntity {
             txHash,
             signature,
             referenceType: props.referenceType,
+            referenceId: props.referenceId,
             paymentIntentId: props.paymentIntentId,
             status: props.status,
             paymentStatus: props.paymentStatus,
@@ -171,6 +179,7 @@ export class TransactionEntity {
     get txHash() { return this._txHash.value; };
     get signature() { return this._signature.value; };
     get referenceType() { return this._referenceType; };
+    get referenceId() { return this._referenceId; }
     get paymentIntentId() { return this._paymentIntentId; };
     get status() { return this._status; };
     get paymentStatus() { return this._paymentStatus; };

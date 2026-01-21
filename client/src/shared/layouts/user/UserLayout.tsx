@@ -71,7 +71,7 @@ const UserLayout = () => {
                             { to: '/user/expenses', label: 'Expense tracker' },
                             { to: '/user/wallet', label: 'Wallet' },
                             { to: '/user/mutual-funds', label: 'Mutual Funds' },
-                            { to: '/user/sip', label: 'SIP' },
+                            // { to: '/user/sip', label: 'SIP' },
                             { to: '/user/algo', label: 'Algo trading' },
                             { to: '/user/portfolio', label: 'Portfolio' },
                             { to: '/user/news', label: "News" },
