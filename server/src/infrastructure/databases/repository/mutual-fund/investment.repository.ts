@@ -16,8 +16,6 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         super(InvestmentModel, InvestmentMapper);
     }
 
-
-
     async createInvestment(entity: InvestmentEntity): Promise<InvestmentEntity | null> {
         const persistenceData = this.mapper.toPersistance(entity);
         const createdDoc = await this.model.create(persistenceData);
@@ -227,23 +225,6 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         return this.mapper.toDomain(doc);
     }
 
-    // async radeemInvestments(
-    //     userId: string,
-    //     schemeCode: string,
-    //     units: number,
-    //     session: ClientSession,
-    // ): Promise<void> {
-
-    //     await this.model.updateOne(
-    //         { userId, schemeCode: schemeCode },
-    //         {
-    //             $set: {
-    //                 remainingUnits: units,
-
-    //             }
-    //         }, { session }
-    //     )
-    // }
 
     async redeemInvestments(
         investmentId: string,
@@ -260,6 +241,5 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             { session }
         );
     }
-
 
 }

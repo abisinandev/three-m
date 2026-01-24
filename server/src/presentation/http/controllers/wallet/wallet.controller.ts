@@ -1,5 +1,5 @@
-import { IMutualFundsUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mutual-fund-usecase.interface";
-import { IUserWalletUseCase } from "@application/use_cases/interfaces/user/user-wallet-usecase.interface";
+import { IMutualFundsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-usecase.interface";
+import { IUserWalletUseCase } from "@application/use_cases/user/interfaces/user-wallet-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";

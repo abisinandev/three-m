@@ -1,6 +1,6 @@
-import { IFetchTransactionsUseCase } from "@application/use_cases/interfaces/admin/fetch-transactions-usecase.interface";
-import { ISipDetailsUseCase } from "@application/use_cases/interfaces/features/sip/sip-details-usecase.interface";
-import { IAdminVerifyTransactionUseCase } from "@application/use_cases/interfaces/user/admin-verify-transaction-usecase.interface";
+import { IFetchTransactionsUseCase } from "@application/use_cases/admin/interfaces/fetch-transactions-usecase.interface";
+import { ISipDetailsUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-details-usecase.interface";
+import { IAdminVerifyTransactionUseCase } from "@application/use_cases/user/interfaces/admin-verify-transaction-usecase.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";

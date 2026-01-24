@@ -1,4 +1,4 @@
-import { ISystemVerifyTransactionUseCase } from "@application/use_cases/interfaces/admin/system-verify-transaction.interface";
+import { ISystemVerifyTransactionUseCase } from "@application/use_cases/admin/interfaces/system-verify-transaction.interface";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { inject, injectable } from "inversify";
 

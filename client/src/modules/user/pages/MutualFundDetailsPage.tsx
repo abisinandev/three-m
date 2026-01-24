@@ -59,7 +59,7 @@ const MutualFundDetailsPage = () => {
       setShowSuccessModal(true);
       setErrorMsg('');
     },
-    (msg) => { 
+    (msg) => {
       alert(msg);
     }
   );
@@ -68,7 +68,7 @@ const MutualFundDetailsPage = () => {
 
   const handleSipProceed = (sipData: SipData) => {
     if (!data) return;
-    setInvestment(sipData.amount);  
+    setInvestment(sipData.amount);
     startSipMutate({
       schemeCode: data.schemeCode,
       amount: sipData.amount,
@@ -263,7 +263,7 @@ const MutualFundDetailsPage = () => {
                 <p className={`text-2xl font-bold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
                   {isPositive ? '+' : ''}{periodReturn.toFixed(1)}%
                 </p>
-                <p className="text-xs text-gray-400 mt-1">{activePeriod}</p>
+                <p className="text-xs text-gray-400 mt-1">{activePeriod} RETURN</p>
               </div>
             </div>
           </div>

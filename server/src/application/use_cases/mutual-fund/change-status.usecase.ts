@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IChangeFundStatusUseCase } from "../interfaces/features/mutual-funds/change-fund-status-usecase.interface";
+import { IChangeFundStatusUseCase } from "./interfaces/change-fund-status-usecase.interface";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";

@@ -1,8 +1,8 @@
-import { IChangeFundStatusUseCase } from "@application/use_cases/interfaces/features/mutual-funds/change-fund-status-usecase.interface";
-import { IFetchAllFundsUseCases } from "@application/use_cases/interfaces/features/mutual-funds/fetch-all-funds-usecase.interface";
-import { IMfCagrUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mf-cagr-usecse.interface";
-import { IMutualFundNavUpdatesUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mutual-fund-nav-udpate-usecase.interface";
-import { IMutualFundsUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mutual-fund-usecase.interface";
+import { IChangeFundStatusUseCase } from "@application/use_cases/mutual-fund/interfaces/change-fund-status-usecase.interface";
+import { IFetchAllFundsUseCases } from "@application/use_cases/mutual-fund/interfaces/fetch-all-funds-usecase.interface";
+import { IMfCagrUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-cagr-usecse.interface";
+import { IMutualFundNavUpdatesUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-nav-udpate-usecase.interface";
+import { IMutualFundsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";

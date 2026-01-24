@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IMutualFundsUseCase } from "../interfaces/features/mutual-funds/mutual-fund-usecase.interface";
+import { IMutualFundsUseCase } from "./interfaces/mutual-fund-usecase.interface";
 import { MutualFundDTO } from "@application/dto/mutual-funds/mutual-fund.dto";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { ValidationError } from "@presentation/express/utils/error-handling";

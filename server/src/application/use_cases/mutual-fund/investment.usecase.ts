@@ -1,5 +1,5 @@
 import { InvestmentDTO } from "@application/dto/mutual-funds/investment-dto";
-import { IInvestmentUseCase } from "../interfaces/features/mutual-funds/investment-usecase.interface";
+import { IInvestmentUseCase } from "./interfaces/investment-usecase.interface";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { inject, injectable } from "inversify";

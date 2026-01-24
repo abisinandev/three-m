@@ -5,7 +5,7 @@ import cron from 'node-cron'
 let isRunning = false;
 
 export const startSipScheduler = () => {
-    cron.schedule("0 6 * * * *", async () => {
+    cron.schedule("0 6,9 * * * *", async () => {
 
         if (isRunning) {
             console.warn("[SIP SCHEDULER] Previous run still in progress. Skipping...");

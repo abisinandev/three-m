@@ -1,6 +1,6 @@
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { inject, injectable } from "inversify";
-import { IMfCagrUseCase } from "../interfaces/features/mutual-funds/mf-cagr-usecse.interface";
+import { IMfCagrUseCase } from "./interfaces/mf-cagr-usecse.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { MfCagrEntity } from "@domain/entities/mutual-fund/cagr-entity";

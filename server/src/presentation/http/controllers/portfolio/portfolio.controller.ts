@@ -1,6 +1,6 @@
-import { IConfirmRedeemUseCase } from "@application/use_cases/interfaces/features/portfolio/confirm-redeem-usecase.interface";
-import { IPortfolioDetailsUseCase } from "@application/use_cases/interfaces/features/portfolio/portfolio-details-usecase.interface";
-import { IRadeemInvestmentUseCase } from "@application/use_cases/interfaces/features/portfolio/redeem-investments-usecase.interface";
+import { IConfirmRedeemUseCase } from "@application/use_cases/portfolio/interfaces/confirm-redeem-usecase.interface";
+import { IPortfolioDetailsUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-details-usecase.interface";
+import { IRadeemInvestmentUseCase } from "@application/use_cases/portfolio/interfaces/redeem-investments-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";

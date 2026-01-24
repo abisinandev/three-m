@@ -1,223 +1,281 @@
-import { useMemo } from 'react';
-import { ArrowLeft, Clock, CheckCircle2, DollarSign, Calendar, Hash, Activity } from 'lucide-react';
+import { useState } from 'react';
+import {
+    ArrowLeft,
+    Clock,
+    CheckCircle2,
+    DollarSign,
+    Calendar,
+    Activity,
+    Loader2,
+    PauseCircle,
+    Ban,
+} from 'lucide-react';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { FetchSipDetailsApi } from '@shared/services/admin/sip-management/SipManagementApi';
+
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
-import { SipStatusBadge, InstallmentStatusBadge } from '../components/SipStatusBadges';
-import type { SIP, SipInstallment } from '../types/SipTypes';
+import { SipStatusBadge } from '../components/SipStatusBadges';
+import { fetchSipDetailsApi } from '@shared/services/admin/sip-management/SipManagementApi';
 
 const SipDetailsPage = () => {
     const navigate = useNavigate();
     const { sipId } = useParams({ from: '/admin/sip-details/$sipId' });
 
-    const { data: response, isLoading, isError } = useQuery({
-        queryKey: ['admin-sip-details', sipId],
-        queryFn: () => FetchSipDetailsApi(sipId as string),
+    const [filters, setFilters] = useState({
+        page: 1,
+        limit: 10,
+        status: '',
     });
 
-    console.log('sip-details: ', response)
+    const {
+        data,
+        isLoading,
+        isError,
+    } = useQuery({
+        queryKey: ['sip-details', sipId, filters],
+        queryFn: () =>
+            fetchSipDetailsApi(sipId, {
+                page: filters.page,
+                limit: filters.limit,
+                status: filters.status || undefined,
+            }),
+        enabled: !!sipId,
+        placeholderData: (p) => p,
+    });
 
-    const sip: SIP | null = useMemo(() => response?.sip ?? null, [response]);
-    const installments: SipInstallment[] = useMemo(() => response?.installments ?? [], [response]);
-
-    const stats = useMemo(() => {
-        if (!installments.length) return null;
-        return {
-            total: installments.length,
-            allocated: installments.filter(i => i.status === 'ALLOCATED').length,
-            failed: installments.filter(i => i.status === 'FAILED').length,
-            totalInvested: installments.filter(i => i.status === 'ALLOCATED').reduce((acc, i) => acc + i.amount, 0),
-        };
-    }, [installments]);
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="text-zinc-500 text-sm animate-pulse">Loading SIP details...</div>
+            <div className="flex flex-col items-center justify-center min-h-[50vh] gap-2">
+                <Loader2 className="w-6 h-6 text-emerald-500 animate-spin" />
+                <p className="text-[11px] text-neutral-500">Loading SIP...</p>
             </div>
         );
     }
 
-    if (isError || !sip) {
+    if (isError || !data?.data) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-                <div className="text-rose-500 text-sm font-medium">Failed to load SIP details</div>
+            <div className="flex flex-col items-center justify-center min-h-[50vh] gap-2">
+                <p className="text-xs text-rose-500">Failed to load SIP details</p>
                 <button
                     onClick={() => navigate({ to: '/admin/sip-management' })}
-                    className="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white hover:bg-zinc-800"
+                    className="text-[10px] text-neutral-400 hover:text-neutral-200 mt-1"
                 >
-                    Back to Management
+                    ← Back
                 </button>
             </div>
         );
     }
 
+    const sip = data.data;
+    const installments = data.data.installments ?? [];
+
+    const totalInvested = sip.executedInstallments * sip.amount;
+    const progressPercentage = (
+        (sip.executedInstallments / Math.max(sip.totalInstallments, 1)) *
+        100
+    ).toFixed(0);
+
+    const canPause = ['ACTIVE', 'RUNNING'].includes(sip.status);
+    const canCancel = ['ACTIVE', 'RUNNING', 'PAUSED'].includes(sip.status);
+
     return (
-        <div className="space-y-6 pb-12">
+        <div className="min-h-screen bg-[#0a0a0a] text-white p-5 space-y-6 text-xs">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <button
-                        onClick={() => navigate({ to: '/admin/sip-management' })}
-                        className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors mb-2 text-[11px] font-bold uppercase tracking-widest"
-                    >
-                        <ArrowLeft size={14} />
-                        Back to SIPs
-                    </button>
-                    <div className="flex items-center gap-3">
-                        <h1 className="text-xl font-semibold text-white">SIP Details</h1>
-                        <SipStatusBadge status={sip.status} />
-                    </div>
-                    <p className="text-xs text-zinc-400 mt-1">
-                        Viewing execution history for SIP <span className="text-blue-400 font-mono">#{sip.id.slice(-8)}</span>
-                    </p>
+            <div className="space-y-2">
+                <button
+                    onClick={() => navigate({ to: '/admin/sip-management' })}
+                    className="flex items-center gap-1.5 text-neutral-500 hover:text-neutral-200 text-[10px] font-semibold uppercase tracking-wide"
+                >
+                    <ArrowLeft size={13} />
+                    BACK TO SIPs
+                </button>
+
+                <div className="flex items-center gap-2">
+                    <h1 className="text-xl font-bold">SIP Details</h1>
+                    <SipStatusBadge status={sip.status} />
                 </div>
+
+                <p className="text-[11px] text-neutral-500 font-mono">
+                    ID: <span className="text-emerald-400">{sip.id}</span>
+                </p>
             </div>
 
-            {/* Stats Overview */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Compact Stats Row */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <StatsCardComponent
-                    title="Installment Amount"
+                    title="Amount"
                     value={sip.amount}
                     prefix="₹"
-                    icon={<DollarSign size={20} />}
+                    icon={<DollarSign size={16} />}
                     color="emerald"
-                    subtitle={`${sip.frequency} frequency`}
+                    size="sm"
+                    subtitle={sip.frequency}
                 />
                 <StatsCardComponent
                     title="Progress"
                     value={`${sip.executedInstallments}/${sip.totalInstallments}`}
-                    icon={<Activity size={20} />}
+                    icon={<Activity size={16} />}
                     color="blue"
-                    subtitle={`${((sip.executedInstallments / (sip.totalInstallments || 1)) * 100).toFixed(0)}% completed`}
+                    size="sm"
+                    subtitle={`${progressPercentage}%`}
                 />
                 <StatsCardComponent
-                    title="Next Execution"
-                    value={new Date(sip.nextExecutionDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
-                    icon={<Calendar size={20} />}
+                    title="Next"
+                    value={new Date(sip.nextExecutionDate).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                    })}
+                    icon={<Calendar size={16} />}
                     color="amber"
-                    subtitle="Expected date"
+                    size="sm"
+                    subtitle="date"
                 />
                 <StatsCardComponent
-                    title="Total Invested"
-                    value={stats?.totalInvested ?? 0}
+                    title="Invested"
+                    value={totalInvested}
                     prefix="₹"
-                    icon={<CheckCircle2 size={20} />}
+                    icon={<CheckCircle2 size={16} />}
                     color="indigo"
-                    subtitle="Successfully allocated"
+                    size="sm"
+                    subtitle="total"
                 />
             </div>
 
-            {/* Installments Table */}
-            <div className="bg-[#090909] rounded-xl border border-zinc-900/50 overflow-hidden">
-                <div className="px-5 py-4 border-b border-zinc-900/50 flex items-center justify-between bg-zinc-900/20">
-                    <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+            <div className="bg-[#111] border border-neutral-800 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[11px]">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1 flex-1">
+                    <div>
+                        <span className="text-neutral-500">Start</span>
+                        <p>{new Date(sip.startDate).toLocaleDateString('en-IN')}</p>
+                    </div>
+                    <div>
+                        <span className="text-neutral-500">Scheme</span>
+                        <p className="font-mono">{sip.schemeCode}</p>
+                    </div>
+                    <div>
+                        <span className="text-neutral-500">User</span>
+                        <p className="font-mono">
+                            {sip.userCode}
+                        </p>
+                    </div>
+                    <div>
+                        <span className="text-neutral-500">Installments</span>
+                        <p>
+                            {sip.executedInstallments} / {sip.totalInstallments}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex gap-2 self-start sm:self-center">
+                    {canPause && (
+                        <button className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-950/60 border border-amber-800/50 rounded text-amber-300 hover:bg-amber-900/60 text-[11px] font-medium">
+                            <PauseCircle size={14} />
+                            Pause SIP
+                        </button>
+                    )}
+                    {canCancel && (
+                        <button className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-950/60 border border-rose-800/50 rounded text-rose-300 hover:bg-rose-900/60 text-[11px] font-medium">
+                            <Ban size={14} />
+                            Cancel SIP
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                    <h2 className="text-sm font-semibold flex items-center gap-1.5">
                         <Clock size={14} />
                         Execution History
                     </h2>
-                    <span className="text-[10px] text-zinc-600 font-medium">
-                        {installments.length} installments generated
-                    </span>
+
+                    <select
+                        value={filters.status}
+                        onChange={(e) =>
+                            setFilters((prev) => ({
+                                ...prev,
+                                page: 1,
+                                status: e.target.value,
+                            }))
+                        }
+                        className="text-[11px] bg-[#111] border border-neutral-800 rounded px-2.5 py-1 text-neutral-300"
+                    >
+                        <option value="">All</option>
+                        <option value="ALLOCATED">Allocated</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="FAILED">Failed</option>
+                    </select>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead>
-                            <tr className="bg-zinc-900/30">
-                                <th className="px-5 py-3 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">No.</th>
-                                <th className="px-5 py-3 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Date</th>
-                                <th className="px-5 py-3 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Amount</th>
-                                <th className="px-5 py-3 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Status</th>
-                                <th className="px-5 py-3 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">NAV / Units</th>
-                                <th className="px-5 py-3 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Reference</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-zinc-900/30">
-                            {installments.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6} className="px-5 py-12 text-center text-zinc-600 text-xs">
-                                        No installments recorded yet
-                                    </td>
-                                </tr>
-                            ) : (
-                                installments.map((inst) => (
-                                    <tr key={inst.id} className="hover:bg-zinc-900/30 transition-colors group">
-                                        <td className="px-5 py-4">
-                                            <span className="text-xs font-bold text-zinc-400">#{inst.installmentNo}</span>
-                                        </td>
-                                        <td className="px-5 py-4">
-                                            <div className="text-xs text-zinc-200 font-medium whitespace-nowrap">
-                                                {new Date(inst.executionDate).toLocaleDateString('en-IN', {
-                                                    day: '2-digit',
-                                                    month: 'short',
-                                                    year: 'numeric'
-                                                })}
+                <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg overflow-hidden text-[11px]">
+                    {installments.length === 0 ? (
+                        <div className="p-8 text-center text-neutral-600">
+                            No installments yet
+                        </div>
+                    ) : (
+                        <>
+                            <div className="divide-y divide-neutral-800/70">
+                                {installments.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        className="grid grid-cols-3 px-4 py-2.5 items-center"
+                                    >
+                                        <div>
+                                            <div className="text-neutral-500">
+                                                #{item.installmentNo}
                                             </div>
-                                            <div className="text-[10px] text-zinc-600 mt-0.5 whitespace-nowrap">
-                                                Generated {new Date(inst.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            <div className="text-neutral-300">
+                                                {new Date(item.executionDate).toLocaleDateString('en-IN')}
                                             </div>
-                                        </td>
-                                        <td className="px-5 py-4">
-                                            <div className="text-xs font-bold text-white">₹{inst.amount.toLocaleString('en-IN')}</div>
-                                        </td>
-                                        <td className="px-5 py-4">
-                                            <InstallmentStatusBadge status={inst.status} />
-                                        </td>
-                                        <td className="px-5 py-4 text-xs">
-                                            {inst.nav ? (
-                                                <div className="flex flex-col">
-                                                    <span className="text-zinc-300 font-medium">Nav: {inst.nav}</span>
-                                                    <span className="text-zinc-500 text-[10px]">Units: {inst.units}</span>
-                                                </div>
-                                            ) : (
-                                                <span className="text-zinc-800">—</span>
-                                            )}
-                                        </td>
-                                        <td className="px-5 py-4">
-                                            {inst.investmentId ? (
-                                                <div className="text-[10px] font-mono text-blue-500/80 uppercase">
-                                                    {inst.investmentId.slice(-10)}
-                                                </div>
-                                            ) : (
-                                                <span className="text-[10px] text-zinc-700 font-medium uppercase tracking-tight">Pending Allocation</span>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-[#090909] border border-zinc-900/50 rounded-xl p-5">
-                    <h3 className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <Hash size={14} />
-                        Scheme Information
-                    </h3>
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between py-1 border-b border-zinc-900/30 last:border-0">
-                            <span className="text-xs text-zinc-500">Scheme Code</span>
-                            <span className="text-xs font-mono text-zinc-200">{sip.schemeCode}</span>
-                        </div>
-                        <div className="flex items-center justify-between py-1 border-b border-zinc-900/30 last:border-0">
-                            <span className="text-xs text-zinc-500">User ID</span>
-                            <span className="text-xs font-mono text-zinc-200 text-right max-w-[150px] truncate">{sip.userId}</span>
-                        </div>
-                        <div className="flex items-center justify-between py-1 border-b border-zinc-900/30 last:border-0">
-                            <span className="text-xs text-zinc-500">Start Date</span>
-                            <span className="text-xs text-zinc-200">{new Date(sip.startDate).toLocaleDateString()}</span>
-                        </div>
-                    </div>
-                </div>
+                                        <div className="text-center font-mono text-emerald-400">
+                                            ₹{item.amount.toLocaleString()}
+                                        </div>
 
-                <div className="bg-zinc-900/10 border border-zinc-900/30 border-dashed rounded-xl p-5 flex flex-col items-center justify-center text-center opacity-70">
-                    <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center mb-3">
-                        <DollarSign size={20} className="text-zinc-600" />
-                    </div>
-                    <p className="text-xs text-zinc-600 font-medium">Automatic execution handles payments and unit allocation on the scheduled dates.</p>
+                                        <div className="text-right font-semibold uppercase tracking-wide">
+                                            <span
+                                                className={
+                                                    item.status === 'FAILED'
+                                                        ? 'text-rose-400'
+                                                        : item.status === 'ALLOCATED'
+                                                            ? 'text-emerald-400'
+                                                            : 'text-neutral-400'
+                                                }
+                                            >
+                                                {item.status}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="px-4 py-2.5 border-t border-neutral-800 flex justify-between items-center text-[10px] text-neutral-500 bg-neutral-950/30">
+                                <span>
+                                    {(filters.page - 1) * filters.limit + 1}–
+                                    {Math.min(filters.page * filters.limit, data.totalCount)}{' '}
+                                    of {data.totalCount}
+                                </span>
+
+                                <div className="flex gap-1.5">
+                                    <button
+                                        disabled={filters.page === 1}
+                                        onClick={() => setFilters((p) => ({ ...p, page: p.page - 1 }))}
+                                        className="px-2.5 py-1 disabled:opacity-40 bg-neutral-900 border border-neutral-700 rounded hover:bg-neutral-800 disabled:cursor-not-allowed"
+                                    >
+                                        Prev
+                                    </button>
+                                    <button
+                                        disabled={filters.page * filters.limit >= data.totalCount}
+                                        onClick={() => setFilters((p) => ({ ...p, page: p.page + 1 }))}
+                                        className="px-2.5 py-1 disabled:opacity-40 bg-neutral-900 border border-neutral-700 rounded hover:bg-neutral-800 disabled:cursor-not-allowed"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

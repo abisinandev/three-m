@@ -19,7 +19,7 @@ export const fetchMutualFunds = async (
 
 export const getMutualFundDetails = async (
     schemeCode: string,
-    activePeriod: string
+    activePeriod: string,
 ): Promise<IFundDetails> => {
     const res = await api.get(`/user/mutual-funds/${schemeCode}`, {
         params: { interval: activePeriod },
@@ -46,4 +46,10 @@ export const startSip = async (payload: {
     paymentMethod: string;
 }) => {
     return await api.post('/user/mutual-funds/sip/create', payload);
+}
+
+
+export const fetchSips = async () => {
+    const response = await api.get("/user/mutual-funds/sip");
+    return response.data
 }

@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IExecuteDueSipsUseCase } from "../interfaces/features/sip/execute-due-sip-usecase.interface";
+import { IExecuteDueSipsUseCase } from "./interfaces/execute-due-sip-usecase.interface";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";

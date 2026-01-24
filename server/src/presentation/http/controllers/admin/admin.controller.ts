@@ -1,4 +1,4 @@
-import type { IAdminProfileUseCase } from "@application/use_cases/interfaces/admin/admin-profile-usecase.interface";
+import type { IAdminProfileUseCase } from "@application/use_cases/admin/interfaces/admin-profile-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";

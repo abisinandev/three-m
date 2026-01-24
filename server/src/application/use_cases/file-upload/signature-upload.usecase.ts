@@ -2,7 +2,7 @@ import type { SignatureUploadDTO } from "@application/dto/user/signature-upload.
 import type { signatureUploadResponseDTO } from "@application/dto/user/signature-upload-response.dto";
 import type { IStorageProvider } from "@application/interfaces/services/externals/storage-provider.interface";
 import { inject, injectable } from "inversify";
-import type { ISignatureUploadUseCase } from "../interfaces/user/signature-upload-usecase.interface";
+import type { ISignatureUploadUseCase } from "../user/interfaces/signature-upload-usecase.interface";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 
 @injectable()

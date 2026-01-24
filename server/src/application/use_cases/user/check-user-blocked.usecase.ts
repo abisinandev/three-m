@@ -3,7 +3,7 @@ import type { UserRepository } from "@infrastructure/databases/repository/user/u
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { ICheckUserBlockedUseCase } from "../interfaces/user/check-user-blocked-usecase.interface";
+import type { ICheckUserBlockedUseCase } from "./interfaces/check-user-blocked-usecase.interface";
 
 @injectable()
 export class CheckUserBlockedUseCase implements ICheckUserBlockedUseCase {

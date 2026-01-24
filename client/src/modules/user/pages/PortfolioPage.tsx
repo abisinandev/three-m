@@ -99,10 +99,6 @@ const PortfolioDashboard = () => {
                         <h1 className="text-xl font-semibold text-white tracking-tight">Portfolio</h1>
                         <p className="text-xs text-zinc-500 mt-0.5">Monitor your investments and performance metrics</p>
                     </div>
-                    <button className="flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors shadow-lg shadow-blue-600/20">
-                        <Plus size={14} strokeWidth={2.5} />
-                        Add Position
-                    </button>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

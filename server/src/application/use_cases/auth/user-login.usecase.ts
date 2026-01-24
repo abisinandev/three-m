@@ -11,7 +11,7 @@ import {
   UnauthorizedError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { IUserLoginUseCase } from "../interfaces/user/user-login-usecase.interface";
+import type { IUserLoginUseCase } from "../user/interfaces/user-login-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()

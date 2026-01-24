@@ -1,7 +1,7 @@
 import { FundDetailsDTO } from "@application/dto/mutual-funds/fund-details.dto";
 import { IMfCagrRepository } from "@application/interfaces/repositories/feature/mf-cagr-repository.interface";
 import { IMutualFundNavRepository } from "@application/interfaces/repositories/feature/mutual-fund-nav-repository.interface";
-import { IMutualFundDetailsUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mutual-fund-details-usecase.interface";
+import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-details-usecase.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
 import { MutualFundRepository } from "@infrastructure/databases/repository/mutual-fund/mutual-fund.repostiory";

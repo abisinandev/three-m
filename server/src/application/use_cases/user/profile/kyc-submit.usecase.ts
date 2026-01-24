@@ -4,7 +4,7 @@ import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { ConflictError } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { IKycSubmitUseCase } from "../../interfaces/user/kyc-submit-usecase.interface";
+import type { IKycSubmitUseCase } from "../interfaces/kyc-submit-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { IKycRepository } from "@application/interfaces/repositories/user/kyc-repository.interface";
 

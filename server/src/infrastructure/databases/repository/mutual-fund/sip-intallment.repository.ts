@@ -66,6 +66,10 @@ export class SipInstallmentRepository extends BaseRepository<SipInstallmentEntit
             filter.status = status;
         }
 
+        if (sipId) {
+            filter.sipId = new Types.ObjectId(sipId);
+        }
+
         Object.assign(filter, otherFilters);
 
         let query = this.model.find(filter);
@@ -97,7 +101,7 @@ export class SipInstallmentRepository extends BaseRepository<SipInstallmentEntit
         userId: string,
         sipId: string
     ): Promise<SipInstallmentEntity[] | null> {
-        console.log('[SipInstallmentRepository] Query params:', { userId, sipId });
+
 
         const userObjectId = new Types.ObjectId(userId);
         const sipObjectId = new Types.ObjectId(sipId);
@@ -113,7 +117,27 @@ export class SipInstallmentRepository extends BaseRepository<SipInstallmentEntit
         if (!docs || docs.length === 0) {
             return null;
         }
-
         return docs.map(doc => this.mapper.toDomain(doc));
+    }
+
+    async countInstallments(
+        userId: string,
+        options?: QueryOptions
+    ): Promise<number> {
+        const { sipId, status, ...otherFilters } = options || {};
+
+        const filter: any = { userId: new Types.ObjectId(userId) };
+
+        if (status) {
+            filter.status = status;
+        }
+
+        if (sipId) {
+            filter.sipId = new Types.ObjectId(sipId);
+        }
+
+        Object.assign(filter, otherFilters);
+
+        return await this.model.countDocuments(filter).exec();
     }
 }

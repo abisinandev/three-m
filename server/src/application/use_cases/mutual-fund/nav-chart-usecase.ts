@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { INavHistoryUseCase } from "../interfaces/features/mutual-funds/nav-history-usecase.interface";
+import { INavHistoryUseCase } from "./interfaces/nav-history-usecase.interface";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { IMutualFundNavRepository } from "@application/interfaces/repositories/feature/mutual-fund-nav-repository.interface";
 import { NotFoundError } from "@presentation/express/utils/error-handling";

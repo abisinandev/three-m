@@ -1,4 +1,4 @@
-import type { IAdminVerifyTransactionUseCase } from "@application/use_cases/interfaces/user/admin-verify-transaction-usecase.interface";
+import type { IAdminVerifyTransactionUseCase } from "@application/use_cases/user/interfaces/admin-verify-transaction-usecase.interface";
 import { BlockEntity } from "@domain/entities/transaction/block.entity";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";

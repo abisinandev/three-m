@@ -10,7 +10,7 @@ import {
   ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { IResetPasswordUseCase } from "../interfaces/user/reset-password-usecase.interface";
+import type { IResetPasswordUseCase } from "../user/interfaces/reset-password-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()

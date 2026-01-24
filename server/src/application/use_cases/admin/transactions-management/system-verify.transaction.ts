@@ -11,7 +11,7 @@ import { ITransactionRepository } from "@application/interfaces/repositories/fea
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IBlockRepository } from "@application/interfaces/repositories/feature/block-repository.interface";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
-import { ISystemVerifyTransactionUseCase } from "@application/use_cases/interfaces/admin/system-verify-transaction.interface";
+import { ISystemVerifyTransactionUseCase } from "@application/use_cases/admin/interfaces/system-verify-transaction.interface";
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { SipFailureReason } from "@domain/enum/funds/sip-failure-reason.enum";

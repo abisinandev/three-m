@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IChangeEmailVerifyOtpUseCase } from "../../interfaces/user/change-email-verify-usecase.interface";
+import { IChangeEmailVerifyOtpUseCase } from "../interfaces/change-email-verify-usecase.interface";
 import { VerifyOtpDTO } from "@application/dto/auth/verify-otp.dto";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";

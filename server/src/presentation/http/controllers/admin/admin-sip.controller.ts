@@ -1,5 +1,5 @@
-import { ISipDetailsUseCase } from "@application/use_cases/interfaces/features/sip/sip-details-usecase.interface";
-import { ISipManagementUseCase } from "@application/use_cases/interfaces/features/sip/sip-management-usecase.interface";
+import { ISipDetailsUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-details-usecase.interface";
+import { ISipManagementUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-management-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
@@ -33,46 +33,20 @@ export class AdminSipController {
     async fetchSipDetails(req: Request, res: Response, next: NextFunction) {
         try {
             const sipId = req.params.sipId;
-            const userId = req.user?.id;
-
-            const { status, limit, skip, sort } = req.query;
-
-            const queryOptions: any = {};
-
-            if (status) {
-                queryOptions.status = status;
-            }
-
-            if (limit) {
-                queryOptions.limit = parseInt(limit as string);
-            }
-
-            if (skip) {
-                queryOptions.skip = parseInt(skip as string);
-            }
-
-            if (sort) {
-                try {
-                    queryOptions.sort = JSON.parse(sort as string);
-                } catch {
-                    queryOptions.sort = { [sort as string]: 1 };
-                }
-            }
-
             const result = await this._sipDetailsUseCase.execute(
                 sipId,
-                userId as string,
-                queryOptions
+                req.query
             );
 
+            console.log(result, '0000000000000000000');
             return ResponseHelper.success(
                 res,
-                SuccessMessage.TRANSACTION_VERIFIED,
+                SuccessMessage.DATA_FETCHED,
                 result,
                 HttpStatus.OK
             )
         } catch (error) {
             next(error)
-        } 
+        }
     }
 }

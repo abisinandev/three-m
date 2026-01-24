@@ -10,7 +10,7 @@ import { NotFoundError } from "@presentation/express/utils/error-handling";
 import AppError from "@presentation/express/utils/error-handling/app.error";
 import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
-import type { IForgotPasswordResendOtpUseCase } from "../interfaces/user/forgot-pass-resend-otp-usecase.interface";
+import type { IForgotPasswordResendOtpUseCase } from "../user/interfaces/forgot-pass-resend-otp-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()

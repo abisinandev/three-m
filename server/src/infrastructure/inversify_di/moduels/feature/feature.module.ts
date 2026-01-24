@@ -7,21 +7,21 @@ import { IHttpClient } from "@application/interfaces/services/externals/http-cli
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IStorageProvider } from "@application/interfaces/services/externals/storage-provider.interface";
 import { SignatureUploadUseCase } from "@application/use_cases/file-upload/signature-upload.usecase";
-import { IChangeFundStatusUseCase } from "@application/use_cases/interfaces/features/mutual-funds/change-fund-status-usecase.interface";
-import { IFetchAllFundsUseCases } from "@application/use_cases/interfaces/features/mutual-funds/fetch-all-funds-usecase.interface";
-import { IInvestmentUseCase } from "@application/use_cases/interfaces/features/mutual-funds/investment-usecase.interface";
-import { IListFundsUserSideUseCase } from "@application/use_cases/interfaces/features/mutual-funds/list-fund-usecase.interface";
-import { IMfCagrUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mf-cagr-usecse.interface";
-import { IMutualFundDetailsUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mutual-fund-details-usecase.interface";
-import { IMutualFundNavUpdatesUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mutual-fund-nav-udpate-usecase.interface";
-import { IMutualFundsUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mutual-fund-usecase.interface";
-import { INavAllocateUseCase } from "@application/use_cases/interfaces/features/mutual-funds/nav-allocate-usecase.interface";
-import { INavHistoryUseCase } from "@application/use_cases/interfaces/features/mutual-funds/nav-history-usecase.interface";
-import { ISipCreationUseCase } from "@application/use_cases/interfaces/features/sip/sip-creation-usecase.interface";
-import { IConfirmRedeemUseCase } from "@application/use_cases/interfaces/features/portfolio/confirm-redeem-usecase.interface";
-import { IPortfolioDetailsUseCase } from "@application/use_cases/interfaces/features/portfolio/portfolio-details-usecase.interface";
-import { IRadeemInvestmentUseCase } from "@application/use_cases/interfaces/features/portfolio/redeem-investments-usecase.interface";
-import { ISignatureUploadUseCase } from "@application/use_cases/interfaces/user/signature-upload-usecase.interface";
+import { IChangeFundStatusUseCase } from "@application/use_cases/mutual-fund/interfaces/change-fund-status-usecase.interface";
+import { IFetchAllFundsUseCases } from "@application/use_cases/mutual-fund/interfaces/fetch-all-funds-usecase.interface";
+import { IInvestmentUseCase } from "@application/use_cases/mutual-fund/interfaces/investment-usecase.interface";
+import { IListFundsUserSideUseCase } from "@application/use_cases/mutual-fund/interfaces/list-fund-usecase.interface";
+import { IMfCagrUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-cagr-usecse.interface";
+import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-details-usecase.interface";
+import { IMutualFundNavUpdatesUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-nav-udpate-usecase.interface";
+import { IMutualFundsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-usecase.interface";
+import { INavAllocateUseCase } from "@application/use_cases/mutual-fund/interfaces/nav-allocate-usecase.interface";
+import { INavHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/nav-history-usecase.interface";
+import { ISipCreationUseCase } from "@application/use_cases/sip/interfaces/sip-creation-usecase.interface";
+import { IConfirmRedeemUseCase } from "@application/use_cases/portfolio/interfaces/confirm-redeem-usecase.interface";
+import { IPortfolioDetailsUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-details-usecase.interface";
+import { IRadeemInvestmentUseCase } from "@application/use_cases/portfolio/interfaces/redeem-investments-usecase.interface";
+import { ISignatureUploadUseCase } from "@application/use_cases/user/interfaces/signature-upload-usecase.interface";
 import { ChangeStatusUseCase } from "@application/use_cases/mutual-fund/change-status.usecase";
 import { FetchAllFundUseCases } from "@application/use_cases/mutual-fund/fetch-all-funds.usecase";
 import { InvestmentUseCase } from "@application/use_cases/mutual-fund/investment.usecase";
@@ -50,15 +50,19 @@ import { MutualFundSipController } from "@presentation/http/controllers/mutual-f
 import { MutualFundUserController } from "@presentation/http/controllers/mutual-funds/mutual-fund-user.controller";
 import { PortFolioController } from "@presentation/http/controllers/portfolio/portfolio.controller";
 import { ContainerModule } from "inversify";
-import { IExecuteDueSipsUseCase } from "@application/use_cases/interfaces/features/sip/execute-due-sip-usecase.interface";
+import { IExecuteDueSipsUseCase } from "@application/use_cases/sip/interfaces/execute-due-sip-usecase.interface";
 import { ExecuteDueSipUseCase } from "@application/use_cases/sip/execute-due-sip.usecase";
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
 import { SipInstallmentRepository } from "@infrastructure/databases/repository/mutual-fund/sip-intallment.repository";
-import { ISystemVerifyTransactionUseCase } from "@application/use_cases/interfaces/admin/system-verify-transaction.interface";
+import { ISystemVerifyTransactionUseCase } from "@application/use_cases/admin/interfaces/system-verify-transaction.interface";
 import { SystemVerifyTransactionUseCase } from "@application/use_cases/admin/transactions-management/system-verify.transaction";
 import { InternalTransactionVerificationService } from "@infrastructure/providers/wallet-integrity/internal-transaction-verification.service";
-import { ISipDetailsUseCase } from "@application/use_cases/interfaces/features/sip/sip-details-usecase.interface";
-import { SipDetailsUseCase } from "@application/use_cases/sip/sip-details.usecase";
+import { ISipDetailsUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-details-usecase.interface";
+import { SipDetailsUseCase } from "@application/use_cases/admin/sip-management/sip-details.usecase";
+import { IUserSipDetailsUseCase } from "@application/use_cases/sip/interfaces/user-sip-details-usecase.interface";
+import { UserSipDetailsUseCase } from "@application/use_cases/sip/user-sip-details.usecase";
+import { IMfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-investment-history-usecase.interface";
+import { MfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/mf-investment-history.usecase";
 
 export const FeatureModule = new ContainerModule(({ bind }) => {
     //Repositories
@@ -88,6 +92,8 @@ export const FeatureModule = new ContainerModule(({ bind }) => {
     bind<IExecuteDueSipsUseCase>(FEATURE_TYPES.ExecuteDueSipUseCase).to(ExecuteDueSipUseCase);
     bind<ISystemVerifyTransactionUseCase>(FEATURE_TYPES.SystemVerifyTransactionUseCase).to(SystemVerifyTransactionUseCase);
     bind<ISipDetailsUseCase>(FEATURE_TYPES.SipDetailsUseCase).to(SipDetailsUseCase);
+    bind<IUserSipDetailsUseCase>(FEATURE_TYPES.UserSipDetailsUseCase).to(UserSipDetailsUseCase);
+    bind<IMfInvestmentHistoryUseCase>(FEATURE_TYPES.MfInvestmentHistoryUseCase).to(MfInvestmentHistoryUseCase);
 
 
     //Providers

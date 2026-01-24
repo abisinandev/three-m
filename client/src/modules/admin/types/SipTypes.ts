@@ -4,6 +4,7 @@ export type InstallmentStatus = 'PENDING' | 'PAYMENT_SUCCESS' | 'ALLOCATED' | 'F
 export interface SIP {
     id: string;
     userId: string;
+    userCode?: string;
     schemeCode: string;
     amount: number;
     frequency: 'Monthly' | 'Weekly';
@@ -14,6 +15,7 @@ export interface SIP {
     status: SipStatus;
     createdAt: string;
     updatedAt: string;
+    installments: SipInstallment[],
 }
 
 export interface SipInstallment {

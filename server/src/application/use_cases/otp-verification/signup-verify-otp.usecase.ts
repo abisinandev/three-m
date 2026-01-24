@@ -7,7 +7,7 @@ import {
   ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { ISignupVerifyOtpUseCase } from "../interfaces/user/signup-verify-otp-usecase.interface";
+import type { ISignupVerifyOtpUseCase } from "../user/interfaces/signup-verify-otp-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()

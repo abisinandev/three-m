@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { ISipCreationUseCase } from "../interfaces/features/sip/sip-creation-usecase.interface";
+import { ISipCreationUseCase } from "./interfaces/sip-creation-usecase.interface";
 import { SipCreationDTO } from "@application/dto/sip/sip-creation.dto";
 import mongoose from "mongoose";
 import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
@@ -63,12 +63,7 @@ export class SipCreationUseCase implements ISipCreationUseCase {
                 const createdSip = await this._sipRepository.createSip(sipEntity, session);
                 if (!createdSip) throw new AppError("Sip creation failed");
 
-                console.log('[SipCreationUseCase] Created SIP:', {
-                    sipId: createdSip.id,
-                    userId: createdSip.userId,
-                    schemeCode: createdSip.schemeCode
-                });
-
+                console.log(createdSip,'CREATED+AIP')
                 const installment = SipInstallmentEntity.create({
                     sipId: createdSip.id as string,
                     userId: createdSip.userId,
@@ -79,15 +74,8 @@ export class SipCreationUseCase implements ISipCreationUseCase {
 
                 });
 
-                console.log('[SipCreationUseCase] Creating first installment:', {
-                    sipId: installment.sipId,
-                    userId: installment.userId,
-                    installmentNo: installment.installmentNo
-                });
-
                 await this._sipInstallmentRepository.create(installment, session);
 
-                console.log('[SipCreationUseCase] First installment created successfully');
             });
         } finally {
             await session.endSession();

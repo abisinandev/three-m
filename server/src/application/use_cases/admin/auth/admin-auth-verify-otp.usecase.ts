@@ -1,7 +1,7 @@
 import type { VerifyOtpDTO } from "@application/dto/auth/verify-otp.dto";
 import type { VerifyOtpResponseDTO } from "@application/dto/auth/verify-otp-response.dto";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
-import type { IAdminAuthVerifyOtpUseCase } from "@application/use_cases/interfaces/admin/admin-auth-verify-otp.interface";
+import type { IAdminAuthVerifyOtpUseCase } from "@application/use_cases/admin/interfaces/admin-auth-verify-otp.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";

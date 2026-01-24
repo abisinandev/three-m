@@ -176,7 +176,7 @@ const WalletPage = () => {
                         <ArrowUpRight size={16} />
                         Deposit
                     </button>
-                    <button
+                    {/* <button
                         disabled={!canTransact}
                         onClick={() => navigate({ to: '/user/wallet/withdraw' })}
                         className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold border border-white/10 transition-all ${canTransact
@@ -186,7 +186,7 @@ const WalletPage = () => {
                     >
                         <ArrowDownRight size={16} />
                         Withdraw
-                    </button>
+                    </button> */}
                 </div>
             </div>
 

@@ -28,5 +28,4 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
         session: ClientSession
     ): Promise<void>;
     createInvestment(entity: InvestmentEntity): Promise<InvestmentEntity | null>;
-
 }

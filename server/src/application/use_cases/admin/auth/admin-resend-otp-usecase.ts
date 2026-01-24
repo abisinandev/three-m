@@ -1,7 +1,7 @@
 import type { ResendOtpDTO } from "@application/dto/auth/resend-otp.dto";
 import type { ResendOtpResponseDTO } from "@application/dto/auth/resend-otp-response.dto";
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
-import type { IAdminResendOtpUseCase } from "@application/use_cases/interfaces/admin/admin-resend-otp-usecase-interface";
+import type { IAdminResendOtpUseCase } from "@application/use_cases/admin/interfaces/admin-resend-otp-usecase-interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";

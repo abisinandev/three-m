@@ -26,6 +26,8 @@ export const FEATURE_TYPES = {
     ExecuteDueSipUseCase: Symbol.for("ExecuteDueSipUseCase"),
     SystemVerifyTransactionUseCase: Symbol.for("SystemVerifyTransactionUseCase"),
     SipDetailsUseCase: Symbol.for("SipDetailsUseCase"),
+    UserSipDetailsUseCase: Symbol.for("UserSipDetailsUseCase"),
+    MfInvestmentHistoryUseCase: Symbol.for("MfInvestmentHistoryUseCase"),
 
     // providers
     NavUpdateProvider: Symbol.for("NavUpdateProvider"),

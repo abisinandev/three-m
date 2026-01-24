@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IFetchAllFundsUseCases } from "../interfaces/features/mutual-funds/fetch-all-funds-usecase.interface";
+import { IFetchAllFundsUseCases } from "./interfaces/fetch-all-funds-usecase.interface";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { toMutualFundResponse } from "@application/mappers/mutual-fund/mutual-fund.mapper";
 import { QueryOptions } from "mongoose";

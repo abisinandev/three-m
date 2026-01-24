@@ -6,7 +6,7 @@ import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
-import type { IForgotPasswordUseCase } from "../interfaces/user/forgot-password-usecase.interface";
+import type { IForgotPasswordUseCase } from "../user/interfaces/forgot-password-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()

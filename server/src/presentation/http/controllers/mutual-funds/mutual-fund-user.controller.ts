@@ -1,6 +1,7 @@
-import { IInvestmentUseCase } from "@application/use_cases/interfaces/features/mutual-funds/investment-usecase.interface";
-import { IListFundsUserSideUseCase } from "@application/use_cases/interfaces/features/mutual-funds/list-fund-usecase.interface";
-import { IMutualFundDetailsUseCase } from "@application/use_cases/interfaces/features/mutual-funds/mutual-fund-details-usecase.interface";
+import { IInvestmentUseCase } from "@application/use_cases/mutual-fund/interfaces/investment-usecase.interface";
+import { IListFundsUserSideUseCase } from "@application/use_cases/mutual-fund/interfaces/list-fund-usecase.interface";
+import { IMfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-investment-history-usecase.interface";
+import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-details-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
@@ -15,6 +16,7 @@ export class MutualFundUserController {
         @inject(FEATURE_TYPES.ListFundUserSideUseCase) private readonly _listFundUseCase: IListFundsUserSideUseCase,
         @inject(FEATURE_TYPES.MutualFundDetailsUseCase) private readonly _mfDetailsUsecase: IMutualFundDetailsUseCase,
         @inject(FEATURE_TYPES.InvestmentUseCase) private readonly _investmentUseCase: IInvestmentUseCase,
+        @inject(FEATURE_TYPES.MfInvestmentHistoryUseCase) private readonly _mfInvestmentsHistory: IMfInvestmentHistoryUseCase,
     ) { }
 
     async fetchFunds(req: Request, res: Response, next: NextFunction) {
@@ -84,5 +86,20 @@ export class MutualFundUserController {
         }
     }
 
+    async listInvestments(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.id;
+            const result = await this._mfInvestmentsHistory.execute(userId as string);
+            console.log("result<", result);
+            return ResponseHelper.success(
+                res,
+                SuccessMessage.DATA_FETCHED,
+                result,
+                HttpStatus.OK,
+            )
 
+        } catch (error) {
+            next(error);
+        }
+    } 
 }

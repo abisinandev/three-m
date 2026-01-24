@@ -1,8 +1,8 @@
-import type { IAdminAuthUseCase } from "@application/use_cases/interfaces/admin/admin-auth-usecase.interface";
-import type { IAdminAuthVerifyOtpUseCase } from "@application/use_cases/interfaces/admin/admin-auth-verify-otp.interface";
-import type { IAdminLogoutUseCase } from "@application/use_cases/interfaces/admin/admin-logout.interface";
-import type { IRefreshTokenUseCase } from "@application/use_cases/interfaces/admin/admin-refresh-token.interface";
-import type { IAdminResendOtpUseCase } from "@application/use_cases/interfaces/admin/admin-resend-otp-usecase-interface";
+import type { IAdminAuthUseCase } from "@application/use_cases/admin/interfaces/admin-auth-usecase.interface";
+import type { IAdminAuthVerifyOtpUseCase } from "@application/use_cases/admin/interfaces/admin-auth-verify-otp.interface";
+import type { IAdminLogoutUseCase } from "@application/use_cases/admin/interfaces/admin-logout.interface";
+import type { IRefreshTokenUseCase } from "@application/use_cases/admin/interfaces/admin-refresh-token.interface";
+import type { IAdminResendOtpUseCase } from "@application/use_cases/admin/interfaces/admin-resend-otp-usecase-interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";

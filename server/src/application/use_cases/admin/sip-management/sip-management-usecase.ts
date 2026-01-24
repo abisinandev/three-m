@@ -1,4 +1,4 @@
-import { ISipManagementUseCase } from "@application/use_cases/interfaces/features/sip/sip-management-usecase.interface";
+import { ISipManagementUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-management-usecase.interface";
 import { ISipRepository } from "@application/interfaces/repositories/feature/sip-repository.interface";
 import { QueryOptions } from "mongoose";
 import { inject, injectable } from "inversify";

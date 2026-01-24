@@ -6,4 +6,5 @@ export interface ISipRepository extends IBaseRepository<SipEntity> {
     createSip(entity: SipEntity, session: ClientSession): Promise<SipEntity | null>
     fetchAllSips(options: QueryOptions): Promise<SipEntity[]>
     findActiveSips(): Promise<{ totalActiveSips: number, datas: SipEntity[] }>
+    findSipsByUser(options: QueryOptions, userId: string): Promise<SipEntity[] | null>;
 }

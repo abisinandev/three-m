@@ -6,8 +6,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
-import { FetchSipsApi, UpdateSipStatusApi, type SipFilters } from '@shared/services/admin/sip-management/SipManagementApi';
-import { toast } from 'sonner';
+import { fetchSipsApi, type SipFilters } from '@shared/services/admin/sip-management/SipManagementApi';
 
 const SipManagementPage = () => {
   const navigate = useNavigate();
@@ -21,9 +20,9 @@ const SipManagementPage = () => {
     sortOrder: 'desc',
   });
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['admin-sip-management', filters],
-    queryFn: () => FetchSipsApi(filters),
+    queryFn: () => fetchSipsApi(filters),
     placeholderData: keepPreviousData,
   });
 
@@ -48,15 +47,15 @@ const SipManagementPage = () => {
   }>({ open: false, type: null, sipId: null });
 
   const updateStatusMutation = useMutation({
-    mutationFn: UpdateSipStatusApi,
-    onSuccess: () => {
-      refetch();
-      toast.success(`SIP status updated successfully`);
-      setModal({ open: false, type: null, sipId: null });
-    },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Failed to update SIP status');
-    }
+    // mutationFn: UpdateSipStatusApi,
+    // onSuccess: () => {
+    //   refetch();
+    //   toast.success(`SIP status updated successfully`);
+    //   setModal({ open: false, type: null, sipId: null });
+    // },
+    // onError: (error: any) => {
+    //   toast.error(error?.response?.data?.message || 'Failed to update SIP status');
+    // }
   });
 
   const openModal = (type: 'PAUSE' | 'RESUME' | 'CANCEL', sipId: string) => {
@@ -71,18 +70,25 @@ const SipManagementPage = () => {
     if (modal.type === 'CANCEL') targetStatus = 'CANCELLED';
     if (modal.type === 'RESUME') targetStatus = 'ACTIVE';
 
-    updateStatusMutation.mutate({ sipId: modal.sipId, status: targetStatus });
+
   };
 
-  const sips = useMemo(() => data?.data?.data ?? [], [data]);
+  const sips = useMemo(() => data?.data ?? [], [data]);
   const total = data?.totalCount || 0;
   const totalActiveSips = data?.totalActiveSips || 0;
 
-  const stats = useMemo(() => ({
-    total: total,
-    active: totalActiveSips,
-    totalAmount: sips.reduce((acc: number, s: SIP) => acc + s.amount, 0),
-  }), [sips, total, totalActiveSips]);
+  const stats = useMemo(() => {
+    const paused = sips.filter((s: SIP) => s.status === 'PAUSED').length;
+    const cancelled = sips.filter((s: SIP) => s.status === 'CANCELLED').length;
+
+    return {
+      total: total,
+      active: totalActiveSips,
+      paused: paused,
+      cancelled: cancelled,
+      totalAmount: sips.reduce((acc: number, s: SIP) => acc + s.amount, 0),
+    };
+  }, [sips, total, totalActiveSips]);
 
   return (
     <div className="space-y-6">
@@ -110,17 +116,17 @@ const SipManagementPage = () => {
         />
         <StatsCardComponent
           title="Paused SIPs"
-          value={0}
-          icon={<DollarSign size={20} />}
+          value={stats.paused}
+          icon={<PauseCircle size={20} />}
           color="amber"
-          subtitle="Total paused SIPs"
+          subtitle={`${((stats.paused / (stats.total || 1)) * 100).toFixed(1)}% of total`}
         />
         <StatsCardComponent
           title="Cancelled SIPs"
-          value={0}
-          icon={<DollarSign size={20} />}
-          color="amber"
-          subtitle="Total cancelled SIPs"
+          value={stats.cancelled}
+          icon={<XOctagon size={20} />}
+          color="rose"
+          subtitle={`${((stats.cancelled / (stats.total || 1)) * 100).toFixed(1)}% of total`}
         />
       </div>
 
@@ -204,7 +210,7 @@ const SipManagementPage = () => {
                     key={sip.id}
                     className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
                     onClick={() => {
-                      navigate({ to: `/admin/installments`, search: { sipId: sip.id } });
+                      navigate({ to: `/admin/sip-details/$sipId`, params: { sipId: sip.id } });
                     }}
                   >
                     <td className="px-5 py-4">
@@ -272,9 +278,9 @@ const SipManagementPage = () => {
                         )}
                         <button
                           className="p-1.5 hover:bg-blue-500/10 rounded text-blue-400 transition-all"
-                          title="View Installments"
+                          title="View Details"
                           onClick={() => {
-                            navigate({ to: `/admin/installments`, search: { sipId: sip.id } });
+                            navigate({ to: `/admin/sip-details/$sipId`, params: { sipId: sip.id } });
                           }}
                         >
                           <List size={16} />

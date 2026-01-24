@@ -1,4 +1,4 @@
-import { ISignatureUploadUseCase } from "@application/use_cases/interfaces/user/signature-upload-usecase.interface";
+import { ISignatureUploadUseCase } from "@application/use_cases/user/interfaces/signature-upload-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";

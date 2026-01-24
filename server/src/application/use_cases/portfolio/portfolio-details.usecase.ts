@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IPortfolioDetailsUseCase } from "../interfaces/features/portfolio/portfolio-details-usecase.interface";
+import { IPortfolioDetailsUseCase } from "./interfaces/portfolio-details-usecase.interface";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { toInvestmentResponse } from "@application/mappers/mutual-fund/investment.mapper";

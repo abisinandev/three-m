@@ -74,6 +74,10 @@ const SipInstallmentsPage = () => {
         };
     }, [installments]);
 
+ 
+
+    console.log("Dictory: ",)
+
     const handleRetry = (instId: string) => {
         setRetryModal({ open: true, instId });
     };
@@ -103,7 +107,6 @@ const SipInstallmentsPage = () => {
                 </button>
             </div>
 
-            {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatsCardComponent
                     title="Total Installments"

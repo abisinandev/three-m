@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { INavAllocateUseCase } from "../interfaces/features/mutual-funds/nav-allocate-usecase.interface";
+import { INavAllocateUseCase } from "./interfaces/nav-allocate-usecase.interface";
 import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";

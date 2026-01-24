@@ -1,7 +1,7 @@
 import type { RefreshDTO } from "@application/dto/auth/refresh.dto";
 import type { RefreshResponseDTO } from "@application/dto/auth/refresh-response.dto";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
-import type { IRefreshTokenUseCase } from "@application/use_cases/interfaces/admin/admin-refresh-token.interface";
+import type { IRefreshTokenUseCase } from "@application/use_cases/admin/interfaces/admin-refresh-token.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";

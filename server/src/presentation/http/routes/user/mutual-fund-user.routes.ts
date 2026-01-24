@@ -9,8 +9,9 @@ const router = Router();
 const mutualFundUserController = container.get<MutualFundUserController>(MutualFundUserController);
 
 router.get("/lists", mutualFundUserController.fetchFunds.bind(mutualFundUserController));
+router.get("/investments", mutualFundUserController.listInvestments.bind(mutualFundUserController));
 router.get(Routes.MF_FUND, mutualFundUserController.fetchFundDetails.bind(mutualFundUserController));
 router.post('/investment/one-time', validateDTO(InvestmentDTO), mutualFundUserController.investment.bind(mutualFundUserController));
 
 
-export default router;
+export default router; 

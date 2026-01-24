@@ -7,5 +7,6 @@ export interface ISipInstallmentRepository extends IBaseRepository<SipInstallmen
     markFailed(installmentId: string, reason: string): Promise<void>;
     markSuccess(installmentId: string, investmentId: string): Promise<void>;
     findInstallmentsByUser(userId: string, options?: QueryOptions): Promise<SipInstallmentEntity[] | null>;
+    countInstallments(userId: string, options?: QueryOptions): Promise<number>;
     findInstallmentsBySip(userId: string, sipId: string): Promise<SipInstallmentEntity[] | null>;
 }

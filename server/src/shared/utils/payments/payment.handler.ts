@@ -1,5 +1,5 @@
 import { StripePaymentDTO } from "@application/dto/user/stripe-payment-dto";
-import { IAddToWalletUseCase } from "@application/use_cases/interfaces/user/add-to-wallet-usecase.interface";
+import { IAddToWalletUseCase } from "@application/use_cases/user/interfaces/add-to-wallet-usecase.interface";
 import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";

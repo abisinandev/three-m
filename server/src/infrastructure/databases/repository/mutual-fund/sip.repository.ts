@@ -5,7 +5,6 @@ import { ISipRepository } from "@application/interfaces/repositories/feature/sip
 import { SipModel } from "@infrastructure/databases/mongo_db/models/schemas/mutual-fund/sip.schema";
 import { SipMapper } from "@infrastructure/mappers/mutual-fund/sip.mapper";
 import { ClientSession, QueryOptions } from "mongoose";
-
 import { injectable } from "inversify";
 import { SipStatus } from "@domain/enum/funds/sip.enums";
 
@@ -72,5 +71,46 @@ export class SipRepository extends BaseRepository<SipEntity, SipDocument> implem
             totalActiveSips,
             datas: data.map(item => this.mapper.toDomain(item)),
         }
+    }
+
+    async findSipsByUser(options: QueryOptions, userId: string): Promise<SipEntity[] | null> {
+        const {
+            page = 1,
+            limit = 10,
+            search = "",
+            searchField = ["schemeCode"],
+            sortBy = "createdAt",
+            sortOrder = "desc",
+            filter = {},
+        } = options;
+
+
+        const skip = (page - 1) * limit;
+
+        type SipFilter = Record<string, unknown> & {
+            $or?: Array<Record<string, unknown>>;
+        };
+
+        const finalFilter: SipFilter = { ...filter };
+
+        if (search.trim()) {
+            const searchRegex = { $regex: search.trim(), $options: "i" };
+            finalFilter.$or = searchField.map((field: string) => ({
+                [field]: searchRegex,
+            }));
+        }
+
+        const sort: Record<string, 1 | -1> = {
+            [sortBy]: sortOrder === "asc" ? 1 : -1,
+        };
+
+        const docs = await this.model
+            .find(finalFilter)
+            .sort(sort)
+            .skip(skip)
+            .limit(limit)
+            .exec();
+
+        return Promise.all(docs.map((doc) => this.mapper.toDomain(doc)));
     }
 }

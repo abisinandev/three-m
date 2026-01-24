@@ -9,5 +9,6 @@ const router = Router();
 const sipController = container.get<MutualFundSipController>(MutualFundSipController);
 
 router.post("/create", validateDTO(SipCreationDTO), sipController.createSip.bind(sipController));
+router.get('/', sipController.listSips.bind(sipController));
 
 export default router;
