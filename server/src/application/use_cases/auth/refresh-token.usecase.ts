@@ -3,8 +3,8 @@ import type { RefreshResponseDTO } from "@application/dto/auth/refresh-response.
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import {
   NotFoundError,

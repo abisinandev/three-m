@@ -2,13 +2,13 @@ import { ISipManagementUseCase } from "@application/use_cases/admin/sip-manageme
 import { ISipRepository } from "@application/interfaces/repositories/feature/sip-repository.interface";
 import { QueryOptions } from "mongoose";
 import { inject, injectable } from "inversify";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { SipDto } from "@application/dto/sip/sip-response.dto";
+import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 
 @injectable()
 export class SipManagementUseCase implements ISipManagementUseCase {
     constructor(
-        @inject(FEATURE_TYPES.SipRepository) private _sipRepository: ISipRepository
+        @inject(SIP_TYPES.SipRepository) private _sipRepository: ISipRepository
     ) { }
 
     async execute(query: QueryOptions): Promise<{

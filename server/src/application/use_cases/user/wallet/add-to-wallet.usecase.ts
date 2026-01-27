@@ -2,7 +2,7 @@ import type { WalletDTO } from "@application/dto/user/add-to-wallet.dto";
 import type { IAddToWalletUseCase } from "../interfaces/add-to-wallet-usecase.interface";
 import { NotFoundError, UnauthorizedError, ValidationError } from "@presentation/express/utils/error-handling";
 import { toTransactionEntity } from "@application/mappers/user/transaction-mapper";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { inject, injectable } from "inversify";
 import { WalletStatus } from "@domain/enum/wallet/wallet-status.enum";

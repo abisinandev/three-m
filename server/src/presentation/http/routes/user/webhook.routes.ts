@@ -1,4 +1,4 @@
-import { container } from '@infrastructure/inversify_di/inversify.di';
+import { container } from '@infrastructure/inversify_di/container';
 import { WebhookController } from '@presentation/http/controllers/payment/webhook.controller';
 import { Router } from 'express';
 import express from 'express';

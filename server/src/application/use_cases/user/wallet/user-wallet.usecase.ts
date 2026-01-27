@@ -2,7 +2,7 @@ import type { IUserWalletUseCase } from "../interfaces/user-wallet-usecase.inter
 import type { FetchWalletDTO } from "@application/dto/user/fetch-wallet.dto";
 import type { WalletResponseDTO } from "@application/dto/user/wallet-response.dto";
 import type { TransactionResponseDTO } from "@application/dto/user/transaction-response.dto";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { WalletStatus } from "@domain/enum/wallet/wallet-status.enum";

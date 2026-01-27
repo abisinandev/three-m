@@ -1,4 +1,5 @@
 import adminApi from "@lib/axiosAdmin";
+import api from "@lib/axiosUser";
 import type { SipStatus, SIP, SipInstallment } from "@modules/admin/types/SipTypes";
 
 
@@ -67,36 +68,3 @@ export const fetchSipDetailsApi = async (
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// export const UpdateSipStatusApi = async ({
-//     sipId,
-//     status,
-// }: {
-//     sipId: string;
-//     status: SipStatus;
-// }): Promise<UpdateSipStatusResponse> => {
-//     const response = await adminApi.patch<UpdateSipStatusResponse>(
-//         `/sip-management/${sipId}/status`,
-//         { status }
-//     );
-
-//     return response.data;
-// };

@@ -4,7 +4,7 @@ import { IUserRepository } from "@application/interfaces/repositories/user/user-
 import { toKycResponse } from "@application/mappers/user/kyc.mapper";
 import type { IViewKycDetailsUseCase } from "@application/use_cases/admin/interfaces/view-kyc-details-usecase.interface";
 import type { UserEntity } from "@domain/entities/user/user.entity";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { inject, injectable } from "inversify";
 
 @injectable()

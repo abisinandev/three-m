@@ -45,7 +45,7 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                 </p>
                                 <p className="text-xs mt-1.5 flex items-center gap-1.5">
                                     Next: <span className="text-green-400 font-medium">{dayjs(sip.nextExecutionDate).format('DD MMM YYYY')}</span>
-                                    {sip.status === 'paused' && (
+                                    {sip.status === 'PAUSED' && (
                                         <span className="inline-flex items-center gap-1 text-yellow-400 text-xs ml-2">
                                             <AlertCircle size={12} /> Paused
                                         </span>
@@ -54,7 +54,7 @@ const SipsTab: React.FC<SipsTabProps> = ({
                             </div>
 
                             <div className="flex gap-2 flex-shrink-0">
-                                {sip.status === 'active' ? (
+                                {sip.status === 'ACTIVE' ? (
                                     <button
                                         onClick={() => handlePause(sip.id)}
                                         className="p-2 bg-yellow-900/40 text-yellow-300 rounded hover:bg-yellow-900/60 transition-colors"

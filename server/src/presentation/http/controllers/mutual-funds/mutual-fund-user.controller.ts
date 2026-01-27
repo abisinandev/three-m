@@ -5,18 +5,18 @@ import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/in
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 
 @injectable()
 export class MutualFundUserController {
     constructor(
-        @inject(FEATURE_TYPES.ListFundUserSideUseCase) private readonly _listFundUseCase: IListFundsUserSideUseCase,
-        @inject(FEATURE_TYPES.MutualFundDetailsUseCase) private readonly _mfDetailsUsecase: IMutualFundDetailsUseCase,
-        @inject(FEATURE_TYPES.InvestmentUseCase) private readonly _investmentUseCase: IInvestmentUseCase,
-        @inject(FEATURE_TYPES.MfInvestmentHistoryUseCase) private readonly _mfInvestmentsHistory: IMfInvestmentHistoryUseCase,
+        @inject(MUTUAL_FUND_TYPES.ListFundUserSideUseCase) private readonly _listFundUseCase: IListFundsUserSideUseCase,
+        @inject(MUTUAL_FUND_TYPES.MutualFundDetailsUseCase) private readonly _mfDetailsUsecase: IMutualFundDetailsUseCase,
+        @inject(MUTUAL_FUND_TYPES.InvestmentUseCase) private readonly _investmentUseCase: IInvestmentUseCase,
+        @inject(MUTUAL_FUND_TYPES.MfInvestmentHistoryUseCase) private readonly _mfInvestmentsHistory: IMfInvestmentHistoryUseCase,
     ) { }
 
     async fetchFunds(req: Request, res: Response, next: NextFunction) {

@@ -5,7 +5,7 @@ import type { IRefreshTokenUseCase } from "@application/use_cases/admin/interfac
 import type { IAdminResendOtpUseCase } from "@application/use_cases/admin/interfaces/admin-resend-otp-usecase-interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
+import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ValidationError } from "@presentation/express/utils/error-handling";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import type { NextFunction, Request, Response } from "express";

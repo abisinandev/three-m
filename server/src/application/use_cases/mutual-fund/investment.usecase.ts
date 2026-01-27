@@ -1,12 +1,11 @@
 import { InvestmentDTO } from "@application/dto/mutual-funds/investment-dto";
 import { IInvestmentUseCase } from "./interfaces/investment-usecase.interface";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { inject, injectable } from "inversify";
 import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { IMutualFundNavRepository } from "@application/interfaces/repositories/feature/mutual-fund-nav-repository.interface";
 import mongoose from "mongoose";
@@ -21,17 +20,19 @@ import { FundStatus } from "@domain/enum/funds/fund-status.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 import { IInternalTransactionVerificationService } from "@application/interfaces/services/externals/internal-transaction-verify.interface";
 import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
+import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 
 @injectable()
 export class InvestmentUseCase implements IInvestmentUseCase {
     constructor(
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
-        @inject(FEATURE_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
-        @inject(FEATURE_TYPES.MutualFundNavRepository) private readonly _navRepository: IMutualFundNavRepository,
+        @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
+        @inject(MUTUAL_FUND_TYPES.MutualFundNavRepository) private readonly _navRepository: IMutualFundNavRepository,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
-        @inject(FEATURE_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
-        @inject(FEATURE_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService,
+        @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
+        @inject(EXTERNAL_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService,
 
     ) { }
 

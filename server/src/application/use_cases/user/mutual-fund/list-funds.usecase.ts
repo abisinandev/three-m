@@ -1,20 +1,20 @@
 import { inject, injectable } from "inversify";
 import { IListFundsUserSideUseCase } from "../../mutual-fund/interfaces/list-fund-usecase.interface";
 import { FundListDTO } from "@application/dto/mutual-funds/mutual-fund-response.dto";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { toMutualFundResponse } from "@application/mappers/mutual-fund/mutual-fund.mapper";
 import { QueryOptions } from "mongoose";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { IMfCagrRepository } from "@application/interfaces/repositories/feature/mf-cagr-repository.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 
 
 @injectable()
 export class ListFundUserSideUseCase implements IListFundsUserSideUseCase {
     constructor(
-        @inject(FEATURE_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
-        @inject(FEATURE_TYPES.MfCagrRepository) private readonly _mfCagrRepository: IMfCagrRepository,
-        @inject(FEATURE_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
+        @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
+        @inject(MUTUAL_FUND_TYPES.MfCagrRepository) private readonly _mfCagrRepository: IMfCagrRepository,
+        @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
     ) { };
 
     async execute(userId: string, data: QueryOptions): Promise<{

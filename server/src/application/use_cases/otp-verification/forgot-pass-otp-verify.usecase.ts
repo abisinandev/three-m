@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import type { VerifyOtpDTO } from "@application/dto/auth/verify-otp.dto";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import {
   NotFoundError,

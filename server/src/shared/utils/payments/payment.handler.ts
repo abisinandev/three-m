@@ -3,7 +3,7 @@ import { IAddToWalletUseCase } from "@application/use_cases/user/interfaces/add-
 import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { mapStripeStatusToTransactionStatus } from "@shared/utils/payments/stripe-payment.utils";
 import { inject, injectable } from "inversify";
 

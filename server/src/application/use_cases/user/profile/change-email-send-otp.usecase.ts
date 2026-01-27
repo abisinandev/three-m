@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import { IChangeEmailSendOtpUseCase } from "../interfaces/change-email-usecase.interface";
 import { ChangeEmailDTO } from "@application/dto/user/change-email.dto";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { generateOtp } from "@shared/utils/otp/otp-generator";

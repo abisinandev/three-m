@@ -4,7 +4,7 @@ import type { IVerifyKycUseCase } from "@application/use_cases/admin/interfaces/
 import type { IViewKycDetailsUseCase } from "@application/use_cases/admin/interfaces/view-kyc-details-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
+import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { type NextFunction, type Request, type Response } from "express";
 import { inject, injectable } from "inversify";

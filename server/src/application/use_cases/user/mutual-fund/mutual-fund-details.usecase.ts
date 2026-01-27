@@ -5,17 +5,17 @@ import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/in
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
 import { MutualFundRepository } from "@infrastructure/databases/repository/mutual-fund/mutual-fund.repostiory";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { calculateReturn } from "@shared/utils/mutual-fund/return-calculation";
 import { inject, injectable } from "inversify";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 
 @injectable()
 export class MutualFundDetailsUseCase implements IMutualFundDetailsUseCase {
     constructor(
-        @inject(FEATURE_TYPES.MutualFundRepository) private readonly _mutualFundRepository: MutualFundRepository,
-        @inject(FEATURE_TYPES.MfCagrRepository) private readonly _mfCagrRepository: IMfCagrRepository,
-        @inject(FEATURE_TYPES.MutualFundNavRepository) private readonly _mfNavRepository: IMutualFundNavRepository,
+        @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: MutualFundRepository,
+        @inject(MUTUAL_FUND_TYPES.MfCagrRepository) private readonly _mfCagrRepository: IMfCagrRepository,
+        @inject(MUTUAL_FUND_TYPES.MutualFundNavRepository) private readonly _mfNavRepository: IMutualFundNavRepository,
     ) { };
 
     async execute(schemeCode: string, interval: NavInterval): Promise<FundDetailsDTO> {

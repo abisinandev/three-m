@@ -4,8 +4,8 @@ import type { IJwtProvider } from "@application/interfaces/services/externals/jw
 import type { IAdminAuthVerifyOtpUseCase } from "@application/use_cases/admin/interfaces/admin-auth-verify-otp.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
+import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import {

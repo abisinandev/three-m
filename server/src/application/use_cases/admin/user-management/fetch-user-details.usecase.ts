@@ -1,6 +1,6 @@
 import type { FetchDataResponseDTO } from "@application/dto/admin/fetch-data.response.dto";
 import type { UserDTO } from "@application/dto/user/user-dto";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { inject, injectable } from "inversify";
 import type { QueryOptions } from "mongoose";
 import type { IFetchUserDetails } from "../interfaces/fetch-user-details.interface";

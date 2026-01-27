@@ -21,9 +21,19 @@ export interface IInvestmentBaseResponse {
     data: IInvestmentResponse[];
     page: number | string;
     limit: number | string;
+    //     totalCount: number;
+    //     totalInvestment: number;
+    //     totalProfit: number;
+    //     currentValue:number
+    // }
+}
+
+export interface IPortfolioDatasResponse {
     totalCount: number;
     totalInvestment: number;
     totalProfit: number;
+    currentValue: number;
+    profitPercentage: number;
 }
 
 export interface IRedeemedInvestment {

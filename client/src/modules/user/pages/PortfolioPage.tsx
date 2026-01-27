@@ -2,11 +2,8 @@
 import { useState } from 'react';
 import {
     Search,
-    Plus,
     Wallet,
     TrendingUp,
-    Layers,
-    DollarSign,
     Clock,
     ChevronRight,
 } from 'lucide-react';
@@ -14,8 +11,8 @@ import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { useQuery } from '@tanstack/react-query';
 import AssetAllocationDonut from '../components/PieChart';
 import { Pagination } from '@shared/components/pagination/Pagination';
-import { getPortfolioInvestments } from '@shared/services/feature/portfolio/PortfolioApi';
-import type { IInvestmentBaseResponse } from '@shared/types/portfolio.types';
+import { getPortfolioDatas, getPortfolioInvestments } from '@shared/services/feature/portfolio/PortfolioApi';
+import type { IInvestmentBaseResponse, IPortfolioDatasResponse } from '@shared/types/portfolio.types';
 import { formatDateTime } from '@utils/date-converter/DateConverter';
 import { useNavigate } from '@tanstack/react-router';
 
@@ -55,23 +52,41 @@ const PortfolioDashboard = () => {
     const [search, setSearch] = useState('');
     const limit = 10;
     const navigate = useNavigate()
+
     const {
-        data,
-        isLoading,
+        data: holdingsData,
+        isLoading: isHoldingsLoading,
         isError,
         error: queryError,
     } = useQuery<IInvestmentBaseResponse>({
-        queryKey: ['portfolio', page, limit],
+        queryKey: ['portfolio', 'holdings', page, limit],
         queryFn: () => getPortfolioInvestments(page, limit),
         staleTime: 5 * 60 * 1000,
-        placeholderData: (prev) => prev,
+        placeholderData: (prev: any) => prev,
     });
 
-    const investments = data?.data || [];
-    const totalCount = data?.totalCount ?? 0;
-    const totalInvestment = data?.totalInvestment ?? 0;
-    const totalProfit = data?.totalProfit ?? 0;
-    const currentValue = totalInvestment + totalProfit;
+
+    const {
+        data: summaryData,
+        isLoading: isSummaryLoading,
+    } = useQuery<IPortfolioDatasResponse>({
+        queryKey: ['portfolio', 'summary'],
+        queryFn: getPortfolioDatas,
+        staleTime: 5 * 60 * 1000,
+        placeholderData: (prev: any) => prev,
+    });
+
+
+    const investments = holdingsData?.data || [];
+    const totalCount = summaryData?.totalCount ?? 0;
+
+    const totalInvestment = summaryData?.totalInvestment ?? 0;
+    const totalProfit = summaryData?.totalProfit ?? 0;
+    const currentValue = summaryData?.currentValue ?? 0;
+    const profitPercentage = summaryData?.profitPercentage ?? 0;
+
+
+    const isLoading = isHoldingsLoading || isSummaryLoading;
 
     const totalRoi = totalInvestment > 0 ? (totalProfit / totalInvestment) * 100 : 0;
 
@@ -113,28 +128,26 @@ const PortfolioDashboard = () => {
                         title="Current Value"
                         value={currentValue}
                         prefix="₹"
-                        subtitle={
-                            totalProfit !== 0
-                                ? `${totalProfit > 0 ? '+' : ''}₹${totalProfit.toLocaleString('en-IN', {
-                                    maximumFractionDigits: 0,
-                                })} (${totalRoi > 0 ? '+' : ''}${totalRoi.toFixed(2)}%)`
-                                : 'No change'
-                        }
-                        color={totalProfit >= 0 ? 'emerald' : 'rose'}
+                        subtitle={`${profitPercentage >= 0 ? '+' : ''
+                            }${profitPercentage.toFixed(2)}%`}
+                        color={profitPercentage >= 0 ? 'emerald' : 'rose'}
                         icon={<TrendingUp size={20} strokeWidth={2} />}
                     />
+
                     <StatsCardComponent
-                        title="Total Holdings"
-                        value={totalCount}
-                        subtitle={`${activeCount} active`}
-                        icon={<Layers size={20} className="text-blue-400" strokeWidth={2} />}
+                        title="Portfolio XIRR"
+                        value={14.2}
+                        suffix="%"
+                        subtitle="Annualised return"
+                        icon={<TrendingUp />}
                     />
                     <StatsCardComponent
-                        title="Available Cash"
-                        value={15000}
+                        title="Today's P&L"
+                        value={1240}
                         prefix="₹"
-                        subtitle="Ready to invest"
-                        icon={<DollarSign size={20} className="text-zinc-400" strokeWidth={2} />}
+                        subtitle="+0.38%"
+                        color="emerald"
+                        icon={<Clock />}
                     />
                 </div>
 

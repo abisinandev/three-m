@@ -1,12 +1,12 @@
 import { ISystemVerifyTransactionUseCase } from "@application/use_cases/admin/interfaces/system-verify-transaction.interface";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { inject, injectable } from "inversify";
+import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 
 @injectable()
 export class InternalTransactionVerificationService {
 
     constructor(
-        @inject(FEATURE_TYPES.SystemVerifyTransactionUseCase)
+        @inject(EXTERNAL_TYPES.SystemVerifyTransactionUseCase)
         private readonly verifier: ISystemVerifyTransactionUseCase
     ) { }
 

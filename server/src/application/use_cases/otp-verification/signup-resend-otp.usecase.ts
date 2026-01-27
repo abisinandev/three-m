@@ -1,8 +1,8 @@
 import type { ResendOtpDTO } from "@application/dto/auth/resend-otp.dto";
 import type { ResendOtpResponseDTO } from "@application/dto/auth/resend-otp-response.dto";
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import AppError from "@presentation/express/utils/error-handling/app.error";
 import { generateOtp } from "@shared/utils/otp/otp-generator";

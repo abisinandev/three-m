@@ -24,7 +24,7 @@ import type { IRejectKycUseCase } from "@application/use_cases/admin/interfaces/
 import type { IUnblockUserUsecase } from "@application/use_cases/admin/interfaces/unblock-user-usecase.interface";
 import type { IVerifyKycUseCase } from "@application/use_cases/admin/interfaces/verify-kyc-usecase.interface";
 import type { IViewKycDetailsUseCase } from "@application/use_cases/admin/interfaces/view-kyc-details-usecase.interface";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
+import { ADMIN_TYPES } from "./admin.types";
 import { AdminController } from "@presentation/http/controllers/admin/admin.controller";
 import { AdminAuthController } from "@presentation/http/controllers/admin/admin-auth.controller";
 import { AdminKycController } from "@presentation/http/controllers/admin/admin-kyc.controller";

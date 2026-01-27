@@ -1,6 +1,6 @@
 import { MutualFundNavUpdate } from '@application/use_cases/mutual-fund/mutual-fund-nav-update.usecase';
 import { NavInterval } from '@domain/enum/funds/nav-intervals.enums';
-import { container } from '@infrastructure/inversify_di/inversify.di';
+import { container } from '@infrastructure/inversify_di/container';
 import cron from 'node-cron';
 
 export function NavYearScheduler() {

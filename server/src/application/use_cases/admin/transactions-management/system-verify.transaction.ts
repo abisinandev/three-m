@@ -3,7 +3,7 @@ import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { SignatureKey } from "@domain/value-objects/wallet/signature-key.vo";
 import { TxHash } from "@domain/value-objects/wallet/transaction.vo";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
 import mongoose from "mongoose";
@@ -13,8 +13,8 @@ import { IBlockRepository } from "@application/interfaces/repositories/feature/b
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { ISystemVerifyTransactionUseCase } from "@application/use_cases/admin/interfaces/system-verify-transaction.interface";
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { SipFailureReason } from "@domain/enum/funds/sip-failure-reason.enum";
+import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 
 /**
  * Verifies a pending transaction.
@@ -35,7 +35,7 @@ export class SystemVerifyTransactionUseCase implements ISystemVerifyTransactionU
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
         @inject(USER_TYPES.BlockRepository) private readonly _blockRepository: IBlockRepository,
-        @inject(FEATURE_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository
+        @inject(SIP_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository
     ) { }
 
     async execute(txId: string): Promise<{ isVerified: boolean }> {

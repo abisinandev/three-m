@@ -16,7 +16,7 @@ import { KycRepository } from "@infrastructure/databases/repository/user/kyc-rep
 import { UserRepository } from "@infrastructure/databases/repository/user/user.repository";
 import { UserController } from "@presentation/http/controllers/user/user.controller";
 import { ContainerModule } from "inversify";
-import { USER_TYPES } from "../../types/user/user.types";
+import { USER_TYPES } from "./user.types";
 import { IEditProfileUseCase } from "@application/use_cases/user/interfaces/edit-profile-usecase.interface";
 import { IChangeEmailSendOtpUseCase } from "@application/use_cases/user/interfaces/change-email-usecase.interface";
 import { ChangeEmailSendOtpUseCase } from "@application/use_cases/user/profile/change-email-send-otp.usecase";

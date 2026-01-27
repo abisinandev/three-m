@@ -22,7 +22,7 @@ import { ForgotPasswordResendOtpUseCase } from "@application/use_cases/otp-verif
 import { ForgotPasswordOtpVerifyUseCase } from "@application/use_cases/otp-verification/forgot-pass-otp-verify.usecase";
 import { ResendOtpUseCase } from "@application/use_cases/otp-verification/signup-resend-otp.usecase";
 import { SignupVerifyOtpUseCase } from "@application/use_cases/otp-verification/signup-verify-otp.usecase";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
+import { AUTH_TYPES } from "./auth.types";
 import { TwoFactorAuthSetup } from "@infrastructure/providers/2fa-security/2fa-auth-setup.provider";
 import { TwoFactorAuthVerify } from "@infrastructure/providers/2fa-security/2fa-auth-verify.provider";
 import { NodeMailerService } from "@infrastructure/providers/email/nodemailor.provider";
@@ -46,7 +46,7 @@ export const AuthModule = new ContainerModule(({ bind }) => {
   bind<ISignupVerifyOtpUseCase>(AUTH_TYPES.SignupVerifyOtpUseCase).to(SignupVerifyOtpUseCase);
   bind<ISignupResendOtpUseCase>(AUTH_TYPES.ResendOtpUseCase).to(ResendOtpUseCase);
   bind<IVerifyTwoFactorUseCase>(AUTH_TYPES.VerifyTwoFactorUseCase).to(VerifyTwoFactorUseCase);
-  
+
   bind<IRefreshTokenUseCase>(AUTH_TYPES.RefreshTokenUseCase).to(RefreshTokenUseCase);
 
   bind<IForgotPasswordUseCase>(AUTH_TYPES.ForgotPasswordUseCase).to(ForgotPasswordUseCase);

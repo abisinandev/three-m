@@ -1,13 +1,13 @@
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { inject, injectable } from "inversify";
 import { IMfInvestmentHistoryUseCase } from "./interfaces/mf-investment-history-usecase.interface";
 import { InvestmentResponseDTO } from "@application/dto/mutual-funds/investment-response.dto";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 
 @injectable()
 export class MfInvestmentHistoryUseCase implements IMfInvestmentHistoryUseCase {
     constructor(
-        @inject(FEATURE_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
+        @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
     ) { }
 
     async execute(userId: string): Promise<InvestmentResponseDTO[]> {

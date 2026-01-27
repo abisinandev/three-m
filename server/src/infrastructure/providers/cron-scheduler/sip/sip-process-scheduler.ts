@@ -1,5 +1,5 @@
 import { ExecuteDueSipUseCase } from '@application/use_cases/sip/execute-due-sip.usecase';
-import { container } from '@infrastructure/inversify_di/inversify.di';
+import { container } from '@infrastructure/inversify_di/container';
 import cron from 'node-cron'
 
 let isRunning = false;

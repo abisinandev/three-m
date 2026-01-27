@@ -52,4 +52,8 @@ export enum SuccessMessage {
   TRANSACTION_VERIFIED = "Transaction verified",
 
   INVESTMENT_SUCCESS = "Investment successfully done",
+
+  SIP_PAUSED = "Sip paused",
+  SIP_RESUME = "Sip resumed",
+  SIP_CANCELLED = "Sip cancelled",
 }

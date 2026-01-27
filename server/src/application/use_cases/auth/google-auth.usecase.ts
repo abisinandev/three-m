@@ -5,8 +5,8 @@ import { UserEntity } from "@domain/entities/user/user.entity";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { AuthProvider } from "@domain/enum/users/auth-provider.enum";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import {
   UnauthorizedError,
   ValidationError,

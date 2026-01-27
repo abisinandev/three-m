@@ -1,7 +1,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import { Plus } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 import { fetchMutualFunds, fetchSips } from '@shared/services/feature/mutual-fund/MutualFundApisUserSide';
 import { useNavigate } from '@tanstack/react-router';
@@ -12,13 +12,17 @@ import FundsTab from '../components/mutual-fund/FundsTab';
 import SipsTab from '../components/mutual-fund/SipsTab';
 import HistoryTab from '../components/mutual-fund/HistoryTab';
 import DashboardSidebar from '../components/mutual-fund/DashboardSidebar';
+import { CancelSipStatus, PauseSipStatus, ResumeSipStatus } from '@shared/services/admin/sip-management/SipManagementUserApi';
+import { toast } from 'sonner';
 
 const MutualFundDashboard = () => {
     const [selectedFilters, setSelectedFilters] = useState<string[]>(['All Funds']);
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearch] = useDebounce(searchTerm, 400);
-    const [activeTab, setActiveTab] = useState('funds');
+    const [activeTab, setActiveTab] = useState<'funds' | 'sips' | 'transactions'>('funds');
+
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const recentNAVUpdates = [
         { fund: 'HDFC Mid-Cap Opp.', nav: 185.42, change: 1.12, date: '22 Jan 2026' },
@@ -36,39 +40,55 @@ const MutualFundDashboard = () => {
     const { data: fundsData, isLoading: fundsLoading } = useQuery({
         queryKey: fundQueryKey,
         queryFn: () => fetchMutualFunds(debouncedSearch, selectedFilters),
-        placeholderData: (prev) => prev,
         enabled: activeTab === 'funds',
+        placeholderData: prev => prev,
     });
 
     const funds = fundsData?.data ?? [];
 
     const { data: sipsData, isLoading: sipsLoading } = useQuery({
-        queryKey: ["sip-lists"],
-        queryFn: () => fetchSips(),
-        enabled: activeTab === 'sips'
+        queryKey: ['sip-lists'],
+        queryFn: fetchSips,
+        enabled: activeTab === 'sips',
     });
+
     const sips = (sipsData as any)?.data?.data as SipDto[] ?? [];
 
     const { data: investmentsData, isLoading: investmentsLoading } = useQuery({
         queryKey: ['investments-listing'],
-        queryFn: async () => await api.get('/user/mutual-funds/investments'),
-        enabled: activeTab === 'transactions'
+        queryFn: async () => api.get('/user/mutual-funds/investments'),
+        enabled: activeTab === 'transactions',
     });
 
     const investments = (investmentsData as any)?.data?.data ?? [];
 
-    const handlePause = (sipId: string) => {
-        alert(`SIP ${sipId} paused (demo)`);
-    };
+    const pauseMutation = useMutation({
+        mutationFn: PauseSipStatus,
+        onSuccess: (res) => {
+            toast.success(res.data?.message || 'SIP paused successfully');
+            queryClient.invalidateQueries({ queryKey: ['sip-lists'] });
+        },
+    });
 
-    const handleResume = (sipId: string) => {
-        alert(`SIP ${sipId} resumed (demo)`);
-    };
+    const resumeMutation = useMutation({
+        mutationFn: ResumeSipStatus,
+        onSuccess: (res) => {
+            toast.success(res.data?.message || 'SIP resumed successfully');
+            queryClient.invalidateQueries({ queryKey: ['sip-lists'] });
+        },
+    });
 
-    const handleCancel = (sipId: string) => {
-        if (!confirm(`Are you sure you want to cancel SIP ${sipId}?`)) return;
-        alert(`SIP ${sipId} cancelled (demo)`);
-    };
+    const cancelMutation = useMutation({
+        mutationFn: CancelSipStatus,
+        onSuccess: (res) => {
+            toast.success(res.data?.message || 'SIP cancelled successfully');
+            queryClient.invalidateQueries({ queryKey: ['sip-lists'] });
+        },
+    });
+
+    const handlePause = (sipId: string) => pauseMutation.mutate(sipId);
+    const handleResume = (sipId: string) => resumeMutation.mutate(sipId);
+    const handleCancel = (sipId: string) => cancelMutation.mutate(sipId);
 
     const handleEdit = (sipId: string) => {
         alert(`Edit flow for SIP ${sipId} would open here (demo)`);
@@ -95,11 +115,12 @@ const MutualFundDashboard = () => {
                     {['funds', 'sips', 'transactions'].map(tab => (
                         <button
                             key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`pb-2 text-sm font-medium transition-colors ${activeTab === tab
-                                ? 'text-white border-b-2 border-green-500'
-                                : 'text-gray-400 hover:text-gray-300'
-                                }`}
+                            onClick={() => setActiveTab(tab as any)}
+                            className={`pb-2 text-sm font-medium transition-colors ${
+                                activeTab === tab
+                                    ? 'text-white border-b-2 border-green-500'
+                                    : 'text-gray-400 hover:text-gray-300'
+                            }`}
                         >
                             {tab === 'funds' ? 'Funds' : tab === 'sips' ? 'SIPs' : 'History'}
                         </button>
@@ -116,10 +137,12 @@ const MutualFundDashboard = () => {
                                 setSelectedFilters={setSelectedFilters}
                                 fundsLoading={fundsLoading}
                                 funds={funds}
-                                onFundClick={(schemeCode) => navigate({
-                                    to: `/user/mutual-funds/$schemeCode`,
-                                    params: { schemeCode }
-                                })}
+                                onFundClick={(schemeCode) =>
+                                    navigate({
+                                        to: `/user/mutual-funds/$schemeCode`,
+                                        params: { schemeCode },
+                                    })
+                                }
                             />
                         )}
 

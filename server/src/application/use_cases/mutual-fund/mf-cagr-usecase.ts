@@ -1,4 +1,3 @@
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { inject, injectable } from "inversify";
 import { IMfCagrUseCase } from "./interfaces/mf-cagr-usecse.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
@@ -8,13 +7,14 @@ import { Cagr } from "@domain/value-objects/mutual-fund/cagr-calculation.vo";
 import { findOldNav } from "@shared/utils/mutual-fund/nav-cagr-utils";
 import { ParsedNav } from "@infrastructure/providers/mutual-fund/nav-interfaces";
 import { IMfCagrRepository } from "@application/interfaces/repositories/feature/mf-cagr-repository.interface";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 
 @injectable()
 export class MfCagrUseCase implements IMfCagrUseCase {
     constructor(
-        @inject(FEATURE_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
-        @inject(FEATURE_TYPES.MfCagrRepository) private readonly _mfCagrRepository: IMfCagrRepository,
-        @inject(FEATURE_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
+        @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
+        @inject(MUTUAL_FUND_TYPES.MfCagrRepository) private readonly _mfCagrRepository: IMfCagrRepository,
+        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
     ) { }
 
     async execute(): Promise<void> {

@@ -25,7 +25,7 @@ export interface SipDto {
     nextExecutionDate: string;
     totalInstallments: number;
     executedInstallments: number;
-    status: 'active' | 'paused' | 'cancelled';
+    status: 'ACTIVE' | 'PAUSED' | 'CANCELLED';
     createdAt: string;
     updatedAt?: string;
     installments?: SipInstallmentDto[];

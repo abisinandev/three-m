@@ -4,7 +4,7 @@ import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { SignatureKey } from "@domain/value-objects/wallet/signature-key.vo";
 import { TxHash } from "@domain/value-objects/wallet/transaction.vo";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
 import mongoose from "mongoose";

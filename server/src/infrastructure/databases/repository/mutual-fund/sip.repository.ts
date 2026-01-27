@@ -113,4 +113,23 @@ export class SipRepository extends BaseRepository<SipEntity, SipDocument> implem
 
         return Promise.all(docs.map((doc) => this.mapper.toDomain(doc)));
     }
+
+    async pause(sipId: string): Promise<void> {
+        await this.model.findByIdAndUpdate(
+            sipId,
+            { $set: { status: SipStatus.PAUSED } }
+        )
+    };
+    async resume(sipId: string): Promise<void> {
+        await this.model.findByIdAndUpdate(
+            sipId,
+            { $set: { status: SipStatus.ACTIVE } }
+        )
+    };
+    async cancel(sipId: string): Promise<void> {
+        await this.model.findByIdAndUpdate(
+            sipId,
+            { $set: { status: SipStatus.CANCELLED } }
+        )
+    };
 }

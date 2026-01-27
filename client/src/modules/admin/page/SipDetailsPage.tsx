@@ -15,7 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { SipStatusBadge } from '../components/SipStatusBadges';
-import { fetchSipDetailsApi } from '@shared/services/admin/sip-management/SipManagementApi';
+import { fetchSipDetailsApi } from '@shared/services/admin/sip-management/SipManagementAdminApi';
 
 const SipDetailsPage = () => {
     const navigate = useNavigate();

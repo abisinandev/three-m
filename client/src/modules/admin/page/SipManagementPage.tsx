@@ -6,7 +6,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
-import { fetchSipsApi, type SipFilters } from '@shared/services/admin/sip-management/SipManagementApi';
+import { fetchSipsApi, type SipFilters } from '@shared/services/admin/sip-management/SipManagementAdminApi';
 
 const SipManagementPage = () => {
   const navigate = useNavigate();

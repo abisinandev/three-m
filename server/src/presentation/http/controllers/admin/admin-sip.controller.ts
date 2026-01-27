@@ -2,17 +2,17 @@ import { ISipDetailsUseCase } from "@application/use_cases/admin/sip-management/
 import { ISipManagementUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-management-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
+import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
+import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 
 @injectable()
 export class AdminSipController {
     constructor(
         @inject(ADMIN_TYPES.SipManagementUseCase) private readonly _sipManagementUseCase: ISipManagementUseCase,
-        @inject(FEATURE_TYPES.SipDetailsUseCase) private readonly _sipDetailsUseCase: ISipDetailsUseCase,
+        @inject(SIP_TYPES.SipDetailsUseCase) private readonly _sipDetailsUseCase: ISipDetailsUseCase,
 
     ) { }
 

@@ -1,18 +1,18 @@
 import { inject, injectable } from "inversify";
 import { IUserSipDetailsUseCase } from "./interfaces/user-sip-details-usecase.interface";
 import { QueryOptions } from "mongoose";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { ISipRepository } from "@application/interfaces/repositories/feature/sip-repository.interface";
 import { SipDto } from "@application/dto/sip/sip-response.dto";
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
 import { SipInstallmentDto } from "@application/dto/sip/sip-installment.dto";
 import { toSipInstallmentResponse } from "@application/mappers/sips/sip-installment.mapper";
+import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 
 @injectable()
 export class UserSipDetailsUseCase implements IUserSipDetailsUseCase {
     constructor(
-        @inject(FEATURE_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
-        @inject(FEATURE_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
+        @inject(SIP_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
+        @inject(SIP_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
     ) { }
 
     async execute(data: QueryOptions, userId: string): Promise<{

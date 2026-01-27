@@ -1,5 +1,5 @@
 import { NavAllocateUseCase } from '@application/use_cases/mutual-fund/nav-allocatation-usecase';
-import { container } from '@infrastructure/inversify_di/inversify.di';
+import { container } from '@infrastructure/inversify_di/container';
 import cron from 'node-cron';
 
 let isRunning = false;

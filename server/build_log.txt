@@ -1,0 +1,5 @@
+src/application/interfaces/repositories/feature/mf-cagr-repository.interface.ts(3,10): error TS2724: '"@application/dto/mutual-funds/mf-cagr.dto"' has no exported member named 'ICagrDTO'. Did you mean 'CagrDTO'?
+src/application/use_cases/user/interfaces/add-to-wallet-usecase.interface.ts(1,10): error TS2305: Module '"@application/dto/user/add-to-wallet.dto"' has no exported member 'AddToWalletDTO'.
+src/infrastructure/databases/mongo_db/models/interfaces/user/user.schema.interface.ts(8,32): error TS2307: Cannot find module '../schemas/wallet.schema' or its corresponding type declarations.
+src/infrastructure/databases/mongo_db/models/interfaces/user/user.schema.interface.ts(9,29): error TS2307: Cannot find module '../schemas/kyc.schema' or its corresponding type declarations.
+src/infrastructure/mappers/script/admin.configs.ts(2,28): error TS2307: Cannot find module '@infrastructure/databases/mongo_db/models/schemas/admin.schema' or its corresponding type declarations.

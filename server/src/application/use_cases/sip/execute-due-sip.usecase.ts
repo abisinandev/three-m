@@ -1,8 +1,7 @@
 import { inject, injectable } from "inversify";
 import { IExecuteDueSipsUseCase } from "./interfaces/execute-due-sip-usecase.interface";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { SipInstallmentEntity } from "@domain/entities/mutual-fund/sip-intallment.entity";
 import { ISipRepository } from "@application/interfaces/repositories/feature/sip-repository.interface";
 import { SipStatus } from "@domain/enum/funds/sip.enums";
@@ -21,17 +20,20 @@ import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { IInternalTransactionVerificationService } from "@application/interfaces/services/externals/internal-transaction-verify.interface";
 import mongoose from "mongoose";
+import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
+import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 
 @injectable() 
 export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
     constructor(
-        @inject(FEATURE_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
-        @inject(FEATURE_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
-        @inject(FEATURE_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
+        @inject(SIP_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
+        @inject(SIP_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
+        @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
-        @inject(FEATURE_TYPES.MutualFundRepository) private readonly _mutualfundRepo: IMutualFundRepository,
+        @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualfundRepo: IMutualFundRepository,
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
-        @inject(FEATURE_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService
+        @inject(EXTERNAL_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService
     ) { }
 
     async execute(): Promise<void> {

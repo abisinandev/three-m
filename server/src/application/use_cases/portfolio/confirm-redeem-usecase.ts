@@ -1,8 +1,7 @@
 import { inject, injectable } from "inversify";
 import { IConfirmRedeemUseCase } from "./interfaces/confirm-redeem-usecase.interface";
 import { ConfirmRedeemDTO } from "@application/dto/portfolio/confirm-radeem-dto";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { ConflictError, NotFoundError } from "@presentation/express/utils/error-handling";
@@ -13,14 +12,15 @@ import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/e
 import mongoose from "mongoose";
 import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 
 @injectable()
 export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
     constructor(
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
-        @inject(FEATURE_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
-        @inject(FEATURE_TYPES.MutualFundRepository) private readonly _mutualfundRepository: IMutualFundRepository,
-        @inject(FEATURE_TYPES.NavUpdateProvider) private readonly _navProvider: IMutualFundNavUpdateProvider,
+        @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
+        @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualfundRepository: IMutualFundRepository,
+        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navProvider: IMutualFundNavUpdateProvider,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
     ) { }
 

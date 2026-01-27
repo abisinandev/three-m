@@ -1,21 +1,21 @@
 import { inject, injectable } from "inversify";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
 import { ISipRepository } from "@application/interfaces/repositories/feature/sip-repository.interface";
 import { SipInstallmentDto } from "@application/dto/sip/sip-installment.dto";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { QueryOptions } from "mongoose";
 import { SipDto } from "@application/dto/sip/sip-response.dto";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { ISipDetailsUseCase } from "./interfaces/sip-details-usecase.interface";
+import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 
 @injectable()
 export class SipDetailsUseCase implements ISipDetailsUseCase {
 
     constructor(
-        @inject(FEATURE_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
-        @inject(FEATURE_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
+        @inject(SIP_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
+        @inject(SIP_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
     ) { }
 

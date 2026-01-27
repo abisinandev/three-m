@@ -148,6 +148,59 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         return docs.map(doc => this.mapper.toDomain(doc));
     }
 
+    async getUserInvestmentsWithoutFilter(
+        userId: string
+    ): Promise<InvestmentEntity[]> {
+
+        const docs = await this.model.aggregate([
+            {
+                $match: {
+                    userId: new Types.ObjectId(userId),
+                    status: InvestmentStatus.ALLOTTED,
+                },
+            },
+            {
+                $lookup: {
+                    from: "mutualfunds",
+                    localField: "schemeCode",
+                    foreignField: "schemeCode",
+                    as: "fund",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$fund",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    userId: 1,
+                    schemeCode: 1,
+                    amount: 1,
+                    units: 1,
+                    nav: 1,
+                    navDate: 1,
+                    status: 1,
+                    investmentType: 1,
+                    paymentMethod: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    fund: {
+                        schemeName: 1,
+                        category: 1,
+                        risk: 1,
+                        amc: 1,
+                        logo: 1,
+                    },
+                },
+            },
+        ]);
+
+        return docs.map(doc => this.mapper.toDomain(doc));
+    }
+
     async getTotalUnitsByUser(userId: string): Promise<number> {
         const result = await this.model.aggregate([
             {

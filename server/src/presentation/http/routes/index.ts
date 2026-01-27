@@ -1,5 +1,5 @@
-import { container } from "@infrastructure/inversify_di/inversify.di";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
+import { container } from "@infrastructure/inversify_di/container";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import type { AuthMiddleware } from "@presentation/express/middlewares/auth.middleware";
 import adminRoutes from "@presentation/http/routes/admin/admin.routes";
 import adminAuthRoute from "@presentation/http/routes/admin/admin-auth.routes";
@@ -14,7 +14,7 @@ import mutualFundSipUserRoues from '@presentation/http/routes/user/mutual-fund-s
 import userPortfoilo from '@presentation/http/routes/portfolio/portfolio.routes';
 import type { Application } from "express";
 import { AdminAuthMiddleware } from "@presentation/express/middlewares/admin-auth.middleware";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
+import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 
 export const RegisterRoutes = (app: Application) => {
   const authMiddleware = container.get<AuthMiddleware>(AUTH_TYPES.AuthMiddleware);

@@ -8,8 +8,9 @@ export enum SipFrequency {
 
 
 export enum SipStatus {
-    ACTIVE = "ACTIVE",
-    PAUSED = "PAUSED",
-    COMPLETED = "COMPLETED",
-    CANCELLED = "CANCELLED",
+  ACTIVE = "ACTIVE",
+  INVACTIVE = "INACTIVE",
+  PAUSED = "PAUSED",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
 }

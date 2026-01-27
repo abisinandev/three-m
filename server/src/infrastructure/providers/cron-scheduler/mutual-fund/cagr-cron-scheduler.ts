@@ -1,5 +1,5 @@
 import { MfCagrUseCase } from '@application/use_cases/mutual-fund/mf-cagr-usecase';
-import { container } from '@infrastructure/inversify_di/inversify.di';
+import { container } from '@infrastructure/inversify_di/container';
 import cron from 'node-cron'
 
 export function CagrUpdateScheduler() {

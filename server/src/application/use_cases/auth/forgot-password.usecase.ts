@@ -1,7 +1,7 @@
 import type { ForgotPasswordDTO } from "@application/dto/auth/forgot-password";
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { generateOtp } from "@shared/utils/otp/otp-generator";

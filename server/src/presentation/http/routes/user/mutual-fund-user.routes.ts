@@ -1,5 +1,5 @@
 import { InvestmentDTO } from '@application/dto/mutual-funds/investment-dto';
-import { container } from '@infrastructure/inversify_di/inversify.di';
+import { container } from '@infrastructure/inversify_di/container';
 import { validateDTO } from '@presentation/express/middlewares/validation-dto.middlewares';
 import { Routes } from '@presentation/express/utils/constants/user-routes.constants';
 import { MutualFundUserController } from '@presentation/http/controllers/mutual-funds/mutual-fund-user.controller';
@@ -12,6 +12,5 @@ router.get("/lists", mutualFundUserController.fetchFunds.bind(mutualFundUserCont
 router.get("/investments", mutualFundUserController.listInvestments.bind(mutualFundUserController));
 router.get(Routes.MF_FUND, mutualFundUserController.fetchFundDetails.bind(mutualFundUserController));
 router.post('/investment/one-time', validateDTO(InvestmentDTO), mutualFundUserController.investment.bind(mutualFundUserController));
-
 
 export default router; 

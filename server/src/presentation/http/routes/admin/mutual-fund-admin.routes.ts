@@ -1,4 +1,4 @@
-import { container } from '@infrastructure/inversify_di/inversify.di';
+import { container } from '@infrastructure/inversify_di/container';
 import { Routes } from '@presentation/express/utils/constants/feature-routes.constants';
 import { MutualFundsAdminController } from '@presentation/http/controllers/mutual-funds/mutual-fund-admin.controller';
 import express from 'express';

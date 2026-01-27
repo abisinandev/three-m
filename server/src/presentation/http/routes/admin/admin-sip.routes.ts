@@ -1,5 +1,5 @@
-import { ADMIN_TYPES } from '@infrastructure/inversify_di/types/admin/admin.types';
-import { container } from '@infrastructure/inversify_di/inversify.di';
+import { ADMIN_TYPES } from '@infrastructure/inversify_di/features/admin/admin.types';
+import { container } from '@infrastructure/inversify_di/container';
 import { AdminSipController } from '@presentation/http/controllers/admin/admin-sip.controller';
 import { Router } from 'express'
 const router = Router();

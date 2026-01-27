@@ -3,7 +3,7 @@ import { TransactionResponseDTO } from "@application/dto/user/transaction-respon
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { toTransactionResponse } from "@application/mappers/user/transaction-mapper";
 import { IFetchTransactionsUseCase } from "@application/use_cases/admin/interfaces/fetch-transactions-usecase.interface";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { inject, injectable } from "inversify";
 import { QueryOptions } from "mongoose";
 

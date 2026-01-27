@@ -4,8 +4,7 @@ import { IAdminVerifyTransactionUseCase } from "@application/use_cases/user/inte
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
+import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";

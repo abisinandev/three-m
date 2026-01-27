@@ -1,6 +1,5 @@
 import { inject, injectable } from "inversify";
 import { INavAllocateUseCase } from "./interfaces/nav-allocate-usecase.interface";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { getNavDate, isSameDate } from "@shared/utils/mutual-fund/nav-allocation-utils";
@@ -8,14 +7,16 @@ import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
 import { InvestmentType } from "@domain/enum/funds/investment.enums";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
+import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 
 @injectable()
 export class NavAllocateUseCase implements INavAllocateUseCase {
 
     constructor(
-        @inject(FEATURE_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
-        @inject(FEATURE_TYPES.NavUpdateProvider) private readonly _navProvider: IMutualFundNavUpdateProvider,
-        @inject(FEATURE_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
+        @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
+        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navProvider: IMutualFundNavUpdateProvider,
+        @inject(SIP_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
     ) { }
     async execute(): Promise<void> {
         const investments = await this._investmentRepository.findInitiatedFunds();

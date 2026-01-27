@@ -1,14 +1,14 @@
 import { inject, injectable } from "inversify";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IHttpClient } from "@application/interfaces/services/externals/http-client-interface";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
 import { MfApiNavResponse } from "./nav-interfaces";
+import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 
 @injectable()
 export class NavUpdateProvider implements IMutualFundNavUpdateProvider {
 
     constructor(
-        @inject(FEATURE_TYPES.HttpClient) private readonly httpClient: IHttpClient
+        @inject(EXTERNAL_TYPES.HttpClient) private readonly httpClient: IHttpClient
     ) { }
 
     async fetchNavHistories(schemeCode: string): Promise<{

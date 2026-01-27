@@ -3,12 +3,12 @@ import type { signatureUploadResponseDTO } from "@application/dto/user/signature
 import type { IStorageProvider } from "@application/interfaces/services/externals/storage-provider.interface";
 import { inject, injectable } from "inversify";
 import type { ISignatureUploadUseCase } from "../user/interfaces/signature-upload-usecase.interface";
-import { FEATURE_TYPES } from "@infrastructure/inversify_di/types/feature/feature.type";
+import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 
 @injectable()
 export class SignatureUploadUseCase implements ISignatureUploadUseCase {
   constructor(
-    @inject(FEATURE_TYPES.CloudinaryStorageProvider) private readonly _cloudinaryStorage: IStorageProvider,
+    @inject(EXTERNAL_TYPES.CloudinaryStorageProvider) private readonly _cloudinaryStorage: IStorageProvider,
   ) {}
 
   async execute(data: SignatureUploadDTO): Promise<signatureUploadResponseDTO> {

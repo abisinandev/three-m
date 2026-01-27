@@ -1,7 +1,7 @@
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import type { IBlockUserUseCase } from "@application/use_cases/admin/interfaces/block-user-usecase.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import {
   NotFoundError,
   ValidationError,
