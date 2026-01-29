@@ -17,7 +17,8 @@ export interface SipDocument extends Document {
     executedInstallments: number;
 
     status: SipStatus;
-
+    failureReason: string;
+    
     createdAt: Date;
     updatedAt: Date;
 }

@@ -47,10 +47,10 @@ export class MutualFundsAdminController {
         } catch (error) {
             next(error);
         }
-    }
+    } 
 
     async updateStatus(req: Request, res: Response, next: NextFunction) {
-        try {
+        try { 
             const fundId = req.params.fundId
             await this._changeFundStatus.execute(fundId);
             await this._mutualFundNavUpdate.execute(NavInterval.DAILY);
@@ -58,7 +58,7 @@ export class MutualFundsAdminController {
             await this._mutualFundNavUpdate.execute(NavInterval.MONTHLY);
             await this._mutualFundNavUpdate.execute(NavInterval.YEARLY);
             await this._mfCagrUpdateUseCase.execute();
-
+ 
             return ResponseHelper.success(
                 res,
                 SuccessMessage.DATA_UPDATED,

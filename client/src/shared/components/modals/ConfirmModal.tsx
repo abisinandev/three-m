@@ -1,14 +1,14 @@
-import { X } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Info, Loader2, X } from 'lucide-react';
 
 interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   title?: string;
-  message?: any;
+  message?: React.ReactNode;
   confirmText?: string;
   cancelText?: string;
-  variant?: 'destructive' | 'default' | 'success';
+  variant?: 'destructive' | 'default' | 'success' | 'warning';
   loading?: boolean;
 }
 
@@ -28,7 +28,15 @@ const ConfirmModal = ({
   const variantStyles = {
     destructive: "bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/30",
     success: "bg-green-600 hover:bg-green-700 shadow-lg shadow-green-900/30",
+    warning: "bg-yellow-600 hover:bg-yellow-700 shadow-lg shadow-yellow-900/30",
     default: "bg-[#22C55E] hover:bg-[#1ea853] shadow-lg shadow-green-900/30",
+  };
+
+  const iconMap = {
+    destructive: <AlertCircle className="w-6 h-6 text-red-500" />,
+    success: <CheckCircle2 className="w-6 h-6 text-green-500" />,
+    warning: <AlertCircle className="w-6 h-6 text-yellow-500" />,
+    default: <Info className="w-6 h-6 text-blue-500" />,
   };
 
 
@@ -48,9 +56,17 @@ const ConfirmModal = ({
           <X className="w-4.5 h-4.5" />
         </button>
 
-        <div className="px-6 py-8 text-center">
-          <h2 className="text-lg font-bold text-white mb-2">{title}</h2>
-          <p className="text-gray-400 text-xs leading-relaxed">{message}</p>
+        <div className="px-6 pt-8 pb-6 text-center">
+          <div className="flex justify-center mb-4">
+            <div className={`p-3 rounded-full bg-opacity-10 ${variant === 'destructive' ? 'bg-red-500' :
+                variant === 'success' ? 'bg-green-500' :
+                  variant === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+              }`}>
+              {iconMap[variant]}
+            </div>
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">{title}</h2>
+          <div className="text-gray-400 text-sm leading-relaxed">{message}</div>
         </div>
 
         <div className="flex gap-2 px-4 pb-4">
@@ -69,17 +85,11 @@ const ConfirmModal = ({
           >
             {loading ? (
               <>
-                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" className="opacity-25" />
-                  <path fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                </svg>
-                <span>Loading...</span>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Processing...</span>
               </>
             ) : (
-              <>
-                {/* {iconMap[variant]} */}
-                {confirmText}
-              </>
+              confirmText
             )}
           </button>
         </div>

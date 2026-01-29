@@ -21,6 +21,7 @@ export class CancelSipUseCase implements ICancelSipUseCase {
         const sip = await this._sipRepository.findById(sipId);
         if (!sip) throw new NotFoundError(ErrorMessage.NOT_FOUND + "SIP");
 
+        //Manage availabe sip installments📌📌
         await this._sipRepository.cancel(sipId);
     }
 }

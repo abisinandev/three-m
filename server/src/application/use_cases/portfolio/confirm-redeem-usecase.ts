@@ -44,7 +44,6 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
                 break;
         };
 
-
         const groupedInvestment = await this._investmentRepository.findGroupedInvestmentsByUser(data.userId) ?? [];
         const investment = groupedInvestment.find(investment => investment.schemeCode === data.schemeCode);
         if (!investment || investment.totalUnits <= 0) {
@@ -88,32 +87,29 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
 
                 const redeemableUnits = Math.min(
                     inv.remainingUnits as number,
-                    remainingUnitsToRedeem
+                    remainingUnitsToRedeem,
                 );
 
                 const updated = InvestmentEntity.redeemUnits(
                     inv.remainingUnits as number,
                     inv.redeemedUnits,
-                    redeemableUnits
-                );
-                remainingUnitsToRedeem = Number(
-                    (remainingUnitsToRedeem - redeemableUnits).toFixed(4)
+                    redeemableUnits,
+                    Number((unitsToRedeem * latestNav).toFixed(2)),
                 );
 
+                remainingUnitsToRedeem = Number((remainingUnitsToRedeem - redeemableUnits).toFixed(4));
                 await this._investmentRepository.redeemInvestments(
                     inv.id as string,
                     data.userId,
                     updated,
-                    session
+                    session,
                 );
             }
 
             if (remainingUnitsToRedeem !== 0) {
                 throw new ConflictError(ErrorMessage.REDEMPTION_FAILED);
             }
-
             const redeemAmount = Number((unitsToRedeem * latestNav).toFixed(2));
-
             await this._walletRepository.credit(
                 data.userId,
                 redeemAmount,

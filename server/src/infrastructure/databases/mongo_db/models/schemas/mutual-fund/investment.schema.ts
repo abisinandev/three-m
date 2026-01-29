@@ -13,9 +13,9 @@ const InvestmentSchema = new Schema<InvestmentDocument>(
 
         sipInstallmentId: {
             type: Schema.Types.ObjectId,
-            ref:"SipInstallment",
+            ref: "SipInstallment",
         },
-        
+
         schemeCode: {
             type: String,
             // required: true,
@@ -62,6 +62,7 @@ const InvestmentSchema = new Schema<InvestmentDocument>(
             type: Date,
         },
 
+        redeemedAmount: { type: Number, min: 0 },
         status: {
             type: String,
             enum: Object.values(InvestmentStatus),

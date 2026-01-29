@@ -12,6 +12,7 @@ export interface InvestmentDocument extends Document {
     units: number;
     remainingUnits: number;
     redeemedUnits: number;
+    redeemedAmount: number;
     redeemedAt: Date;
     nav: number;
     navDate: Date;

@@ -17,6 +17,7 @@ export class SipEntity {
     private readonly _executedInstallments: number;
 
     private readonly _status: SipStatus;
+    private readonly _failureReason?: string;
 
     private readonly _createdAt: Date;
     private readonly _updatedAt?: Date;
@@ -32,6 +33,7 @@ export class SipEntity {
         totalInstallments: number;
         executedInstallments: number;
         status: SipStatus;
+        failureReason?: string;
         createdAt: Date;
         updatedAt?: Date;
     }) {
@@ -45,6 +47,7 @@ export class SipEntity {
         this._totalInstallments = props.totalInstallments;
         this._executedInstallments = props.executedInstallments;
         this._status = props.status;
+        this._failureReason = props.failureReason;
         this._createdAt = props.createdAt;
         this._updatedAt = props.updatedAt;
     }
@@ -144,6 +147,7 @@ export class SipEntity {
         totalInstallments: number;
         executedInstallments: number;
         status: SipStatus;
+        failureReason: string;
         createdAt: Date;
         updatedAt?: Date;
     }): SipEntity {
@@ -163,6 +167,7 @@ export class SipEntity {
             totalInstallments: this._totalInstallments,
             executedInstallments: this._executedInstallments,
             status: this._status,
+            failureReason: this._failureReason,
             createdAt: this._createdAt,
             updatedAt: this._updatedAt,
         };
@@ -179,6 +184,7 @@ export class SipEntity {
     get totalInstallments() { return this._totalInstallments; }
     get executedInstallments() { return this._executedInstallments; }
     get status() { return this._status; }
+    get failureReason() { return this._failureReason; }
     get createdAt() { return this._createdAt; }
     get updatedAt() { return this._updatedAt; }
 }

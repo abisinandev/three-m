@@ -6,5 +6,6 @@ export interface IPortfolioDetailsUseCase {
         data: InvestmentResponseDTO[],
         page: number,
         limit: number,
+        totalCount: number,
     }>
 }

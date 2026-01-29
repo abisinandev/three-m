@@ -1,7 +1,8 @@
-import React from 'react';
-import { CalendarCheck, Pause, Play, Edit, Trash2, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState } from 'react';
+import { CalendarCheck, Pause, Play, Trash2, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import dayjs from 'dayjs';
 import type { SipDto } from '@modules/user/types/mutual-fund.types';
+import ConfirmModal from '@shared/components/modals/ConfirmModal';
 
 interface SipsTabProps {
     sipsLoading: boolean;
@@ -17,9 +18,50 @@ const SipsTab: React.FC<SipsTabProps> = ({
     sips,
     handlePause,
     handleResume,
-    handleEdit,
     handleCancel
 }) => {
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        type: 'pause' | 'cancel' | null;
+        sipId: string | null;
+        sipName: string | null;
+    }>({
+        isOpen: false,
+        type: null,
+        sipId: null,
+        sipName: null
+    });
+
+    const openConfirmModal = (type: 'pause' | 'cancel', sipId: string, sipName: string) => {
+        setConfirmModal({
+            isOpen: true,
+            type,
+            sipId,
+            sipName
+        });
+    };
+
+    const closeConfirmModal = () => {
+        setConfirmModal({
+            isOpen: false,
+            type: null,
+            sipId: null,
+            sipName: null
+        });
+    };
+
+    const handleConfirmAction = () => {
+        if (!confirmModal.sipId || !confirmModal.type) return;
+
+        if (confirmModal.type === 'pause') {
+            handlePause(confirmModal.sipId);
+        } else if (confirmModal.type === 'cancel') {
+            handleCancel(confirmModal.sipId);
+        }
+
+        closeConfirmModal();
+    };
+
     return (
         <div className="bg-[#111] border border-[#1f1f1f] rounded-xl p-4 space-y-4">
             <h3 className="text-base font-semibold flex items-center gap-2.5">
@@ -50,41 +92,48 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                             <AlertCircle size={12} /> Paused
                                         </span>
                                     )}
+                                    {sip.status === 'CANCELLED' && (
+                                        <span className="inline-flex items-center gap-1 text-red-500 text-xs ml-2">
+                                            <AlertCircle size={12} /> Cancelled
+                                        </span>
+                                    )}
                                 </p>
                             </div>
 
                             <div className="flex gap-2 flex-shrink-0">
-                                {sip.status === 'ACTIVE' ? (
-                                    <button
-                                        onClick={() => handlePause(sip.id)}
-                                        className="p-2 bg-yellow-900/40 text-yellow-300 rounded hover:bg-yellow-900/60 transition-colors"
-                                        title="Pause SIP"
-                                    >
-                                        <Pause size={16} />
-                                    </button>
+                                {sip.status === 'CANCELLED' ? (
+                                    <span className="px-3 py-1 bg-red-900/20 text-red-500 text-xs font-semibold rounded-full border border-red-900/30">
+                                        Terminated
+                                    </span>
                                 ) : (
-                                    <button
-                                        onClick={() => handleResume(sip.id)}
-                                        className="p-2 bg-green-900/40 text-green-300 rounded hover:bg-green-900/60 transition-colors"
-                                        title="Resume SIP"
-                                    >
-                                        <Play size={16} />
-                                    </button>
+                                    <>
+                                        {sip.status === 'ACTIVE' ? (
+                                            <button
+                                                onClick={() => openConfirmModal('pause', sip.id, sip.schemeCode)}
+                                                className="p-2 bg-yellow-900/40 text-yellow-300 rounded hover:bg-yellow-900/60 transition-colors"
+                                                title="Pause SIP"
+                                            >
+                                                <Pause size={16} />
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleResume(sip.id)}
+                                                className="p-2 bg-green-900/40 text-green-300 rounded hover:bg-green-900/60 transition-colors"
+                                                title="Resume SIP"
+                                            >
+                                                <Play size={16} />
+                                            </button>
+                                        )}
+
+                                        <button
+                                            onClick={() => openConfirmModal('cancel', sip.id, sip.schemeCode)}
+                                            className="p-2 bg-red-900/40 text-red-300 rounded hover:bg-red-900/60 transition-colors"
+                                            title="Cancel SIP"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </>
                                 )}
-                                <button
-                                    onClick={() => handleEdit(sip.id)}
-                                    className="p-2 bg-blue-900/40 text-blue-300 rounded hover:bg-blue-900/60 transition-colors"
-                                    title="Edit SIP"
-                                >
-                                    <Edit size={16} />
-                                </button>
-                                <button
-                                    onClick={() => handleCancel(sip.id)}
-                                    className="p-2 bg-red-900/40 text-red-300 rounded hover:bg-red-900/60 transition-colors"
-                                    title="Cancel SIP"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
                             </div>
                         </div>
 
@@ -114,6 +163,21 @@ const SipsTab: React.FC<SipsTabProps> = ({
                     </div>
                 ))
             )}
+
+            <ConfirmModal
+                isOpen={confirmModal.isOpen}
+                onClose={closeConfirmModal}
+                onConfirm={handleConfirmAction}
+                title={confirmModal.type === 'pause' ? 'Pause SIP?' : 'Cancel SIP?'}
+                message={
+                    <p>
+                        Are you sure you want to {confirmModal.type} your SIP in <span className="text-white font-semibold">{confirmModal.sipName}</span>?
+                        {confirmModal.type === 'cancel' && <span className="block mt-2 text-red-400">This action cannot be undone.</span>}
+                    </p>
+                }
+                confirmText={confirmModal.type === 'pause' ? 'Pause SIP' : 'Cancel SIP'}
+                variant={confirmModal.type === 'pause' ? 'warning' : 'destructive'}
+            />
         </div>
     );
 };

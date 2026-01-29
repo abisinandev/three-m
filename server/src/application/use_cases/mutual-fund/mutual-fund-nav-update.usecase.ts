@@ -6,6 +6,7 @@ import { IMutualFundNavRepository } from "@application/interfaces/repositories/f
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 
 @injectable()
 export class MutualFundNavUpdate implements IMutualFundNavUpdatesUseCase {
@@ -17,7 +18,6 @@ export class MutualFundNavUpdate implements IMutualFundNavUpdatesUseCase {
 
     async execute(interval: NavInterval): Promise<void> {
         const { funds } = await this._mutualFundRepository.findActiveFunds();
-        console.log("INterval: ",interval)
         for (const fund of funds) {
             const navs = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
             for (let data of navs) {
@@ -30,7 +30,9 @@ export class MutualFundNavUpdate implements IMutualFundNavUpdatesUseCase {
                 });
                 try {
                     await this._mutualFundNavRepository.upsertDocument(entity);
+                    logger.info("Nav updation done✅")
                 } catch (error) {
+                    logger.info("Nav updation failed❌")
                     return
                 }
             }

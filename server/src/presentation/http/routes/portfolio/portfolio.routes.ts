@@ -9,6 +9,9 @@ const portfolioController = container.get<PortFolioController>(PortFolioControll
 
 router.get("/", portfolioController.listAllInvestments.bind(portfolioController));
 router.get("/datas", portfolioController.portfolioCalculation.bind(portfolioController));
+router.get("/return-xirr", portfolioController.xirrCalculation.bind(portfolioController));
+
 router.get('/redeem-investment', portfolioController.redeemInvestments.bind(portfolioController));
 router.patch("/confirm-redeem", validateDTO(ConfirmRedeemDTO), portfolioController.confirmRedeem.bind(portfolioController));
+
 export default router;

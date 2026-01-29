@@ -7,18 +7,20 @@ import {
     Calendar,
     Activity,
     Loader2,
-    PauseCircle,
     Ban,
 } from 'lucide-react';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
-
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { SipStatusBadge } from '../components/SipStatusBadges';
 import { fetchSipDetailsApi } from '@shared/services/admin/sip-management/SipManagementAdminApi';
+import { toast } from 'sonner';
+import ConfirmModal from '@shared/components/modals/ConfirmModal';
+import axios from 'axios';
 
 const SipDetailsPage = () => {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const { sipId } = useParams({ from: '/admin/sip-details/$sipId' });
 
     const [filters, setFilters] = useState({
@@ -26,6 +28,8 @@ const SipDetailsPage = () => {
         limit: 10,
         status: '',
     });
+
+    const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
 
     const {
         data,
@@ -40,9 +44,29 @@ const SipDetailsPage = () => {
                 status: filters.status || undefined,
             }),
         enabled: !!sipId,
-        placeholderData: (p) => p,
+        placeholderData: (prev) => prev,
     });
 
+    const blockSipMutation = useMutation({
+        mutationFn: async () => {
+            const res = await axios.patch(`/api/admin/sip-management/block/${sipId}`);
+            return res.data;
+        },
+        onSuccess: (res) => {
+            toast.success(
+                res?.data?.message || 'SIP blocked successfully'
+            );
+            queryClient.invalidateQueries({
+                queryKey: ['sip-details', sipId],
+            });
+            setIsBlockModalOpen(false);
+        },
+        onError: (error: any) => {
+            toast.error(
+                error?.response?.data?.message || 'Failed to block SIP'
+            );
+        },
+    });
 
     if (isLoading) {
         return (
@@ -68,7 +92,7 @@ const SipDetailsPage = () => {
     }
 
     const sip = data.data;
-    const installments = data.data.installments ?? [];
+    const installments = sip.installments ?? [];
 
     const totalInvested = sip.executedInstallments * sip.amount;
     const progressPercentage = (
@@ -76,7 +100,10 @@ const SipDetailsPage = () => {
         100
     ).toFixed(0);
 
-    const canPause = ['ACTIVE', 'RUNNING'].includes(sip.status);
+    const handleBlockSip = () => {
+        setIsBlockModalOpen(true);
+    };
+
     const canCancel = ['ACTIVE', 'RUNNING', 'PAUSED'].includes(sip.status);
 
     return (
@@ -88,7 +115,7 @@ const SipDetailsPage = () => {
                     className="flex items-center gap-1.5 text-neutral-500 hover:text-neutral-200 text-[10px] font-semibold uppercase tracking-wide"
                 >
                     <ArrowLeft size={13} />
-                    BACK TO SIPs
+                    Back to SIPs
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -97,11 +124,14 @@ const SipDetailsPage = () => {
                 </div>
 
                 <p className="text-[11px] text-neutral-500 font-mono">
-                    ID: <span className="text-emerald-400">{sip.id}</span>
+                    Scheme-code:{' '}
+                    <span className="text-emerald-400">
+                        {sip.schemeCode}
+                    </span>
                 </p>
             </div>
 
-            {/* Compact Stats Row */}
+            {/* Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <StatsCardComponent
                     title="Amount"
@@ -122,7 +152,9 @@ const SipDetailsPage = () => {
                 />
                 <StatsCardComponent
                     title="Next"
-                    value={new Date(sip.nextExecutionDate).toLocaleDateString('en-IN', {
+                    value={new Date(
+                        sip.nextExecutionDate
+                    ).toLocaleDateString('en-IN', {
                         day: 'numeric',
                         month: 'short',
                     })}
@@ -142,46 +174,57 @@ const SipDetailsPage = () => {
                 />
             </div>
 
-            <div className="bg-[#111] border border-neutral-800 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[11px]">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1 flex-1">
-                    <div>
-                        <span className="text-neutral-500">Start</span>
-                        <p>{new Date(sip.startDate).toLocaleDateString('en-IN')}</p>
-                    </div>
-                    <div>
-                        <span className="text-neutral-500">Scheme</span>
-                        <p className="font-mono">{sip.schemeCode}</p>
-                    </div>
-                    <div>
-                        <span className="text-neutral-500">User</span>
-                        <p className="font-mono">
-                            {sip.userCode}
-                        </p>
-                    </div>
-                    <div>
-                        <span className="text-neutral-500">Installments</span>
-                        <p>
-                            {sip.executedInstallments} / {sip.totalInstallments}
-                        </p>
-                    </div>
-                </div>
+            {/* Info + Actions */}
+            <div className="bg-[#111] border border-neutral-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl -mr-16 -mt-16 group-hover:bg-emerald-500/10 transition-all duration-500 rounded-full" />
 
-                <div className="flex gap-2 self-start sm:self-center">
-                    {canPause && (
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-950/60 border border-amber-800/50 rounded text-amber-300 hover:bg-amber-900/60 text-[11px] font-medium">
-                            <PauseCircle size={14} />
-                            Pause SIP
-                        </button>
-                    )}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 flex-1 w-full">
+                        <div className="space-y-1">
+                            <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-wider">Start Date</span>
+                            <p className="text-sm font-medium text-neutral-200">
+                                {new Date(sip.startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}
+                            </p>
+                        </div>
+                        <div className="space-y-1">
+                            <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-wider">Scheme</span>
+                            <p className="text-sm font-mono text-emerald-400 font-medium">{sip.schemeCode}</p>
+                        </div>
+                        <div className="space-y-1">
+                            <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-wider">User Code</span>
+                            <p className="text-sm font-mono text-blue-400 font-medium">{sip.userCode}</p>
+                        </div>
+                        <div className="space-y-1">
+                            <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-wider">Installments</span>
+                            <p className="text-sm font-medium text-neutral-200">
+                                {sip.executedInstallments} <span className="text-neutral-500 mx-1">/</span> {sip.totalInstallments}
+                            </p>
+                        </div>
+                    </div>
+
                     {canCancel && (
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-950/60 border border-rose-800/50 rounded text-rose-300 hover:bg-rose-900/60 text-[11px] font-medium">
-                            <Ban size={14} />
-                            Cancel SIP
+                        <button
+                            onClick={handleBlockSip}
+                            disabled={blockSipMutation.isPending}
+                            className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-rose-900/20 disabled:opacity-50 active:scale-95"
+                        >
+                            {blockSipMutation.isPending ? (
+                                <>
+                                    <Loader2 size={14} className="animate-spin" />
+                                    Blocking...
+                                </>
+                            ) : (
+                                <>
+                                    <Ban size={14} />
+                                    Block SIP
+                                </>
+                            )}
                         </button>
                     )}
                 </div>
             </div>
 
+            {/* Execution History */}
             <div className="space-y-3">
                 <div className="flex justify-between items-center">
                     <h2 className="text-sm font-semibold flex items-center gap-1.5">
@@ -198,7 +241,7 @@ const SipDetailsPage = () => {
                                 status: e.target.value,
                             }))
                         }
-                        className="text-[11px] bg-[#111] border border-neutral-800 rounded px-2.5 py-1 text-neutral-300"
+                        className="text-[11px] bg-[#111] border border-neutral-800 rounded px-2 py-1"
                     >
                         <option value="">All</option>
                         <option value="ALLOCATED">Allocated</option>
@@ -207,77 +250,56 @@ const SipDetailsPage = () => {
                     </select>
                 </div>
 
-                <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg overflow-hidden text-[11px]">
+                <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg overflow-hidden">
                     {installments.length === 0 ? (
                         <div className="p-8 text-center text-neutral-600">
                             No installments yet
                         </div>
                     ) : (
-                        <>
-                            <div className="divide-y divide-neutral-800/70">
-                                {installments.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className="grid grid-cols-3 px-4 py-2.5 items-center"
-                                    >
-                                        <div>
-                                            <div className="text-neutral-500">
-                                                #{item.installmentNo}
-                                            </div>
-                                            <div className="text-neutral-300">
-                                                {new Date(item.executionDate).toLocaleDateString('en-IN')}
-                                            </div>
-                                        </div>
-
-                                        <div className="text-center font-mono text-emerald-400">
-                                            ₹{item.amount.toLocaleString()}
-                                        </div>
-
-                                        <div className="text-right font-semibold uppercase tracking-wide">
-                                            <span
-                                                className={
-                                                    item.status === 'FAILED'
-                                                        ? 'text-rose-400'
-                                                        : item.status === 'ALLOCATED'
-                                                            ? 'text-emerald-400'
-                                                            : 'text-neutral-400'
-                                                }
-                                            >
-                                                {item.status}
-                                            </span>
-                                        </div>
+                        installments.map((item) => (
+                            <div
+                                key={item.id}
+                                className="grid grid-cols-3 px-4 py-2.5 border-b border-neutral-800"
+                            >
+                                <div>
+                                    <div className="text-neutral-500">
+                                        #{item.installmentNo}
                                     </div>
-                                ))}
-                            </div>
+                                    <div className="text-neutral-300">
+                                        {new Date(
+                                            item.executionDate
+                                        ).toLocaleDateString('en-IN')}
+                                    </div>
+                                </div>
 
-                            <div className="px-4 py-2.5 border-t border-neutral-800 flex justify-between items-center text-[10px] text-neutral-500 bg-neutral-950/30">
-                                <span>
-                                    {(filters.page - 1) * filters.limit + 1}–
-                                    {Math.min(filters.page * filters.limit, data.totalCount)}{' '}
-                                    of {data.totalCount}
-                                </span>
+                                <div className="text-center text-emerald-400 font-mono">
+                                    ₹{item.amount.toLocaleString()}
+                                </div>
 
-                                <div className="flex gap-1.5">
-                                    <button
-                                        disabled={filters.page === 1}
-                                        onClick={() => setFilters((p) => ({ ...p, page: p.page - 1 }))}
-                                        className="px-2.5 py-1 disabled:opacity-40 bg-neutral-900 border border-neutral-700 rounded hover:bg-neutral-800 disabled:cursor-not-allowed"
-                                    >
-                                        Prev
-                                    </button>
-                                    <button
-                                        disabled={filters.page * filters.limit >= data.totalCount}
-                                        onClick={() => setFilters((p) => ({ ...p, page: p.page + 1 }))}
-                                        className="px-2.5 py-1 disabled:opacity-40 bg-neutral-900 border border-neutral-700 rounded hover:bg-neutral-800 disabled:cursor-not-allowed"
-                                    >
-                                        Next
-                                    </button>
+                                <div className="text-right uppercase font-semibold">
+                                    {item.status}
                                 </div>
                             </div>
-                        </>
+                        ))
                     )}
                 </div>
             </div>
+
+            <ConfirmModal
+                isOpen={isBlockModalOpen}
+                onClose={() => setIsBlockModalOpen(false)}
+                onConfirm={() => blockSipMutation.mutate()}
+                title="Block SIP?"
+                message={
+                    <>
+                        <p>Are you sure you want to block this SIP for <span className="text-white font-semibold">{sip.userCode}</span>?</p>
+                        <p className="mt-2 text-rose-400">This will stop all future installments for this specific SIP.</p>
+                    </>
+                }
+                confirmText="Block SIP"
+                variant="destructive"
+                loading={blockSipMutation.isPending}
+            />
         </div>
     );
 };

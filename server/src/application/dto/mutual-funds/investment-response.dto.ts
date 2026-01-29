@@ -16,7 +16,12 @@ export interface InvestmentResponseDTO {
     paymentMethod: PaymentMethod;
     investmentType: InvestmentType;
     logo: string;
-    profit:number,
+    remainingUnits?: number;
+    redeemedUnits?: number;
+    redeemedAmount?: number;
+    redeemedAt?: Date;
+    profit: number;
+    xirr?: number;
     createdAt: Date;
     updatedAt?: Date;
 }

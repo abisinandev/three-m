@@ -11,7 +11,7 @@ export const SIP_TYPES = {
     PauseSipUseCase: Symbol.for("PauseSipUseCase"),
     CancelSipUseCase: Symbol.for("CancelSipUseCase"),
     ResumeSipUseCase: Symbol.for("ResumeSipUseCase"),
-
+    SipBlockUseCase: Symbol.for('SipBlockUseCase'),
     // controllers
     MutualFundSipController: Symbol.for("MutualFundSipController"),
 };

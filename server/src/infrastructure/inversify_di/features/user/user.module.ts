@@ -39,7 +39,7 @@ import { IWalletRepository } from "@application/interfaces/repositories/user/wal
 import { IKycRepository } from "@application/interfaces/repositories/user/kyc-repository.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
-import { IBlockRepository } from "@application/interfaces/repositories/feature/block-repository.interface";
+// import { IBlockRepository } from "@application/interfaces/repositories/feature/block-repository.interface";
 import { EditProfileUseCase } from "@application/use_cases/user/profile/edit-profile.usecase";
 
 export const UserModule = new ContainerModule(({ bind }) => {
@@ -69,7 +69,7 @@ export const UserModule = new ContainerModule(({ bind }) => {
   bind<IProfileImageUploadUseCase>(USER_TYPES.ProfileImageUploadUseCase).to(ProfileImageUploadUseCase);
   bind<IUserWalletUseCase>(USER_TYPES.UserWalletUseCase).to(UserWalletUseCase);
   bind<ITransactionRepository>(USER_TYPES.TransactionRepository).to(TransactionRepository);
-  bind<IBlockRepository>(USER_TYPES.BlockRepository).to(BlockRepository);
+  // bind<IBlockRepository>(USER_TYPES.BlockRepository).to(BlockRepository);
   bind<IAddToWalletUseCase>(USER_TYPES.AddToWalletUseCase).to(AddToWalletUseCase);
   bind<StripePaymentHandler>(USER_TYPES.StripePaymentHandler).to(StripePaymentHandler);
 });

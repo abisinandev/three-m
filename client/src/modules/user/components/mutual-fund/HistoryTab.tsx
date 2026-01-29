@@ -88,7 +88,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                                             <History size={14} className={tx.paymentMethod === 'Debit' ? 'text-red-400' : 'text-green-400'} />
                                         </div>
                                         <div>
-                                            <p className="font-medium text-gray-200">{tx.investmentType || 'Investment'}</p>
+                                            <p className="font-medium text-gray-200">{tx.investmentType[0] + tx.investmentType.slice(1).toLowerCase() || 'Investment'}</p>
                                             <p className="text-xs text-gray-500 mt-0.5">{dayjs(tx.createdAt).format('DD MMM YYYY, hh:mm A')}</p>
                                         </div>
                                     </div>

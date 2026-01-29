@@ -8,6 +8,7 @@ import { ResponseHelper } from "@presentation/express/utils/response-handling/re
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
+import { IXirrCalculationUseCase } from "@application/use_cases/portfolio/interfaces/xirr-calculation-usecase.interface";
 
 @injectable()
 export class PortFolioController {
@@ -16,6 +17,7 @@ export class PortFolioController {
         @inject(PORTFOLIO_TYPES.RadeemInvestmentUseCase) private readonly _radeemInvestments: IRadeemInvestmentUseCase,
         @inject(PORTFOLIO_TYPES.ConfirmRedeemUseCase) private readonly _confirmRedeem: IConfirmRedeemUseCase,
         @inject(PORTFOLIO_TYPES.PortfolioCalculationsUseCase) private readonly _portfolioCalcuationUseCase: IPortfolioCalculationsUseCase,
+        @inject(PORTFOLIO_TYPES.XirrCalculationUseCase) private readonly _xirrCalculation: IXirrCalculationUseCase,
     ) { }
 
     async listAllInvestments(req: Request, res: Response, next: NextFunction) {
@@ -71,6 +73,22 @@ export class PortFolioController {
             const dto = { ...req.body }
             const userId = req?.user?.id;
             const result = await this._confirmRedeem.execute({ ...dto, userId });
+            return ResponseHelper.success(
+                res,
+                SuccessMessage.DATA_FETCHED,
+                result,
+                HttpStatus.OK,
+            )
+        } catch (error) {
+            next(error)
+        }
+    }
+
+
+    async xirrCalculation(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req?.user?.id;
+            const result = await this._xirrCalculation.execute(userId as string);
             return ResponseHelper.success(
                 res,
                 SuccessMessage.DATA_FETCHED,

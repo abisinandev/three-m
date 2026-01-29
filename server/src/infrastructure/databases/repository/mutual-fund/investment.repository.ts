@@ -70,24 +70,21 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
     };
 
 
-    async getUserInvestments(
-        userId: string,
-        options: QueryOptions
-    ): Promise<InvestmentEntity[]> {
-
+    async getUserInvestments(userId: string, options: QueryOptions): Promise<InvestmentEntity[]> {
         const {
             page = 1,
             limit = 10,
             filter = {},
             sortBy = "createdAt",
             sortOrder = "desc",
+            search = "",
         } = options;
 
         const pageNumber = Math.max(Number(page), 1);
         const limitNumber = Math.max(Number(limit), 1);
         const skip = (pageNumber - 1) * limitNumber;
 
-        const finalFilter: Record<string, unknown> = {
+        const matchStage: Record<string, unknown> = {
             ...filter,
             userId: new Types.ObjectId(userId),
         };
@@ -96,30 +93,37 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             [sortBy]: sortOrder === "asc" ? 1 : -1,
         };
 
-        const docs = await this.model.aggregate([
-            { $match: finalFilter },
+        const pipeline: any[] = [{ $match: matchStage }];
 
+        pipeline.push({
+            $lookup: {
+                from: "mutualfunds",
+                localField: "schemeCode",
+                foreignField: "schemeCode",
+                as: "fund",
+            },
+        }, {
+            $unwind: {
+                path: "$fund",
+                preserveNullAndEmptyArrays: true,
+            },
+        });
+
+        if (search) {
+            pipeline.push({
+                $match: {
+                    $or: [
+                        { schemeCode: { $regex: search, $options: "i" } },
+                        { "fund.schemeName": { $regex: search, $options: "i" } },
+                    ],
+                },
+            });
+        }
+
+        pipeline.push(
             { $sort: sort },
-
             { $skip: skip },
             { $limit: limitNumber },
-
-            {
-                $lookup: {
-                    from: "mutualfunds",
-                    localField: "schemeCode",
-                    foreignField: "schemeCode",
-                    as: "fund",
-                },
-            },
-
-            {
-                $unwind: {
-                    path: "$fund",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
-
             {
                 $project: {
                     _id: 1,
@@ -132,6 +136,9 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
                     status: 1,
                     investmentType: 1,
                     paymentMethod: 1,
+                    remainingUnits: 1,
+                    redeemedUnits: 1,
+                    redeemedAmount: 1,
                     createdAt: 1,
                     updatedAt: 1,
 
@@ -143,14 +150,14 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
                         logo: 1,
                     },
                 },
-            },
-        ]);
+            }
+        );
+
+        const docs = await this.model.aggregate(pipeline);
         return docs.map(doc => this.mapper.toDomain(doc));
     }
 
-    async getUserInvestmentsWithoutFilter(
-        userId: string
-    ): Promise<InvestmentEntity[]> {
+    async getUserInvestmentsWithoutFilter(userId: string): Promise<InvestmentEntity[]> {
 
         const docs = await this.model.aggregate([
             {
@@ -231,7 +238,7 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
     }
 
     async findInvestmentsByUser(userId: string): Promise<InvestmentEntity[] | null> {
-        const docs = await this.model.find({ userId, status: InvestmentStatus.ALLOTTED });
+        const docs = await this.model.find({ userId });
         if (!docs) return null;
         return docs.map(doc => this.mapper.toDomain(doc));
     }
@@ -285,7 +292,7 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         update: InvestmentRedeemResult,
         session: ClientSession
     ): Promise<void> {
-        const x = await this.model.findOneAndUpdate(
+        await this.model.findOneAndUpdate(
             {
                 _id: investmentId,
                 userId: new Types.ObjectId(userId),
@@ -293,6 +300,56 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             { $set: update },
             { session }
         );
+    };
+
+
+    async getCurrentPortfolioValue(userId: string): Promise<number> {
+        return 0;
     }
 
+    async findUserInvestmentsForXirr(userId: string): Promise<InvestmentEntity[] | null> {
+        const docs = await this.model.find({
+            $or: [
+                { userId, status: InvestmentStatus.ALLOTTED },
+                { userId, status: InvestmentStatus.REDEEMED }
+            ]
+        })
+        if (!docs) return null;
+        return docs.map(doc => this.mapper.toDomain(doc));
+    }
+
+    async countInvestments(userId: string, filter: any = {}, search: string = ""): Promise<number> {
+        const matchStage: Record<string, unknown> = {
+            ...filter,
+            userId: new Types.ObjectId(userId),
+        };
+
+        if (!search) {
+            return await this.model.countDocuments(matchStage);
+        }
+
+        const result = await this.model.aggregate([
+            { $match: matchStage },
+            {
+                $lookup: {
+                    from: "mutualfunds",
+                    localField: "schemeCode",
+                    foreignField: "schemeCode",
+                    as: "fund",
+                },
+            },
+            { $unwind: "$fund" },
+            {
+                $match: {
+                    $or: [
+                        { schemeCode: { $regex: search, $options: "i" } },
+                        { "fund.schemeName": { $regex: search, $options: "i" } },
+                    ],
+                },
+            },
+            { $count: "count" },
+        ]);
+
+        return result.length > 0 ? result[0].count : 0;
+    }
 }

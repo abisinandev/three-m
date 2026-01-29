@@ -56,6 +56,7 @@ const SipSchema = new Schema<SipDocument>(
             default: SipStatus.ACTIVE,
             index: true,
         },
+        failureReason: { type: String },
     },
     {
         timestamps: true,

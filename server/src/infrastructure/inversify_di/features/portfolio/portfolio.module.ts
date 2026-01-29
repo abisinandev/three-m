@@ -14,7 +14,8 @@ import { PortFolioController } from "@presentation/http/controllers/portfolio/po
 import { IPortfolioDetailsUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-details-usecase.interface";
 import { IRadeemInvestmentUseCase } from "@application/use_cases/portfolio/interfaces/redeem-investments-usecase.interface";
 import { IConfirmRedeemUseCase } from "@application/use_cases/portfolio/interfaces/confirm-redeem-usecase.interface";
-
+import { IXirrCalculationUseCase } from "@application/use_cases/portfolio/interfaces/xirr-calculation-usecase.interface";
+import { XirrCalculationUseCase } from "@application/use_cases/portfolio/xirr-calculation.usecase";
 
 export const PortfolioModule = new ContainerModule(({ bind }) => {
     // UseCases
@@ -22,6 +23,7 @@ export const PortfolioModule = new ContainerModule(({ bind }) => {
     bind<IRadeemInvestmentUseCase>(PORTFOLIO_TYPES.RadeemInvestmentUseCase).to(RadeemInvestmentUseCase);
     bind<IConfirmRedeemUseCase>(PORTFOLIO_TYPES.ConfirmRedeemUseCase).to(ConfirmRedeemUseCase);
     bind<PortfolioCalculationsUseCase>(PORTFOLIO_TYPES.PortfolioCalculationsUseCase).to(PortfolioCalculationsUseCase);
+    bind<IXirrCalculationUseCase>(PORTFOLIO_TYPES.XirrCalculationUseCase).to(XirrCalculationUseCase);
 
     // Controllers
     bind<PortFolioController>(PORTFOLIO_TYPES.PortFolioController).to(PortFolioController);

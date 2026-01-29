@@ -8,5 +8,6 @@ const sipController = container.get<AdminSipController>(ADMIN_TYPES.AdminSipCont
 
 router.get('/', sipController.listAllSips.bind(sipController));
 router.get('/:sipId', sipController.fetchSipDetails.bind(sipController));
+router.patch('/block/:sipId', sipController.blockSip.bind(sipController));
 
 export default router;

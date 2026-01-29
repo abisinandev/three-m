@@ -4,6 +4,7 @@ export const PORTFOLIO_TYPES = {
     RadeemInvestmentUseCase: Symbol.for("RadeemInvestmentUseCase"),
     ConfirmRedeemUseCase: Symbol.for("ConfirmRadeemUseCase"),
     PortfolioCalculationsUseCase: Symbol.for("PortfolioCalculationsUseCase"),
+    XirrCalculationUseCase: Symbol.for("XirrCalculationUseCase"),
 
     // controllers
     PortFolioController: Symbol.for("PortFolioController"),

@@ -1,5 +1,5 @@
 import type { IAdminVerifyTransactionUseCase } from "@application/use_cases/user/interfaces/admin-verify-transaction-usecase.interface";
-import { BlockEntity } from "@domain/entities/transaction/block.entity";
+// import { BlockEntity } from "@domain/entities/transaction/block.entity";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { SignatureKey } from "@domain/value-objects/wallet/signature-key.vo";
@@ -11,7 +11,7 @@ import mongoose from "mongoose";
 import stripe from "@infrastructure/providers/stripe/stripe.client";
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
-import { IBlockRepository } from "@application/interfaces/repositories/feature/block-repository.interface";
+// import { IBlockRepository } from "@application/interfaces/repositories/feature/block-repository.interface";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 
 /**
@@ -32,7 +32,7 @@ export class AdminVerifyTransactionUseCase implements IAdminVerifyTransactionUse
     constructor(
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
-        @inject(USER_TYPES.BlockRepository) private readonly _blockRepository: IBlockRepository,
+        // @inject(USER_TYPES.BlockRepository) private readonly _blockRepository: IBlockRepository,
     ) { }
 
     async execute(txId: string): Promise<{ isVerified: boolean }> {
@@ -85,14 +85,14 @@ export class AdminVerifyTransactionUseCase implements IAdminVerifyTransactionUse
                 session
             );
 
-            const lastBlock = await this._blockRepository.getLastBlock(session);
+            // const lastBlock = await this._blockRepository.getLastBlock(session);
 
-            const block = BlockEntity.create({
-                index: lastBlock ? lastBlock.index + 1 : 0,
-                prevHash: lastBlock ? lastBlock.blockHash : "GENESIS",
-                txHash: transaction.txHash,
-            });
-            await this._blockRepository.create(block, session);
+            // const block = BlockEntity.create({
+            //     index: lastBlock ? lastBlock.index + 1 : 0,
+            //     prevHash: lastBlock ? lastBlock.blockHash : "GENESIS",
+            //     txHash: transaction.txHash,
+            // });
+            // await this._blockRepository.create(block, session);
 
             await session.commitTransaction();
             return { isVerified: true };

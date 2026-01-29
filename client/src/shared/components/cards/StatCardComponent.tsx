@@ -47,7 +47,7 @@ export const StatsCardComponent = ({
 }: StatsCardProps) => {
   const colorMap: Record<ColorVariant, string> = {
     emerald: 'text-emerald-400 bg-emerald-950/30',
-    rose:    'text-rose-400 bg-rose-950/30',
+    rose:    'text-rose-500 bg-rose-950/30',
     red:     'text-red-400 bg-red-950/30',
     blue:    'text-blue-400 bg-blue-950/30',
     indigo:  'text-indigo-400 bg-indigo-950/30',

@@ -15,6 +15,7 @@ export const toDomain = (doc: SipDocument): SipEntity => {
         startDate: doc.startDate,
         updatedAt: doc.updatedAt,
         createdAt: doc.createdAt,
+        failureReason: doc.failureReason,
     })
 }
 
@@ -30,9 +31,9 @@ export const toPersistance = (data: SipEntity): Partial<SipDocument> => {
         totalInstallments: data.totalInstallments,
         executedInstallments: data.executedInstallments,
         status: data.status,
+        failureReason: data.failureReason,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
-        
     };
 }
 

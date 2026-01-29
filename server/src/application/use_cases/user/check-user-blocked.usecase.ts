@@ -14,7 +14,6 @@ export class CheckUserBlockedUseCase implements ICheckUserBlockedUseCase {
   async execute(id: string): Promise<boolean> {
     const user = await this._userRepository.findById(id);
     if (!user) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
-
     return user.isBlocked;
   }
 }

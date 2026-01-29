@@ -14,18 +14,19 @@ export interface IInvestmentResponse {
     createdAt: Date | string;
     updatedAt?: Date | string;
     profit: number;
+    xirr?: number;
     logo?: string;
+    remainingUnits?: number;
+    redeemedUnits?: number;
+    redeemedAmount?: number;
+    redeemedAt?: Date | string;
 }
 
 export interface IInvestmentBaseResponse {
     data: IInvestmentResponse[];
     page: number | string;
     limit: number | string;
-    //     totalCount: number;
-    //     totalInvestment: number;
-    //     totalProfit: number;
-    //     currentValue:number
-    // }
+    totalCount?: number;
 }
 
 export interface IPortfolioDatasResponse {

@@ -14,6 +14,7 @@ export class InvestmentEntity {
 
     private _remainingUnits?: number;
     private _redeemedUnits?: number;
+    private _redemeedAmount?: number;
     private _redeemedAt?: Date;
 
     private _status: InvestmentStatus;
@@ -36,6 +37,7 @@ export class InvestmentEntity {
 
         remainingUnits?: number;
         redeemedUnits?: number;
+        redeemedAmount?: number;
         redeemedAt?: Date;
 
         status: InvestmentStatus;
@@ -58,7 +60,7 @@ export class InvestmentEntity {
         this._remainingUnits = props.remainingUnits;
         this._redeemedUnits = props.redeemedUnits;
         this._redeemedAt = props.redeemedAt;
-
+        this._redemeedAmount = props.redeemedAmount;
         this._status = props.status;
         this._paymentMethod = props.paymentMethod;
         this._investmentType = props.investmentType;
@@ -123,7 +125,8 @@ export class InvestmentEntity {
     static redeemUnits(
         remainingUnits: number,
         redeemedUnits: number | undefined,
-        unitsToRedeem: number
+        unitsToRedeem: number,
+        redeemedAmount: number,
     ): InvestmentRedeemResult {
 
         if (unitsToRedeem <= 0 || unitsToRedeem > remainingUnits) {
@@ -142,13 +145,16 @@ export class InvestmentEntity {
             remainingUnits: newRemaining <= 0 ? 0 : newRemaining,
             redeemedUnits: newRedeemed,
             updatedAt: new Date(),
+            redeemedAmount,
         };
 
         if (newRemaining <= 0) {
             result.status = InvestmentStatus.REDEEMED;
             result.redeemedAt = new Date();
+        } else {
+            result.status = InvestmentStatus.PARTIALLY_REDEEMED;
+            result.redeemedAt = new Date();
         }
-
         return result;
     }
 
@@ -164,7 +170,8 @@ export class InvestmentEntity {
         navDate: Date;
 
         remainingUnits: number;
-        redeemedUnits?: number;
+        redeemedUnits: number;
+        redeemedAmount: number;
         redeemedAt?: Date;
 
         status: InvestmentStatus;
@@ -184,6 +191,7 @@ export class InvestmentEntity {
             navDate: props.navDate,
             remainingUnits: props.remainingUnits,
             redeemedUnits: props.redeemedUnits,
+            redeemedAmount: props.redeemedAmount,
             redeemedAt: props.redeemedAt,
             status: props.status,
             investmentType: props.investmentType,
@@ -200,7 +208,8 @@ export class InvestmentEntity {
     get amount() { return this._amount; }
     get units() { return this._units; }
     get remainingUnits() { return this._remainingUnits; }
-    get redeemedUnits() { return this._remainingUnits; }
+    get redeemedUnits() { return this._redeemedUnits; }
+    get redeemedAmount() { return this._redemeedAmount; }
     get redeemedAt() { return this._redeemedAt; }
     get nav() { return this._nav; }
     get navDate() { return this._navDate; }

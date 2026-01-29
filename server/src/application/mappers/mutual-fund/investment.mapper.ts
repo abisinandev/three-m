@@ -26,8 +26,9 @@ export const toInvestmentResponse = (
     entity: InvestmentEntity,
     fund: MutualFundEntity,
     profit: number,
+    xirr?: number,
 ): InvestmentResponseDTO => {
-    console.log(entity)
+
     return {
         schemeCode: entity.schemeCode,
         amount: entity.amount,
@@ -44,6 +45,11 @@ export const toInvestmentResponse = (
         schemeName: fund?.schemeName as string,
         category: fund?.category as string,
         logo: fund.logo,
+        remainingUnits: entity.remainingUnits,
+        redeemedUnits: entity.redeemedUnits,
+        redeemedAmount: entity.redeemedAmount,
+        redeemedAt: entity.redeemedAt,
         profit,
+        xirr,
     };
 };

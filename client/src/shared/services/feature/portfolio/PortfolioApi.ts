@@ -3,10 +3,12 @@ import type { IInvestmentBaseResponse, IPortfolioDatasResponse, IRedeemedInvestm
 
 export const getPortfolioInvestments = async (
     page = 1,
-    limit = 10
+    limit = 10,
+    status?: string | null,
+    search?: string
 ): Promise<IInvestmentBaseResponse> => {
     const { data } = await api.get('/user/portfolio', {
-        params: { page, limit },
+        params: { page, limit, status: status || undefined, search: search || undefined },
     });
 
     const responseData = data?.data;
@@ -15,6 +17,7 @@ export const getPortfolioInvestments = async (
         data: responseData?.data ?? [],
         limit: responseData?.limit ?? limit,
         page: responseData?.page ?? page,
+        totalCount: responseData?.totalCount ?? 0,
     };
 };
 
@@ -42,6 +45,6 @@ export const confirmRedeemInvestment = async (payload: {
     amount?: number | string;
     units?: number | string;
 }) => {
-    const { data } = await api.patch('/user/portfolio/confrim-redeem', payload);
+    const { data } = await api.patch('/user/portfolio/confirm-redeem', payload);
     return data;
 };
