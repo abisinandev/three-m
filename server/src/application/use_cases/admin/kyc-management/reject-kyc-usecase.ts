@@ -1,7 +1,7 @@
-import type { IKycRepository } from "@application/interfaces/repositories/kyc-repository.interface";
-import type { IRejectKycUseCase } from "@application/use_cases/interfaces/admin/reject-kyc-usecase.interface";
+import { IKycRepository } from "@application/interfaces/repositories/user/kyc-repository.interface";
+import type { IRejectKycUseCase } from "@application/use_cases/admin/interfaces/reject-kyc-usecase.interface";
 import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
 

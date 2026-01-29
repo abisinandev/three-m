@@ -1,12 +1,11 @@
 import type { VerifyOtpDTO } from "@application/dto/auth/verify-otp.dto";
 import type { VerifyOtpResponseDTO } from "@application/dto/auth/verify-otp-response.dto";
-import type { IAdminRepository } from "@application/interfaces/repositories/admin.repository.interface";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
-import type { IAdminAuthVerifyOtpUseCase } from "@application/use_cases/interfaces/admin/admin-auth-verify-otp.interface";
+import type { IAdminAuthVerifyOtpUseCase } from "@application/use_cases/admin/interfaces/admin-auth-verify-otp.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
+import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import {
@@ -14,6 +13,7 @@ import {
   ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
+import { IAdminRepository } from "@application/interfaces/repositories/admin/admin.repository.interface";
 
 @injectable()
 export class AdminAuthVerifyOtpUseCase implements IAdminAuthVerifyOtpUseCase {

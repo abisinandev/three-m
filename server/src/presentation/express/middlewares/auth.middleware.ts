@@ -1,7 +1,6 @@
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import jwt from "jsonwebtoken";
@@ -12,6 +11,7 @@ import {
   UnauthorizedError,
 } from "../utils/error-handling";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class AuthMiddleware {
@@ -44,6 +44,6 @@ export class AuthMiddleware {
       next();
     } catch (error) {
       next(error);
-    }
+    } 
   }
 }

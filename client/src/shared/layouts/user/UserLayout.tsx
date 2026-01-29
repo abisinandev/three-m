@@ -7,15 +7,23 @@ import { Wallet, ChevronDown, LogOut, User, Menu, Bell } from 'lucide-react';
 import { Footer } from '@shared/components/LandingPage/Footer';
 import { LOGOUT } from '@shared/constants/userContants';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
+import { useProfileQuery } from '@shared/services/user/ProfileApi';
 
 const UserLayout = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
-
+    const { setUser } = useUserStore()
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { user, logout } = useUserStore();
     const navigate = useNavigate();
+
+    const { data } = useProfileQuery()
+    useEffect(() => {
+        if (data) {
+            setUser(data);
+        }
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -63,7 +71,6 @@ const UserLayout = () => {
                             { to: '/user/expenses', label: 'Expense tracker' },
                             { to: '/user/wallet', label: 'Wallet' },
                             { to: '/user/mutual-funds', label: 'Mutual Funds' },
-                            { to: '/user/sip', label: 'SIP' },
                             { to: '/user/algo', label: 'Algo trading' },
                             { to: '/user/portfolio', label: 'Portfolio' },
                             { to: '/user/news', label: "News" },

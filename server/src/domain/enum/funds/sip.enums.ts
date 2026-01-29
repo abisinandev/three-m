@@ -1,0 +1,17 @@
+export enum SipFrequency {
+  DAILY = "DAILY",
+  WEEKLY = "WEEKLY",
+  MONTHLY = "MONTHLY",
+  QUARTERLY = "QUARTERLY",
+  YEARLY = "YEARLY",
+}
+
+
+export enum SipStatus {
+  ACTIVE = "ACTIVE",
+  INVACTIVE = "INACTIVE",
+  PAUSED = "PAUSED",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  SYSTEM_BLOCKED = "SYSTEM_BLOCKED",
+}

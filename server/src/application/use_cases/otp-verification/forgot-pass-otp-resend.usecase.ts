@@ -1,17 +1,17 @@
 import type { ResendOtpDTO } from "@application/dto/auth/resend-otp.dto";
 import type { ResendOtpResponseDTO } from "@application/dto/auth/resend-otp-response.dto";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import AppError from "@presentation/express/utils/error-handling/app.error";
 import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
-import type { IForgotPasswordResendOtpUseCase } from "../interfaces/user/forgot-pass-resend-otp-usecase.interface";
+import type { IForgotPasswordResendOtpUseCase } from "../user/interfaces/forgot-pass-resend-otp-usecase.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class ForgotPasswordResendOtpUseCase

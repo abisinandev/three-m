@@ -1,0 +1,1 @@
+export type FundCategory = 'Equity' | 'Debt' | 'Hybrid' | 'Index';

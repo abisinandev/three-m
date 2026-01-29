@@ -512,18 +512,6 @@ export default function TransactionManagementPage() {
                                                                             Verify Ledger
                                                                         </button>
                                                                     )}
-                                                                    <button
-                                                                        onClick={() =>
-                                                                            window.open(
-                                                                                `https://etherscan.io/tx/${tx.transactionId}`,
-                                                                                "_blank"
-                                                                            )
-                                                                        }
-                                                                        className="px-3 py-1.5 text-[11px] rounded bg-neutral-800 text-neutral-300 border border-neutral-700 hover:bg-neutral-700 flex items-center gap-1.5"
-                                                                    >
-                                                                        <ExternalLink size={12} />
-                                                                        View on Explorer
-                                                                    </button>
                                                                 </div>
                                                             </div>
                                                         </div>

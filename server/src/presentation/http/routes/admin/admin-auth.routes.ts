@@ -1,8 +1,8 @@
 import { AdminAuthDTO } from "@application/dto/admin/admin-auth.dto";
 import { ResendOtpDTO } from "@application/dto/auth/resend-otp.dto";
 import { VerifyOtpDTO } from "@application/dto/auth/verify-otp.dto";
-import { container } from "@infrastructure/inversify_di/inversify.di";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
+import { container } from "@infrastructure/inversify_di/container";
+import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { validateDTO } from "@presentation/express/middlewares/validation-dto.middlewares";
 import { AUTH_ROUTES } from "@presentation/express/utils/constants/admin-routes.constants";
 import type { AdminAuthController } from "@presentation/http/controllers/admin/admin-auth.controller";

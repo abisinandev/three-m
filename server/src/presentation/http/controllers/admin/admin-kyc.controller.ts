@@ -1,10 +1,10 @@
-import type { IFetchAllKycDocsUseCase } from "@application/use_cases/interfaces/admin/kyc-management-usecase.interface";
-import type { IRejectKycUseCase } from "@application/use_cases/interfaces/admin/reject-kyc-usecase.interface";
-import type { IVerifyKycUseCase } from "@application/use_cases/interfaces/admin/verify-kyc-usecase.interface";
-import type { IViewKycDetailsUseCase } from "@application/use_cases/interfaces/admin/view-kyc-details-usecase.interface";
+import type { IFetchAllKycDocsUseCase } from "@application/use_cases/admin/interfaces/kyc-management-usecase.interface";
+import type { IRejectKycUseCase } from "@application/use_cases/admin/interfaces/reject-kyc-usecase.interface";
+import type { IVerifyKycUseCase } from "@application/use_cases/admin/interfaces/verify-kyc-usecase.interface";
+import type { IViewKycDetailsUseCase } from "@application/use_cases/admin/interfaces/view-kyc-details-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
+import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { type NextFunction, type Request, type Response } from "express";
 import { inject, injectable } from "inversify";

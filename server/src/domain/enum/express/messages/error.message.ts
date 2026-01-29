@@ -44,4 +44,20 @@ export enum ErrorMessage {
   WALLET_BALANCE_EXCEEDED = "Wallet balance cannot exceed ₹50,000.",
 
   TRANSACTION_FAILED = "Transaction verification failed",
+  ALREADY_EXISTS = "Already exists",
+
+  INSUFFICIENT_BALANCE = "Insufficient balance",
+
+  FUND_INACTIVE = "Investments in this fund are temporarily disabled. Please try another fund",
+  REDEMPTION_FAILED = "Redemption is not allowed for this fund at the moment",
+  FUND_CLOSED = "Fund is closed for redemption",
+  FUND_SUSPENDED = "Redemption is temporarily suspended",
+  NO_REDEEMABLE_UNITS = "No redeemable units are available for the selected scheme.",
+
+  NAV_NOT_AVAILABLE = "Net Asset Value (NAV) is currently unavailable for the selected scheme.",
+  NOT_ENOUGH_UNITS = "Insufficient units to complete the transaction.",
+  NOT_ENOUGH_AMOUNT = "Insufficient amount to complete the transaction.",
+  INVALID_REDEEM_REQUEST = "The redemption request is invalid. Please verify the details and try again.",
+
+  WALLET_TANSACTIONS_FAIELED_VERIFICATION = "External transaction only allowed to verify"
 }

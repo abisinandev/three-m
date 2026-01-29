@@ -8,7 +8,7 @@ export interface UserKycCombined {
     status: string;
     isVerified: boolean;
     panNumber: string;
-    adhaarNumber: string;
+    aadhaarNumber: string;
     documents: {
       type: string;
       fileName: string;

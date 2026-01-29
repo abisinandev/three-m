@@ -1,12 +1,12 @@
 import type { AdminAuthDTO } from "@application/dto/admin/admin-auth.dto";
 import type { AdminAuthReponseDTO } from "@application/dto/admin/admin-auth.response.dto";
-import type { IAdminRepository } from "@application/interfaces/repositories/admin.repository.interface";
+import { IAdminRepository } from "@application/interfaces/repositories/admin/admin.repository.interface";
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
 import type { IPasswordHashingService } from "@application/interfaces/services/externals/password-hashing.service.interface";
-import type { IAdminAuthUseCase } from "@application/use_cases/interfaces/admin/admin-auth-usecase.interface";
+import type { IAdminAuthUseCase } from "@application/use_cases/admin/interfaces/admin-auth-usecase.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
+import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import {
   NotFoundError,

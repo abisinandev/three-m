@@ -1,4 +1,4 @@
-import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
+import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 
@@ -11,10 +11,11 @@ export interface TransactionResponseDTO {
     currency: string;
     type: TransactionTypes;
     isVerified: boolean;
-    referenceType: ReferenceType;
+    referenceType: TransactionReferenceType;
     paymentIntentId: string;
     status: TransactionStatus;
     paymentStatus: TransactionStatus;
+    referenceId?: string;
     fundId?: string;
     units?: number;
     receipt_url?: string;

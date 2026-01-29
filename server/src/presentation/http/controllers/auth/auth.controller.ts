@@ -1,19 +1,20 @@
-import type { IForgotPasswordResendOtpUseCase } from "@application/use_cases/interfaces/user/forgot-pass-resend-otp-usecase.interface";
-import type { IForgotPasswordVerifyOtpUseCase } from "@application/use_cases/interfaces/user/forgot-pass-verify-otp-usecase.interface";
-import type { IForgotPasswordUseCase } from "@application/use_cases/interfaces/user/forgot-password-usecase.interface";
-import type { IGoogleAuthUseCase } from "@application/use_cases/interfaces/user/google-auth.usecase.interface";
-import type { IRefreshTokenUseCase } from "@application/use_cases/interfaces/user/refresh-token-usecase.interface";
-import type { IResetPasswordUseCase } from "@application/use_cases/interfaces/user/reset-password-usecase.interface";
-import type { ISignupVerifyOtpUseCase } from "@application/use_cases/interfaces/user/signup-verify-otp-usecase.interface";
-import type { ISignupResendOtpUseCase } from "@application/use_cases/interfaces/user/singup-resend-otp-usecase.interface";
-import type { IUserLoginUseCase } from "@application/use_cases/interfaces/user/user-login-usecase.interface";
-import type { IUserSignupUseCase } from "@application/use_cases/interfaces/user/user-signup.usecase.interface";
-import type { IVerifyTwoFactorUseCase } from "@application/use_cases/interfaces/user/verify-2fa-usecase.interface";
+import type { IForgotPasswordResendOtpUseCase } from "@application/use_cases/user/interfaces/forgot-pass-resend-otp-usecase.interface";
+import type { IForgotPasswordVerifyOtpUseCase } from "@application/use_cases/user/interfaces/forgot-pass-verify-otp-usecase.interface";
+import type { IForgotPasswordUseCase } from "@application/use_cases/user/interfaces/forgot-password-usecase.interface";
+import type { IGoogleAuthUseCase } from "@application/use_cases/user/interfaces/google-auth.usecase.interface";
+import type { IRefreshTokenUseCase } from "@application/use_cases/user/interfaces/refresh-token-usecase.interface";
+import type { IResetPasswordUseCase } from "@application/use_cases/user/interfaces/reset-password-usecase.interface";
+import type { ISignupVerifyOtpUseCase } from "@application/use_cases/user/interfaces/signup-verify-otp-usecase.interface";
+import type { ISignupResendOtpUseCase } from "@application/use_cases/user/interfaces/singup-resend-otp-usecase.interface";
+import type { IUserLoginUseCase } from "@application/use_cases/user/interfaces/user-login-usecase.interface";
+import type { IUserSignupUseCase } from "@application/use_cases/user/interfaces/user-signup.usecase.interface";
+import type { IVerifyTwoFactorUseCase } from "@application/use_cases/user/interfaces/verify-2fa-usecase.interface";
+import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
-import { ValidationError } from "@presentation/express/utils/error-handling";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
+import { ForbiddenError, ValidationError } from "@presentation/express/utils/error-handling";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
@@ -150,7 +151,7 @@ export class AuthController {
         HttpStatus.OK,
       );
 
-    } catch (err) {
+    } catch (err) { 
       next(err);
     }
   }
@@ -159,7 +160,7 @@ export class AuthController {
     try {
       const refreshToken = req.cookies.refreshToken;
       console.log("Refresh : ", refreshToken);
-      if (!refreshToken) throw new ValidationError("No refresh token provided");
+      if (!refreshToken) throw new ForbiddenError(ErrorMessage.REFRESH_TOKEN_EXPIRED);
 
       const result = await this._refreshTokenUseCase.execute({ refreshToken });
 
@@ -178,8 +179,8 @@ export class AuthController {
 
     } catch (error) {
       next(error);
-    }
-  }
+    } 
+  }  
 
   async forgotPassword(req: Request, res: Response, next: NextFunction) {
     try {

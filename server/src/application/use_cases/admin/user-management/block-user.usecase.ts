@@ -1,7 +1,7 @@
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
-import type { IBlockUserUseCase } from "@application/use_cases/interfaces/admin/block-user-usecase.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
+import type { IBlockUserUseCase } from "@application/use_cases/admin/interfaces/block-user-usecase.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import {
   NotFoundError,
   ValidationError,
@@ -16,7 +16,6 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 
   async execute(userId: string): Promise<void> {
     const user = await this._userRepository.findById(userId);
-    console.log(userId, '=======');
     if (!user) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
 
     if (user.isBlocked)

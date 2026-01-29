@@ -90,7 +90,7 @@ const UserProfilePage = () => {
     if (!file || !user?.id) return;
 
     setUploading(true);
-    
+
     try {
       const signatureData = await GetSignatureApi("profile", user.id);
       console.log('signatureData: ', signatureData.data)

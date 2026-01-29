@@ -14,7 +14,7 @@ export const PROFILE_GET_API = '/user/profile/me';
 
 export const USER_REFRESH_TOKEN = "/auth/refresh";
 
-export const KYC_SIGN_URL = '/user/cloudinary/signature';
+export const FILE_UPLOAD_SIGN_URL = '/file-upload/cloudinary/signature';
 export const KYC_SUMBIT_URL = '/user/kyc/submit';
 
 export const UPDATE_PROFILE = "/user/profile/update";
@@ -22,5 +22,4 @@ export const SEND_EMAIL_OTP = "/user/profile/update/email/send-otp";
 export const VERIFY_EMAIL_OTP = '/user/profile/update/email/verify-otp';
 export const UPLOAD_PROFILE_IMAGE = "/user/profile/update/profile-image";
 
-// export const PAYMENT_ROUTE = "/payments/create-intent";
 export const PAYMENT_ROUTE = "/payments/create-checkout-session";

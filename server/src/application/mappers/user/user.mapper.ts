@@ -1,6 +1,6 @@
 import type { CreateUserDTO } from "@application/dto/auth/create-user.dto";
 import type { UserDTO } from "@application/dto/user/user-dto";
-import { UserEntity } from "@domain/entities/user.entity";
+import { UserEntity } from "@domain/entities/user/user.entity";
 import { Role } from "@domain/enum/users/user-role.enum";
 
 // Dto => Domain

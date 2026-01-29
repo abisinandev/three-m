@@ -12,7 +12,7 @@ const api = axios.create({
 const authFreeRoutes = [
     "/auth/login",
     "/auth/signup",
-    "/auth/refresh",
+    // "/auth/refresh",
 ];
 
 let isRefreshing = false;
@@ -47,7 +47,6 @@ api.interceptors.response.use(
 
             originalRequest._retryCount++;
             const delay = 1000 * Math.pow(2, originalRequest._retryCount);
-
             console.log("⚠ Server restarting… retrying in 2s");
 
             return new Promise((resolve) =>

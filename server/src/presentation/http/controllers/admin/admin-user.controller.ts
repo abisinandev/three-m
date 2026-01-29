@@ -1,9 +1,9 @@
-import type { IBlockUserUseCase } from "@application/use_cases/interfaces/admin/block-user-usecase.interface";
-import type { IFetchUserDetails } from "@application/use_cases/interfaces/admin/fetch-user-details";
-import type { IUnblockUserUsecase } from "@application/use_cases/interfaces/admin/unblock-user-usecase.interface";
+import type { IBlockUserUseCase } from "@application/use_cases/admin/interfaces/block-user-usecase.interface";
+import type { IFetchUserDetails } from "@application/use_cases/admin/interfaces/fetch-user-details.interface";
+import type { IUnblockUserUsecase } from "@application/use_cases/admin/interfaces/unblock-user-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
-import { ADMIN_TYPES } from "@infrastructure/inversify_di/types/admin/admin.types";
+import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { type NextFunction, type Request, type Response } from "express";
 import { inject, injectable } from "inversify";
@@ -19,7 +19,6 @@ export class AdminUserController {
   async fetchUserDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await this._fetchUserDetails.execute(req.query);
-
       return ResponseHelper.success(
         res,
         SuccessMessage.DATA_FETCHED,

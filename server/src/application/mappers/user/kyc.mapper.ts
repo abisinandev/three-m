@@ -1,14 +1,14 @@
 import type { KycResponseDTO } from "@application/dto/user/kyc-response.dto";
 import type { KycSubmitDTO } from "@application/dto/user/kyc-submit.dto";
-import { KycEntity } from "@domain/entities/kyc.entity";
-import type { UserEntity } from "@domain/entities/user.entity";
+import { KycEntity } from "@domain/entities/user/kyc.entity";
+import type { UserEntity } from "@domain/entities/user/user.entity";
 
 export const toEntity = (dto: KycSubmitDTO): KycEntity => {
   return KycEntity.create({
     userId: dto.userId,
     panNumber: dto.panNumber,
     documents: dto.documents,
-    adhaarNumber: dto.aadhaarNumber,
+    aadhaarNumber: dto.aadhaarNumber,
     address: dto.address,
   });
 };
@@ -22,7 +22,7 @@ export const toKycResponse = (data: KycEntity, user: UserEntity): KycResponseDTO
     fullName: user.fullName,
     isKycVerified: data.isKycVerified,
     panNumber: data.panNumber as string,
-    adhaarNumber: data.adhaarNumber as string,
+    aadhaarNumber: data.aadhaarNumber as string,
     address: data.address ?? {
       fullAddress: "",
       city: "",

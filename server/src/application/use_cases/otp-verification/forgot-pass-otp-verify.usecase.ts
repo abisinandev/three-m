@@ -1,15 +1,15 @@
 import crypto from "node:crypto";
 import type { VerifyOtpDTO } from "@application/dto/auth/verify-otp.dto";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import {
   NotFoundError,
   ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { IForgotPasswordVerifyOtpUseCase } from "../interfaces/user/forgot-pass-verify-otp-usecase.interface";
+import type { IForgotPasswordVerifyOtpUseCase } from "../user/interfaces/forgot-pass-verify-otp-usecase.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class ForgotPasswordOtpVerifyUseCase implements IForgotPasswordVerifyOtpUseCase {

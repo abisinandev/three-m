@@ -1,12 +1,11 @@
 import type { Verify2faDTO } from "@application/dto/auth/2fa-verify-dto";
 import type { VerifyOtpResponseDTO } from "@application/dto/auth/verify-otp-response.dto";
-import type { IUserRepository } from "@application/interfaces/repositories/user-repository.interface";
 import type { ITwoFactorAuthVerify } from "@application/interfaces/services/externals/2fa-auth-verify.interface";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
 import { ErrorMessage } from "@domain/enum/express/messages/error.message";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
-import { AUTH_TYPES } from "@infrastructure/inversify_di/types/auth/auth.types";
-import { USER_TYPES } from "@infrastructure/inversify_di/types/user/user.types";
+import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import {
@@ -14,7 +13,8 @@ import {
   UnauthorizedError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { IVerifyTwoFactorUseCase } from "../interfaces/user/verify-2fa-usecase.interface";
+import type { IVerifyTwoFactorUseCase } from "../user/interfaces/verify-2fa-usecase.interface";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class VerifyTwoFactorUseCase implements IVerifyTwoFactorUseCase {
