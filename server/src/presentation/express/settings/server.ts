@@ -23,7 +23,7 @@ const bootstrap = async () => {
 
     app.listen(env.PORT, () => {
       logger.info(`Server running on PORT: ${env.PORT}`);
-    });
+    }); 
   } catch (error) {
     logger.error(`❌ Server startup failed: ${error}`);
     process.exit(1);

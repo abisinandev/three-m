@@ -3,7 +3,7 @@ import { IFetchAllFundsUseCases } from "@application/use_cases/mutual-fund/inter
 import { IMfCagrUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-cagr-usecse.interface";
 import { IMutualFundNavUpdatesUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-nav-udpate-usecase.interface";
 import { IMutualFundsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
@@ -27,7 +27,7 @@ export class MutualFundsAdminController {
             await this._mutualFundsUseCase.execute(dto);
             return ResponseHelper.success(
                 res,
-                "Successfully done",
+                SuccessMessages.DATA.OPERATION_SUCCESSFUL,
                 HttpStatus.OK,
             )
         } catch (error) {
@@ -40,17 +40,17 @@ export class MutualFundsAdminController {
             const result = await this._fetchAllFundsUseCase.execute(req.query);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK,
             )
         } catch (error) {
             next(error);
         }
-    } 
+    }
 
     async updateStatus(req: Request, res: Response, next: NextFunction) {
-        try { 
+        try {
             const fundId = req.params.fundId
             await this._changeFundStatus.execute(fundId);
             await this._mutualFundNavUpdate.execute(NavInterval.DAILY);
@@ -58,10 +58,10 @@ export class MutualFundsAdminController {
             await this._mutualFundNavUpdate.execute(NavInterval.MONTHLY);
             await this._mutualFundNavUpdate.execute(NavInterval.YEARLY);
             await this._mfCagrUpdateUseCase.execute();
- 
+
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_UPDATED,
+                SuccessMessages.DATA.UPDATED,
                 HttpStatus.OK,
             )
         } catch (error) {

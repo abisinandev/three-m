@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { ValueObjectBase } from "../vo.base-class";
+import { ValueObjectBase } from "../../../value-object/vo.base-class";
 
 interface IUserCode {
   value: string;

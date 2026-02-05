@@ -1,8 +1,8 @@
 // import { BlockEntity } from "@domain/entities/transaction/block.entity";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
-import { SignatureKey } from "@domain/value-objects/wallet/signature-key.vo";
-import { TxHash } from "@domain/value-objects/wallet/transaction.vo";
+import { SignatureKey } from "@domain/entities/user/wallet-value-objects/signature-key.vo";
+import { TxHash } from "@domain/entities/user/wallet-value-objects/transaction.vo";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
@@ -45,7 +45,7 @@ export class SystemVerifyTransactionUseCase implements ISystemVerifyTransactionU
             session.startTransaction();
 
             const transaction = await this._transactionRepository.findTransaction(txId, session);
-            if (!transaction) throw new NotFoundError(ErrorMessage.NOT_FOUND);
+            if (!transaction) throw new NotFoundError(ErrorMessages.USER.NOT_FOUND);
 
             if (transaction.type === TransactionTypes.ADD_TO_WALLET)
                 throw new ValidationError("Admin verification required")
@@ -57,7 +57,7 @@ export class SystemVerifyTransactionUseCase implements ISystemVerifyTransactionU
 
             if (transaction.status === TransactionStatus.PENDING) {
                 throw new ValidationError("Transaction not in verifiable state");
-            } 
+            }
 
             const payload = {
                 txType: transaction.type,
@@ -66,11 +66,11 @@ export class SystemVerifyTransactionUseCase implements ISystemVerifyTransactionU
                 referenceType: transaction.referenceType,
                 referenceId: transaction.referenceId,
             };
-            console.log(payload,'System veirfy')
+            console.log(payload, 'System veirfy');
             const recalculatedHash = TxHash.generate(payload);
             if (recalculatedHash.value !== transaction.txHash) {
                 throw new ValidationError("Transaction hash mismatch");
-            }     
+            }
 
             const expectedSignature = SignatureKey.generate(recalculatedHash.value).value;
             if (expectedSignature !== transaction.signature) {
@@ -78,14 +78,14 @@ export class SystemVerifyTransactionUseCase implements ISystemVerifyTransactionU
             }
 
             const wallet = await this._walletRepository.findByUserId(transaction.userId as string, session);
-            if (!wallet) throw new NotFoundError(ErrorMessage.WALLET_NOT_FOUND);
-  
-            if (   
+            if (!wallet) throw new NotFoundError(ErrorMessages.PAYMENT.WALLET_NOT_FOUND);
+
+            if (
                 transaction.type === TransactionTypes.INVESTMENT ||
                 transaction.type === TransactionTypes.SIP_INSTALLMENT
             ) {
                 if (wallet.balance < transaction.amount) {
-                    throw new ValidationError(ErrorMessage.INSUFFICIENT_BALANCE);
+                    throw new ValidationError(ErrorMessages.PAYMENT.INSUFFICIENT_BALANCE);
                 }
 
                 const sip = await this._sipInstallmentRepository.findById(transaction.referenceId as string);
@@ -135,4 +135,4 @@ export class SystemVerifyTransactionUseCase implements ISystemVerifyTransactionU
         }
     }
 }
-     
+

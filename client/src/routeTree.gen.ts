@@ -17,6 +17,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserProfileRouteImport } from './routes/user/profile'
 import { Route as UserKycVerificationRouteImport } from './routes/user/kyc-verification'
 import { Route as UserHomeRouteImport } from './routes/user/home'
+import { Route as UserExpenseTrackerRouteImport } from './routes/user/expense-tracker'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AdminUsersManagementRouteImport } from './routes/admin/users-management'
 import { Route as AdminTransactionsManagementRouteImport } from './routes/admin/transactions-management'
@@ -83,6 +84,11 @@ const UserKycVerificationRoute = UserKycVerificationRouteImport.update({
 const UserHomeRoute = UserHomeRouteImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserExpenseTrackerRoute = UserExpenseTrackerRouteImport.update({
+  id: '/expense-tracker',
+  path: '/expense-tracker',
   getParentRoute: () => UserRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -249,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
+  '/user/expense-tracker': typeof UserExpenseTrackerRoute
   '/user/home': typeof UserHomeRoute
   '/user/kyc-verification': typeof UserKycVerificationRoute
   '/user/profile': typeof UserProfileRoute
@@ -286,6 +293,7 @@ export interface FileRoutesByTo {
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
+  '/user/expense-tracker': typeof UserExpenseTrackerRoute
   '/user/home': typeof UserHomeRoute
   '/user/kyc-verification': typeof UserKycVerificationRoute
   '/user/profile': typeof UserProfileRoute
@@ -325,6 +333,7 @@ export interface FileRoutesById {
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
+  '/user/expense-tracker': typeof UserExpenseTrackerRoute
   '/user/home': typeof UserHomeRoute
   '/user/kyc-verification': typeof UserKycVerificationRoute
   '/user/profile': typeof UserProfileRoute
@@ -364,6 +373,7 @@ export interface FileRouteTypes {
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
+    | '/user/expense-tracker'
     | '/user/home'
     | '/user/kyc-verification'
     | '/user/profile'
@@ -401,6 +411,7 @@ export interface FileRouteTypes {
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
+    | '/user/expense-tracker'
     | '/user/home'
     | '/user/kyc-verification'
     | '/user/profile'
@@ -439,6 +450,7 @@ export interface FileRouteTypes {
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
+    | '/user/expense-tracker'
     | '/user/home'
     | '/user/kyc-verification'
     | '/user/profile'
@@ -528,6 +540,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/user/home'
       preLoaderRoute: typeof UserHomeRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/expense-tracker': {
+      id: '/user/expense-tracker'
+      path: '/expense-tracker'
+      fullPath: '/user/expense-tracker'
+      preLoaderRoute: typeof UserExpenseTrackerRouteImport
       parentRoute: typeof UserRoute
     }
     '/auth/login': {
@@ -797,6 +816,7 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface UserRouteChildren {
+  UserExpenseTrackerRoute: typeof UserExpenseTrackerRoute
   UserHomeRoute: typeof UserHomeRoute
   UserKycVerificationRoute: typeof UserKycVerificationRoute
   UserProfileRoute: typeof UserProfileRoute
@@ -812,6 +832,7 @@ interface UserRouteChildren {
 }
 
 const UserRouteChildren: UserRouteChildren = {
+  UserExpenseTrackerRoute: UserExpenseTrackerRoute,
   UserHomeRoute: UserHomeRoute,
   UserKycVerificationRoute: UserKycVerificationRoute,
   UserProfileRoute: UserProfileRoute,

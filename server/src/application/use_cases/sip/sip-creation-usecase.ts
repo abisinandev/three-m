@@ -6,7 +6,7 @@ import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.type
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
 import { FundStatus } from "@domain/enum/funds/fund-status.enum";
 import { ISipRepository } from "@application/interfaces/repositories/feature/sip-repository.interface";
@@ -35,21 +35,21 @@ export class SipCreationUseCase implements ISipCreationUseCase {
                 const { amount, frequency, schemeCode, startDate, totalInstallments } = data;
 
                 const user = await this._userRepository.findById(userId, session);
-                if (!user) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
+                if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
                 const wallet = await this._walletRepository.findOne({ userId });
-                if (!wallet) throw new NotFoundError(ErrorMessage.WALLET_NOT_FOUND);
+                if (!wallet) throw new NotFoundError(ErrorMessages.PAYMENT.WALLET_NOT_FOUND);
 
                 const fund = await this._mutualFundRepository.findBySchemeCode(
                     schemeCode,
                     session
                 );
                 if (!fund || fund.status === FundStatus.INACTIVE) {
-                    throw new ValidationError(ErrorMessage.FUND_INACTIVE);
+                    throw new ValidationError(ErrorMessages.MUTUAL_FUND.FUND_INACTIVE);
                 }
 
                 if (wallet.balance < amount) {
-                    throw new ValidationError(ErrorMessage.INSUFFICIENT_BALANCE);
+                    throw new ValidationError(ErrorMessages.PAYMENT.INSUFFICIENT_BALANCE);
                 }
 
                 const sipEntity = SipEntity.create({
@@ -64,7 +64,7 @@ export class SipCreationUseCase implements ISipCreationUseCase {
                 const createdSip = await this._sipRepository.createSip(sipEntity, session);
                 if (!createdSip) throw new AppError("Sip creation failed");
 
-                console.log(createdSip,'CREATED+AIP')
+                console.log(createdSip, 'CREATED+AIP')
                 const installment = SipInstallmentEntity.create({
                     sipId: createdSip.id as string,
                     userId: createdSip.userId,

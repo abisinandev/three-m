@@ -6,7 +6,7 @@ export class Cagr {
     }
 
     /**
-     * Create CAGR from NAV values (calculation path)
+     * Create CAGR from NAV values 
      */
     static calculate(params: {
         startNav: number;

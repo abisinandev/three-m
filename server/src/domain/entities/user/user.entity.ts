@@ -4,10 +4,10 @@ import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
 import { SubscripionPlan } from "@domain/enum/users/subscription-plan.enum";
 import { SubscriptionStatus } from "@domain/enum/users/subscription-status.enum";
 import { Role } from "@domain/enum/users/user-role.enum";
-import { Email } from "@domain/value-objects/user/email.vo";
-import { Password } from "@domain/value-objects/user/password.vo";
-import { Phone } from "@domain/value-objects/user/phone.vo";
-import { UserCode } from "@domain/value-objects/user/user-code.vo";
+import { Email } from "@domain/entities/user/user-value-objects/email.vo";
+import { Password } from "@domain/entities/user/user-value-objects/password.vo";
+import { Phone } from "@domain/entities/user/user-value-objects/phone.vo";
+import { UserCode } from "@domain/entities/user/user-value-objects/user-code.vo";
 import { WalletSummary } from "@domain/types/wallet-summery";
 import { KycSummary } from "@domain/types/kyc-summery";
 

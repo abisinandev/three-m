@@ -48,7 +48,6 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
                     );
             }
 
-            // Calculate Fund-level XIRR (user-specific cash flows for this scheme)
             const schemeInvestments = await this._investmentRepository.getTotalUnitsByUserAndScheme(userId, inv.schemeCode) ?? [];
             const fundXirr = this.calculateFundXirr(schemeInvestments, latestNav[0].nav);
 

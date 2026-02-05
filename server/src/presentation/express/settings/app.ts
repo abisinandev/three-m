@@ -16,15 +16,15 @@ app.use(helmet());
 
 //stripe webhook
 import webhookRoutes from "@presentation/http/routes/user/webhook.routes";
-import { Routes } from "../utils/constants/feature-routes.constants";
-app.use(Routes.WEBHOOK_ROUTE, webhookRoutes);
+import { CommonRoutes } from "@shared/routes/common.routes";
+app.use(CommonRoutes.WEBHOOK_ROUTE, webhookRoutes);
 
 app.use(cookieParser());
 app.use(express.json());
 
 //protected routes
 RegisterRoutes(app);
- 
+
 //AppError middleware
 app.use(errorMiddleware);
 

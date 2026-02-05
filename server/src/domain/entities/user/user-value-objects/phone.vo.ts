@@ -1,9 +1,10 @@
-import { ValueObjectBase } from "../vo.base-class";
+import { ValueObjectBase } from "../../../value-object/vo.base-class";
 
 interface PhoneProps {
   country_code?: string;
   value: string;
 }
+
 export class Phone extends ValueObjectBase<PhoneProps> {
   private constructor(props: PhoneProps) {
     super(props);

@@ -32,4 +32,5 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
     getCurrentPortfolioValue(userId: string): Promise<number>;
     findUserInvestmentsForXirr(userId: string): Promise<InvestmentEntity[] | null>;
     countInvestments(userId: string, filter?: any, search?: string): Promise<number>;
+    // getUserTotalInvestments(userId: string): Promise<number>;
 }

@@ -1,6 +1,6 @@
 import { Role } from "@domain/enum/users/user-role.enum";
-import { Email } from "@domain/value-objects/user/email.vo";
-import { Password } from "@domain/value-objects/user/password.vo";
+import { Email } from "@domain/entities/user/user-value-objects/email.vo";
+import { Password } from "@domain/entities/user/user-value-objects/password.vo";
 
 export class AdminEntity {
   private readonly _id?: string;

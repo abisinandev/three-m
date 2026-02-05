@@ -4,7 +4,6 @@ import { Types } from "mongoose";
 
 const toDomain = (doc: InvestmentDocument): InvestmentEntity => {
     
-    console.log("Docs: ", doc.redeemedAmount);
     return InvestmentEntity.fromPersistence({
         id: doc._id.toString(),
         schemeCode: doc.schemeCode,

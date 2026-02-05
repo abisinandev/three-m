@@ -1,0 +1,13 @@
+﻿
+> three_m@1.0.0 build
+> tsc
+
+src/application/interfaces/repositories/feature/mf-cagr-repository.interface.ts(3,10): error TS2724: '"@application/dto/mutual-funds/mf-cagr.dto"' has no exported member named 'ICagrDTO'. Did you mean 'CagrDTO'?
+src/application/use_cases/user/interfaces/add-to-wallet-usecase.interface.ts(1,10): error TS2305: Module '"@application/dto/user/add-to-wallet.dto"' has no exported member 'AddToWalletDTO'.
+src/infrastructure/databases/mongo_db/models/interfaces/user/user.schema.interface.ts(8,32): error TS2307: Cannot find module '../schemas/wallet.schema' or its corresponding type declarations.
+src/infrastructure/databases/mongo_db/models/interfaces/user/user.schema.interface.ts(9,29): error TS2307: Cannot find module '../schemas/kyc.schema' or its corresponding type declarations.
+src/infrastructure/databases/repository/transaction/block.repository.ts(1,29): error TS2306: File 'C:/Users/Dell/OneDrive/Desktop/MAIN PROJECT/Three-M/server/src/domain/entities/transaction/block.entity.ts' is not a module.
+src/infrastructure/databases/repository/transaction/block.repository.ts(3,43): error TS2306: File 'C:/Users/Dell/OneDrive/Desktop/MAIN PROJECT/Three-M/server/src/infrastructure/databases/mongo_db/models/schemas/transaction/block.schema.ts' is not a module.
+src/infrastructure/databases/repository/transaction/block.repository.ts(4,29): error TS2306: File 'C:/Users/Dell/OneDrive/Desktop/MAIN PROJECT/Three-M/server/src/infrastructure/mappers/transaction/block.mapper.ts' is not a module.
+src/infrastructure/databases/repository/transaction/block.repository.ts(6,34): error TS2306: File 'C:/Users/Dell/OneDrive/Desktop/MAIN PROJECT/Three-M/server/src/application/interfaces/repositories/feature/block-repository.interface.ts' is not a module.
+src/infrastructure/mappers/script/admin.configs.ts(2,28): error TS2307: Cannot find module '@infrastructure/databases/mongo_db/models/schemas/admin.schema' or its corresponding type declarations.

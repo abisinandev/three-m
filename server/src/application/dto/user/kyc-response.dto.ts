@@ -1,5 +1,5 @@
 import type { KycStatusType } from "@domain/enum/users/kyc-status.enum";
-import type { KycDocumentVO } from "@domain/value-objects/user/kyc-documents.vo";
+import type { KycDocumentVO } from "@domain/entities/user/user-value-objects/kyc-documents.vo";
 
 export interface KycResponseDTO {
   id?: string;

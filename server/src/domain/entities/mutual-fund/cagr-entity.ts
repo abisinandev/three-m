@@ -1,4 +1,4 @@
-import { Cagr } from "@domain/value-objects/mutual-fund/cagr-calculation.vo";
+import { Cagr } from "@domain/entities/mutual-fund/value-objects/cagr-calculation.vo";
 
 export class MfCagrEntity {
     private readonly _id?: string;
