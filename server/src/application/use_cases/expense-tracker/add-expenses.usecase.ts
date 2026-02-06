@@ -13,6 +13,7 @@ import { ExpenseTrackerEntity } from "@domain/entities/expense-tracker/expense-t
 import { Expense } from "@domain/entities/expense-tracker/value-objects/expense.vo";
 import { Income } from "@domain/entities/expense-tracker/value-objects/income.vo";
 import { IncomeSource } from "@domain/entities/expense-tracker/types/expense-tracker.types";
+import { ErrorMessages } from "@shared/constants/error.messages";
 
 @injectable()
 export class AddExpensesUseCase implements IAddExpenseUseCase {
@@ -27,7 +28,6 @@ export class AddExpensesUseCase implements IAddExpenseUseCase {
         if (!user) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
 
         const currentMonth = new Date().toISOString().slice(0, 7);
-
         let tracker = await this._expenseTrackerRepository.findOne({
             userId,
             month: currentMonth
@@ -40,9 +40,9 @@ export class AddExpensesUseCase implements IAddExpenseUseCase {
         const availableBalance = currentIncome - currentSpent - (totalInvestments || 0);
 
         if (availableBalance < dto.amount) {
-            throw new ValidationError("Insufficient funds: You don't have enough balance to add this expense.");
+            throw new ValidationError(ErrorMessages.EXPENSE_TRACKER.INSUFFICIENT_BALANCE);
         }
-
+ 
         const newExpense = new Expense({
             amount: dto.amount,
             category: dto.category,

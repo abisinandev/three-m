@@ -67,4 +67,7 @@ export const ErrorMessages = {
         NOT_ENOUGH_AMOUNT: "Insufficient amount to complete the transaction",
         INVALID_REDEEM_REQUEST: "The redemption request is invalid. Please verify the details and try again",
     },
+    EXPENSE_TRACKER: {
+        INSUFFICIENT_BALANCE : "Insufficient funds: You don't have enough balance to add this expense."
+    }
 } as const;

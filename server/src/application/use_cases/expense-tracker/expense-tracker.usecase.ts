@@ -27,8 +27,7 @@ export class ExpenseTrackerUseCase implements IExpenseTrackerUseCase {
         if (wallet?.status === WalletStatus.PENDING) {
             throw new ValidationError(ErrorMessage.COMPLETE_KYC_VERIFICATION);
         }
-
-
+ 
         const expenses = tracker ? tracker.expenses.map(exp => ({
             amount: exp.amount,
             category: exp.category,
@@ -40,7 +39,7 @@ export class ExpenseTrackerUseCase implements IExpenseTrackerUseCase {
 
         const incomeSources = tracker ? tracker.incomes.map(inc => ({
             source: inc.source,
-            amount: inc.amount
+            amount: inc.amount,
         })) : [];
 
         const userInvestments = await this._investmentRepository.findInvestmentsByUser(userId);

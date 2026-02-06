@@ -40,7 +40,7 @@ export class ExpenseSummary {
             needsSpent,
             wantsSpent,
             needsUsage,
-            wantsUsage
+            wantsUsage,
         );
     }
 

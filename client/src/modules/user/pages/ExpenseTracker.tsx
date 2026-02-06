@@ -7,14 +7,19 @@ import {
     Wallet,
     Calendar,
     ChevronDown,
-    Edit2,
-    X
+    X,
+    TrendingUp,
+    TrendingDown,
+    AlertCircle,
+    Banknote
 } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 import { ExpenseTrackerData } from '@shared/services/feature/expense-tracker/ExpenseTrackerApi';
 import { useAddExpenseMutation, useDeleteExpenseMutation, useAddIncomeMutation } from '../hooks/useExpenseMutations';
 import { toast } from 'sonner';
+import { Pagination } from '@shared/components/pagination/Pagination';
+
 
 type TransactionType = 'expense' | 'investment';
 type Category = 'NEED' | 'WANT' | 'INVESTMENT';
@@ -32,54 +37,55 @@ interface Transaction {
 
 const ExpenseTracker = () => {
     const [selectedMonth, setSelectedMonth] = useState('January 2026');
-    const { mutate: addExpense, isPending: isAddingExpense } = useAddExpenseMutation();
-    const { mutate: deleteExpense } = useDeleteExpenseMutation();
-    const { mutate: addIncome } = useAddIncomeMutation();
+    const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
+    const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
-    const availableMonths = [
-        'January 2026', 'February 2026', 'March 2026'
-    ];
 
     const [amount, setAmount] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState<'NEED' | 'WANT' | ''>('');
-    const [date, setDate] = useState('');
-
-
-    const [isManagingIncome, setIsManagingIncome] = useState(false);
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [newSourceName, setNewSourceName] = useState('');
     const [newSourceAmount, setNewSourceAmount] = useState('');
+
+    const { mutate: addExpense, isPending: isAddingExpense } = useAddExpenseMutation();
+    const { mutate: deleteExpense } = useDeleteExpenseMutation();
+    const { mutate: addIncome, isPending: isAddingIncome } = useAddIncomeMutation();
 
     const { data: DashbpardData } = useQuery({
         queryKey: ['expense-details'],
         queryFn: () => ExpenseTrackerData()
     });
 
+    const availableMonths = ['January 2026', 'February 2026', 'March 2026'];
+
     const backendExpenses = DashbpardData?.expenses || [];
     const incomeSources = DashbpardData?.incomeSources || [];
     const backendInvestments = DashbpardData?.investments || [];
 
     const totalIncome = DashbpardData?.income || 0;
-    const needsTarget = DashbpardData?.needsTarget || 0;
-    const wantsTarget = DashbpardData?.wantsTarget || 0;
-    const savingsTarget = DashbpardData?.savingsTarget || 0;
-
     const totalNeeds = DashbpardData?.totalNeeds || 0;
     const totalWants = DashbpardData?.totalWants || 0;
     const totalInvested = DashbpardData?.totalInvestedAmount || 0;
+    const currentBalance = DashbpardData?.walletBalance || 0;
+
+    const needsTarget = DashbpardData?.needsTarget || 0.5;
+    const wantsTarget = DashbpardData?.wantsTarget || 0.3;
+    const savingsTarget = DashbpardData?.savingsTarget || 0.2;
 
     const totalSpent = DashbpardData?.totalSpent || 0;
-    const currentBalance = DashbpardData?.currentMonthBalance || 0;
-
-    const savingsGap = DashbpardData?.savingsGap || 0;
-    const isSavingsGoalMet = DashbpardData?.isSavingsGoalMet || false;
 
     const handleAddExpense = () => {
-        if (!amount || !description || !category) return;
+        if (!amount || !description || !category) {
+            toast.error("Please fill all fields");
+            return;
+        }
 
         const expenseAmount = parseFloat(amount);
         if (expenseAmount > currentBalance) {
-            toast.success("Insufficient funds to add this expense.");
+            toast.error("Insufficient wallet balance!");
             return;
         }
 
@@ -94,7 +100,28 @@ const ExpenseTracker = () => {
                 setAmount('');
                 setDescription('');
                 setCategory('');
-                setDate('');
+                setDate(new Date().toISOString().split('T')[0]);
+                setIsExpenseModalOpen(false);
+                toast.success("Expense added successfully");
+            }
+        });
+    };
+
+    const handleAddIncomeSource = () => {
+        if (!newSourceName || !newSourceAmount) {
+            toast.error("Please fill all fields");
+            return;
+        }
+
+        addIncome({
+            source: newSourceName,
+            amount: parseFloat(newSourceAmount)
+        }, {
+            onSuccess: () => {
+                setNewSourceName('');
+                setNewSourceAmount('');
+                setIsIncomeModalOpen(false);
+                toast.success("Income source added");
             }
         });
     };
@@ -108,419 +135,343 @@ const ExpenseTracker = () => {
         }
     };
 
-    const handleAddIncomeSource = () => {
-        if (!newSourceName || !newSourceAmount) return;
-
-        const newSource = {
-            name: newSourceName,
-            amount: parseFloat(newSourceAmount)
-        };
-
-        addIncome({
-            source: newSource.name,
-            amount: newSource.amount
-        });
-
-        setNewSourceName('');
-        setNewSourceAmount('');
-    };
-
-    const handleDeleteIncomeSource = (id: string) => {
-        // Implement delete income logic here if needed
-        console.log("Delete income not implemented yet", id);
-    };
-
-
-    // Map backend expenses to transaction format for display
-    const expenseTransactions: Transaction[] = backendExpenses.map((exp, idx) => ({
-        id: `exp-${idx}`,
-        date: exp.date ? new Date(exp.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A',
-        category: exp.type as Category,
-        description: exp.description || exp.category || 'No description',
-        amount: exp.amount || 0,
-        type: 'expense' as TransactionType
-    }));
-
-    const investmentTransactions: Transaction[] = backendInvestments.map((inv, idx) => ({
-        id: `inv-${idx}`,
-        date: inv.date ? new Date(inv.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A',
-        category: 'INVESTMENT',
-        description: inv.schemeName || 'Investment',
-        amount: inv.amount || 0,
-        type: 'investment' as TransactionType,
-        investmentType: inv.type as InvestmentType
-    }));
-
-    const allTransactions = [...expenseTransactions, ...investmentTransactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
     const formatCurrency = (val?: number) => `₹${(val || 0).toLocaleString('en-IN')}`;
 
-    const getChartData = (used: number, total: number) => {
-        const remaining = Math.max(0, total - used);
-        return [
-            { name: 'Used', value: used },
-            { name: 'Remaining', value: remaining }
-        ];
+    const chartData = [
+        { name: 'Needs', value: totalNeeds, color: '#3B82F6' },
+        { name: 'Wants', value: totalWants, color: '#F59E0B' },
+        { name: 'Savings', value: totalInvested, color: '#10B981' },
+    ];
+
+    const activeChartData = chartData.filter(d => d.value > 0);
+    const finalChartData = activeChartData.length > 0 ? activeChartData : [{ name: 'Empty', value: 1, color: '#1a1a1a' }];
+
+    const getInsights = () => {
+        const insights = [];
+
+        if (totalWants > wantsTarget) {
+            insights.push({
+                type: 'warning',
+                text: `Wants spending is ${Math.round((totalWants / totalIncome) * 100)}%, exceeding the 30% guideline.`
+            });
+        } else {
+            insights.push({
+                type: 'good',
+                text: `Wants are well within the 30% limit. Great job!`
+            });
+        }
+
+        if (totalInvested < savingsTarget) {
+            insights.push({
+                type: 'neutral',
+                text: `You need ${formatCurrency(savingsTarget - totalInvested)} more to hit your 20% savings goal.`
+            });
+        } else {
+            insights.push({
+                type: 'good',
+                text: `You've met your 20% savings goal! Excellent.`
+            });
+        }
+
+        return insights;
     };
 
-    const DonutChart = ({ data, color, title, subtext, status }: { data: any[], color: string, title: string, subtext: string, status: 'good' | 'bad' | 'neutral' }) => {
-        const percentage = Math.min(100, Math.round((data[0].value / (data[0].value + data[1].value)) * 100)) || 0;
+    const insights = getInsights();
 
-        return (
-            <div className="flex flex-col items-center justify-center relative">
-                <div className="h-28 w-28 relative">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                            <Pie
-                                data={data}
-                                innerRadius={35}
-                                outerRadius={48}
-                                paddingAngle={0}
-                                dataKey="value"
-                                stroke="none"
-                                startAngle={90}
-                                endAngle={-270}
-                            >
-                                <Cell fill={color} />
-                                <Cell fill="#1a1a1a" />
-                            </Pie>
-                            <Tooltip
-                                contentStyle={{ backgroundColor: '#111', borderColor: '#333', borderRadius: '6px', fontSize: '12px' }}
-                                itemStyle={{ color: '#fff' }}
-                                formatter={(value: number | undefined) => formatCurrency(value)}
-                            />
-                        </PieChart>
-                    </ResponsiveContainer>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                        <span className="text-xl font-bold">{percentage}%</span>
-                    </div>
-                </div>
+    const allTransactions = [
+        ...backendExpenses.map((exp, idx) => ({
+            id: `exp-${idx}`,
+            date: exp.date ? new Date(exp.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A',
+            category: exp.type as Category,
+            description: exp.description || exp.category || 'No description',
+            amount: exp.amount || 0,
+            type: 'expense' as TransactionType
+        })),
+        ...backendInvestments.map((inv, idx) => ({
+            id: `inv-${idx}`,
+            date: inv.date ? new Date(inv.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A',
+            category: 'INVESTMENT',
+            description: inv.schemeName || 'Investment',
+            amount: inv.amount || 0,
+            type: 'investment' as TransactionType,
+            investmentType: inv.type as InvestmentType
+        }))
+    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-                <p className="text-[10px] font-bold text-neutral-400 mt-2 text-center uppercase tracking-wider">{title}</p>
-                <div className={`mt-2 px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1.5 border
-                    ${status === 'good' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
-                        status === 'bad' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' : 'bg-blue-500/10 border-blue-500/20 text-blue-400'}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${status === 'good' ? 'bg-emerald-500' : status === 'bad' ? 'bg-rose-500' : 'bg-blue-500'}`}></span>
-                    {subtext}
-                </div>
-            </div>
-        );
-    };
+    const totalTransactions = allTransactions.length;
+    const currentTransactions = allTransactions.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     return (
-        <div className="min-h-screen bg-black font-sans text-neutral-300 p-4 pb-24 flex justify-center">
-            <div className="w-full max-w-5xl space-y-6">
+        <div className="min-h-screen bg-black font-sans text-neutral-300 p-6 pb-24 flex justify-center">
+            <div className="w-full max-w-5xl space-y-8">
 
-                <div className="flex items-center justify-between mb-2">
-                    <h1 className="text-lg font-bold text-white uppercase tracking-widest">
-                        Expense Tracker
-                    </h1>
-                    <div className="relative">
-                        <div className="flex items-center gap-2 bg-[#111] px-3 py-1.5 rounded-lg border border-neutral-800">
-                            <Calendar size={18} className="text-neutral-500" />
-                            <select
-                                value={selectedMonth}
-                                onChange={(e) => setSelectedMonth(e.target.value)}
-                                className="bg-transparent text-xs text-white outline-none font-medium appearance-none min-w-[110px] cursor-pointer"
-                            >
-                                {availableMonths.map(m => <option key={m} value={m} className="bg-neutral-900 text-neutral-200">{m}</option>)}
-                            </select>
-                            <ChevronDown size={14} className="text-neutral-500" />
+                {/* Header */}
+                <header className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-xl font-bold text-white tracking-tight">Financial Overview</h1>
+                        <p className="text-xs text-neutral-500 font-medium mt-1">Track, manage, and optimize your wealth.</p>
+                    </div>
+                    <div className="flex items-center gap-2 bg-[#111] px-3 py-1.5 rounded-lg border border-neutral-800 hover:border-neutral-700 transition-colors">
+                        <Calendar size={16} className="text-neutral-500" />
+                        <select
+                            value={selectedMonth}
+                            onChange={(e) => {
+                                setSelectedMonth(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                            className="bg-transparent text-sm text-neutral-200 outline-none font-medium appearance-none cursor-pointer"
+                        >
+
+                            {availableMonths.map(m => <option key={m} value={m} className="bg-neutral-900">{m}</option>)}
+                        </select>
+                        <ChevronDown size={14} className="text-neutral-500" />
+                    </div>
+                </header>
+
+                {/* Top Summary Cards */}
+                <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Income Card */}
+                    <div className="bg-[#111] rounded-2xl p-6 border border-neutral-800/60 relative overflow-hidden group hover:border-neutral-700 transition-all">
+                        <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <Banknote size={80} className="text-blue-500" />
+                        </div>
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="p-1.5 bg-blue-500/10 rounded-md text-blue-500">
+                                    <TrendingUp size={16} />
+                                </div>
+                                <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Monthly Income</span>
+                            </div>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-3xl font-bold text-white tracking-tight">{formatCurrency(totalIncome)}</span>
+                            </div>
+                            <p className="text-xs text-neutral-500 mt-2 font-medium">
+                                Across {incomeSources.length} active sources
+                            </p>
                         </div>
                     </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <section className="bg-[#111] rounded-xl p-5 border border-neutral-800">
-                        <div className="flex justify-between items-start mb-2">
-                            <div>
-                                <h3 className="text-xs font-bold text-blue-400 uppercase tracking-wide flex items-center gap-2">
-                                    Monthly Income <span className="bg-blue-500/10 text-[9px] px-1.5 py-0.5 rounded text-blue-400 border border-blue-500/20">Planning</span>
-                                </h3>
-                                <p className="text-[10px] text-neutral-500 mt-1 font-medium">Auto-sum from {incomeSources.length} sources.</p>
-                            </div>
-                            <button
-                                onClick={() => setIsManagingIncome(!isManagingIncome)}
-                                className="text-[10px] font-bold text-blue-400 bg-blue-500/10 px-2.5 py-1.5 rounded border border-blue-500/20 hover:bg-blue-500/20 transition-colors flex items-center gap-1.5"
-                            >
-                                <Edit2 size={12} /> Manage
-                            </button>
+                    {/* Wallet Card */}
+                    <div className="bg-[#111] rounded-2xl p-6 border border-neutral-800/60 relative overflow-hidden group hover:border-neutral-700 transition-all">
+                        <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <Wallet size={80} className="text-emerald-500" />
                         </div>
-
-                        {isManagingIncome ? (
-                            <div className="mt-4 bg-[#1a1a1a] p-3 rounded-lg border border-neutral-800 animate-in fade-in slide-in-from-top-2 duration-200">
-                                <div className="flex items-center justify-between mb-3 border-b border-neutral-800 pb-2">
-                                    <h4 className="text-[10px] uppercase font-bold text-neutral-400">Income Sources</h4>
-                                    <button onClick={() => setIsManagingIncome(false)}><X size={14} className="text-neutral-500 hover:text-white" /></button>
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="p-1.5 bg-emerald-500/10 rounded-md text-emerald-500">
+                                    <Wallet size={16} />
                                 </div>
-
-                                <div className="space-y-2 mb-3 max-h-32 overflow-y-auto">
-                                    <div className="flex items-center justify-between text-xs bg-[#111] p-2 rounded border border-neutral-800">
-                                        <span className="text-white">Total Current Income</span>
-                                        <span className="font-mono text-neutral-400">{formatCurrency(DashbpardData?.income || 0)}</span>
-                                    </div>
-                                    {incomeSources.map((source, idx) => (
-                                        <div key={idx} className="flex items-center justify-between text-xs bg-[#1a1a1a] p-2 rounded border border-dashed border-neutral-800 hover:border-neutral-600 transition-colors">
-                                            <span className="text-neutral-400 font-medium">{source.source}</span>
-                                            <span className="font-mono text-neutral-300">{formatCurrency(source.amount)}</span>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="flex gap-2 items-center">
-                                    <input
-                                        placeholder="Source (e.g. Salary)"
-                                        className="bg-[#111] text-xs px-2 py-1.5 rounded border border-neutral-800 w-full outline-none focus:border-blue-500"
-                                        value={newSourceName}
-                                        onChange={e => setNewSourceName(e.target.value)}
-                                    />
-                                    <input
-                                        type="number"
-                                        placeholder="Amount"
-                                        className="bg-[#111] text-xs px-2 py-1.5 rounded border border-neutral-800 w-24 outline-none focus:border-blue-500"
-                                        value={newSourceAmount}
-                                        onChange={e => setNewSourceAmount(e.target.value)}
-                                    />
-                                    <button onClick={handleAddIncomeSource} className="bg-blue-600 p-1.5 rounded text-white hover:bg-blue-500"><Plus size={14} /></button>
-                                </div>
+                                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Wallet Balance</span>
                             </div>
-                        ) : (
-                            <div className="flex flex-col mt-3 border-b border-neutral-800 pb-2">
+                            <div className="flex items-baseline gap-1">
                                 <span className={`text-3xl font-bold tracking-tight ${currentBalance < 0 ? 'text-rose-500' : 'text-white'}`}>
                                     {formatCurrency(currentBalance)}
                                 </span>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-wider">Initial:</span>
-                                    <span className="text-xs font-mono text-neutral-400">{formatCurrency(totalIncome)}</span>
-                                </div>
                             </div>
-                        )}
-                    </section>
-
-                    <section className="bg-[#111] rounded-xl p-5 border border-neutral-800 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-4 opacity-10">
-                            <Wallet size={56} className="text-white" />
+                            <p className="text-xs text-neutral-500 mt-2 font-medium">
+                                Left to spend or invest
+                            </p>
                         </div>
-                        <div className="flex justify-between items-start mb-2 relative z-10">
-                            <div>
-                                <h3 className="text-xs font-bold text-emerald-500 uppercase tracking-wide flex items-center gap-2">
-                                    Wallet Balance <span className="bg-emerald-500/10 text-[9px] px-1.5 py-0.5 rounded text-emerald-400 border border-emerald-500/20">Real Cash</span>
-                                </h3>
-                                <p className="text-[10px] text-neutral-500 mt-1 font-medium">Available for investments.</p>
-                            </div>
-                        </div>
-                        <div className="mt-3 relative z-10">
-                            <span className="text-4xl font-bold text-white tracking-tight">₹{DashbpardData?.walletBalance}</span>
-                        </div>
-                    </section>
-                </div>
-
-                <section className="bg-[#111] rounded-xl p-5 border border-neutral-800">
-                    <div className="flex items-center justify-between mb-4 px-1">
-                        <h2 className="text-xs font-bold text-white uppercase tracking-wide border-l-4 border-emerald-500 pl-3">
-                            Budget Breakdown
-                        </h2>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                        <DonutChart
-                            data={getChartData(totalNeeds, needsTarget)}
-                            color="#3B82F6"
-                            title="Needs (50%)"
-                            subtext={`${Math.round((totalNeeds / needsTarget) * 100) || 0}% Used`}
-                            status={totalNeeds > needsTarget ? 'bad' : 'good'}
-                        />
-                        <DonutChart
-                            data={getChartData(totalWants, wantsTarget)}
-                            color="#F59E0B"
-                            title="Wants (30%)"
-                            subtext={`${Math.round((totalWants / wantsTarget) * 100) || 0}% Used`}
-                            status={totalWants > wantsTarget ? 'bad' : 'good'}
-                        />
-                        <DonutChart
-                            data={getChartData(totalInvested, savingsTarget)}
-                            color="#10B981"
-                            title="Savings (20%)"
-                            subtext={`${Math.round((totalInvested / savingsTarget) * 100) || 0}% Met`}
-                            status={isSavingsGoalMet ? 'good' : 'neutral'}
-                        />
                     </div>
                 </section>
-                {/* 
-                <section className="bg-[#111] rounded-xl p-5 border border-neutral-800">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xs font-bold text-emerald-500 uppercase tracking-wide flex items-center gap-2">
-                            <TrendingUp size={18} /> Investment Summary
-                        </h2>
-                        {isSavingsGoalMet ? (
-                            <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 tracking-wide">
-                                GOAL MET
-                            </span>
-                        ) : (
-                            <span className="text-[9px] font-bold text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-full border border-rose-500/20 flex items-center gap-1 tracking-wide">
-                                <Zap size={10} fill="currentColor" /> {formatCurrency(savingsGap)} SHORT
-                            </span>
-                        )}
+
+                <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                    {/* 50-30-20 Chart Section */}
+                    <div className="lg:col-span-1 bg-[#111] rounded-2xl p-6 border border-neutral-800/60 flex flex-col items-center justify-center relative min-h-[300px]">
+                        <h3 className="absolute top-6 left-6 text-sm font-bold text-white uppercase tracking-wide">
+                            Budget Distribution
+                        </h3>
+                        <div className="absolute top-6 right-6 text-[10px] font-bold bg-neutral-800/50 px-2 py-1 rounded text-neutral-400 border border-neutral-700">
+                            50-30-20 Rule
+                        </div>
+
+                        <div className="w-full h-56 relative mt-6">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={finalChartData}
+                                        innerRadius={60}
+                                        outerRadius={80}
+                                        paddingAngle={5}
+                                        dataKey="value"
+                                        stroke="none"
+                                        cornerRadius={4}
+                                    >
+                                        {activeChartData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                        {activeChartData.length === 0 && <Cell fill="#1a1a1a" />}
+                                    </Pie>
+                                    <Tooltip
+                                        contentStyle={{ backgroundColor: '#000', borderColor: '#333', borderRadius: '8px', padding: '8px 12px' }}
+                                        itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
+                                        formatter={(val: number | undefined) => formatCurrency(val)}
+                                    />
+                                </PieChart>
+                            </ResponsiveContainer>
+                            {/* Center Text */}
+                            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                <span className="text-xs text-neutral-500 font-bold uppercase tracking-wider">Total Spent</span>
+                                <span className="text-lg font-bold text-white mt-0.5">{formatCurrency(totalSpent + totalInvested)}</span>
+                            </div>
+                        </div>
+
+                        {/* Custom Legend */}
+                        <div className="w-full mt-6 grid grid-cols-3 gap-2 px-2">
+                            <div className="flex flex-col items-center">
+                                <div className="w-full h-1 bg-blue-500/20 rounded-full mb-2 overflow-hidden">
+                                    <div className="h-full bg-blue-500" style={{ width: `${Math.min(100, (totalNeeds / needsTarget) * 100)}%` }}></div>
+                                </div>
+                                <span className="text-[10px] text-neutral-500 uppercase font-bold">Needs</span>
+                                <span className="text-xs font-bold text-blue-400">{Math.round((totalNeeds / totalIncome) * 100) || 0}%</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <div className="w-full h-1 bg-amber-500/20 rounded-full mb-2 overflow-hidden">
+                                    <div className="h-full bg-amber-500" style={{ width: `${Math.min(100, (totalWants / wantsTarget) * 100)}%` }}></div>
+                                </div>
+                                <span className="text-[10px] text-neutral-500 uppercase font-bold">Wants</span>
+                                <span className="text-xs font-bold text-amber-500">{Math.round((totalWants / totalIncome) * 100) || 0}%</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <div className="w-full h-1 bg-emerald-500/20 rounded-full mb-2 overflow-hidden">
+                                    <div className="h-full bg-emerald-500" style={{ width: `${Math.min(100, (totalInvested / savingsTarget) * 100)}%` }}></div>
+                                </div>
+                                <span className="text-[10px] text-neutral-500 uppercase font-bold">Savings</span>
+                                <span className="text-xs font-bold text-emerald-500">{Math.round((totalInvested / totalIncome) * 100) || 0}%</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="bg-[#1a1a1a] p-3 rounded-lg border border-neutral-800">
-                            <p className="text-[9px] text-neutral-500 uppercase font-bold tracking-wider">SIP Invested</p>
-                            <p className="text-base font-bold text-white mt-1">{formatCurrency(DashbpardData?.sipInvestedAmount || 0)}</p>
-                        </div>
-                        <div className="bg-[#1a1a1a] p-3 rounded-lg border border-neutral-800">
-                            <p className="text-[9px] text-neutral-500 uppercase font-bold tracking-wider">Mutual Funds</p>
-                            <p className="text-base font-bold text-white mt-1">{formatCurrency(DashbpardData?.mutualFundInvestedAmount || 0)}</p>
-                        </div>
-                        <div className="bg-[#1a1a1a] p-3 rounded-lg border border-neutral-800">
-                            <p className="text-[9px] text-neutral-500 uppercase font-bold tracking-wider">Stocks</p>
-                            <p className="text-base font-bold text-white mt-1">{formatCurrency(DashbpardData?.stocks || 0)}</p>
-                        </div>
-                        <div className="bg-[#1a1a1a] p-3 rounded-lg border border-emerald-500/20">
-                            <p className="text-[9px] text-emerald-500 uppercase font-bold tracking-wider">Total Invested</p>
-                            <p className="text-base font-bold text-emerald-400 mt-1">{formatCurrency(DashbpardData?.totalInvestedAmount || 0)}</p>
-                        </div>
-                    </div>
+                    {/* Actions & Insights Column */}
+                    <div className="lg:col-span-2 space-y-6">
 
-                    <div className="mt-5">
-                        <div className="flex justify-between text-[10px] text-neutral-400 mb-1.5 font-bold uppercase tracking-wide">
-                            <span>Progress to Goal ({formatCurrency(savingsTarget)})</span>
-                            <span className={isSavingsGoalMet ? 'text-emerald-500' : 'text-blue-500'}>{Math.round((totalInvested / savingsTarget) * 100) || 0}%</span>
-                        </div>
-                        <div className="h-2 w-full bg-[#1a1a1a] rounded-full overflow-hidden">
-                            <div
-                                className={`h-full rounded-full transition-all duration-700 ease-out ${isSavingsGoalMet ? 'bg-emerald-500' : 'bg-blue-500'}`}
-                                style={{ width: `${Math.min(100, (totalInvested / savingsTarget) * 100)}%` }}
-                            />
-                        </div>
-                    </div>
-                </section> */}
-
-                <section className="bg-[#111] rounded-xl p-5 border border-neutral-800">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="bg-emerald-500/10 rounded-full p-2 text-emerald-500 border border-emerald-500/20">
-                            <Plus size={18} strokeWidth={3} />
-                        </div>
-                        <div className="flex flex-col">
-                            <h3 className="text-xs font-bold text-white uppercase tracking-wide">Log Expense</h3>
-                            <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wide">Needs & Wants Only</p>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center bg-[#1a1a1a] p-3 rounded-lg border border-neutral-800">
-                        <div className="md:col-span-3">
-                            <input
-                                type="text"
-                                placeholder="Description"
-                                className="w-full bg-[#111] text-xs font-medium text-white px-3 py-3 rounded border border-neutral-700 outline-none focus:border-emerald-500 transition-all placeholder-neutral-600 h-10"
-                                value={description}
-                                onChange={e => setDescription(e.target.value)}
-                            />
-                        </div>
-                        <div className="md:col-span-2">
-                            <input
-                                type="number"
-                                placeholder="Amount"
-                                className="w-full bg-[#111] text-xs font-medium text-white px-3 py-3 rounded border border-neutral-700 outline-none focus:border-emerald-500 transition-all placeholder-neutral-600 h-10"
-                                value={amount}
-                                onChange={e => setAmount(e.target.value)}
-                            />
-                        </div>
-                        <div className="md:col-span-3">
-                            <select
-                                className="w-full bg-[#111] text-xs font-medium text-neutral-300 px-3 py-3 rounded border border-neutral-700 outline-none focus:border-emerald-500 h-10 cursor-pointer appearance-none"
-                                value={category}
-                                onChange={e => setCategory(e.target.value as any)}
-                            >
-                                <option value="" disabled>Select Type</option>
-                                <option value="NEED">🔹 NEED (Necessary)</option>
-                                <option value="WANT">🔸 WANT (Lifestyle)</option>
-                            </select>
-                        </div>
-                        <div className="md:col-span-2">
-                            <input
-                                type="date"
-                                className="w-full bg-[#111] text-xs font-medium text-neutral-300 px-3 py-3 rounded border border-neutral-700 outline-none focus:border-emerald-500 h-10"
-                                value={date}
-                                onChange={e => setDate(e.target.value)}
-                            />
-                        </div>
-                        <div className="md:col-span-2">
+                        {/* Quick Actions */}
+                        <div className="grid grid-cols-2 gap-4">
                             <button
-                                onClick={handleAddExpense}
-                                disabled={isAddingExpense}
-                                className={`w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-10 rounded transition-all active:scale-95 text-xs uppercase tracking-wide flex items-center justify-center gap-2 ${isAddingExpense ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                onClick={() => setIsExpenseModalOpen(true)}
+                                className="group relative overflow-hidden bg-[#111] hover:bg-neutral-900 border border-neutral-800 rounded-xl p-5 text-left transition-all"
                             >
-                                {isAddingExpense ? (
-                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                ) : (
-                                    <Plus size={14} strokeWidth={3} />
-                                )}
-                                {isAddingExpense ? 'Adding...' : 'Add'}
+                                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                                    <TrendingDown size={48} />
+                                </div>
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500 border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                                        <Plus size={18} strokeWidth={3} />
+                                    </div>
+                                    <span className="font-bold text-white">Add Expense</span>
+                                </div>
+                                <p className="text-[10px] text-neutral-500 uppercase font-bold tracking-wide pl-1">Daily Spending</p>
+                            </button>
+
+                            <button
+                                onClick={() => setIsIncomeModalOpen(true)}
+                                className="group relative overflow-hidden bg-[#111] hover:bg-neutral-900 border border-neutral-800 rounded-xl p-5 text-left transition-all"
+                            >
+                                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                                    <TrendingUp size={48} />
+                                </div>
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500 border border-blue-500/20 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                                        <Plus size={18} strokeWidth={3} />
+                                    </div>
+                                    <span className="font-bold text-white">Add Income</span>
+                                </div>
+                                <p className="text-[10px] text-neutral-500 uppercase font-bold tracking-wide pl-1">Salary & Bonus</p>
                             </button>
                         </div>
+
+                        <div className="bg-[#111] rounded-2xl p-6 border border-neutral-800/60 h-auto">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Zap size={16} className="text-amber-400" fill="currentColor" />
+                                <h3 className="text-sm font-bold text-white uppercase tracking-wide">Insights & Highlights</h3>
+                            </div>
+
+                            <div className="space-y-3">
+                                {insights.map((insight, idx) => (
+                                    <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-[#161616] border border-neutral-800/50">
+                                        <div className={`mt-0.5 w-1.5 h-1.5 rounded-full flex-shrink-0 
+                                            ${insight.type === 'good' ? 'bg-emerald-500' : insight.type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'}`}
+                                        />
+                                        <p className="text-xs text-neutral-300 leading-relaxed font-medium">
+                                            {insight.text}
+                                        </p>
+                                    </div>
+                                ))}
+                                <div className="flex items-start gap-3 p-3 rounded-lg bg-[#161616] border border-neutral-800/50">
+                                    <div className="mt-0.5 w-1.5 h-1.5 rounded-full flex-shrink-0 bg-neutral-500" />
+                                    <p className="text-xs text-neutral-400 leading-relaxed font-medium">
+                                        Active Income Sources: <span className="text-neutral-200">{incomeSources.length}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
-                <section className="bg-[#111] rounded-xl p-5 border border-neutral-800 overflow-hidden">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xs font-bold text-white uppercase tracking-wide border-l-4 border-emerald-500 pl-3">Transactions History</h3>
-                        <span className="text-[9px] font-bold text-neutral-400 bg-[#1a1a1a] px-2.5 py-1 rounded border border-neutral-800 uppercase tracking-wider">
-                            {selectedMonth}
+                <section className="bg-[#111] rounded-2xl border border-neutral-800/60 overflow-hidden">
+                    <div className="p-6 border-b border-neutral-800/60 flex items-center justify-between">
+                        <h3 className="text-sm font-bold text-white uppercase tracking-wide">
+                            Transactions History
+                        </h3>
+                        <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wilder">
+                            {allTransactions.length} Records
                         </span>
                     </div>
 
                     <div className="overflow-x-auto">
                         <table className="w-full">
-                            <thead>
-                                <tr className="text-left text-[10px] font-bold text-neutral-500 border-b border-neutral-800 tracking-widest uppercase">
-                                    <th className="pb-3 pl-3">Date</th>
-                                    <th className="pb-3">Type</th>
-                                    <th className="pb-3">Description</th>
-                                    <th className="pb-3 text-right">Amount</th>
-                                    <th className="pb-3 text-center">Action</th>
+                            <thead className="bg-[#161616]">
+                                <tr className="text-left text-[10px] font-bold text-neutral-500 tracking-widest uppercase">
+                                    <th className="py-4 pl-6">Date</th>
+                                    <th className="py-4">Category</th>
+                                    <th className="py-4">Description</th>
+                                    <th className="py-4 text-right">Amount</th>
+                                    <th className="py-4 text-center pr-4">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="text-xs font-medium">
+                            <tbody className="divide-y divide-neutral-800/50">
                                 {allTransactions.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="py-8 text-center text-neutral-600 text-xs italic">
-                                            No transactions found for {selectedMonth}.
+                                        <td colSpan={5} className="py-12 text-center text-neutral-600 text-xs italic">
+                                            No transactions yet for {selectedMonth}.
                                         </td>
                                     </tr>
                                 ) : (
-                                    allTransactions.map((tx) => (
-                                        <tr key={tx.id} className="group hover:bg-[#1a1a1a] transition-colors border-b border-neutral-800 last:border-0 text-neutral-300">
-                                            <td className="py-3.5 pl-3 font-mono text-[10px] text-neutral-500 group-hover:text-neutral-400">{tx.date}</td>
-                                            <td className="py-3.5">
-                                                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-bold border tracking-wide ${tx.category === 'NEED' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                                                    tx.category === 'WANT' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                                                        'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                    currentTransactions.map((tx) => (
+                                        <tr key={tx.id} className="group hover:bg-[#161616] transition-colors text-xs font-medium text-neutral-300">
+
+                                            <td className="py-4 pl-6 font-mono text-neutral-500">{tx.date}</td>
+                                            <td className="py-4">
+                                                <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] font-bold tracking-wide uppercase ${tx.category === 'NEED' ? 'bg-blue-500/10 text-blue-400' :
+                                                    tx.category === 'WANT' ? 'bg-amber-500/10 text-amber-500' :
+                                                        'bg-emerald-500/10 text-emerald-400'
                                                     }`}>
                                                     {tx.category}
                                                 </span>
                                             </td>
-                                            <td className="py-3.5 text-neutral-200">
+                                            <td className="py-4 text-white">
                                                 {tx.description}
                                                 {'investmentType' in tx && tx.investmentType && (
-                                                    <span className="ml-2 text-[9px] font-bold text-emerald-500 border border-emerald-500/20 px-1.5 py-0.5 rounded bg-emerald-500/10">{tx.investmentType}</span>
+                                                    <span className="ml-2 text-[9px] text-neutral-500 border border-neutral-800 px-1 py-0.5 rounded">{tx.investmentType}</span>
                                                 )}
                                             </td>
-                                            <td className="py-3.5 text-right font-bold text-white tracking-wide">
+                                            <td className="py-4 text-right font-bold tabular-nums">
                                                 {formatCurrency(tx.amount)}
                                             </td>
-                                            <td className="py-3.5 text-center">
+                                            <td className="py-4 text-center pr-4">
                                                 {tx.type === 'expense' ? (
                                                     <button
                                                         onClick={() => handleDelete(tx.id)}
-                                                        className="p-1.5 rounded hover:bg-rose-500/10 text-neutral-600 hover:text-rose-500 transition-colors"
+                                                        className="p-2 rounded-md hover:bg-rose-500/10 text-neutral-600 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"
                                                     >
                                                         <Trash2 size={14} />
                                                     </button>
                                                 ) : (
-                                                    <span className="text-[9px] text-neutral-500 flex justify-center items-center gap-1.5 font-bold">
-                                                        <Lock size={10} className="text-emerald-500/50" /> AUTO
-                                                    </span>
+                                                    <Lock size={12} className="mx-auto text-neutral-600 opacity-0 group-hover:opacity-50" />
                                                 )}
                                             </td>
                                         </tr>
@@ -529,34 +480,164 @@ const ExpenseTracker = () => {
                             </tbody>
                         </table>
                     </div>
-                </section>
-
-                <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    {!isSavingsGoalMet && (
-                        <div className="bg-[#111] p-4 rounded-xl border border-rose-500/20 flex items-center gap-4">
-                            <div className="bg-rose-500/10 p-3 rounded-full text-rose-500 flex-shrink-0 border border-rose-500/20"><Zap size={20} /></div>
-                            <div>
-                                <p className="text-[10px] text-rose-500 font-bold uppercase tracking-wide">Goal Alert</p>
-                                <p className="text-xs text-neutral-400 mt-1 font-medium">
-                                    You are <span className="text-rose-400 font-bold">{formatCurrency(savingsGap)}</span> short of your 20% savings target.
-                                </p>
-                            </div>
-                        </div>
-                    )}
-                    {totalWants > wantsTarget && (
-                        <div className="bg-[#111] p-4 rounded-xl border border-amber-500/20 flex items-center gap-4">
-                            <div className="bg-amber-500/10 p-3 rounded-full text-amber-500 flex-shrink-0 border border-amber-500/20"><Lock size={20} /></div>
-                            <div>
-                                <p className="text-[10px] text-amber-500 font-bold uppercase tracking-wide">Overspending Alert</p>
-                                <p className="text-xs text-neutral-400 mt-1 font-medium">
-                                    Wants exceeded 30%. Limit: <span className="text-amber-500 font-bold">{formatCurrency(wantsTarget)}</span>.
-                                </p>
-                            </div>
-                        </div>
-                    )}
+                    <Pagination
+                        page={currentPage}
+                        limit={itemsPerPage}
+                        total={totalTransactions}
+                        onPageChange={setCurrentPage}
+                    />
                 </section>
 
             </div>
+
+            {/* EXPENSE MODAL */}
+            {isExpenseModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-[#111] border border-neutral-800 w-full max-w-md rounded-2xl p-6 shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                                <span className="bg-emerald-500/10 p-1.5 rounded text-emerald-500"><Plus size={18} /></span> Add Expense
+                            </h2>
+                            <button onClick={() => setIsExpenseModalOpen(false)} className="text-neutral-500 hover:text-white transition-colors">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 block">Description</label>
+                                <input
+                                    type="text"
+                                    placeholder="What did you buy?"
+                                    className="w-full bg-[#1a1a1a] text-sm text-white px-4 py-3 rounded-xl border border-neutral-800 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all placeholder-neutral-600"
+                                    value={description}
+                                    onChange={e => setDescription(e.target.value)}
+                                    autoFocus
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 block">Amount</label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 font-sans">₹</span>
+                                        <input
+                                            type="number"
+                                            placeholder="0.00"
+                                            className="w-full bg-[#1a1a1a] text-sm text-white pl-8 pr-4 py-3 rounded-xl border border-neutral-800 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all font-mono"
+                                            value={amount}
+                                            onChange={e => setAmount(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 block">Category</label>
+                                    <select
+                                        className="w-full bg-[#1a1a1a] text-sm text-white px-4 py-3 rounded-xl border border-neutral-800 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all appearance-none cursor-pointer"
+                                        value={category}
+                                        onChange={e => setCategory(e.target.value as any)}
+                                    >
+                                        <option value="" disabled>Select</option>
+                                        <option value="NEED">🔹 Needs</option>
+                                        <option value="WANT">🔸 Wants</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 block">Date</label>
+                                <input
+                                    type="date"
+                                    className="w-full bg-[#1a1a1a] text-sm text-white px-4 py-3 rounded-xl border border-neutral-800 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
+                                    value={date}
+                                    onChange={e => setDate(e.target.value)}
+                                />
+                            </div>
+
+                            <button
+                                onClick={handleAddExpense}
+                                disabled={isAddingExpense}
+                                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition-all active:scale-[0.98] mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isAddingExpense ? (
+                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                ) : 'Save Transaction'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* INCOME MODAL */}
+            {isIncomeModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-[#111] border border-neutral-800 w-full max-w-md rounded-2xl p-6 shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                                <span className="bg-blue-500/10 p-1.5 rounded text-blue-500"><Plus size={18} /></span> Add Income Source
+                            </h2>
+                            <button onClick={() => setIsIncomeModalOpen(false)} className="text-neutral-500 hover:text-white transition-colors">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 block">Source Name</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. Freelance, Salary"
+                                    className="w-full bg-[#1a1a1a] text-sm text-white px-4 py-3 rounded-xl border border-neutral-800 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder-neutral-600"
+                                    value={newSourceName}
+                                    onChange={e => setNewSourceName(e.target.value)}
+                                    autoFocus
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 block">Amount</label>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 font-sans">₹</span>
+                                    <input
+                                        type="number"
+                                        placeholder="0.00"
+                                        className="w-full bg-[#1a1a1a] text-sm text-white pl-8 pr-4 py-3 rounded-xl border border-neutral-800 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all font-mono"
+                                        value={newSourceAmount}
+                                        onChange={e => setNewSourceAmount(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={handleAddIncomeSource}
+                                disabled={isAddingIncome}
+                                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all active:scale-[0.98] mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isAddingIncome ? (
+                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                ) : 'Add Income Source'}
+                            </button>
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t border-neutral-800">
+                            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-3">Current Sources</p>
+                            <div className="space-y-2 max-h-32 overflow-y-auto pr-1">
+                                {incomeSources.length === 0 ? (
+                                    <p className="text-xs text-neutral-600 italic">No income sources added yet.</p>
+                                ) : (
+                                    incomeSources.map((source, idx) => (
+                                        <div key={idx} className="flex items-center justify-between text-xs bg-[#1a1a1a] p-2.5 rounded-lg border border-neutral-800">
+                                            <span className="text-neutral-300 font-medium">{source.source}</span>
+                                            <span className="font-mono text-neutral-400">{formatCurrency(source.amount)}</span>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

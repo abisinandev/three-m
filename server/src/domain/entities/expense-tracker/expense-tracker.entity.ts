@@ -1,4 +1,3 @@
-import { ExpenseType } from "@application/dto/expense-tracker/add-expense.dto";
 import { Budget } from "./value-objects/budget.vo";
 import { ExpenseSummary } from "./value-objects/expense-summery.vo";
 import { Expense } from "./value-objects/expense.vo";
@@ -51,21 +50,6 @@ export class ExpenseTrackerEntity {
     }
 
     addExpense(expense: Expense): void {
-
-
-        let needs = 3000;
-        let wants = 2000;
-        // let savings = 1000;
-
-
-        if (expense.category === ExpenseType.NEED && expense.amount > needs) {
-            throw new Error("Needs limit is reached")
-        }
-        if (expense.category === ExpenseType.WANT && expense.amount > wants) {
-            throw new Error("Wants limit is reached");
-        }
-
-
         this._expenses.push(expense);
         this.recalculate();
     }
