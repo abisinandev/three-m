@@ -42,7 +42,7 @@ export class AddExpensesUseCase implements IAddExpenseUseCase {
         if (availableBalance < dto.amount) {
             throw new ValidationError(ErrorMessages.EXPENSE_TRACKER.INSUFFICIENT_BALANCE);
         }
- 
+
         const newExpense = new Expense({
             amount: dto.amount,
             category: dto.category,
