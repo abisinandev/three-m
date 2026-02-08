@@ -2,7 +2,7 @@ import { IConfirmRedeemUseCase } from "@application/use_cases/portfolio/interfac
 import { IPortfolioCalculationsUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-calculations-usecase.interface";
 import { IPortfolioDetailsUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-details-usecase.interface";
 import { IRadeemInvestmentUseCase } from "@application/use_cases/portfolio/interfaces/redeem-investments-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { NextFunction, Request, Response } from "express";
@@ -27,7 +27,7 @@ export class PortFolioController {
             const result = await this._listAllInvestments.execute(userId as string, req.query);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK,
             )
@@ -44,7 +44,7 @@ export class PortFolioController {
             console.log("result: ", result);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK,
             )
@@ -59,7 +59,7 @@ export class PortFolioController {
             const result = await this._radeemInvestments.execute(userId as string);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK,
             )
@@ -75,7 +75,7 @@ export class PortFolioController {
             const result = await this._confirmRedeem.execute({ ...dto, userId });
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK,
             )
@@ -91,7 +91,7 @@ export class PortFolioController {
             const result = await this._xirrCalculation.execute(userId as string);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK,
             )

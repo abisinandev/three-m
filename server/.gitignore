@@ -12,6 +12,8 @@ npm-debug.log*
 # Build outputs
 dist/
 build/
+*.tsbuildinfo
+build_*.txt
 
 # OS files
 .DS_Store

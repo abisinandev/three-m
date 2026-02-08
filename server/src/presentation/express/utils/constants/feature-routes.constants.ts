@@ -8,4 +8,7 @@ export enum Routes {
     // Mutual funds
     ADD_FUNDS = "/add-fund",
     ADD_FUND_ICON = "/add-fund-logo",
+
+    //Expense-Tracker 
+    EXPENSE_TRACKER = "/expense-tracker"
 }

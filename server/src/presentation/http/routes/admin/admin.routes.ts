@@ -1,7 +1,7 @@
 import { container } from "@infrastructure/inversify_di/container";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { AdminAuthMiddleware } from "@presentation/express/middlewares/admin-auth.middleware";
-import { PROTECTED_ROUTES } from "@presentation/express/utils/constants/admin-routes.constants";
+import { AdminProtectedRoutes } from "@shared/routes/admin.routes";
 import type { AdminController } from "@presentation/http/controllers/admin/admin.controller";
 import { AdminAuthController } from "@presentation/http/controllers/admin/admin-auth.controller";
 import type { AdminKycController } from "@presentation/http/controllers/admin/admin-kyc.controller";
@@ -17,19 +17,19 @@ const adminUserController = container.get<AdminUserController>(ADMIN_TYPES.Admin
 const adminKycController = container.get<AdminKycController>(ADMIN_TYPES.AdminKycController);
 const adminTransactionsController = container.get<AdminTransactionsController>(ADMIN_TYPES.AdminTransactionsController);
 
-router.get(PROTECTED_ROUTES.PROILE, adminController.getProfile.bind(adminController));
-router.post(PROTECTED_ROUTES.LOGOUT, authController.logout.bind(authController));
+router.get(AdminProtectedRoutes.PROFILE, adminController.getProfile.bind(adminController));
+router.post(AdminProtectedRoutes.LOGOUT, authController.logout.bind(authController));
 
-router.get(PROTECTED_ROUTES.FETCH_USER, adminUserController.fetchUserDetails.bind(adminUserController));
-router.patch(PROTECTED_ROUTES.BLOCK_USER, adminUserController.blockUser.bind(adminUserController));
-router.patch(PROTECTED_ROUTES.UNBLOCK_USER, adminUserController.unblockUser.bind(adminUserController));
+router.get(AdminProtectedRoutes.FETCH_USER, adminUserController.fetchUserDetails.bind(adminUserController));
+router.patch(AdminProtectedRoutes.BLOCK_USER, adminUserController.blockUser.bind(adminUserController));
+router.patch(AdminProtectedRoutes.UNBLOCK_USER, adminUserController.unblockUser.bind(adminUserController));
 
-router.get(PROTECTED_ROUTES.FETCH_KYC_DATAS, adminKycController.fetchAllKycDocs.bind(adminKycController));
-router.get(PROTECTED_ROUTES.VIEW_KYC_DETAILS, adminKycController.viewKycDetails.bind(adminKycController));
-router.patch(PROTECTED_ROUTES.VERIFY_KYC, adminKycController.verifyKyc.bind(adminKycController));
-router.patch(PROTECTED_ROUTES.REJECT_KYC, adminKycController.rejectKyc.bind(adminKycController));
+router.get(AdminProtectedRoutes.FETCH_KYC_DATAS, adminKycController.fetchAllKycDocs.bind(adminKycController));
+router.get(AdminProtectedRoutes.VIEW_KYC_DETAILS, adminKycController.viewKycDetails.bind(adminKycController));
+router.patch(AdminProtectedRoutes.VERIFY_KYC, adminKycController.verifyKyc.bind(adminKycController));
+router.patch(AdminProtectedRoutes.REJECT_KYC, adminKycController.rejectKyc.bind(adminKycController));
 
-router.get(PROTECTED_ROUTES.FETCH_TRANSACTIONS, adminTransactionsController.getTransactions.bind(adminTransactionsController));
-router.patch(PROTECTED_ROUTES.VERIFY_TRANSACTIONS, adminTransactionsController.verifyTransaction.bind(adminTransactionsController));
+router.get(AdminProtectedRoutes.FETCH_TRANSACTIONS, adminTransactionsController.getTransactions.bind(adminTransactionsController));
+router.patch(AdminProtectedRoutes.VERIFY_TRANSACTIONS, adminTransactionsController.verifyTransaction.bind(adminTransactionsController));
 
 export default router;

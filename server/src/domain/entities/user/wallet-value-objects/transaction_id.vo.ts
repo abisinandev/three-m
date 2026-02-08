@@ -1,4 +1,4 @@
-import { ValueObjectBase } from "../vo.base-class";
+import { ValueObjectBase } from "../../../value-object/vo.base-class";
 
 interface ITransactionId {
     value: string;

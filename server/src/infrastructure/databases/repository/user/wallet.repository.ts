@@ -28,7 +28,7 @@ export class WalletRepository extends BaseRepository<WalletEntity, WalletDocumen
         );
     }
 
-    async findByUserId(userId: string, session: ClientSession): Promise<WalletEntity | null> {
+    async findByUserId(userId: string, session?: ClientSession): Promise<WalletEntity | null> {
         const doc = await this.model.findOne({ userId });
         if (!doc) return null;
         return this.mapper.toDomain(doc);

@@ -3,7 +3,7 @@ import type { FetchWalletDTO } from "@application/dto/user/fetch-wallet.dto";
 import type { WalletResponseDTO } from "@application/dto/user/wallet-response.dto";
 import type { TransactionResponseDTO } from "@application/dto/user/transaction-response.dto";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { WalletStatus } from "@domain/enum/wallet/wallet-status.enum";
 import { toEntity } from "@application/mappers/user/wallet.mapper";
@@ -26,7 +26,7 @@ export class UserWalletUseCase implements IUserWalletUseCase {
     async execute(userId: string, query: QueryOptions): Promise<FetchWalletDTO<WalletResponseDTO>> {
 
         const userExists = await this._userRepository.findById(userId);
-        if (!userExists) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
+        if (!userExists) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
         let wallet = await this._walletRepository.findOne({ userId });
         if (!wallet) {
@@ -42,7 +42,7 @@ export class UserWalletUseCase implements IUserWalletUseCase {
         };
 
         wallet = await this._walletRepository.findOne({ userId });
-        if (!wallet) throw new NotFoundError(ErrorMessage.WALLET_NOT_FOUND);
+        if (!wallet) throw new NotFoundError(ErrorMessages.PAYMENT.WALLET_NOT_FOUND);
 
         const page = query.page ?? 1;
         const limit = query.limit ?? 10;

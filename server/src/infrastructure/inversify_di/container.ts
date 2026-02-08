@@ -6,6 +6,7 @@ import { MutualFundModule } from "./features/mutual-fund/mutual-fund.module";
 import { SipModule } from "./features/sip/sip.module";
 import { PortfolioModule } from "./features/portfolio/portfolio.module";
 import { ExternalModule } from "./features/external/external.module";
+import { ExpenseTrackerModule } from "./features/expense-tracker/expense-tracker.module";
 
 const container = new Container({
   defaultScope: "Singleton",
@@ -20,7 +21,7 @@ container.load(
   SipModule,
   PortfolioModule,
   ExternalModule,
+  ExpenseTrackerModule,
 );
 
 export { container };
- 

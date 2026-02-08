@@ -21,7 +21,7 @@ export enum ErrorMessage {
   INVALID_PASSWORD = "Invalid old password",
   ADMIN_NOT_FOUND = "Admin not found",
   NOT_FOUND = 'Not found',
-
+  DATA_NOT_FOUND = 'Data not found',
   REFRESH_TOKEN_MISSING = "Refresh token is missing",
   REFRESH_TOKEN_EXPIRED = "Invalid or expired refresh token",
   REFRESH_TOKEN_NOT_FOUND = "Refresh token not found or already revoked",
@@ -59,5 +59,6 @@ export enum ErrorMessage {
   NOT_ENOUGH_AMOUNT = "Insufficient amount to complete the transaction.",
   INVALID_REDEEM_REQUEST = "The redemption request is invalid. Please verify the details and try again.",
 
-  WALLET_TANSACTIONS_FAIELED_VERIFICATION = "External transaction only allowed to verify"
+  WALLET_TANSACTIONS_FAIELED_VERIFICATION = "External transaction only allowed to verify",
+  COMPLETE_KYC_VERIFICATION = "Please complete KYC verification"
 }

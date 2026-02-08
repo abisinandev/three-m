@@ -1,6 +1,6 @@
 import { IMutualFundsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-usecase.interface";
 import { IUserWalletUseCase } from "@application/use_cases/user/interfaces/user-wallet-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
@@ -22,7 +22,7 @@ export class WalletController {
             const result = await this._walletUseCase.execute(userId as string, req.query);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK,
             );
@@ -31,5 +31,5 @@ export class WalletController {
         }
     }
 
- 
+
 }

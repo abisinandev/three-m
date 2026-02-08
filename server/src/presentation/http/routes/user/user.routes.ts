@@ -7,7 +7,7 @@ import { UploadProfileImageDTO } from "@application/dto/user/upload-profile-imag
 import { container } from "@infrastructure/inversify_di/container";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { validateDTO } from "@presentation/express/middlewares/validation-dto.middlewares";
-import { Routes } from "@presentation/express/utils/constants/user-routes.constants";
+import { UserRoutes } from "@shared/routes/user.routes";
 import type { UserController } from "@presentation/http/controllers/user/user.controller";
 import { WalletController } from "@presentation/http/controllers/wallet/wallet.controller";
 import { Router } from "express";
@@ -17,14 +17,14 @@ const router = Router();
 const userController = container.get<UserController>(USER_TYPES.UserController);
 const walletController = container.get<WalletController>(USER_TYPES.WalletController);
 
-router.get(Routes.PROFILE, userController.getProfile.bind(userController));
-router.post(Routes.CHANGE_PASSWORD, validateDTO(ChangePasswordDTO), userController.ChangePassword.bind(userController));
-router.post(Routes.KYC_SUBMIT, validateDTO(KycSubmitDTO), userController.kycSubmit.bind(userController));
-router.patch(Routes.PROFILE_UPDATE, validateDTO(EditProfileDto), userController.editProfile.bind(userController));
-router.post(Routes.EMAIL_UPDATE_OTP_SEND, validateDTO(ChangeEmailDTO), userController.changeEmailSendOtp.bind(userController));
-router.post(Routes.EMAIL_UPDATE_VERIFY, validateDTO(VerifyOtpDTO), userController.changeEmailVerifyOtp.bind(userController));
-router.patch(Routes.UPLOAD_PROFILE_IMAGE, validateDTO(UploadProfileImageDTO), userController.uploadProfile.bind(userController));
-router.get(Routes.WALLET, walletController.getWallet.bind(walletController));
-router.post(Routes.LOGOUT, userController.logout.bind(userController));
+router.get(UserRoutes.PROFILE, userController.getProfile.bind(userController));
+router.post(UserRoutes.CHANGE_PASSWORD, validateDTO(ChangePasswordDTO), userController.ChangePassword.bind(userController));
+router.post(UserRoutes.KYC_SUBMIT, validateDTO(KycSubmitDTO), userController.kycSubmit.bind(userController));
+router.patch(UserRoutes.PROFILE_UPDATE, validateDTO(EditProfileDto), userController.editProfile.bind(userController));
+router.post(UserRoutes.EMAIL_UPDATE_OTP_SEND, validateDTO(ChangeEmailDTO), userController.changeEmailSendOtp.bind(userController));
+router.post(UserRoutes.EMAIL_UPDATE_VERIFY, validateDTO(VerifyOtpDTO), userController.changeEmailVerifyOtp.bind(userController));
+router.patch(UserRoutes.UPLOAD_PROFILE_IMAGE, validateDTO(UploadProfileImageDTO), userController.uploadProfile.bind(userController));
+router.get(UserRoutes.WALLET, walletController.getWallet.bind(walletController));
+router.post(UserRoutes.LOGOUT, userController.logout.bind(userController));
 
 export default router;

@@ -5,8 +5,9 @@ import type { KycStatusType } from "@domain/enum/users/kyc-status.enum";
 import type { SubscripionPlan } from "@domain/enum/users/subscription-plan.enum";
 import type { SubscriptionStatus } from "@domain/enum/users/subscription-status.enum";
 import type { Role } from "@domain/enum/users/user-role.enum";
-import { WalletDocument } from "../schemas/wallet.schema";
-import { KycDocument } from "../schemas/kyc.schema";
+import { KycDocument } from "../../schemas/user/kyc.schema";
+import { WalletDocument } from "../../schemas/user/wallet.schema";
+
 
 export interface IUserSchema {
   _id: Types.ObjectId;

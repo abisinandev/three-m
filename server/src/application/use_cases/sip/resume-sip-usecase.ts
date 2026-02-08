@@ -3,7 +3,7 @@ import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.type
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { ISipRepository } from "@application/interfaces/repositories/feature/sip-repository.interface";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { IResumeSipUseCase } from "./interfaces/resume-sip-usecase.interface";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 
@@ -16,11 +16,11 @@ export class ResumeSipUseCase implements IResumeSipUseCase {
     ) { }
     async execute(userId: string, sipId: string): Promise<void> {
         const user = await this._userRepository.findById(userId);
-        if (!user) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
+        if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
         const sip = await this._sipRepository.findById(sipId);
-        if (!sip) throw new NotFoundError(ErrorMessage.NOT_FOUND + "SIP");
-        
+        if (!sip) throw new NotFoundError(ErrorMessages.DB.DATA_NOT_FOUND + " SIP");
+
         await this._sipRepository.resume(sipId);
     }
 } 

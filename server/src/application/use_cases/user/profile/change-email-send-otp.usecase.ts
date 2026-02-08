@@ -8,6 +8,7 @@ import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
+import { ErrorMessages } from "@shared/constants/error.messages";
 
 @injectable()
 export class ChangeEmailSendOtpUseCase implements IChangeEmailSendOtpUseCase {
@@ -18,7 +19,7 @@ export class ChangeEmailSendOtpUseCase implements IChangeEmailSendOtpUseCase {
     ) { }
     async execute(userId: string, data: ChangeEmailDTO): Promise<void> {
         const user = await this._userRepository.findById(userId);
-        if (!user) throw new NotFoundError("User doest not exist");
+        if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
         const redisKey = `change-email-otp:${data.email}`;
         const otp = generateOtp();

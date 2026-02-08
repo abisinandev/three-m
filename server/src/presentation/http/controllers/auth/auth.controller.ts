@@ -9,13 +9,13 @@ import type { ISignupResendOtpUseCase } from "@application/use_cases/user/interf
 import type { IUserLoginUseCase } from "@application/use_cases/user/interfaces/user-login-usecase.interface";
 import type { IUserSignupUseCase } from "@application/use_cases/user/interfaces/user-signup.usecase.interface";
 import type { IVerifyTwoFactorUseCase } from "@application/use_cases/user/interfaces/verify-2fa-usecase.interface";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
-import { ForbiddenError, ValidationError } from "@presentation/express/utils/error-handling";
+import { ForbiddenError } from "@presentation/express/utils/error-handling";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
+import { ErrorMessages } from "@shared/constants/error.messages";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
@@ -43,7 +43,7 @@ export class AuthController {
       if (result.isAlreadyCreated) {
         return ResponseHelper.success(
           res,
-          SuccessMessage.ACCOUNT_EXISTS_EMAIL_NOT_VERIFIED,
+          SuccessMessages.AUTH.ACCOUNT_EXISTS_NOT_VERIFIED,
           { expiresAt: result.expiresAt },
           HttpStatus.OK,
         );
@@ -51,7 +51,7 @@ export class AuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.OTP_SEND,
+        SuccessMessages.AUTH.OTP_SENT,
         { expiresAt: result.expiresAt },
         HttpStatus.OK,
       );
@@ -69,7 +69,7 @@ export class AuthController {
       if (result.required2FASetup) {
         return ResponseHelper.success(
           res,
-          SuccessMessage.TWO_FA_REQUIRED,
+          SuccessMessages.AUTH.TWO_FA_REQUIRED,
           { qrCode: result.qrCode },
           HttpStatus.CREATED,
         );
@@ -77,7 +77,7 @@ export class AuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.PLEASE_VERIFY_2FA_CODE,
+        SuccessMessages.AUTH.VERIFY_2FA_CODE,
         { qrCode: result.qrCode },
         HttpStatus.CREATED,
       );
@@ -113,7 +113,7 @@ export class AuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.LOGGED_IN_SUCCESS,
+        SuccessMessages.AUTH.LOGGED_IN,
         { accessToken: "Created" },
         HttpStatus.OK,
       );
@@ -130,7 +130,7 @@ export class AuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.EMAIL_VERIFIED,
+        SuccessMessages.AUTH.EMAIL_VERIFIED,
         HttpStatus.OK,
       );
 
@@ -146,12 +146,12 @@ export class AuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.RESEND_OTP_MSG,
+        SuccessMessages.AUTH.RESEND_OTP,
         { ...result },
         HttpStatus.OK,
       );
 
-    } catch (err) { 
+    } catch (err) {
       next(err);
     }
   }
@@ -160,7 +160,7 @@ export class AuthController {
     try {
       const refreshToken = req.cookies.refreshToken;
       console.log("Refresh : ", refreshToken);
-      if (!refreshToken) throw new ForbiddenError(ErrorMessage.REFRESH_TOKEN_EXPIRED);
+      if (!refreshToken) throw new ForbiddenError(ErrorMessages.AUTH.REFRESH_TOKEN_EXPIRED);
 
       const result = await this._refreshTokenUseCase.execute({ refreshToken });
 
@@ -173,14 +173,14 @@ export class AuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.ACCESS_TOKEN_UPDATED,
+        SuccessMessages.AUTH.ACCESS_TOKEN_UPDATED,
         HttpStatus.CREATED,
       );
 
     } catch (error) {
       next(error);
-    } 
-  }  
+    }
+  }
 
   async forgotPassword(req: Request, res: Response, next: NextFunction) {
     try {
@@ -189,7 +189,7 @@ export class AuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.VERIFYCATION_CODE_SEND,
+        SuccessMessages.AUTH.VERIFICATION_CODE_SENT,
         HttpStatus.OK,
       );
     } catch (error) {
@@ -204,7 +204,7 @@ export class AuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.OTP_VERIFIED,
+        SuccessMessages.AUTH.OTP_VERIFIED,
         { resetToken: result.resetToken },
         HttpStatus.OK,
       );
@@ -221,7 +221,7 @@ export class AuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.RESEND_OTP_MSG,
+        SuccessMessages.AUTH.RESEND_OTP,
         { resendCount, expiresAt },
         HttpStatus.OK,
       );
@@ -238,7 +238,7 @@ export class AuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.PASSWORD_RESET_SUCCESS,
+        SuccessMessages.AUTH.PASSWORD_RESET,
         HttpStatus.OK,
       );
 
@@ -268,7 +268,7 @@ export class AuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.LOGGED_IN_SUCCESS,
+        SuccessMessages.AUTH.LOGGED_IN,
         { accessToken: "created" },
         HttpStatus.OK,
       );

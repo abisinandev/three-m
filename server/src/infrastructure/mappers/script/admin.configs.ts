@@ -1,5 +1,5 @@
 import { Role } from "@domain/enum/users/user-role.enum";
-import { AdminModel } from "@infrastructure/databases/mongo_db/models/schemas/admin.schema";
+import { AdminModel } from "@infrastructure/databases/mongo_db/models/schemas/admin/admin.schema";
 import connectDB from "@infrastructure/databases/mongo_db/mongo.db";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import argon2 from "argon2";

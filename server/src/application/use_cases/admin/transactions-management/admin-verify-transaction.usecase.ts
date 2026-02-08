@@ -1,9 +1,9 @@
 import type { IAdminVerifyTransactionUseCase } from "@application/use_cases/user/interfaces/admin-verify-transaction-usecase.interface";
 // import { BlockEntity } from "@domain/entities/transaction/block.entity";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
-import { SignatureKey } from "@domain/value-objects/wallet/signature-key.vo";
-import { TxHash } from "@domain/value-objects/wallet/transaction.vo";
+import { SignatureKey } from "@domain/entities/user/wallet-value-objects/signature-key.vo";
+import { TxHash } from "@domain/entities/user/wallet-value-objects/transaction.vo";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
@@ -42,9 +42,9 @@ export class AdminVerifyTransactionUseCase implements IAdminVerifyTransactionUse
             session.startTransaction();
 
             const transaction = await this._transactionRepository.findTransaction(txId, session);
-            if (!transaction) throw new NotFoundError(ErrorMessage.NOT_FOUND);
+            if (!transaction) throw new NotFoundError(ErrorMessages.USER.NOT_FOUND);
             if (transaction.type !== TransactionTypes.ADD_TO_WALLET)
-                throw new ValidationError(ErrorMessage.WALLET_TANSACTIONS_FAIELED_VERIFICATION)
+                throw new ValidationError(ErrorMessages.PAYMENT.EXTERNAL_VERIFICATION_ONLY)
 
             if (transaction.status === TransactionStatus.VERIFIED) {
                 await session.abortTransaction();
@@ -52,7 +52,7 @@ export class AdminVerifyTransactionUseCase implements IAdminVerifyTransactionUse
             }
 
             if (transaction.status !== TransactionStatus.PENDING) {
-                throw new ValidationError("Transaction not in verifiable state");
+                throw new ValidationError(ErrorMessages.PAYMENT.TRANSACTION_FAILED);
             }
 
             const payload = {
@@ -61,16 +61,16 @@ export class AdminVerifyTransactionUseCase implements IAdminVerifyTransactionUse
                 amount: transaction.amount,
                 paymentIntentId: transaction.paymentIntentId,
                 referenceType: transaction.referenceType,
-                referenceId:transaction.referenceId ?? undefined,
+                referenceId: transaction.referenceId ?? undefined,
             };
             const recalculatedHash = TxHash.generate(payload);
             if (recalculatedHash.value !== transaction.txHash) {
-                throw new ValidationError("Transaction hash mismatch");
+                throw new ValidationError(ErrorMessages.PAYMENT.TRANSACTION_FAILED);
             }
 
             const expectedSignature = SignatureKey.generate(recalculatedHash.value).value;
             if (expectedSignature !== transaction.signature) {
-                throw new ValidationError("Invalid transaction signature");
+                throw new ValidationError(ErrorMessages.PAYMENT.TRANSACTION_FAILED);
             }
 
             await this._walletRepository.credit(

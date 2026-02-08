@@ -66,7 +66,7 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
                 },
             },
         ]);
-        return result.length > 0 ? result[0].total : 0;
+        return result.length > 0 ? result[0] : 0;
     };
 
 
@@ -238,10 +238,79 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
     }
 
     async findInvestmentsByUser(userId: string): Promise<InvestmentEntity[] | null> {
-        const docs = await this.model.find({ userId });
-        if (!docs) return null;
+        const latestDoc = await this.model
+            .findOne({ userId })
+            .sort({ createdAt: -1 })
+            .exec();
+
+        if (!latestDoc) return null;
+
+        const latestDate = new Date(latestDoc.createdAt);
+        const startOfMonth = new Date(latestDate.getFullYear(), latestDate.getMonth(), 1);
+        const endOfMonth = new Date(latestDate.getFullYear(), latestDate.getMonth() + 1, 0, 23, 59, 59);
+
+        const docs = await this.model.find({
+            userId,
+            createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+        });
+
         return docs.map(doc => this.mapper.toDomain(doc));
     }
+
+
+    // async findInvestmentsByUser(userId: string): Promise<InvestmentEntity[]> {
+
+    //     const docs = await this.model.aggregate([
+    //         {
+    //             $match: {
+    //                 userId: new Types.ObjectId(userId),
+    //             },
+    //         },
+
+    //         {
+    //             $lookup: {
+    //                 from: "investments",
+    //                 localField: "schemeCode",
+    //                 foreignField: "schemeCode",
+    //                 as: "investment",
+    //             },
+    //         },
+
+    //         {
+    //             $unwind: {
+    //                 path: "$investment",
+    //                 preserveNullAndEmptyArrays: true,
+    //             },
+    //         },
+
+    //         {
+    //             $project: {
+    //                 _id: 1,
+    //                 userId: 1,
+    //                 schemeCode: 1,
+    //                 amount: 1,
+    //                 units: 1,
+    //                 nav: 1,
+    //                 navDate: 1,
+    //                 remainingUnits: 1,
+    //                 redeemedUnits: 1,
+    //                 redeemedAmount: 1,
+    //                 status: 1,
+    //                 investmentType: 1,
+    //                 paymentMethod: 1,
+    //                 createdAt: 1,
+
+    //                 schemeName: "$investment.schemeName",
+    //                 fundHouse: "$investment.fundHouse",
+    //                 category: "$investment.category",
+    //             },
+    //         },
+    //     ]);
+
+    //     return docs.map(doc => this.mapper.toDomain(doc));
+    // }
+
+
 
     async findGroupedInvestmentsByUser(
         userId: string
@@ -352,4 +421,14 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
 
         return result.length > 0 ? result[0].count : 0;
     }
+
+    // async getetUserTotalInvestments(userId: string): Promise<number> {
+    //     const result = await this.model.aggregate([
+    //         {
+    //             $group: {
+    //                 _id: "$userId",
+    //                 totalInvestments: {$sum:{}}
+    //         }}
+    //     ]);
+    // }
 }

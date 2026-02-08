@@ -68,7 +68,7 @@ const UserLayout = () => {
                     <nav className="hidden lg:flex items-center gap-8 font-medium text-gray-400">
                         {[
                             { to: '/user/home', label: 'Dashboard' },
-                            { to: '/user/expenses', label: 'Expense tracker' },
+                            { to: '/user/expense-tracker', label: 'Expense tracker' },
                             { to: '/user/wallet', label: 'Wallet' },
                             { to: '/user/mutual-funds', label: 'Mutual Funds' },
                             { to: '/user/algo', label: 'Algo trading' },

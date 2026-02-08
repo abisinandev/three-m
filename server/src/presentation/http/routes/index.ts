@@ -12,6 +12,7 @@ import fileUploadRoutes from '@presentation/http/routes/file-upload/file-upload.
 import mutualFundUserRoues from '@presentation/http/routes/user/mutual-fund-user.routes';
 import mutualFundSipUserRoues from '@presentation/http/routes/user/mutual-fund-sip.routes';
 import userPortfoilo from '@presentation/http/routes/portfolio/portfolio.routes';
+import expenseTracker from '@presentation/http/routes/expense-tracker/expense-tracker.routes';
 import type { Application } from "express";
 import { AdminAuthMiddleware } from "@presentation/express/middlewares/admin-auth.middleware";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
@@ -22,13 +23,19 @@ export const RegisterRoutes = (app: Application) => {
 
   app.use("/api/auth", authRoute);
   app.use("/api/admin/authentication", adminAuthRoute);
+  
+  app.use("/api/user/expense-tracker", (req, res, next) => authMiddleware.handle(req, res, next), expenseTracker);
+
+  app.use("/api/user/mutual-funds/sip", (req, res, next) => authMiddleware.handle(req, res, next), mutualFundSipUserRoues);
+  app.use("/api/user/mutual-funds", (req, res, next) => authMiddleware.handle(req, res, next), mutualFundUserRoues);
+  app.use("/api/user/portfolio", (req, res, next) => authMiddleware.handle(req, res, next), userPortfoilo);
+
   app.use("/api/user", (req, res, next) => authMiddleware.handle(req, res, next), userRoute);
+
   app.use('/api/admin/mutual-funds', (req, res, next) => authAdminMiddleware.handle(req, res, next), mutualFundRoutes);
   app.use("/api/admin/sip-management", (req, res, next) => authAdminMiddleware.handle(req, res, next), adminSipRoutes);
   app.use('/api/payments', (req, res, next) => authMiddleware.handle(req, res, next), paymentRoutes);
   app.use("/api/admin", (req, res, next) => authAdminMiddleware.handle(req, res, next), adminRoutes);
-  app.use("/api/user/mutual-funds/sip", (req, res, next) => authMiddleware.handle(req, res, next), mutualFundSipUserRoues)
-  app.use("/api/user/mutual-funds", (req, res, next) => authMiddleware.handle(req, res, next), mutualFundUserRoues)
   app.use("/api/file-upload", fileUploadRoutes);
-  app.use("/api/user/portfolio", (req, res, next) => authMiddleware.handle(req, res, next), userPortfoilo);
+
 };

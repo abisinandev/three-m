@@ -1,4 +1,4 @@
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import stripe from "@infrastructure/providers/stripe/stripe.client";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import { UnauthorizedError, ValidationError } from "@presentation/express/utils/error-handling";
@@ -23,15 +23,15 @@ export class PaymentController {
             const userId = req.user?.id;
 
             if (!userId) {
-                throw new UnauthorizedError(ErrorMessage.UNAUTHORIZED);
+                throw new UnauthorizedError(ErrorMessages.AUTH.UNAUTHORIZED);
             }
 
             if (!amount || amount <= 0) {
-                throw new ValidationError("Invalid amount");
+                throw new ValidationError(ErrorMessages.PAYMENT.INVALID_AMOUNT);
             }
 
             if (amount > 10000) {
-                throw new ValidationError("Transaction amount exceeds the allowed limit of ₹10,000.");
+                throw new ValidationError(ErrorMessages.PAYMENT.LIMIT_EXCEEDED);
             }
 
             const session = await stripe.checkout.sessions.create({
