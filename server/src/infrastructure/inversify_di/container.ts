@@ -7,6 +7,7 @@ import { SipModule } from "./features/sip/sip.module";
 import { PortfolioModule } from "./features/portfolio/portfolio.module";
 import { ExternalModule } from "./features/external/external.module";
 import { ExpenseTrackerModule } from "./features/expense-tracker/expense-tracker.module";
+import { NotificationModules } from "./features/notification/notification.module";
 
 const container = new Container({
   defaultScope: "Singleton",
@@ -22,6 +23,7 @@ container.load(
   PortfolioModule,
   ExternalModule,
   ExpenseTrackerModule,
+  NotificationModules,
 );
 
 export { container };

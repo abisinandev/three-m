@@ -8,6 +8,8 @@ import { NavMontlyScheduler } from "@infrastructure/providers/cron-scheduler/mut
 import { NavYearScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-yearly.scheduler";
 import { NavAllocationScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-allocatation-scheduler";
 import { startSipScheduler } from "@infrastructure/providers/cron-scheduler/sip/sip-process-scheduler";
+import { initSocket } from "@infrastructure/providers/notification/socket";
+import http from "http";
 
 const bootstrap = async () => {
   try {
@@ -21,9 +23,13 @@ const bootstrap = async () => {
     NavAllocationScheduler();
     startSipScheduler();
 
-    app.listen(env.PORT, () => {
+    const server = http.createServer(app);
+    initSocket(server);
+
+    server.listen(env.PORT, () => {
       logger.info(`Server running on PORT: ${env.PORT}`);
-    }); 
+    });
+
   } catch (error) {
     logger.error(`❌ Server startup failed: ${error}`);
     process.exit(1);

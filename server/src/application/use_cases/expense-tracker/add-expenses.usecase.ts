@@ -14,6 +14,8 @@ import { Expense } from "@domain/entities/expense-tracker/value-objects/expense.
 import { Income } from "@domain/entities/expense-tracker/value-objects/income.vo";
 import { IncomeSource } from "@domain/entities/expense-tracker/types/expense-tracker.types";
 import { ErrorMessages } from "@shared/constants/error.messages";
+import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
+import { INotificationService } from "@application/interfaces/services/notification/notification-service.interface";
 
 @injectable()
 export class AddExpensesUseCase implements IAddExpenseUseCase {
@@ -21,6 +23,7 @@ export class AddExpensesUseCase implements IAddExpenseUseCase {
         @inject(EXPENSE_TRACKER_TYPE.ExpenseTrackerRepository) private readonly _expenseTrackerRepository: IExpenseTrackerRepository,
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
+        @inject(NOTIFICATION_TYEPS.SocketNotificationService) private readonly _socketNotifier: INotificationService,
     ) { }
 
     async execute(dto: AddExpenseDTO, userId: string): Promise<void> {
@@ -41,7 +44,7 @@ export class AddExpensesUseCase implements IAddExpenseUseCase {
 
         if (availableBalance < dto.amount) {
             throw new ValidationError(ErrorMessages.EXPENSE_TRACKER.INSUFFICIENT_BALANCE);
-        }
+        };
 
         const newExpense = new Expense({
             amount: dto.amount,
@@ -65,5 +68,12 @@ export class AddExpensesUseCase implements IAddExpenseUseCase {
             });
             await this._expenseTrackerRepository.create(tracker);
         }
+
+        this._socketNotifier.send(
+            userId,
+            {
+                message: "Hello socket is on",
+           }
+        );
     }
 }
