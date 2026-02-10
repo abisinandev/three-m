@@ -53,8 +53,6 @@ export const toDomain = (userDoc: UserDocument): UserEntity => {
     }
   }
 
-  
-
   return UserEntity.reconstitute({
     id: userDoc._id.toString(),
     userCode: userDoc.userCode,

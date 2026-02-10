@@ -14,9 +14,8 @@ const toDomain = (doc: NotificationDocument): NotificationEntity => {
     });
 };
 
-const toPersistance = (entity: NotificationEntity): any => {
-    return {
-        _id: new Types.ObjectId(entity.id),
+const toPersistance = (entity: NotificationEntity): Partial<NotificationDocument> => {
+    const persistence: Partial<NotificationDocument> = {
         userId: new Types.ObjectId(entity.userId),
         type: entity.type,
         title: entity.title,
@@ -24,6 +23,12 @@ const toPersistance = (entity: NotificationEntity): any => {
         read: entity.read,
         createdAt: new Date(entity.createdAt),
     };
+
+    if (Types.ObjectId.isValid(entity.id)) {
+        persistence._id = new Types.ObjectId(entity.id);
+    }
+
+    return persistence;
 };
 
 export const NotificationMapper = {

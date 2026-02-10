@@ -21,6 +21,8 @@
       "@shared/*":["shared/*"],
       "@configs/*":["configs/*"],
       "@lib/*":["lib/*"],
+      "@socket": ["socket/index"],
+      "@socket/*": ["socket/*"],
     },
 
     /* Bundler mode */

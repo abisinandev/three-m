@@ -232,24 +232,24 @@ const ExpenseTracker = () => {
                 </header>
 
                 {/* Top Summary Cards */}
-                <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Income Card */}
+                <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Total Spent Card */}
                     <div className="bg-[#111] rounded-2xl p-6 border border-neutral-800/60 relative overflow-hidden group hover:border-neutral-700 transition-all">
                         <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <Banknote size={80} className="text-blue-500" />
+                            <TrendingDown size={80} className="text-rose-500" />
                         </div>
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-3">
-                                <div className="p-1.5 bg-blue-500/10 rounded-md text-blue-500">
-                                    <TrendingUp size={16} />
+                                <div className="p-1.5 bg-rose-500/10 rounded-md text-rose-500">
+                                    <TrendingDown size={16} />
                                 </div>
-                                <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Monthly Income</span>
+                                <span className="text-xs font-bold text-rose-400 uppercase tracking-wider">Total Spent</span>
                             </div>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-3xl font-bold text-white tracking-tight">{formatCurrency(totalIncome)}</span>
+                                <span className="text-3xl font-bold text-white tracking-tight">{formatCurrency(totalSpent)}</span>
                             </div>
                             <p className="text-xs text-neutral-500 mt-2 font-medium">
-                                Across {incomeSources.length} active sources
+                                Total expenses for the month
                             </p>
                         </div>
                     </div>
@@ -273,6 +273,27 @@ const ExpenseTracker = () => {
                             </div>
                             <p className="text-xs text-neutral-500 mt-2 font-medium">
                                 Left to spend or invest
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Income Card */}
+                    <div className="bg-[#111] rounded-2xl p-6 border border-neutral-800/60 relative overflow-hidden group hover:border-neutral-700 transition-all">
+                        <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <Banknote size={80} className="text-blue-500" />
+                        </div>
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="p-1.5 bg-blue-500/10 rounded-md text-blue-500">
+                                    <TrendingUp size={16} />
+                                </div>
+                                <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Monthly Income</span>
+                            </div>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-3xl font-bold text-white tracking-tight">{formatCurrency(totalIncome)}</span>
+                            </div>
+                            <p className="text-xs text-neutral-500 mt-2 font-medium">
+                                Across {incomeSources.length} active sources
                             </p>
                         </div>
                     </div>

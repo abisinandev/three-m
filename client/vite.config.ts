@@ -8,8 +8,8 @@ export default defineConfig({
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
-      routesDirectory: './src/routes',   
-      generatedRouteTree: './src/routeTree.gen.ts',  
+      routesDirectory: './src/routes',
+      generatedRouteTree: './src/routeTree.gen.ts',
     }),
     react()
   ],
@@ -25,6 +25,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      "@": path.resolve(__dirname, "src"),
+      "@socket": path.resolve(__dirname, "src/socket"),
       "@shared": path.resolve(__dirname, "src/shared"),
       "@modules": path.resolve(__dirname, "src/modules"),
       "@apis": path.resolve(__dirname, "src/apis"),

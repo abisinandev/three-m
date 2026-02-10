@@ -13,20 +13,13 @@ export class NotificationRepository extends BaseRepository<NotificationEntity, N
         super(NotificationModel, NotificationMapper);
     }
 
-    /**
-     * Save a notification
-     */
     async save(notification: NotificationEntity): Promise<NotificationEntity> {
         const persistence = this.mapper.toPersistance(notification);
         const created = await this.model.create(persistence);
         return this.mapper.toDomain(created);
     }
 
-    /**
-     * Mark all notifications as read for a user
-     * Returns number of updated documents
-     */
-    async markAllRead(userId: string): Promise<number> {
+    async markAllRead(userId: string): Promise<number> { 
         const result = await this.model.updateMany(
             { userId, isRead: false },
             { $set: { isRead: true } }
@@ -35,9 +28,6 @@ export class NotificationRepository extends BaseRepository<NotificationEntity, N
         return result.modifiedCount;
     }
 
-    /**
-     * Mark a single notification as read
-     */
     async markAsRead(id: string, userId: string): Promise<void> {
         const result = await this.model.updateOne(
             { _id: id, userId },
@@ -49,9 +39,11 @@ export class NotificationRepository extends BaseRepository<NotificationEntity, N
         }
     }
 
-    /**
-     * Count unread notifications for a user
-     */
+    async findByUser(userId: string): Promise<NotificationEntity[]> {
+        const documents = await this.model.find({ userId }).sort({ createdAt: -1 });
+        return documents.map(doc => this.mapper.toDomain(doc));
+    }
+
     async countUnread(userId: string): Promise<number> {
         return this.model.countDocuments({
             userId,
