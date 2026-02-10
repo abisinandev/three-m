@@ -67,7 +67,7 @@ export class ExpenseTrackerController {
         } catch (error) {
             next(error)
         }
-    }
+    } 
 
     async deleteExpense(req: Request, res: Response, next: NextFunction) {
         try {
