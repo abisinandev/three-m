@@ -31,9 +31,10 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
             message: input.message
         });
 
-        await this.notificationRepository.save(notification);
+        const notfify = await this.notificationRepository.save(notification);
 
         this.notificationService.send(input.userId, {
+            id: notfify.id as string,
             type: input.type,
             title: input.title,
             message: input.message,

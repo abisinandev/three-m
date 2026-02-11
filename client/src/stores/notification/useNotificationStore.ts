@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export interface Notification {
-    _id: string;
+    id: string;
     type: "EXPENSE" | "WALLET" | "SIP";
     title: string;
     message: string;
@@ -28,7 +28,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     markRead: (id) =>
         set((state) => ({
             notifications: state.notifications.map((n) =>
-                n._id === id ? { ...n, read: true } : n
+                n.id === id ? { ...n, read: true } : n
             ),
         })),
     markAllRead: () =>

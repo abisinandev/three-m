@@ -6,9 +6,10 @@ import { Router } from "express";
 
 const router = Router();
 
-const notificationController = container.get<NotificationController>(NOTIFICATION_TYEPS.NotificationController);
+const controller = container.get<NotificationController>(NOTIFICATION_TYEPS.NotificationController);
 
-router.get(NotificationRoutes.DEFUALT, notificationController.getNotifications.bind(notificationController));
-router.patch(NotificationRoutes.MARK_AS_READ, notificationController.markAsRead.bind(notificationController));
+router.get(NotificationRoutes.DEFUALT, controller.getNotifications.bind(controller));
+router.patch(NotificationRoutes.MARK_ALL_READ, controller.markReadAll.bind(controller));
+router.patch(NotificationRoutes.MARK_AS_READ, controller.markAsRead.bind(controller));
 
 export default router;

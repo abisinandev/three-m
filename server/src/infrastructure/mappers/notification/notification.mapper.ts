@@ -24,10 +24,6 @@ const toPersistance = (entity: NotificationEntity): Partial<NotificationDocument
         createdAt: new Date(entity.createdAt),
     };
 
-    if (Types.ObjectId.isValid(entity.id)) {
-        persistence._id = new Types.ObjectId(entity.id);
-    }
-
     return persistence;
 };
 

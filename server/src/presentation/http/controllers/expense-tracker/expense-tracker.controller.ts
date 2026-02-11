@@ -7,11 +7,10 @@ import { EXPENSE_TRACKER_TYPE } from "@infrastructure/inversify_di/features/expe
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
-
 import { IDeleteExpenseUseCase } from "@application/use_cases/expense-tracker/interfaces/delete-expense-usecase.interface";
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { ICreateNotificationUseCase } from "@application/use_cases/notification/interfaces/create-notification-usecase.interface";
-import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
+import { IAnalyticsUseCase } from "@application/use_cases/expense-tracker/interfaces/analytics-usecase.interface";
 
 @injectable()
 export class ExpenseTrackerController {
@@ -20,6 +19,7 @@ export class ExpenseTrackerController {
         @inject(EXPENSE_TRACKER_TYPE.AddIncomeUseCase) private readonly _addIncomeUseCase: IAddIncomeUseCase,
         @inject(EXPENSE_TRACKER_TYPE.AddExpenseUseCase) private readonly _addExpenseUseCase: IAddExpenseUseCase,
         @inject(EXPENSE_TRACKER_TYPE.DeleteExpenseUseCase) private readonly _deleteExpenseUseCase: IDeleteExpenseUseCase,
+        @inject(EXPENSE_TRACKER_TYPE.AnalyticsUseCase) private readonly _analyticsUseCase: IAnalyticsUseCase,
         @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotificationUseCase: ICreateNotificationUseCase,
     ) { }
 
@@ -63,12 +63,6 @@ export class ExpenseTrackerController {
             const dto = { ...req.body }
 
             const result = await this._addExpenseUseCase.execute(dto, userId);
-            await this._createNotificationUseCase.execute({
-                message: "Expense added",
-                title: "Add Expense",
-                type: NotificationType.EXPENSE_TRACKER,
-                userId,
-            });
             return ResponseHelper.success(
                 res,
                 SuccessMessage.OPERATION_SUCCESSFUL,

@@ -13,27 +13,14 @@ import {
     AlertCircle,
     Banknote
 } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 import { ExpenseTrackerData } from '@shared/services/feature/expense-tracker/ExpenseTrackerApi';
 import { useAddExpenseMutation, useDeleteExpenseMutation, useAddIncomeMutation } from '../hooks/useExpenseMutations';
 import { toast } from 'sonner';
 import { Pagination } from '@shared/components/pagination/Pagination';
+import type { Category, InvestmentType, TransactionType } from '../contants/ExpenseTrackerTypes';
 
-
-type TransactionType = 'expense' | 'investment';
-type Category = 'NEED' | 'WANT' | 'INVESTMENT';
-type InvestmentType = 'SIP' | 'MF' | 'STOCK';
-
-interface Transaction {
-    id: string;
-    date: string;
-    category: Category;
-    description: string;
-    amount: number;
-    type: TransactionType;
-    investmentType?: InvestmentType;
-}
 
 const ExpenseTracker = () => {
     const [selectedMonth, setSelectedMonth] = useState('January 2026');
@@ -54,28 +41,30 @@ const ExpenseTracker = () => {
     const { mutate: deleteExpense } = useDeleteExpenseMutation();
     const { mutate: addIncome, isPending: isAddingIncome } = useAddIncomeMutation();
 
-    const { data: DashbpardData } = useQuery({
+    const { data: DashboardData } = useQuery({
         queryKey: ['expense-details'],
         queryFn: () => ExpenseTrackerData()
     });
 
     const availableMonths = ['January 2026', 'February 2026', 'March 2026'];
 
-    const backendExpenses = DashbpardData?.expenses || [];
-    const incomeSources = DashbpardData?.incomeSources || [];
-    const backendInvestments = DashbpardData?.investments || [];
+    const backendExpenses = DashboardData?.expenses || [];
+    const incomeSources = DashboardData?.incomeSources || [];
+    const backendInvestments = DashboardData?.investments || [];
 
-    const totalIncome = DashbpardData?.income || 0;
-    const totalNeeds = DashbpardData?.totalNeeds || 0;
-    const totalWants = DashbpardData?.totalWants || 0;
-    const totalInvested = DashbpardData?.totalInvestedAmount || 0;
-    const currentBalance = DashbpardData?.walletBalance || 0;
+    const totalIncome = DashboardData?.income || 0;
+    const totalNeeds = DashboardData?.totalNeeds || 0;
+    const totalWants = DashboardData?.totalWants || 0;
+    const totalInvested = DashboardData?.totalInvestedAmount || 0;
+    const currentBalance = DashboardData?.walletBalance || 0;
 
-    const needsTarget = DashbpardData?.needsTarget || 0.5;
-    const wantsTarget = DashbpardData?.wantsTarget || 0.3;
-    const savingsTarget = DashbpardData?.savingsTarget || 0.2;
+    const needsTarget = DashboardData?.needsTarget || 0.5;
+    const wantsTarget = DashboardData?.wantsTarget || 0.3;
+    const savingsTarget = DashboardData?.savingsTarget || 0.2;
 
-    const totalSpent = DashbpardData?.totalSpent || 0;
+    const totalSpent = DashboardData?.totalSpent || 0;
+    const totalWantsToIncomeRatio = totalIncome > 0 ? totalWants / totalIncome : 0;
+    const usagePercent = totalIncome > 0 ? (totalSpent / totalIncome) * 100 : 0;
 
     const handleAddExpense = () => {
         if (!amount || !description || !category) {
@@ -84,11 +73,6 @@ const ExpenseTracker = () => {
         }
 
         const expenseAmount = parseFloat(amount);
-        if (expenseAmount > currentBalance) {
-            toast.error("Insufficient wallet balance!");
-            return;
-        }
-
         addExpense({
             amount: expenseAmount,
             category: description,
@@ -139,7 +123,12 @@ const ExpenseTracker = () => {
 
     const chartData = [
         { name: 'Needs', value: totalNeeds, color: '#3B82F6' },
-        { name: 'Wants', value: totalWants, color: '#F59E0B' },
+        {
+            name: 'Wants',
+            value: totalWants,
+            color: totalWantsToIncomeRatio > 0.3 ? '#EF4444' : '#F59E0B',
+            warning: totalWantsToIncomeRatio > 0.3 ? 'Exceeds recommended 30%' : null
+        },
         { name: 'Savings', value: totalInvested, color: '#10B981' },
     ];
 
@@ -231,6 +220,33 @@ const ExpenseTracker = () => {
                     </div>
                 </header>
 
+                {/* Budget Banner */}
+                {usagePercent >= 80 && (
+                    <div className={`
+                        animate-in slide-in-from-top duration-500
+                        flex items-center gap-4 px-6 py-4 rounded-2xl border mb-6
+                        ${usagePercent >= 100
+                            ? 'bg-rose-500/5 border-rose-500/20 text-rose-400 shadow-[0_4px_20px_rgba(244,63,94,0.1)]'
+                            : 'bg-amber-500/5 border-amber-500/20 text-amber-400 shadow-[0_4px_20px_rgba(245,158,11,0.1)]'}
+                    `}>
+                        <div className={`p-2.5 rounded-xl flex-shrink-0 ${usagePercent >= 100 ? 'bg-rose-500/10' : 'bg-amber-500/10'}`}>
+                            <AlertCircle size={20} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <h4 className="text-sm font-bold text-white tracking-tight">
+                                {usagePercent >= 100
+                                    ? `Budget Exceeded by ${formatCurrency(totalSpent - totalIncome)}`
+                                    : 'Budget Threshold Warning'}
+                            </h4>
+                            <p className="text-xs font-medium opacity-80 mt-0.5 truncate">
+                                {usagePercent >= 100
+                                    ? `You’ve exceeded your monthly budget. Consider adjusting your spending.`
+                                    : `You’ve used ${Math.round(usagePercent)}% of your monthly budget.`}
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {/* Top Summary Cards */}
                 <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Total Spent Card */}
@@ -271,14 +287,16 @@ const ExpenseTracker = () => {
                                     {formatCurrency(currentBalance)}
                                 </span>
                             </div>
-                            <p className="text-xs text-neutral-500 mt-2 font-medium">
-                                Left to spend or invest
+                            <p className={`text-xs mt-2 font-bold ${currentBalance < 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                                {currentBalance < 0
+                                    ? `Remaining Budget: -${formatCurrency(Math.abs(currentBalance))}`
+                                    : "You are on track this month."}
                             </p>
                         </div>
                     </div>
 
                     {/* Income Card */}
-                    <div className="bg-[#111] rounded-2xl p-6 border border-neutral-800/60 relative overflow-hidden group hover:border-neutral-700 transition-all">
+                    <div className={`rounded-2xl p-6 border transition-all duration-500 relative overflow-hidden group ${usagePercent >= 100 ? 'bg-rose-500/5 border-rose-500/30 shadow-[0_0_20px_rgba(244,63,94,0.15)]' : 'bg-[#111] border-neutral-800/60 hover:border-neutral-700'}`}>
                         <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Banknote size={80} className="text-blue-500" />
                         </div>
@@ -295,6 +313,30 @@ const ExpenseTracker = () => {
                             <p className="text-xs text-neutral-500 mt-2 font-medium">
                                 Across {incomeSources.length} active sources
                             </p>
+
+                            {/* Budget Progress Bar */}
+                            <div className="mt-5 space-y-2">
+                                <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
+                                    <span className="text-neutral-500">Budget Usage</span>
+                                    <span className={usagePercent >= 100 ? 'text-rose-500' : usagePercent >= 70 ? 'text-amber-500' : 'text-emerald-500'}>
+                                        {Math.round(usagePercent)}%
+                                    </span>
+                                </div>
+                                <div className="h-1.5 w-full bg-neutral-800 rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full transition-all duration-1000 ease-out rounded-full ${usagePercent >= 100 ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]' :
+                                            usagePercent >= 70 ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]' :
+                                                'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]'
+                                            }`}
+                                        style={{ width: `${Math.min(100, usagePercent)}%` }}
+                                    ></div>
+                                </div>
+                                {usagePercent > 100 && (
+                                    <p className="text-[10px] text-rose-500 font-bold uppercase tracking-tight text-right animate-pulse mt-2">
+                                        Exceeded by {formatCurrency(totalSpent - totalIncome)}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -328,9 +370,22 @@ const ExpenseTracker = () => {
                                         {activeChartData.length === 0 && <Cell fill="#1a1a1a" />}
                                     </Pie>
                                     <Tooltip
-                                        contentStyle={{ backgroundColor: '#000', borderColor: '#333', borderRadius: '8px', padding: '8px 12px' }}
-                                        itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
-                                        formatter={(val: number | undefined) => formatCurrency(val)}
+                                        contentStyle={{ backgroundColor: '#000', borderColor: '#333', borderRadius: '12px', padding: '12px', border: '1px solid #222' }}
+                                        itemStyle={{ fontSize: '11px', fontWeight: 'bold' }}
+                                        cursor={{ fill: 'transparent' }}
+                                        formatter={(val: number | undefined, name?: string, props?: any) => {
+                                            const formatted = formatCurrency(val);
+                                            if (props?.payload?.warning) {
+                                                return [
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="text-white">{formatted}</span>
+                                                        <span className="text-rose-500 text-[10px] font-bold uppercase tracking-tight">{props.payload.warning}</span>
+                                                    </div>,
+                                                    name || ''
+                                                ];
+                                            }
+                                            return [formatted, name || ''];
+                                        }}
                                     />
                                 </PieChart>
                             </ResponsiveContainer>

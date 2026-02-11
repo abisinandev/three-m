@@ -63,20 +63,22 @@ export class ExpenseTrackerUseCase implements IExpenseTrackerUseCase {
         const totalNeeds = tracker ? tracker.expenseSummary.totalNeedsSpent : 0;
         const totalWants = tracker ? tracker.expenseSummary.totalWantsSpent : 0;
 
-        const totalSpent = totalNeeds + totalWants + (totalInvestment || 0);
-        const currentMonthBalance = totalIncome - totalSpent;
+        const totalExpense = totalNeeds + totalWants;
+        const totalSpent = totalExpense;
+        const totalOutflow = totalExpense + (totalInvestment || 0);
+        const totalInvestmentAmount = totalInvestment || 0;
+        const currentMonthBalance = totalIncome - totalExpense;
 
-        const savingsGap = savingsTarget - (totalInvestment || 0);
-        const isSavingsGoalMet = (totalInvestment || 0) >= savingsTarget;
+        const savingsGap = savingsTarget - totalInvestmentAmount;
+        const isSavingsGoalMet = totalInvestmentAmount >= savingsTarget;
 
         return {
             walletBalance: wallet?.balance,
             income: totalIncome,
             incomeSources,
-            sipInvestedAmount: 0,
             mutualFundInvestedAmount: totalInvestment,
-            stocks: 0,
-            totalInvestedAmount: totalInvestment,
+            totalInvestedAmount: totalInvestmentAmount,
+            totalOutflow,
             investments,
             expenses,
             totalNeeds,

@@ -51,11 +51,11 @@ export function NewsCard({ news }: { news: MarketNews }) {
         <div className="group block mb-6 px-4 sm:px-0">
             <div className="relative overflow-hidden rounded-xl border border-[#2D2D2D] bg-black transition-all duration-300 hover:border-[#404040] hover:shadow-[0_0_20px_rgba(0,0,0,0.5)]">
                 <div className="flex flex-col md:flex-row h-full">
-                    <div className="relative w-full md:w-64 h-48 md:h-auto overflow-hidden bg-[#0A0A0A]">
+                    <div className="relative w-full md:w-64 h-48 md:h-60 flex-shrink-0 overflow-hidden bg-[#0A0A0A]">
                         <img
                             src={news.image || "/placeholder-news.jpg"}
                             alt={news.title}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                             onError={(e) => {
                                 (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1611974714652-96048a9fbc75?auto=format&fit=crop&q=80&w=800";
                             }}

@@ -27,10 +27,9 @@ export interface ExpenseTrackerDTO {
     income: number;
     incomeSources: IncomeSourceDTO[];
     investments: InvestmentDTO[];
-    sipInvestedAmount: number;
     mutualFundInvestedAmount: number;
-    stocks: number;
     totalInvestedAmount: number;
+    totalOutflow: number;
     expenses?: ExpenseDTO[];
     totalNeeds?: number;
     totalWants?: number;

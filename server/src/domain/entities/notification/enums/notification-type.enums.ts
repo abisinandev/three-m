@@ -3,4 +3,6 @@ export enum NotificationType {
     WALLET = "WALLET",
     SIP = "SIP",
     MUTUAL_FUND = "MUTUAL_FUND",
+    INFO = "INFO",
+    WARNING = "WARNING",
 }

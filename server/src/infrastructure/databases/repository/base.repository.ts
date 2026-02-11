@@ -16,46 +16,61 @@ export abstract class BaseRepository<TDomain, TDocument>
     if (session) {
       await this.model.create([data], { session });
     } else {
-      console.log(data,'invesmtnee')
+      console.log(data, 'invesmtnee')
       await this.model.create(data);
     }
   }
 
-  async findById(id: string): Promise<TDomain | null> {
+  async findById(id: string, session?: ClientSession): Promise<TDomain | null> {
     const doc = await this.model.findById(id).exec();
     return doc ? this.mapper.toDomain(doc) : null;
   }
 
-  async findOne(data: Partial<TDomain>): Promise<TDomain | null> {
-    const doc = await this.model.findOne(data).exec();
+  async findOne(data: Partial<TDomain>, session?: ClientSession): Promise<TDomain | null> {
+
+    const query = this.model.findOne(data as any);
+    if (session) query.session(session);
+
+    const doc = await query.exec();
     return doc ? this.mapper.toDomain(doc) : null;
   }
 
-  async findAll(): Promise<TDomain[]> {
-    const docs = await this.model.find().sort({ createdAt: -1 }).exec();
+  async findAll(session?: ClientSession): Promise<TDomain[]> {
+    const query = this.model.find().sort({ createdAt: -1 });
+    if (session) query.session(session);
+
+    const docs = await query.exec();
     return Promise.all(docs.map((doc) => this.mapper.toDomain(doc)));
   }
 
-  async count(): Promise<{ totalCount: number }> {
-    const totalCount = await this.model.countDocuments();
+  async count(session?: ClientSession): Promise<{ totalCount: number }> {
+    const query = this.model.countDocuments();
+    if (session) query.session(session);
+
+    const totalCount = await query.exec();
     return { totalCount };
   }
 
-  async update(id: string, update: Partial<TDomain>): Promise<TDomain | null> {
-    const mappedUpdate = this.mapper.toPersistance(update as TDomain);
+  async update(id: string, update: Partial<TDomain>, session?: ClientSession): Promise<TDomain | null> {
 
+    const mappedUpdate = this.mapper.toPersistance(update as TDomain);
     const updateQuery: UpdateQuery<TDocument> = {
       $set: mappedUpdate,
     };
 
-    const doc = await this.model.findByIdAndUpdate(id, updateQuery, {
-      new: true,
-    });
+    const doc = await this.model.findByIdAndUpdate(
+      id,
+      updateQuery,
+      {
+        new: true,
+        session,
+      }
+    );
 
     return doc ? this.mapper.toDomain(doc) : null;
   }
 
-  async delete(id: string): Promise<void> {
-    await this.model.findByIdAndDelete(id);
+  async delete(id: string, session?: ClientSession): Promise<void> {
+    await this.model.findByIdAndDelete(id, { session });
   }
 }

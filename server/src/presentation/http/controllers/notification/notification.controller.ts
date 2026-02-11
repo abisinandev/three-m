@@ -15,11 +15,27 @@ export class NotificationController {
     async getNotifications(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.user?.id as string;
-            const notifications = await this.notificationRepository.findByUser(userId);
+            const unreadOnly = req.query.filter === 'unread';
+            const notifications = await this.notificationRepository.findByUser(userId, unreadOnly);
             return ResponseHelper.success(
                 res,
                 SuccessMessages.DATA.FETCHED,
                 notifications,
+                HttpStatus.OK
+            )
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async markReadAll(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.id as string;
+            await this.notificationRepository.markAllRead(userId);
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.NOTIFICATION.MARK_AS_READ,
+                null,
                 HttpStatus.OK
             )
         } catch (error) {

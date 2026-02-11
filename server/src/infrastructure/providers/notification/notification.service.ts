@@ -6,6 +6,7 @@ import { INotificationService, NotificationPayload } from "@application/interfac
 export class NotificationService implements INotificationService {
   send(userId: string, payload: NotificationPayload): void {
     emitNotificationToUser(userId, {
+      id: payload.id,
       type: payload.type,
       title: payload.title,
       message: payload.message,

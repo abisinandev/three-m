@@ -25,7 +25,7 @@ const App = () => {
     );
 
     useEffect(() => {
-        getNotifications().then(getNotifications).catch(console.error);
+        getNotifications().then(setNotifications).catch(console.error);
 
         socket.on("notification", (data) => {
             addNotification(data);
