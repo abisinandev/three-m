@@ -4,7 +4,7 @@ import cron from 'node-cron'
 
 let isRunning = false;
 
-export const startSipScheduler = () => {
+export const StartSipScheduler = () => {
     cron.schedule(
         "0 6,9 * * * *",
         // "* * * * * * *",

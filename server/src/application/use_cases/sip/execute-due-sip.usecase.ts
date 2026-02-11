@@ -18,11 +18,11 @@ import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
-import { IInternalTransactionVerificationService } from "@application/interfaces/services/externals/internal-transaction-verify.interface";
+// import { IInternalTransactionVerificationService } from "@application/interfaces/services/externals/internal-transaction-verify.interface";
 import mongoose from "mongoose";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
-import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
+// import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 
 @injectable() 
 export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
@@ -33,7 +33,8 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualfundRepo: IMutualFundRepository,
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
-        @inject(EXTERNAL_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService
+        // @inject(EXTERNAL_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService
+        @
     ) { }
 
     async execute(): Promise<void> {
@@ -103,8 +104,7 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 await this._sipInstallmentRepository.create(nextInstallment, session);
             }
 
-
-            // await this._internalTransactionVerify.verify(transaction.id as string);
+            // await this._internalTransactionVerify.verify(transaction.id as string);📌
 
         } catch (error) {
             await session.abortTransaction();

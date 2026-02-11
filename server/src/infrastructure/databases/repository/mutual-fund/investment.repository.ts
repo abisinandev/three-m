@@ -258,63 +258,7 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
     }
 
 
-    // async findInvestmentsByUser(userId: string): Promise<InvestmentEntity[]> {
-
-    //     const docs = await this.model.aggregate([
-    //         {
-    //             $match: {
-    //                 userId: new Types.ObjectId(userId),
-    //             },
-    //         },
-
-    //         {
-    //             $lookup: {
-    //                 from: "investments",
-    //                 localField: "schemeCode",
-    //                 foreignField: "schemeCode",
-    //                 as: "investment",
-    //             },
-    //         },
-
-    //         {
-    //             $unwind: {
-    //                 path: "$investment",
-    //                 preserveNullAndEmptyArrays: true,
-    //             },
-    //         },
-
-    //         {
-    //             $project: {
-    //                 _id: 1,
-    //                 userId: 1,
-    //                 schemeCode: 1,
-    //                 amount: 1,
-    //                 units: 1,
-    //                 nav: 1,
-    //                 navDate: 1,
-    //                 remainingUnits: 1,
-    //                 redeemedUnits: 1,
-    //                 redeemedAmount: 1,
-    //                 status: 1,
-    //                 investmentType: 1,
-    //                 paymentMethod: 1,
-    //                 createdAt: 1,
-
-    //                 schemeName: "$investment.schemeName",
-    //                 fundHouse: "$investment.fundHouse",
-    //                 category: "$investment.category",
-    //             },
-    //         },
-    //     ]);
-
-    //     return docs.map(doc => this.mapper.toDomain(doc));
-    // }
-
-
-
-    async findGroupedInvestmentsByUser(
-        userId: string
-    ): Promise<GroupedSchemeInvestments[]> {
+    async findGroupedInvestmentsByUser(userId: string): Promise<GroupedSchemeInvestments[]> {
 
         const docs = await this.model.aggregate([
             {
@@ -422,13 +366,4 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         return result.length > 0 ? result[0].count : 0;
     }
 
-    // async getetUserTotalInvestments(userId: string): Promise<number> {
-    //     const result = await this.model.aggregate([
-    //         {
-    //             $group: {
-    //                 _id: "$userId",
-    //                 totalInvestments: {$sum:{}}
-    //         }}
-    //     ]);
-    // }
 }

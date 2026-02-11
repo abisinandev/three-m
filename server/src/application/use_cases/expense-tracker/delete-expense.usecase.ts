@@ -15,11 +15,8 @@ export class DeleteExpenseUseCase implements IDeleteExpenseUseCase {
         const currentMonth = new Date().toISOString().slice(0, 7);
 
         const tracker = await this._expenseTrackerRepository.findOne({ userId, month: currentMonth });
+        if (!tracker) throw new NotFoundError(ErrorMessage.DATA_NOT_FOUND);
 
-        if (!tracker) {
-            throw new NotFoundError(ErrorMessage.DATA_NOT_FOUND);
-        }
-        
         tracker.removeExpenseAt(expenseIndex);
         await this._expenseTrackerRepository.update(tracker.id as string, tracker);
     }

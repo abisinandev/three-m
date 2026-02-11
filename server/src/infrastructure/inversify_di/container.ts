@@ -8,6 +8,7 @@ import { PortfolioModule } from "./features/portfolio/portfolio.module";
 import { ExternalModule } from "./features/external/external.module";
 import { ExpenseTrackerModule } from "./features/expense-tracker/expense-tracker.module";
 import { NotificationModules } from "./features/notification/notification.module";
+import { MarketNewsModules } from "./features/market-news/market-news.module";
 
 const container = new Container({
   defaultScope: "Singleton",
@@ -24,6 +25,7 @@ container.load(
   ExternalModule,
   ExpenseTrackerModule,
   NotificationModules,
+  MarketNewsModules,
 );
 
 export { container };

@@ -19,8 +19,8 @@ export class ExpenseTrackerUseCase implements IExpenseTrackerUseCase {
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
     ) { }
 
-    async execute(userId: string): Promise<ExpenseTrackerDTO> {
-        const currentMonth = new Date().toISOString().slice(0, 7);
+    async execute(userId: string, month?: string): Promise<ExpenseTrackerDTO> {
+        const currentMonth = month || new Date().toISOString().slice(0, 7);
 
         const tracker = await this._expenseTrackerRepository.findOne({ userId, month: currentMonth });
         const wallet = await this._walletRepository.findByUserId(userId);
@@ -63,20 +63,22 @@ export class ExpenseTrackerUseCase implements IExpenseTrackerUseCase {
         const totalNeeds = tracker ? tracker.expenseSummary.totalNeedsSpent : 0;
         const totalWants = tracker ? tracker.expenseSummary.totalWantsSpent : 0;
 
-        const totalSpent = totalNeeds + totalWants + (totalInvestment || 0);
-        const currentMonthBalance = totalIncome - totalSpent;
+        const totalExpense = totalNeeds + totalWants;
+        const totalSpent = totalExpense;
+        const totalOutflow = totalExpense + (totalInvestment || 0);
+        const totalInvestmentAmount = totalInvestment || 0;
+        const currentMonthBalance = totalIncome - totalExpense;
 
-        const savingsGap = savingsTarget - (totalInvestment || 0);
-        const isSavingsGoalMet = (totalInvestment || 0) >= savingsTarget;
+        const savingsGap = savingsTarget - totalInvestmentAmount;
+        const isSavingsGoalMet = totalInvestmentAmount >= savingsTarget;
 
         return {
             walletBalance: wallet?.balance,
             income: totalIncome,
             incomeSources,
-            sipInvestedAmount: 0,
             mutualFundInvestedAmount: totalInvestment,
-            stocks: 0,
-            totalInvestedAmount: totalInvestment,
+            totalInvestedAmount: totalInvestmentAmount,
+            totalOutflow,
             investments,
             expenses,
             totalNeeds,

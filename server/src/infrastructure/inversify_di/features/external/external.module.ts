@@ -9,6 +9,8 @@ import { ISignatureUploadUseCase } from "@application/use_cases/user/interfaces/
 import { ISystemVerifyTransactionUseCase } from "@application/use_cases/admin/interfaces/system-verify-transaction.interface";
 import { IHttpClient } from "@application/interfaces/services/externals/http-client-interface";
 import { IStorageProvider } from "@application/interfaces/services/externals/storage-provider.interface";
+import { ICacheProvider } from "@application/interfaces/services/externals/redis-cache.provider.interface";
+import { RedisCacheProvider } from "@infrastructure/providers/redis/redis-cache.provider";
 
 
 export const ExternalModule = new ContainerModule(({ bind }) => {
@@ -20,4 +22,5 @@ export const ExternalModule = new ContainerModule(({ bind }) => {
     bind<IHttpClient>(EXTERNAL_TYPES.HttpClient).to(AxiosHttpClient);
     bind<IStorageProvider>(EXTERNAL_TYPES.CloudinaryStorageProvider).to(CloudinaryStorageProvider);
     bind<InternalTransactionVerificationService>(EXTERNAL_TYPES.InternalTransactionVerificationService).to(InternalTransactionVerificationService);
+    bind<ICacheProvider>(EXTERNAL_TYPES.RedisCacheProvider).to(RedisCacheProvider);
 });

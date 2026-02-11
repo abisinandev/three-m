@@ -7,15 +7,15 @@ import { Wallet, ChevronDown, LogOut, User, Menu, Bell } from 'lucide-react';
 import { Footer } from '@shared/components/LandingPage/Footer';
 import { LOGOUT } from '@shared/constants/userContants';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
+import { NotificationDropdown } from '@shared/components/notification/NotificationDropdown';
 import { useProfileQuery } from '@shared/services/user/ProfileApi';
 
 const UserLayout = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
-    const { setUser } = useUserStore()
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const { user, logout } = useUserStore();
+    const { user, logout, setUser } = useUserStore();
     const navigate = useNavigate();
 
     const { data } = useProfileQuery()
@@ -73,7 +73,7 @@ const UserLayout = () => {
                             { to: '/user/mutual-funds', label: 'Mutual Funds' },
                             { to: '/user/algo', label: 'Algo trading' },
                             { to: '/user/portfolio', label: 'Portfolio' },
-                            { to: '/user/news', label: "News" },
+                            { to: '/user/market-news', label: "News" },
                             { to: '/user/ai-bot', label: "AI bot" }
                         ].map((item) => (
                             <Link
@@ -95,15 +95,9 @@ const UserLayout = () => {
                             <Wallet className="w-3.5 h-3.5 text-[#22C55E]" />
                             <span>₹1,24,500</span>
                         </div>
-                        <button className="relative p-2 rounded-lg hover:bg-[#1a1a1a] transition-colors group">
-                            <Bell className="w-4.5 h-4.5 text-gray-400 group-hover:text-gray-200 transition" />
 
-                            <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-[#0f0f0f]">
-                                3
-                            </span>
+                        <NotificationDropdown />
 
-                            <span className="absolute inset-0 rounded-lg ring-2 ring-transparent group-hover:ring-[#22C55E]/20 transition-all" />
-                        </button>
                         <div className="relative" ref={dropdownRef}>
                             <button
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}

@@ -42,4 +42,5 @@ export class ExpenseTrackerRepository extends BaseRepository<ExpenseTrackerEntit
 
         return this.mapper.toDomain(updatedDoc);
     }
+
 }

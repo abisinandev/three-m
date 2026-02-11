@@ -4,3 +4,4 @@ export * from './common.routes';
 export * from './expense.routes';
 export * from './portfolio.routes';
 export * from './user.routes';
+export * from './notification.routes';

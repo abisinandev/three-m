@@ -15,6 +15,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminAuthRouteRouteImport } from './routes/_admin-auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserProfileRouteImport } from './routes/user/profile'
+import { Route as UserMarketNewsRouteImport } from './routes/user/market-news'
 import { Route as UserKycVerificationRouteImport } from './routes/user/kyc-verification'
 import { Route as UserHomeRouteImport } from './routes/user/home'
 import { Route as UserExpenseTrackerRouteImport } from './routes/user/expense-tracker'
@@ -74,6 +75,11 @@ const IndexRoute = IndexRouteImport.update({
 const UserProfileRoute = UserProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserMarketNewsRoute = UserMarketNewsRouteImport.update({
+  id: '/market-news',
+  path: '/market-news',
   getParentRoute: () => UserRoute,
 } as any)
 const UserKycVerificationRoute = UserKycVerificationRouteImport.update({
@@ -258,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/user/expense-tracker': typeof UserExpenseTrackerRoute
   '/user/home': typeof UserHomeRoute
   '/user/kyc-verification': typeof UserKycVerificationRoute
+  '/user/market-news': typeof UserMarketNewsRoute
   '/user/profile': typeof UserProfileRoute
   '/admin/add-new-fund': typeof AdminMutualFundAddNewFundRoute
   '/admin/mutual-funds-management': typeof AdminMutualFundMutualFundsManagementRoute
@@ -296,6 +303,7 @@ export interface FileRoutesByTo {
   '/user/expense-tracker': typeof UserExpenseTrackerRoute
   '/user/home': typeof UserHomeRoute
   '/user/kyc-verification': typeof UserKycVerificationRoute
+  '/user/market-news': typeof UserMarketNewsRoute
   '/user/profile': typeof UserProfileRoute
   '/admin/add-new-fund': typeof AdminMutualFundAddNewFundRoute
   '/admin/mutual-funds-management': typeof AdminMutualFundMutualFundsManagementRoute
@@ -336,6 +344,7 @@ export interface FileRoutesById {
   '/user/expense-tracker': typeof UserExpenseTrackerRoute
   '/user/home': typeof UserHomeRoute
   '/user/kyc-verification': typeof UserKycVerificationRoute
+  '/user/market-news': typeof UserMarketNewsRoute
   '/user/profile': typeof UserProfileRoute
   '/admin/_mutual-fund/add-new-fund': typeof AdminMutualFundAddNewFundRoute
   '/admin/_mutual-fund/mutual-funds-management': typeof AdminMutualFundMutualFundsManagementRoute
@@ -376,6 +385,7 @@ export interface FileRouteTypes {
     | '/user/expense-tracker'
     | '/user/home'
     | '/user/kyc-verification'
+    | '/user/market-news'
     | '/user/profile'
     | '/admin/add-new-fund'
     | '/admin/mutual-funds-management'
@@ -414,6 +424,7 @@ export interface FileRouteTypes {
     | '/user/expense-tracker'
     | '/user/home'
     | '/user/kyc-verification'
+    | '/user/market-news'
     | '/user/profile'
     | '/admin/add-new-fund'
     | '/admin/mutual-funds-management'
@@ -453,6 +464,7 @@ export interface FileRouteTypes {
     | '/user/expense-tracker'
     | '/user/home'
     | '/user/kyc-verification'
+    | '/user/market-news'
     | '/user/profile'
     | '/admin/_mutual-fund/add-new-fund'
     | '/admin/_mutual-fund/mutual-funds-management'
@@ -526,6 +538,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/user/profile'
       preLoaderRoute: typeof UserProfileRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/market-news': {
+      id: '/user/market-news'
+      path: '/market-news'
+      fullPath: '/user/market-news'
+      preLoaderRoute: typeof UserMarketNewsRouteImport
       parentRoute: typeof UserRoute
     }
     '/user/kyc-verification': {
@@ -819,6 +838,7 @@ interface UserRouteChildren {
   UserExpenseTrackerRoute: typeof UserExpenseTrackerRoute
   UserHomeRoute: typeof UserHomeRoute
   UserKycVerificationRoute: typeof UserKycVerificationRoute
+  UserMarketNewsRoute: typeof UserMarketNewsRoute
   UserProfileRoute: typeof UserProfileRoute
   UserPaymentPaymentFailedRoute: typeof UserPaymentPaymentFailedRoute
   UserPaymentPaymentSuccessRoute: typeof UserPaymentPaymentSuccessRoute
@@ -835,6 +855,7 @@ const UserRouteChildren: UserRouteChildren = {
   UserExpenseTrackerRoute: UserExpenseTrackerRoute,
   UserHomeRoute: UserHomeRoute,
   UserKycVerificationRoute: UserKycVerificationRoute,
+  UserMarketNewsRoute: UserMarketNewsRoute,
   UserProfileRoute: UserProfileRoute,
   UserPaymentPaymentFailedRoute: UserPaymentPaymentFailedRoute,
   UserPaymentPaymentSuccessRoute: UserPaymentPaymentSuccessRoute,

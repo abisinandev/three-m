@@ -1,4 +1,6 @@
 export const NOTIFICATION_TYEPS = {
-    SocketNotificationService: Symbol.for("SocketNotificationService"),
+    NotificationService: Symbol.for("NotificationService"),
     NotificationController: Symbol.for("NotificationController"),
-}
+    CreateNotificationUseCase: Symbol.for("CreateNotificationUseCase"),
+    NotificationRepository: Symbol.for("NotificationRepository"),
+};

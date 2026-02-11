@@ -10,7 +10,7 @@ const notificationSchema = new Schema<NotificationDocument>({
     type: {
         type: String,
         required: true,
-        enum: ["EXPENSE", "WALLET", "SIP"],
+        enum: ["EXPENSE", "WALLET", "SIP", "MUTUAL_FUND", "INFO", "WARNING"],
     },
     title: {
         type: String,

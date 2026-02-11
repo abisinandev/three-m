@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 import { NotificationType } from "./enums/notification-type.enums";
 
 export class NotificationEntity {
-    private readonly _id: string;
+    private readonly _id?: string;
     private readonly _userId: string;
     private readonly _type: NotificationType;
     private readonly _title: string;
@@ -11,7 +11,7 @@ export class NotificationEntity {
     private readonly _createdAt: string;
 
     private constructor(props: {
-        id: string;
+        id?: string;
         userId: string;
         type: NotificationType;
         title?: string;
@@ -35,12 +35,11 @@ export class NotificationEntity {
         message: string;
     }): NotificationEntity {
         return new NotificationEntity({
-            id: randomUUID(),
             userId: props.userId,
             type: props.type,
             title: props.title,
             message: props.message,
-            read: false,
+            read: false, 
             createdAt: new Date().toISOString(),
         });
     }
@@ -84,4 +83,16 @@ export class NotificationEntity {
     get createdAt() {
         return this._createdAt;
     }
+
+    // toJSON() {
+    //     return {
+    //         id: this._id,
+    //         userId: this._userId,
+    //         type: this._type,
+    //         title: this._title,
+    //         message: this._message,
+    //         read: this._read,
+    //         createdAt: this._createdAt,
+    //     };
+    // }
 }
