@@ -10,15 +10,16 @@ export class AnalyticsUseCase implements IAnalyticsUseCase {
         @inject(EXPENSE_TRACKER_TYPE.ExpenseTrackerRepository) private readonly _expenseTrackerRepository: IExpenseTrackerRepository,
     ) { }
 
-    async execute(userId: string): Promise<AnalyticsResponseDTO> {
-        const now = new Date();
-        const currentMonthStr = now.toISOString().slice(0, 7);
+    async execute(userId: string, month?: string): Promise<AnalyticsResponseDTO> {
+        const targetMonth = month || new Date().toISOString().slice(0, 7);
+        const [year, monthNum] = targetMonth.split('-').map(Number);
 
-        const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const targetMonthDate = new Date(year, monthNum - 1, 1);
+        const lastMonthDate = new Date(year, monthNum - 2, 1);
         const lastMonthStr = lastMonthDate.toISOString().slice(0, 7);
 
         const [currentTracker, lastTracker] = await Promise.all([
-            this._expenseTrackerRepository.findOne({ userId, month: currentMonthStr }),
+            this._expenseTrackerRepository.findOne({ userId, month: targetMonth }),
             this._expenseTrackerRepository.findOne({ userId, month: lastMonthStr })
         ]);
 
@@ -28,7 +29,6 @@ export class AnalyticsUseCase implements IAnalyticsUseCase {
         const difference = thisMonthTotal - lastMonthTotal;
         const percentageChange = lastMonthTotal > 0 ? (difference / lastMonthTotal) * 100 : 0;
 
-        // Category Comparison (Top 5 categories from this month vs last month)
         const categoryMap: Map<string, { thisMonth: number, lastMonth: number }> = new Map();
 
         currentTracker?.expenses.forEach(exp => {
@@ -50,9 +50,8 @@ export class AnalyticsUseCase implements IAnalyticsUseCase {
             .sort((a, b) => b.thisMonth - a.thisMonth)
             .slice(0, 5);
 
-        // Spending Trend (Daily breakdown)
         const spendingTrend: SpendingTrend[] = [];
-        const daysInMonth = 31; // Simplified for comparison
+        const daysInMonth = 31;
 
         for (let i = 1; i <= daysInMonth; i++) {
             let thisMonthDay = 0;
@@ -69,24 +68,40 @@ export class AnalyticsUseCase implements IAnalyticsUseCase {
             spendingTrend.push({ day: i, thisMonth: thisMonthDay, lastMonth: lastMonthDay });
         }
 
-        // Insights
         const insights: { type: 'info' | 'warning' | 'success', text: string }[] = [];
-        if (difference < 0) {
-            insights.push({ type: 'success', text: `You reduced overall spending by ${Math.abs(Math.round(percentageChange))}% compared to last month.` });
-        } else if (difference > 0 && lastMonthTotal > 0) {
-            insights.push({ type: 'warning', text: `Spending increased by ₹${difference.toLocaleString('en-IN')} this month.` });
+
+        // 1. Spend Growth Detection
+        if (percentageChange > 15) {
+            insights.push({ type: 'warning', text: `Spending growth is high (${Math.round(percentageChange)}% increase). Review your budget.` });
         }
 
-        // Top category insight
-        if (categoryComparison.length > 0) {
-            const topCat = categoryComparison[0];
-            if (topCat.thisMonth > topCat.lastMonth && topCat.lastMonth > 0) {
-                insights.push({ type: 'info', text: `${topCat.name} spending increased by ₹${(topCat.thisMonth - topCat.lastMonth).toLocaleString('en-IN')} vs last month.` });
+        // 2. Category Spike Detection
+        const categorySpike = [...categoryComparison].sort((a, b) => (b.thisMonth - b.lastMonth) - (a.thisMonth - a.lastMonth))[0];
+        if (categorySpike && categorySpike.thisMonth > categorySpike.lastMonth && categorySpike.lastMonth > 0) {
+            const increase = categorySpike.thisMonth - categorySpike.lastMonth;
+            const percent = Math.round((increase / categorySpike.lastMonth) * 100);
+            insights.push({ type: 'info', text: `Biggest increase: ${categorySpike.name} +₹${increase.toLocaleString('en-IN')} (${percent}%).` });
+        }
+
+        // 3. Savings Rate Improvement
+        if (currentTracker && lastTracker && currentTracker.totalIncome > 0 && lastTracker.totalIncome > 0) {
+            const currentSavingsRate = (currentTracker.totalIncome - thisMonthTotal) / currentTracker.totalIncome;
+            const lastSavingsRate = (lastTracker.totalIncome - lastMonthTotal) / lastTracker.totalIncome;
+            if (currentSavingsRate > lastSavingsRate) {
+                const improvement = Math.round((currentSavingsRate - lastSavingsRate) * 100);
+                if (improvement > 0) insights.push({ type: 'success', text: `Savings rate improved by ${improvement}% this month.` });
             }
         }
 
-        // Financial Health Score (Simulated logic based on budget and trends)
-        let healthScore = 75; // Base score
+        // 4. Budget Balanced
+        if (insights.length < 3 && percentageChange < 5 && percentageChange > -5 && thisMonthTotal > 0) {
+            insights.push({ type: 'success', text: "You are maintaining balanced spending this month." });
+        }
+
+        // Limit to 3 insights
+        const finalInsights = insights.slice(0, 3);
+
+        let healthScore = 75; 
         if (percentageChange < 0) healthScore += 10;
         if (percentageChange > 20) healthScore -= 15;
         if (currentTracker && currentTracker.totalIncome > 0) {
@@ -105,7 +120,7 @@ export class AnalyticsUseCase implements IAnalyticsUseCase {
             },
             categoryComparison,
             spendingTrend,
-            insights,
+            insights: finalInsights,
             healthScore
         };
     }

@@ -62,8 +62,8 @@ export interface ExpenseTrackerData {
     isSavingsGoalMet: boolean;
 }
 
-export const ExpenseTrackerData = async (): Promise<ExpenseTrackerData> => {
-    const response = await api.get('/user/expense-tracker');
+export const ExpenseTrackerData = async (month?: string): Promise<ExpenseTrackerData> => {
+    const response = await api.get('/user/expense-tracker', { params: { month } });
     return {
         walletBalance: response.data.data.walletBalance,
         mutualFundInvestedAmount: response.data.data.mutualFundInvestedAmount,
@@ -98,5 +98,10 @@ export const AddIncomeApi = async (data: AddIncomeRequest) => {
 
 export const DeleteExpenseApi = async (index: number) => {
     const response = await api.delete(`/user/expense-tracker/delete-expense/${index}`);
+    return response.data;
+}
+
+export const FetchAnalyticsData = async (month?: string) => {
+    const response = await api.get('/user/expense-tracker/analytics', { params: { month } });
     return response.data;
 }

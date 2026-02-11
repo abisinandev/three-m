@@ -1,5 +1,5 @@
 import { AnalyticsResponseDTO } from "@application/dto/expense-tracker/analytics-response.dto";
 
 export interface IAnalyticsUseCase {
-    execute(userId: string): Promise<AnalyticsResponseDTO>;
+    execute(userId: string, month?: string): Promise<AnalyticsResponseDTO>;
 }

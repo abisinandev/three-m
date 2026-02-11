@@ -8,8 +8,6 @@ import { ResponseHelper } from "@presentation/express/utils/response-handling/re
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { IDeleteExpenseUseCase } from "@application/use_cases/expense-tracker/interfaces/delete-expense-usecase.interface";
-import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
-import { ICreateNotificationUseCase } from "@application/use_cases/notification/interfaces/create-notification-usecase.interface";
 import { IAnalyticsUseCase } from "@application/use_cases/expense-tracker/interfaces/analytics-usecase.interface";
 
 @injectable()
@@ -20,15 +18,15 @@ export class ExpenseTrackerController {
         @inject(EXPENSE_TRACKER_TYPE.AddExpenseUseCase) private readonly _addExpenseUseCase: IAddExpenseUseCase,
         @inject(EXPENSE_TRACKER_TYPE.DeleteExpenseUseCase) private readonly _deleteExpenseUseCase: IDeleteExpenseUseCase,
         @inject(EXPENSE_TRACKER_TYPE.AnalyticsUseCase) private readonly _analyticsUseCase: IAnalyticsUseCase,
-        @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotificationUseCase: ICreateNotificationUseCase,
     ) { }
 
     async fetchDatas(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req?.user?.id as string;
+            const month = req.query.month as string;
 
-            const result = await this._expenseTrackerUsecase.execute(userId);
-            return ResponseHelper.success(
+            const result = await this._expenseTrackerUsecase.execute(userId, month);
+            return ResponseHelper.success( 
                 res,
                 SuccessMessage.DATA_FETCHED,
                 result,
@@ -88,6 +86,22 @@ export class ExpenseTrackerController {
             )
         } catch (error) {
             next(error)
+        }
+    }
+
+    async fetchAnalytics(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req?.user?.id as string;
+            const month = req.query.month as string;
+            const result = await this._analyticsUseCase.execute(userId, month);
+            return ResponseHelper.success(
+                res,
+                SuccessMessage.DATA_FETCHED,
+                result,
+                HttpStatus.OK
+            );
+        } catch (error) {
+            next(error);
         }
     }
 }

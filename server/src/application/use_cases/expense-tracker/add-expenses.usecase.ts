@@ -31,9 +31,7 @@ export class AddExpensesUseCase implements IAddExpenseUseCase {
         await session.withTransaction(async () => {
 
             const user = await this._userRepository.findById(userId, session);
-            if (!user) {
-                throw new NotFoundError(ErrorMessages.USER.NOT_FOUND);
-            }
+            if (!user) throw new NotFoundError(ErrorMessages.USER.NOT_FOUND);
 
             const currentMonth = new Date().toISOString().slice(0, 7);
 

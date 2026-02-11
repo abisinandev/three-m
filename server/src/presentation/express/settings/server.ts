@@ -7,7 +7,7 @@ import { CagrUpdateScheduler } from "@infrastructure/providers/cron-scheduler/mu
 import { NavMontlyScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-monthly-scheduler";
 import { NavYearScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-yearly.scheduler";
 import { NavAllocationScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-allocatation-scheduler";
-import { startSipScheduler } from "@infrastructure/providers/cron-scheduler/sip/sip-process-scheduler";
+import { StartSipScheduler } from "@infrastructure/providers/cron-scheduler/sip/sip-process-scheduler";
 import { initSocketConfigs } from "@infrastructure/providers/notification/socket.configs";
 import http from "http";
 
@@ -21,7 +21,7 @@ const bootstrap = async () => {
     NavYearScheduler();
     CagrUpdateScheduler();
     NavAllocationScheduler();
-    startSipScheduler();
+    StartSipScheduler();
 
     const server = http.createServer(app);
     initSocketConfigs(server);

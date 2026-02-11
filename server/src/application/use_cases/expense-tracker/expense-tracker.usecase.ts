@@ -19,8 +19,8 @@ export class ExpenseTrackerUseCase implements IExpenseTrackerUseCase {
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
     ) { }
 
-    async execute(userId: string): Promise<ExpenseTrackerDTO> {
-        const currentMonth = new Date().toISOString().slice(0, 7);
+    async execute(userId: string, month?: string): Promise<ExpenseTrackerDTO> {
+        const currentMonth = month || new Date().toISOString().slice(0, 7);
 
         const tracker = await this._expenseTrackerRepository.findOne({ userId, month: currentMonth });
         const wallet = await this._walletRepository.findByUserId(userId);

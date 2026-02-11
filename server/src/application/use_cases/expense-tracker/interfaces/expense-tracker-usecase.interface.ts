@@ -1,3 +1,3 @@
 export interface IExpenseTrackerUseCase {
-    execute(userId: string): Promise<any>;
+    execute(userId: string, month?: string): Promise<any>;
 }

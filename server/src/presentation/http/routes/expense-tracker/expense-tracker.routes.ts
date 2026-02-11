@@ -14,5 +14,6 @@ router.get(ExpenseRoutes.ROOT, expenseTrackerController.fetchDatas.bind(expenseT
 router.post(ExpenseRoutes.ADD_INCOME, validateDTO(AddIncomeDTO), expenseTrackerController.addIncome.bind(expenseTrackerController));
 router.post(ExpenseRoutes.ADD_EXPENSE, validateDTO(AddExpenseDTO), expenseTrackerController.addExpense.bind(expenseTrackerController));
 router.delete(ExpenseRoutes.DELETE_EXPENSE, expenseTrackerController.deleteExpense.bind(expenseTrackerController));
+router.get(ExpenseRoutes.FETCH_ANALYTICS, expenseTrackerController.fetchAnalytics.bind(expenseTrackerController));
 
 export default router;
