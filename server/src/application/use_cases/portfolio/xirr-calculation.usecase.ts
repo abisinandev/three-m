@@ -19,7 +19,6 @@ export class XirrCalculationUseCase implements IXirrCalculationUseCase {
     async execute(userId: string): Promise<number | null> {
 
         const investments = await this._investmentRepository.findUserInvestmentsForXirr(userId) ?? [];
-        console.log("investments xirr: ", investments);
 
         if (investments.length === 0) return null;
         const cashFlows: { date: Date; amount: number }[] = [];
@@ -48,15 +47,51 @@ export class XirrCalculationUseCase implements IXirrCalculationUseCase {
         }
 
         cashFlows.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+        const cleanedCashFlows: { date: Date; amount: number }[] = [];
+        const skipIndices = new Set<number>();
+
+        for (let i = 0; i < cashFlows.length; i++) {
+            if (skipIndices.has(i)) continue;
+
+            const currentFlow = cashFlows[i];
+
+            if (currentFlow.amount > 0) {
+                const matchingRedemptions = [currentFlow];
+
+                for (let j = i + 1; j < cashFlows.length; j++) {
+                    if (skipIndices.has(j)) continue;
+
+                    const candidateFlow = cashFlows[j];
+                    const timeDiffMs = Math.abs(candidateFlow.date.getTime() - currentFlow.date.getTime());
+
+                    const isSameAmount = Math.abs(candidateFlow.amount - currentFlow.amount) < 0.01;
+                    if (timeDiffMs <= 1000 && candidateFlow.amount > 0 && isSameAmount) {
+                        matchingRedemptions.push(candidateFlow);
+                        skipIndices.add(j);
+                    }
+                }
+
+                if (matchingRedemptions.length > 1) {
+                    console.log(`Removed ${matchingRedemptions.length - 1} duplicate redemption(s) of ₹${currentFlow.amount}`);
+                }
+                cleanedCashFlows.push(currentFlow);
+                skipIndices.add(i);
+            } else {
+                cleanedCashFlows.push(currentFlow);
+                skipIndices.add(i);
+            }
+        }
+
         const portfolioAgeDays =
-            (Date.now() - cashFlows[0].date.getTime()) / (1000 * 60 * 60 * 24);
+            (Date.now() - cleanedCashFlows[0].date.getTime()) / (1000 * 60 * 60 * 24);
 
         if (portfolioAgeDays < 7) {
             return null;
         }
-        console.log("cashFlows: ", cashFlows);
+        console.log("cashFlows (after cleanup): ", cleanedCashFlows);
 
-        const xirrr = this.calculateXirr(cashFlows);
+        const xirrr = this.calculateXirr(cleanedCashFlows);
         console.log("XiRR,", xirrr);
         return xirrr
     }

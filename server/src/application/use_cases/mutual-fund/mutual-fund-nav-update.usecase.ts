@@ -20,7 +20,7 @@ export class MutualFundNavUpdate implements IMutualFundNavUpdatesUseCase {
         const { funds } = await this._mutualFundRepository.findActiveFunds();
         for (const fund of funds) {
             const navs = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
-            for (let data of navs) {
+            for (const data of navs) {
                 const entity = toEntity({
                     nav: data.nav,
                     navDate: new Date(data.navDate),
@@ -30,9 +30,9 @@ export class MutualFundNavUpdate implements IMutualFundNavUpdatesUseCase {
                 });
                 try {
                     await this._mutualFundNavRepository.upsertDocument(entity);
-                    logger.info("Nav updation done✅")
+                    logger.info("Nav updation done")
                 } catch (error) {
-                    logger.info("Nav updation failed❌")
+                    logger.info("Nav updation failed")
                     return
                 }
             }

@@ -1,4 +1,3 @@
-import { IMutualFundsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-usecase.interface";
 import { IUserWalletUseCase } from "@application/use_cases/user/interfaces/user-wallet-usecase.interface";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
@@ -6,13 +5,11 @@ import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.type
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
-import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 
 @injectable()
 export class WalletController {
     constructor(
         @inject(USER_TYPES.UserWalletUseCase) private readonly _walletUseCase: IUserWalletUseCase,
-        @inject(MUTUAL_FUND_TYPES.MutualFundUsecase) private readonly _mutualFundsUseCase: IMutualFundsUseCase,
     ) { }
 
     async getWallet(req: Request, res: Response, next: NextFunction) {

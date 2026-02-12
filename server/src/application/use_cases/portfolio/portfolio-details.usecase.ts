@@ -9,6 +9,25 @@ import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/e
 import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 
+interface PortfolioQueryOptions extends QueryOptions {
+    status?: InvestmentStatus;
+    search?: string;
+}
+
+interface InvestmentFilter {
+    status?: InvestmentStatus;
+}
+
+interface InvestmentData {
+    createdAt: Date;
+    amount: number;
+    status: InvestmentStatus;
+    redeemedAt?: Date;
+    updatedAt?: Date;
+    redeemedAmount?: number;
+    remainingUnits?: number;
+}
+
 @injectable()
 export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
     constructor(
@@ -23,16 +42,17 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
         limit: number;
         totalCount: number;
     }> {
-        const { page = 1, limit = 10 } = options as any;
-        const status = (options as any).status;
+        const { page = 1, limit = 10 } = options;
+        const portfolioOptions = options as PortfolioQueryOptions;
+        const status = portfolioOptions.status;
 
-        const filter: any = {};
+        const filter: InvestmentFilter = {};
         if (status) {
             filter.status = status;
         }
 
         const investments = (await this._investmentRepository.getUserInvestments(userId, { ...options, filter })) ?? [];
-        const totalCount = await this._investmentRepository.countInvestments(userId, filter, (options as any).search || "");
+        const totalCount = await this._investmentRepository.countInvestments(userId, filter, portfolioOptions.search || "");
 
         const data: InvestmentResponseDTO[] = [];
         for (const inv of investments) {
@@ -62,7 +82,7 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
         };
     }
 
-    private calculateFundXirr(investments: any[], currentNav: number): number | null {
+    private calculateFundXirr(investments: InvestmentData[], currentNav: number): number | null {
         if (investments.length === 0) return null;
 
         const cashFlows: { date: Date; amount: number }[] = [];
@@ -76,8 +96,8 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
 
             if (inv.status === InvestmentStatus.REDEEMED) {
                 cashFlows.push({
-                    date: inv.redeemedAt ?? inv.updatedAt,
-                    amount: inv.redeemedAmount,
+                    date: inv.redeemedAt as Date ?? inv.updatedAt,
+                    amount: inv.redeemedAmount as number,
                 });
             } else {
                 totalRemainingUnits += (inv.remainingUnits ?? 0);

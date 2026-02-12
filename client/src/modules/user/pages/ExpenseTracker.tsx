@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
-import { format, startOfMonth, addMonths, subMonths, setMonth as setDateMonth, setYear as setDateYear, getYear, getMonth } from 'date-fns';
+import { format, startOfMonth, getYear, getMonth } from 'date-fns';
 import {
     Plus,
     Trash2,
@@ -13,12 +13,10 @@ import {
     TrendingDown,
     AlertCircle,
     Banknote,
-    BarChart3,
     Activity,
     ArrowUpRight,
     ArrowDownLeft,
     Lightbulb,
-    Target,
     RefreshCcw,
     Search
 } from 'lucide-react';

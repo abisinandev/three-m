@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getMarketNews } from "@shared/services/market-new-api/marketNewsApi";
 import { NewsCard } from "@modules/user/market-news/components/NewsCard";
-import { MarketSnapshotBar } from "@modules/user/market-news/components/MarketSnapshotBar";
 import { CategoryNav } from "@modules/user/market-news/components/CategoryNav";
 import { PersonalizationPanel } from "@modules/user/market-news/components/PersonalizationPanel";
 import { NewsSkeleton, SidebarSkeleton } from "@modules/user/market-news/components/NewsSkeleton";

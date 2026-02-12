@@ -7,7 +7,7 @@ import { NotFoundError, ValidationError } from "@presentation/express/utils/erro
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
-import { IMutualFundNavRepository } from "@application/interfaces/repositories/feature/mutual-fund-nav-repository.interface";
+// import { IMutualFundNavRepository } from "@application/interfaces/repositories/feature/mutual-fund-nav-repository.interface";
 import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
@@ -16,7 +16,7 @@ import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { FundStatus } from "@domain/enum/funds/fund-status.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
-import { IInternalTransactionVerificationService } from "@application/interfaces/services/externals/internal-transaction-verify.interface";
+// import { IInternalTransactionVerificationService } from "@application/interfaces/services/externals/internal-transaction-verify.interface";
 import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
@@ -33,10 +33,10 @@ export class InvestmentUseCase implements IInvestmentUseCase {
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
-        @inject(MUTUAL_FUND_TYPES.MutualFundNavRepository) private readonly _navRepository: IMutualFundNavRepository,
+        // @inject(MUTUAL_FUND_TYPES.MutualFundNavRepository) private readonly _navRepository: IMutualFundNavRepository,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
-        @inject(EXTERNAL_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService,
+        // @inject(EXTERNAL_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService,
     ) { }
 
     async execute(data: InvestmentDTO, userId: string): Promise<void> {
@@ -83,7 +83,7 @@ export class InvestmentUseCase implements IInvestmentUseCase {
                     paymentStatus: TransactionStatus.SUCCESSFUL,
                     isVerified: true,
                 })
-                const txns = await this._transactionRepository.createTransaction(transaction, session);
+                const _txns = await this._transactionRepository.createTransaction(transaction, session);
                 // await this._internalTransactionVerify.verify(txns?.id as string);
             });
 

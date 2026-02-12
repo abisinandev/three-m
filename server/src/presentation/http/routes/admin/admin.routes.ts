@@ -1,6 +1,5 @@
 import { container } from "@infrastructure/inversify_di/container";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
-import { AdminAuthMiddleware } from "@presentation/express/middlewares/admin-auth.middleware";
 import { AdminProtectedRoutes } from "@shared/routes/admin.routes";
 import type { AdminController } from "@presentation/http/controllers/admin/admin.controller";
 import { AdminAuthController } from "@presentation/http/controllers/admin/admin-auth.controller";
