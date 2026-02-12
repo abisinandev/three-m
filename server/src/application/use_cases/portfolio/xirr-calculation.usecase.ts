@@ -25,7 +25,7 @@ export class XirrCalculationUseCase implements IXirrCalculationUseCase {
         const cashFlows: { date: Date; amount: number }[] = [];
         let totalCurrentValue = 0;
         for (const investment of investments) {
-            cashFlows.push({ 
+            cashFlows.push({
                 date: investment.createdAt,
                 amount: -investment.amount,
             });
@@ -50,12 +50,12 @@ export class XirrCalculationUseCase implements IXirrCalculationUseCase {
         cashFlows.sort((a, b) => a.date.getTime() - b.date.getTime());
         const portfolioAgeDays =
             (Date.now() - cashFlows[0].date.getTime()) / (1000 * 60 * 60 * 24);
-        
+
         if (portfolioAgeDays < 7) {
             return null;
         }
         console.log("cashFlows: ", cashFlows);
-        
+
         const xirrr = this.calculateXirr(cashFlows);
         console.log("XiRR,", xirrr);
         return xirrr
@@ -68,7 +68,7 @@ export class XirrCalculationUseCase implements IXirrCalculationUseCase {
 
     private calculateXirr(cashFlows: CashFlow[]): number | null {
         if (cashFlows.length < 2) return null;
- 
+
         const hasPositive = cashFlows.some(c => c.amount > 0);
         const hasNegative = cashFlows.some(c => c.amount < 0);
         if (!hasPositive || !hasNegative) return null;

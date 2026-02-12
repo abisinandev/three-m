@@ -22,9 +22,13 @@ import { IMutualFundRepository } from "@application/interfaces/repositories/feat
 import mongoose from "mongoose";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
+import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
+import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
+import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
+import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 // import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 
-@injectable() 
+@injectable()
 export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
     constructor(
         @inject(SIP_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
@@ -34,7 +38,8 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualfundRepo: IMutualFundRepository,
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         // @inject(EXTERNAL_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService
-        @
+        @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotificationUseCase: ICreateNotificationUseCase,
+        @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
     ) { }
 
     async execute(): Promise<void> {
@@ -57,6 +62,25 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
 
             const fund = await this._mutualfundRepo.findBySchemeCode(installment.schemeCode);
             if (!fund) return;
+
+            const wallet = await this._walletRepository.findById(user.walletId as string);
+
+            if ((wallet?.balance ?? 0) < installment.amount) {
+
+                await this._sipInstallmentRepository.markFailed(
+                    installment.id!,
+                    "INSUFFICIENT_BALANCE"
+                );
+
+                await this._createNotificationUseCase.execute({
+                    userId: user.id!,
+                    type: NotificationType.SIP,
+                    title: "SIP Installment Failed",
+                    message: `Your SIP installment of ₹${installment.amount} failed due to insufficient wallet balance.`,
+                });
+
+                return; 
+            }
 
             const transaction = TransactionEntity.create({
                 userId: user.id!,
@@ -91,7 +115,19 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
             const updatedSip = SipEntity.executeInstallment(sip, nextDate);
             await this._sipRepository.update(updatedSip.id as string, updatedSip);
 
-            await this._sipInstallmentRepository.markSuccess(installment.id as string, investment.id as string);
+            await this._sipInstallmentRepository.markSuccess(
+                installment.id as string,
+                investment.id as string
+            );
+
+            //Notification
+            await this._createNotificationUseCase.execute({
+                userId: user.id!,
+                type: NotificationType.SIP,
+                title: "SIP Installment Executed",
+                message: `Your SIP installment of ₹${installment.amount} has been successfully invested.`,
+            });
+
             if (updatedSip.status === SipStatus.ACTIVE) {
                 const nextInstallment = SipInstallmentEntity.create({
                     sipId: sip.id!,
@@ -103,7 +139,6 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 });
                 await this._sipInstallmentRepository.create(nextInstallment, session);
             }
-
             // await this._internalTransactionVerify.verify(transaction.id as string);📌
 
         } catch (error) {

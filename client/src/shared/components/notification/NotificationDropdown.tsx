@@ -8,6 +8,9 @@ type NotificationFilter = 'all' | 'unread';
 
 export const NotificationDropdown = () => {
     const { notifications, unreadCount, markRead, markAllRead } = useNotificationStore();
+
+    console.log(notifications, '================');
+    
     const [isOpen, setIsOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<NotificationFilter>('all');
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -30,7 +33,7 @@ export const NotificationDropdown = () => {
     }, []);
 
     const handleMarkAsRead = async (id: string, event: React.MouseEvent) => {
-    
+
         event.stopPropagation();
         try {
             await markNotificationRead(id);
@@ -142,7 +145,9 @@ export const NotificationDropdown = () => {
                                             </p>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest">
-                                                    {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true })}
+                                                    {notif.createdAt && !isNaN(new Date(notif.createdAt).getTime())
+                                                        ? formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true })
+                                                        : 'Just now'}
                                                 </span>
                                             </div>
                                         </div>

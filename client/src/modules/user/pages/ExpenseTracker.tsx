@@ -486,7 +486,7 @@ const ExpenseTracker = () => {
                                     </div>
                                     <div className="flex items-baseline gap-1">
                                         <span className={`text-3xl font-bold tracking-tight ${walletBalanace as number < 0 ? 'text-rose-500' : 'text-white'}`}>
-                                            {walletBalanace}
+                                            {Number(walletBalanace).toFixed(2)}
                                         </span>
                                     </div>
                                     <p className={`text-xs mt-2 font-bold ${walletBalanace as number < 0 ? 'text-rose-500' : 'text-emerald-500'}`}>

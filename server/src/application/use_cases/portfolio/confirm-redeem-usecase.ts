@@ -94,7 +94,7 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
                     inv.remainingUnits as number,
                     inv.redeemedUnits,
                     redeemableUnits,
-                    Number((unitsToRedeem * latestNav).toFixed(2)),
+                    Number((redeemableUnits * latestNav).toFixed(2)),
                 );
 
                 remainingUnitsToRedeem = Number((remainingUnitsToRedeem - redeemableUnits).toFixed(4));

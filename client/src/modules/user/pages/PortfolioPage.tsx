@@ -91,7 +91,7 @@ const PortfolioDashboard = () => {
     const totalProfit = summaryData?.totalProfit ?? 0;
     const currentValue = summaryData?.currentValue ?? 0;
     const profitPercentage = summaryData?.profitPercentage ?? 0;
-
+    const xirrValue = Number(xirrData?.data?.data).toFixed(2) || 0;
 
     const isLoading = isHoldingsLoading || isSummaryLoading;
 
@@ -166,7 +166,7 @@ const PortfolioDashboard = () => {
                     />
                     <StatsCardComponent
                         title="Portfolio XIRR"
-                        value={xirrData?.data?.data !== undefined ? xirrData.data.data * 100 : undefined}
+                        value={xirrValue}
                         suffix="%"
                         subtitle={xirrData?.data?.data !== undefined ? "Annualised return" : "Calculation in progress..."}
                         color={xirrData?.data?.data >= 0 ? 'emerald' : xirrData?.data?.data < 0 ? 'rose' : 'zinc'}

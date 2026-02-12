@@ -29,6 +29,7 @@ export const ErrorMessages = {
         NOT_VERIFIED: "User not verified",
         PROFILE_UPDATE_FAILED: "No valid fields provided to update",
         KYC_REJECTED: "KYC document rejected",
+        WALLET_INCONSISTENCY: "We detected an inconsistency in your wallet. Please contact support",
     },
     VALIDATION: {
         FAILED: "Validation failed",
@@ -68,6 +69,6 @@ export const ErrorMessages = {
         INVALID_REDEEM_REQUEST: "The redemption request is invalid. Please verify the details and try again",
     },
     EXPENSE_TRACKER: {
-        INSUFFICIENT_BALANCE : "Insufficient funds: You don't have enough balance to add this expense."
+        INSUFFICIENT_BALANCE: "Insufficient funds: You don't have enough balance to add this expense."
     }
 } as const;

@@ -13,7 +13,6 @@ export class WalletController {
     constructor(
         @inject(USER_TYPES.UserWalletUseCase) private readonly _walletUseCase: IUserWalletUseCase,
         @inject(MUTUAL_FUND_TYPES.MutualFundUsecase) private readonly _mutualFundsUseCase: IMutualFundsUseCase,
-
     ) { }
 
     async getWallet(req: Request, res: Response, next: NextFunction) {

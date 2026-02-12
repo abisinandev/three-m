@@ -4,8 +4,8 @@ import { Types } from "mongoose";
 
 const toDomain = (doc: NotificationDocument): NotificationEntity => {
     return NotificationEntity.fromPersistence({
-        id: doc._id.toHexString(),
-        userId: doc.userId.toHexString(),
+        id: doc._id.toString(),
+        userId: doc.userId.toString(),
         type: doc.type,
         title: doc.title,
         message: doc.message,
@@ -23,7 +23,6 @@ const toPersistance = (entity: NotificationEntity): Partial<NotificationDocument
         read: entity.read,
         createdAt: new Date(entity.createdAt),
     };
-
     return persistence;
 };
 

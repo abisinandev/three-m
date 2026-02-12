@@ -9,6 +9,7 @@ import { WalletStatus } from "@domain/enum/wallet/wallet-status.enum";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
+import { ErrorMessages } from "@shared/constants/error.messages";
 
 /**
  * Adds funds to a user's wallet after a successful payment.
@@ -31,7 +32,7 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
     ) { }
 
-    async execute(data: WalletDTO): Promise<void> {
+    async execute(data: WalletDTO): Promise<void> {  
 
         const user = await this._userRepository.findById(data.userId);
         if (!user) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
@@ -39,11 +40,11 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
 
         const wallet = await this._walletRepository.findOne({ userId: user.id as string });
         if (wallet?.status === WalletStatus.FROZEN)
-            throw new UnauthorizedError("We detected an inconsistency in your wallet. Please contact support");
+            throw new UnauthorizedError(ErrorMessages.USER.WALLET_INCONSISTENCY);
 
-        if (wallet && wallet.balance > 50000) {
+        if (wallet && wallet.balance > 50000)
             throw new ValidationError(ErrorMessage.WALLET_BALANCE_EXCEEDED);
-        }
+
 
         const transaction = toTransactionEntity({ ...data, userCode: user.userCode });
         const isExists = await this._transactionRepository.findByPaymentId(data.paymentIntentId as string);
@@ -51,8 +52,13 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
 
         try {
             await this._transactionRepository.create(transaction);
-        } catch (error: any) {
-            if (error.code === 11000) return;
+        } catch (error: unknown) {
+            if (
+                typeof error === "object" && error !== null && "code" in error &&
+                (error as { code: number }).code === 11000
+            ) {
+                return;
+            }
             throw error;
         }
 
