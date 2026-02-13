@@ -1,5 +1,6 @@
 import { ExecuteDueSipUseCase } from '@application/use_cases/sip/execute-due-sip.usecase';
 import { container } from '@infrastructure/inversify_di/container';
+import { SIP_TYPES } from '@infrastructure/inversify_di/features/sip/sip.types';
 import cron from 'node-cron'
 
 let isRunning = false;
@@ -18,7 +19,7 @@ export const StartSipScheduler = () => {
             isRunning = true;
             console.log("[SIP SCHEDULER] Started");
             try {
-                const useCase = container.get<ExecuteDueSipUseCase>(ExecuteDueSipUseCase);
+                const useCase = container.get<ExecuteDueSipUseCase>(SIP_TYPES.ExecuteDueSipUseCase);
                 await useCase.execute();
 
                 console.log("[SIP SCHEDULER] Finished");

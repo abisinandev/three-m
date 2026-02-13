@@ -2,7 +2,6 @@ import { inject, injectable } from "inversify";
 import { IPortfolioCalculationsUseCase } from "./interfaces/portfolio-calculations-usecase.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
-import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 
@@ -22,8 +21,7 @@ export class PortfolioCalculationsUseCase implements IPortfolioCalculationsUseCa
         profitPercentage: number;
     }> {
 
-        const investments =
-            await this.investmentRepository.getUserInvestmentsWithoutFilter(userId) ?? [];
+        const investments = await this.investmentRepository.getUserInvestmentsWithoutFilter(userId) ?? [];
 
         if (!investments.length) {
             return {
@@ -64,7 +62,6 @@ export class PortfolioCalculationsUseCase implements IPortfolioCalculationsUseCa
 
         const totalProfit = currentValue - totalInvestment;
         const profitPercentage = (totalProfit / totalInvestment) * 100;
-        
 
         return {
             totalCount,

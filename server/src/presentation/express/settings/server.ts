@@ -33,7 +33,7 @@ const bootstrap = async () => {
   } catch (error) {
     logger.error(`Server startup failed: ${error}`);
     process.exit(1);
-  }
+  } 
 };
        
 bootstrap();

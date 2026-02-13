@@ -66,7 +66,6 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
             const wallet = await this._walletRepository.findById(user.walletId as string);
 
             if ((wallet?.balance ?? 0) < installment.amount) {
-
                 await this._sipInstallmentRepository.markFailed(
                     installment.id!,
                     "INSUFFICIENT_BALANCE"

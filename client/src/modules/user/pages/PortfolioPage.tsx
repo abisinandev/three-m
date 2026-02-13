@@ -95,10 +95,6 @@ const PortfolioDashboard = () => {
 
     const isLoading = isHoldingsLoading || isSummaryLoading;
 
-    const activeCount = investments.filter((inv) =>
-        inv.status?.toLowerCase().includes('active')
-    ).length;
-
     const handlePageChange = (newPage: number) => {
         const maxPage = Math.ceil(totalCount / limit);
         if (newPage >= 1 && newPage <= maxPage) {
