@@ -3,7 +3,7 @@ import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.type
 import { inject, injectable } from "inversify";
 import type { IUserProfileInterface } from "../interfaces/user-profile-usecase.interface";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { toUserResponse } from "@application/mappers/user/user.mapper";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
@@ -22,7 +22,7 @@ export class GetUserProfileUseCase implements IUserProfileInterface {
   async execute(data: { userId: string }): Promise<UserDTO> {
     const user = await this._userRepository.findAllWithRelations(data.userId);
     if (!user) {
-      throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
+      throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
     }
     return toUserResponse(user)
   }

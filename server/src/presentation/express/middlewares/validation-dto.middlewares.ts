@@ -1,4 +1,4 @@
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import AppError from "@presentation/express/utils/error-handling/app.error";
 import type { ClassConstructor } from "class-transformer";
@@ -30,7 +30,7 @@ export const validateDTO = <T extends object>(
       });
 
       throw new AppError(
-        ErrorMessage.INVALID_CREDENTIALS,
+        ErrorMessages.AUTH.INVALID_CREDENTIALS,
         HttpStatus.BAD_REQUEST,
         { errors: formattedErrors },
       );

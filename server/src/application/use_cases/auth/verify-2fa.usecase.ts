@@ -2,7 +2,7 @@ import type { Verify2faDTO } from "@application/dto/auth/2fa-verify-dto";
 import type { VerifyOtpResponseDTO } from "@application/dto/auth/verify-otp-response.dto";
 import type { ITwoFactorAuthVerify } from "@application/interfaces/services/externals/2fa-auth-verify.interface";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
@@ -26,14 +26,14 @@ export class VerifyTwoFactorUseCase implements IVerifyTwoFactorUseCase {
 
   async execute(data: Verify2faDTO): Promise<VerifyOtpResponseDTO> {
     const user = await this._userRepository.findByField("email", data.email);
-    if (!user?.twoFactorSecret) throw new ForbiddenError(ErrorMessage.TWO_FA_NOT_CONFIGURED);
+    if (!user?.twoFactorSecret) throw new ForbiddenError(ErrorMessages.AUTH.TWO_FA_NOT_CONFIGURED);
 
     const isValid = await this._twoFactorAuthVerify.verify(
       user.twoFactorSecret,
       data.token,
     );
 
-    if (!isValid) throw new UnauthorizedError(ErrorMessage.INVALID_OTP);
+    if (!isValid) throw new UnauthorizedError(ErrorMessages.AUTH.INVALID_OTP);
 
     const payload: JwtPayload = {
       id: user.id as string,
@@ -44,7 +44,7 @@ export class VerifyTwoFactorUseCase implements IVerifyTwoFactorUseCase {
     };
 
     const accessToken = this._jwtProvider.generateAccessToken(payload);
-    const refreshToken = this._jwtProvider.generateRefreshToken(payload); 
+    const refreshToken = this._jwtProvider.generateRefreshToken(payload);
 
     const key = `refresh_token:${user.id}`;
     const ttl = Number(env.REFRESH_EXPIRES_IN);

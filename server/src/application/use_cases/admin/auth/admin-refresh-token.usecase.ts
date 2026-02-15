@@ -2,7 +2,7 @@ import type { RefreshDTO } from "@application/dto/auth/refresh.dto";
 import type { RefreshResponseDTO } from "@application/dto/auth/refresh-response.dto";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
 import type { IRefreshTokenUseCase } from "@application/use_cases/admin/interfaces/admin-refresh-token.interface";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
@@ -30,7 +30,7 @@ export class AdminRefreshTokenUseCase implements IRefreshTokenUseCase {
     );
 
     if (typeof decoded === "string" || !decoded.id) {
-      throw new ValidationError(ErrorMessage.REFRESH_TOKEN_EXPIRED);
+      throw new ValidationError(ErrorMessages.AUTH.REFRESH_TOKEN_EXPIRED);
     }
 
     const storedToken = await redisClient.hgetall(
@@ -38,13 +38,13 @@ export class AdminRefreshTokenUseCase implements IRefreshTokenUseCase {
     );
 
     if (!storedToken || storedToken.refreshToken !== data.refreshToken) {
-      throw new ValidationError(ErrorMessage.REFRESH_TOKEN_NOT_FOUND);
+      throw new ValidationError(ErrorMessages.AUTH.REFRESH_TOKEN_NOT_FOUND);
     }
 
     const isAdmin = await this._adminRepository.findOne({
       email: decoded.email,
     });
-    if (!isAdmin) throw new NotFoundError(ErrorMessage.ADMIN_NOT_FOUND);
+    if (!isAdmin) throw new NotFoundError(ErrorMessages.ADMIN.NOT_FOUND);
 
     const payload: JwtPayload = {
       id: isAdmin.id as string,

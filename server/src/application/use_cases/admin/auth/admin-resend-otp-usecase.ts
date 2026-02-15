@@ -2,7 +2,7 @@ import type { ResendOtpDTO } from "@application/dto/auth/resend-otp.dto";
 import type { ResendOtpResponseDTO } from "@application/dto/auth/resend-otp-response.dto";
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
 import type { IAdminResendOtpUseCase } from "@application/use_cases/admin/interfaces/admin-resend-otp-usecase-interface";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
@@ -26,7 +26,7 @@ export class AdminResendOtpUseCase implements IAdminResendOtpUseCase {
     const expiryTime = 5 * 60;
     const expiresAt = Date.now() + expiryTime * 1000;
 
-    if (!admin) throw new NotFoundError(ErrorMessage.ADMIN_NOT_FOUND);
+    if (!admin) throw new NotFoundError(ErrorMessages.ADMIN.NOT_FOUND);
 
     const otpData = await redisClient.hgetall(`otp:${admin.email}`);
 
@@ -34,11 +34,11 @@ export class AdminResendOtpUseCase implements IAdminResendOtpUseCase {
       const now = Date.now();
 
       if (otpData.lastResendAt && now - Number(otpData.lastResendAt) < 30000) {
-        throw new AppError(ErrorMessage.RATE_LIMIT_MESSAGE, 429);
+        throw new AppError(ErrorMessages.AUTH.MAX_RESEND_REACHED, 429);
       }
 
       if (Number(otpData.resendCount) >= 5) {
-        throw new AppError(ErrorMessage.MAX_RESEND_REACHED, 429);
+        throw new AppError(ErrorMessages.AUTH.MAX_RESEND_REACHED, 429);
       }
 
     }

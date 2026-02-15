@@ -3,7 +3,7 @@ import type { SignupResponseDTO } from "@application/dto/auth/signup-response.dt
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
 import type { IPasswordHashingService } from "@application/interfaces/services/externals/password-hashing.service.interface";
 import { toEntity } from "@application/mappers/user/user.mapper";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
@@ -19,7 +19,7 @@ export class UserSignupUseCase implements IUserSignupUseCase {
     @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
     @inject(AUTH_TYPES.IPasswordHashingService) private readonly _passswordHashing: IPasswordHashingService,
     @inject(AUTH_TYPES.IEmailService) private readonly _emailVerifyService: IEmailService,
-  ) {}
+  ) { }
 
   async execute(user: CreateUserDTO): Promise<SignupResponseDTO> {
     const isExistingUser = await this._userRepository.findByField(
@@ -35,7 +35,7 @@ export class UserSignupUseCase implements IUserSignupUseCase {
 
     if (isExistingUser) {
       if (isExistingUser.isEmailVerified) {
-        throw new ConflictError(ErrorMessage.EMAIL_ALREADY_EXISTS);
+        throw new ConflictError(ErrorMessages.VALIDATION.EMAIL_ALREADY_EXISTS);
       }
 
       await this._emailVerifyService.sendOtpEmail(user.email, otp);
@@ -56,7 +56,7 @@ export class UserSignupUseCase implements IUserSignupUseCase {
       user.phone,
     );
     if (isExistingPhone) {
-      throw new ConflictError(ErrorMessage.PHONENO_ALREADY_EXISTS);
+      throw new ConflictError(ErrorMessages.VALIDATION.PHONE_ALREADY_EXISTS);
     }
 
     const hashedPassword = await this._passswordHashing.hash(user.password);

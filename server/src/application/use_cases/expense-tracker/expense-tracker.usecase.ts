@@ -9,7 +9,7 @@ import { IInvestmentRepository } from "@application/interfaces/repositories/feat
 import { ExpenseTrackerDTO, InvestmentDTO } from "@application/dto/expense-tracker/expense-tracker-response.dto";
 import { WalletStatus } from "@domain/enum/wallet/wallet-status.enum";
 import { ValidationError } from "@presentation/express/utils/error-handling";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 
 @injectable()
 export class ExpenseTrackerUseCase implements IExpenseTrackerUseCase {
@@ -25,7 +25,7 @@ export class ExpenseTrackerUseCase implements IExpenseTrackerUseCase {
         const tracker = await this._expenseTrackerRepository.findOne({ userId, month: currentMonth });
         const wallet = await this._walletRepository.findByUserId(userId);
         if (wallet?.status === WalletStatus.PENDING) {
-            throw new ValidationError(ErrorMessage.COMPLETE_KYC_VERIFICATION);
+            throw new ValidationError(ErrorMessages.AUTH.COMPLETE_KYC);
         }
 
         const expenses = tracker ? tracker.expenses.map(exp => ({

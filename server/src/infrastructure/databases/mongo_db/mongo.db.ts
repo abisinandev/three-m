@@ -1,4 +1,4 @@
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
 import { env } from "@presentation/express/utils/constants/env.constants";
@@ -8,7 +8,7 @@ import mongoose from "mongoose";
 const connectDB = async () => {
   if (!env.MONGO_URI) {
     throw new AppError(
-      ErrorMessage.DB_CONNECTION_FAILED,
+      ErrorMessages.DB.CONNECTION_FAILED,
       HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }

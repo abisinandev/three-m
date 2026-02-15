@@ -2,7 +2,7 @@ import type { GoogleResponseDTO } from "@application/dto/auth/google-auth-resepo
 import type { IGoogleAuthService } from "@application/interfaces/services/externals/google-auth.service.interface";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
 import { UserEntity } from "@domain/entities/user/user.entity";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { AuthProvider } from "@domain/enum/users/auth-provider.enum";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
@@ -29,7 +29,7 @@ export class GoogleAuthUseCase implements IGoogleAuthUseCase {
       await this._googleAuthServie.verifyToken(data.token);
 
     if (!emailVerified) {
-      throw new UnauthorizedError(ErrorMessage.EMAIL_NOT_VERIFIED);
+      throw new UnauthorizedError(ErrorMessages.AUTH.EMAIL_NOT_VERIFIED);
     }
 
     let user = await this._userRepository.findByField("email", email);
@@ -46,7 +46,7 @@ export class GoogleAuthUseCase implements IGoogleAuthUseCase {
     }
 
     user = await this._userRepository.findByField("email", email);
-    if (!user) throw new ValidationError(ErrorMessage.USER_NOT_FOUND);
+    if (!user) throw new ValidationError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
     const payload: JwtPayload = {
       id: user.id as string,

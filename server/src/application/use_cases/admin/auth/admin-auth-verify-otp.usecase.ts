@@ -2,7 +2,7 @@ import type { VerifyOtpDTO } from "@application/dto/auth/verify-otp.dto";
 import type { VerifyOtpResponseDTO } from "@application/dto/auth/verify-otp-response.dto";
 import type { IJwtProvider } from "@application/interfaces/services/externals/jwt.provider.interface";
 import type { IAdminAuthVerifyOtpUseCase } from "@application/use_cases/admin/interfaces/admin-auth-verify-otp.interface";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
@@ -25,17 +25,17 @@ export class AdminAuthVerifyOtpUseCase implements IAdminAuthVerifyOtpUseCase {
   async execute(data: VerifyOtpDTO): Promise<VerifyOtpResponseDTO> {
     const storedOtp = await redisClient.hgetall(`otp:${data.email}`);
     if (!storedOtp || !storedOtp.otp)
-      throw new ValidationError(ErrorMessage.OTP_EXPIRED);
+      throw new ValidationError(ErrorMessages.AUTH.OTP_EXPIRED);
 
     if (Number(storedOtp.expiresAt) < Date.now())
-      throw new ValidationError(ErrorMessage.OTP_EXPIRED);
+      throw new ValidationError(ErrorMessages.AUTH.OTP_EXPIRED);
 
     if (storedOtp.otp !== data.otp)
-      throw new ValidationError(ErrorMessage.INVALID_OTP);
+      throw new ValidationError(ErrorMessages.AUTH.INVALID_OTP);
 
     await redisClient.del(`otp:${data.email}`);
     const isExist = await this._adminRepository.findOne({ email: data.email });
-    if (!isExist) throw new NotFoundError(ErrorMessage.ADMIN_NOT_FOUND);
+    if (!isExist) throw new NotFoundError(ErrorMessages.ADMIN.NOT_FOUND);
 
     const payload: JwtPayload = {
       id: isExist.id as string,

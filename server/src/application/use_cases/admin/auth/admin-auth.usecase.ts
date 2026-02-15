@@ -4,7 +4,7 @@ import { IAdminRepository } from "@application/interfaces/repositories/admin/adm
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
 import type { IPasswordHashingService } from "@application/interfaces/services/externals/password-hashing.service.interface";
 import type { IAdminAuthUseCase } from "@application/use_cases/admin/interfaces/admin-auth-usecase.interface";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
@@ -28,13 +28,13 @@ export class AdminAuthUseCase implements IAdminAuthUseCase {
       adminCode: data.adminCode,
     });
 
-    if (!isExist) throw new NotFoundError(ErrorMessage.ADMIN_NOT_FOUND);
+    if (!isExist) throw new NotFoundError(ErrorMessages.ADMIN.NOT_FOUND);
 
     const isMatch = await this._passwordHashing.verify(
       data.password,
       isExist.password,
     );
-    if (!isMatch) throw new ValidationError(ErrorMessage.INVALID_CREDENTIALS);
+    if (!isMatch) throw new ValidationError(ErrorMessages.AUTH.INVALID_CREDENTIALS);
 
     const otp = generateOtp();
     const expiryTime = 5 * 60;

@@ -2,7 +2,7 @@ import type { LoginReponseDTO } from "@application/dto/auth/login-response.dto";
 import type { UserLoginDTO } from "@application/dto/auth/user-login.dto";
 import type { ITwoFactorAuthSetup } from "@application/interfaces/services/externals/2fa-auth-setup.interface";
 import type { IPasswordHashingService } from "@application/interfaces/services/externals/password-hashing.service.interface";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import {
@@ -28,15 +28,15 @@ export class UserLoginUseCase implements IUserLoginUseCase {
       user.email as string,
     );
 
-    if (!existingUser) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
-    if (existingUser.isBlocked) throw new ForbiddenError(ErrorMessage.ACCOUNT_BLOCKED);
-    if (!existingUser.isEmailVerified) new ForbiddenError(ErrorMessage.EMAIL_NOT_VERIFIED);
+    if (!existingUser) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
+    if (existingUser.isBlocked) throw new ForbiddenError(ErrorMessages.USER.ACCOUNT_BLOCKED);
+    if (!existingUser.isEmailVerified) new ForbiddenError(ErrorMessages.AUTH.EMAIL_NOT_VERIFIED);
 
     const isMatch = await this._passwordHashing.verify(
       user.password,
       existingUser.password as string,
     );
-    if (!isMatch) throw new UnauthorizedError(ErrorMessage.INVALID_CREDENTIALS);
+    if (!isMatch) throw new UnauthorizedError(ErrorMessages.AUTH.INVALID_CREDENTIALS);
 
     if (!existingUser.isTwoFactorEnabled) {
 

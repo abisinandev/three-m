@@ -1,7 +1,7 @@
 import { IFetchTransactionsUseCase } from "@application/use_cases/admin/interfaces/fetch-transactions-usecase.interface";
 import { ISipDetailsUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-details-usecase.interface";
 import { IAdminVerifyTransactionUseCase } from "@application/use_cases/user/interfaces/admin-verify-transaction-usecase.interface";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
@@ -37,7 +37,7 @@ export class AdminTransactionsController {
             if (!result.isVerified) {
                 return ResponseHelper.failure(
                     res,
-                    ErrorMessage.TRANSACTION_FAILED,
+                    ErrorMessages.PAYMENT.TRANSACTION_FAILED,
                     HttpStatus.BAD_REQUEST
                 )
             };

@@ -5,7 +5,7 @@ import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.type
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { ConflictError, NotFoundError } from "@presentation/express/utils/error-handling";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { FundStatus } from "@domain/enum/funds/fund-status.enum";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
@@ -26,19 +26,19 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
 
     async execute(data: ConfirmRedeemDTO): Promise<void> {
         const user = await this._userRepository.findById(data.userId);
-        if (!user) throw new NotFoundError(ErrorMessage.USER_NOT_FOUND);
+        if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
         const fund = await this._mutualfundRepository.findBySchemeCode(data.schemeCode);
-        if (!fund) throw new NotFoundError(ErrorMessage.NOT_FOUND);
+        if (!fund) throw new NotFoundError(ErrorMessages.DB.DATA_NOT_FOUND);
         switch (fund.status) {
             case FundStatus.INACTIVE:
-                throw new ConflictError(ErrorMessage.REDEMPTION_FAILED);
+                throw new ConflictError(ErrorMessages.MUTUAL_FUND.REDEMPTION_FAILED);
 
             case FundStatus.CLOSED:
-                throw new ConflictError(ErrorMessage.FUND_CLOSED);
+                throw new ConflictError(ErrorMessages.MUTUAL_FUND.FUND_CLOSED);
 
             case FundStatus.SUSPENDED:
-                throw new ConflictError(ErrorMessage.FUND_SUSPENDED);
+                throw new ConflictError(ErrorMessages.MUTUAL_FUND.FUND_SUSPENDED);
 
             default:
                 break;
@@ -47,14 +47,14 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
         const groupedInvestment = await this._investmentRepository.findGroupedInvestmentsByUser(data.userId) ?? [];
         const investment = groupedInvestment.find(investment => investment.schemeCode === data.schemeCode);
         if (!investment || investment.totalUnits <= 0) {
-            throw new ConflictError(ErrorMessage.NO_REDEEMABLE_UNITS);
+            throw new ConflictError(ErrorMessages.MUTUAL_FUND.NO_REDEEMABLE_UNITS);
         }
 
         const navHistory = await this._navProvider.fetchNavHistories(data.schemeCode);
         const latestNav = navHistory?.[0]?.nav;
 
         if (!latestNav || latestNav <= 0) {
-            throw new ConflictError(ErrorMessage.NAV_NOT_AVAILABLE);
+            throw new ConflictError(ErrorMessages.MUTUAL_FUND.NAV_NOT_AVAILABLE);
         }
 
 
@@ -73,7 +73,7 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
             }
 
             if (unitsToRedeem <= 0 || unitsToRedeem > investment.totalUnits) {
-                throw new ConflictError(ErrorMessage.INVALID_REDEEM_REQUEST);
+                throw new ConflictError(ErrorMessages.MUTUAL_FUND.INVALID_REDEEM_REQUEST);
             }
 
             let remainingUnitsToRedeem = unitsToRedeem;
@@ -107,7 +107,7 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
             }
 
             if (remainingUnitsToRedeem !== 0) {
-                throw new ConflictError(ErrorMessage.REDEMPTION_FAILED);
+                throw new ConflictError(ErrorMessages.MUTUAL_FUND.REDEMPTION_FAILED);
             }
             const redeemAmount = Number((unitsToRedeem * latestNav).toFixed(2));
             await this._walletRepository.credit(

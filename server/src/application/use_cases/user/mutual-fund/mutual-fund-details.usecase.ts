@@ -2,7 +2,7 @@ import { FundDetailsDTO } from "@application/dto/mutual-funds/fund-details.dto";
 import { IMfCagrRepository } from "@application/interfaces/repositories/feature/mf-cagr-repository.interface";
 import { IMutualFundNavRepository } from "@application/interfaces/repositories/feature/mutual-fund-nav-repository.interface";
 import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-details-usecase.interface";
-import { ErrorMessage } from "@domain/enum/express/messages/error.message";
+import { ErrorMessages } from "@shared/constants/error.messages";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
 import { MutualFundRepository } from "@infrastructure/databases/repository/mutual-fund/mutual-fund.repostiory";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
@@ -20,7 +20,7 @@ export class MutualFundDetailsUseCase implements IMutualFundDetailsUseCase {
 
     async execute(schemeCode: string, interval: NavInterval): Promise<FundDetailsDTO> {
         const fund = await this._mutualFundRepository.findBySchemeCode(schemeCode);
-        if (!fund) throw new NotFoundError(ErrorMessage.NOT_FOUND);
+        if (!fund) throw new NotFoundError(ErrorMessages.DB.DATA_NOT_FOUND);
 
         const mfCagrs = await this._mfCagrRepository.findOne({ schemeCode });
         const navHistories = await this._mfNavRepository.findByInterval(schemeCode, interval, 300) ?? [];
