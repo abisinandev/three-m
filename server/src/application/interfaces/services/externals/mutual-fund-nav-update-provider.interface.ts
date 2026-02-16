@@ -4,4 +4,10 @@ export interface IMutualFundNavUpdateProvider {
         nav: number;
         navDate: string;
     }[]>;
+
+    fetchNavSince(schemeCode: string, lastNavDate: Date): Promise<{
+        schemeCode: string;
+        nav: number;
+        navDate: string;
+    }[]>;
 }

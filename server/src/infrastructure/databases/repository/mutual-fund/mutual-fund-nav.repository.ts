@@ -7,6 +7,7 @@ import { IMutualFundNavRepository } from "@application/interfaces/repositories/f
 import { MutualFundNavModel } from "@infrastructure/databases/mongo_db/models/schemas/mutual-fund/mutual-fund-nav.schema";
 import { MutualFundNavDTO } from "@application/dto/mutual-funds/mutual-fund-nav-dto";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
+import { NavHistoryDTO } from "@application/dto/mutual-funds/nav-histroy.dto";
 
 @injectable()
 export class MutualFundNavRepsitory extends BaseRepository<MutualFundNavEntity, MutualFundNavDocument>
@@ -120,4 +121,37 @@ export class MutualFundNavRepsitory extends BaseRepository<MutualFundNavEntity, 
         }
         return null;
     };
+
+
+    async getLatestNav(schemeCode: string): Promise<MutualFundNavEntity | null> {
+        const doc = await this.model
+            .findOne({ schemeCode })
+            .sort({ navDate: -1 })
+            .exec()
+        if (!doc) return null
+        return this.mapper.toDomain(doc)
+    }
+
+
+    async bulkUpsertNavs(navs: NavHistoryDTO[]): Promise<void> {
+        if (!navs.length) return;
+
+        const operations = navs.map(nav => ({
+            updateOne: {
+                filter: {
+                    schemeCode: nav.schemeCode,
+                    navDate: nav.navDate,
+                },
+                update: {
+                    $set: {
+                        nav: nav.nav,
+                        interval: nav.interval,
+                        source: nav.source,
+                    },
+                },
+                upsert: true,
+            },
+        }));
+        await this.model.bulkWrite(operations, { ordered: false });
+    }
 }
