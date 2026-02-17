@@ -21,7 +21,18 @@ export const AnalyticsView = ({ data, formatCurrency, selectedMonth }: Analytics
         </div>
     );
 
-    const { comparison, categoryComparison, spendingTrend, insights, healthScore } = data;
+    const {
+        comparison = {
+            thisMonth: 0,
+            lastMonth: 0,
+            difference: 0,
+            percentageChange: 0
+        },
+        categoryComparison = [],
+        spendingTrend = [],
+        insights = [],
+        healthScore = 0
+    } = data || {};
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -30,7 +41,7 @@ export const AnalyticsView = ({ data, formatCurrency, selectedMonth }: Analytics
                 <div className="bg-[#111] p-6 rounded-2xl border border-neutral-800 shadow-xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                         <TrendingUp size={64} />
-                    </div>
+                    </div>percentage
                     <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">{selectedMonth}</p>
                     <div className="flex items-baseline gap-2 relative z-10">
                         <h3 className="text-2xl font-black text-white">{formatCurrency(comparison.thisMonth)}</h3>
