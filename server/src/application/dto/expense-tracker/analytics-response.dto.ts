@@ -22,8 +22,11 @@ export interface AnalyticsResponseDTO {
     categoryComparison: CategoryComparison[];
     spendingTrend: SpendingTrend[];
     insights: {
-        type: 'info' | 'warning' | 'success';
+        type: 'info' | 'warning' | 'success' | 'critical' | 'neutral';
         text: string;
+        title?: string;
+        id?: string;
+        priority?: number;
     }[];
     healthScore: number;
 }
