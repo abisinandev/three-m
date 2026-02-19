@@ -56,3 +56,10 @@ export interface IRedeemedInvestment {
     updatedAt: string;
     roi: number;
 }
+
+export interface IPortfolioProjectionResponse {
+    projectedValue: number;
+    projectedProfit: number;
+    futureTotalInvestment: number;
+    yearlyBreakdown: { year: number; value: number }[];
+}

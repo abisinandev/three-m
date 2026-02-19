@@ -1,5 +1,5 @@
 import api from "@lib/axiosUser";
-import type { IInvestmentBaseResponse, IPortfolioDatasResponse, IRedeemedInvestment } from "@shared/types/portfolio.types";
+import type { IInvestmentBaseResponse, IPortfolioDatasResponse, IPortfolioProjectionResponse, IRedeemedInvestment } from "@shared/types/portfolio.types";
 
 export const getPortfolioInvestments = async (
     page = 1,
@@ -47,4 +47,9 @@ export const confirmRedeemInvestment = async (payload: {
 }) => {
     const { data } = await api.patch('/user/portfolio/confirm-redeem', payload);
     return data;
+};
+
+export const getPortfolioProjection = async (): Promise<IPortfolioProjectionResponse> => {
+    const { data } = await api.get('/user/portfolio/projection');
+    return data?.data;
 };

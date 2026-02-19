@@ -9,8 +9,8 @@ import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-
 export class PortfolioCalculationsUseCase implements IPortfolioCalculationsUseCase {
 
     constructor(
-        @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly investmentRepository: IInvestmentRepository,
-        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly navUpdateProvider: IMutualFundNavUpdateProvider,
+        @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
+        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
     ) { }
 
     async execute(userId: string): Promise<{
@@ -21,8 +21,7 @@ export class PortfolioCalculationsUseCase implements IPortfolioCalculationsUseCa
         profitPercentage: number;
     }> {
 
-        const investments = await this.investmentRepository.getUserInvestmentsWithoutFilter(userId) ?? [];
-
+        const investments = await this._investmentRepository.getUserInvestmentsWithoutFilter(userId) ?? [];
         if (!investments.length) {
             return {
                 totalCount: 0,
@@ -44,7 +43,7 @@ export class PortfolioCalculationsUseCase implements IPortfolioCalculationsUseCa
 
         await Promise.all(
             schemeCodes.map(async (schemeCode) => {
-                const navHistory = await this.navUpdateProvider.fetchNavHistories(schemeCode);
+                const navHistory = await this._navUpdateProvider.fetchNavHistories(schemeCode);
                 if (navHistory?.length) {
                     navMap.set(schemeCode, Number(navHistory[0].nav));
                 }

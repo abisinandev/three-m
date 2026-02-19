@@ -12,8 +12,8 @@ import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { useQuery } from '@tanstack/react-query';
 import AssetAllocationDonut from '../components/PieChart';
 import { Pagination } from '@shared/components/pagination/Pagination';
-import { getPortfolioDatas, getPortfolioInvestments } from '@shared/services/feature/portfolio/PortfolioApi';
-import type { IInvestmentBaseResponse, IPortfolioDatasResponse } from '@shared/types/portfolio.types';
+import { getPortfolioDatas, getPortfolioInvestments, getPortfolioProjection } from '@shared/services/feature/portfolio/PortfolioApi';
+import type { IInvestmentBaseResponse, IPortfolioDatasResponse, IPortfolioProjectionResponse } from '@shared/types/portfolio.types';
 import { formatDateTime } from '@utils/date-converter/DateConverter';
 import { useNavigate } from '@tanstack/react-router';
 import api from '@lib/axiosUser';
@@ -83,6 +83,15 @@ const PortfolioDashboard = () => {
         queryKey: ["portfolio-key"],
         queryFn: async () => await api.get('/user/portfolio/return-xirr'),
     })
+
+    const {
+        data: projectionData,
+        isLoading: isProjectionLoading,
+    } = useQuery<IPortfolioProjectionResponse>({
+        queryKey: ['portfolio', 'projection'],
+        queryFn: getPortfolioProjection,
+        staleTime: 5 * 60 * 1000,
+    });
 
     const investments = holdingsData?.data || [];
     const totalCount = holdingsData?.totalCount ?? 0;
@@ -479,6 +488,49 @@ const PortfolioDashboard = () => {
                                     Redeem Profit
                                 </button>
                             </div>
+                        </div>
+
+                        {/* Portfolio Projection Card */}
+                        <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800/50 rounded-lg p-4 overflow-hidden relative group">
+                            <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
+
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+                                    10-Year Forecast
+                                </h3>
+                                <div className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                                    <span className="text-[10px] text-emerald-400 font-bold">12% CAGR</span>
+                                </div>
+                            </div>
+
+                            {isProjectionLoading ? (
+                                <div className="py-4 text-center text-[10px] text-zinc-600">Calculating projection...</div>
+                            ) : projectionData ? (
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p className="text-[10px] text-zinc-500 uppercase font-medium mb-1">Projected Value</p>
+                                            <p className="text-lg font-bold text-white tracking-tight">
+                                                ₹{projectionData.projectedValue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] text-zinc-500 uppercase font-medium mb-1">Expected Growth</p>
+                                            <p className="text-lg font-bold text-emerald-400 tracking-tight">
+                                                +₹{projectionData.projectedProfit.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-3 border-t border-zinc-800/50">
+                                        <p className="text-[9px] text-zinc-500 italic leading-relaxed">
+                                            Based on your current portfolio value and a conservative 12% annual return over the next 10 years.
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="py-2 text-center text-[10px] text-zinc-600">No data available</div>
+                            )}
                         </div>
                     </div>
                 </div>

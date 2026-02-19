@@ -6,13 +6,15 @@ import { PortfolioRoutes } from "@shared/routes/portfolio.routes";
 import { Router } from "express"
 const router = Router()
 
-const portfolioController = container.get<PortFolioController>(PortFolioController);
+const controller = container.get<PortFolioController>(PortFolioController);
 
-router.get(PortfolioRoutes.LIST_ALL, portfolioController.listAllInvestments.bind(portfolioController));
-router.get(PortfolioRoutes.DATAS, portfolioController.portfolioCalculation.bind(portfolioController));
-router.get(PortfolioRoutes.RETURN_XIRR, portfolioController.xirrCalculation.bind(portfolioController));
+router.get(PortfolioRoutes.LIST_ALL, controller.listAllInvestments.bind(controller));
+router.get(PortfolioRoutes.DATAS, controller.portfolioCalculation.bind(controller));
+router.get(PortfolioRoutes.RETURN_XIRR, controller.xirrCalculation.bind(controller));
 
-router.get(PortfolioRoutes.REDEEM_INVESTMENT, portfolioController.redeemInvestments.bind(portfolioController));
-router.patch(PortfolioRoutes.CONFIRM_REDEEM, validateDTO(ConfirmRedeemDTO), portfolioController.confirmRedeem.bind(portfolioController));
+router.get(PortfolioRoutes.REDEEM_INVESTMENT, controller.redeemInvestments.bind(controller));
+router.patch(PortfolioRoutes.CONFIRM_REDEEM, validateDTO(ConfirmRedeemDTO), controller.confirmRedeem.bind(controller));
+
+router.get("/projection", controller.returnProjection.bind(controller));
 
 export default router;
