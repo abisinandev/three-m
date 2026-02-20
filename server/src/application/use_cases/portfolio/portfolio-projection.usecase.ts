@@ -40,7 +40,6 @@ export class PortfolioProjectionUseCase implements IPortfolioProjectionUseCase {
         const schemeCodes = [...new Set(investments.map(i => i.schemeCode))];
         const navMap = new Map<string, number>();
         await Promise.all(
-
             schemeCodes.map(async (schemeCode) => {
                 const navHistory = await this._navUpdateProvider.fetchNavHistories(schemeCode);
                 if (navHistory?.length) {
