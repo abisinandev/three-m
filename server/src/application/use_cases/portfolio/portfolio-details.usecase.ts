@@ -28,6 +28,7 @@ interface InvestmentData {
     remainingUnits?: number;
 }
 
+//📌📌📌📌📌MANAGE THIS USECASE PROPERLY. SOLID BROKEN HERE💢💢
 @injectable()
 export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
     constructor(

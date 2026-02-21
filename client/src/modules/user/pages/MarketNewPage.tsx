@@ -16,7 +16,7 @@ export const MarketNewsPage = () => {
         queryFn: () => getMarketNews({
             query: searchQuery,
             category: activeCategory === "All" ? "" : activeCategory
-        }),
+        }), 
     });
 
     const filteredNews = news || [];

@@ -42,5 +42,5 @@ export const deleteExpenseApi = async (index: number) => {
 
 export const fetchAnalyticsData = async (month?: string) => {
     const response = await api.get('/user/expense-tracker/analytics', { params: { month } });
-    return response.data;
+    return response.data.data;
 };

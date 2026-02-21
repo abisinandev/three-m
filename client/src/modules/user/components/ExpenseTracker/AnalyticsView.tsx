@@ -41,7 +41,7 @@ export const AnalyticsView = ({ data, formatCurrency, selectedMonth }: Analytics
                 <div className="bg-[#111] p-6 rounded-2xl border border-neutral-800 shadow-xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                         <TrendingUp size={64} />
-                    </div>percentage
+                    </div>
                     <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1">{selectedMonth}</p>
                     <div className="flex items-baseline gap-2 relative z-10">
                         <h3 className="text-2xl font-black text-white">{formatCurrency(comparison.thisMonth)}</h3>
@@ -137,24 +137,35 @@ export const AnalyticsView = ({ data, formatCurrency, selectedMonth }: Analytics
                             {insights.length === 0 && (
                                 <p className="text-xs text-neutral-600 italic">No significant trends detected this month.</p>
                             )}
-                            {insights.map((insight: any, idx: number) => (
-                                <div key={idx} className={`p-4 rounded-xl border flex gap-3 items-start transition-all hover:translate-x-1 ${insight.type === 'success' ? 'bg-emerald-500/5 border-emerald-500/10' :
-                                    insight.type === 'warning' ? 'bg-rose-500/5 border-rose-500/10' :
-                                        'bg-blue-500/5 border-blue-500/10'
-                                    }`}>
-                                    <div className="mt-1">
-                                        {insight.type === 'success' ? <TrendingDown size={14} className="text-emerald-500" /> :
-                                            insight.type === 'warning' ? <AlertCircle size={14} className="text-rose-500" /> :
-                                                <Activity size={14} className="text-blue-500" />}
+                            {insights.map((insight: any, idx: number) => {
+                                const getInsightStyle = (type: string) => {
+                                    switch (type) {
+                                        case 'critical': return { bg: 'bg-rose-500/10', border: 'border-rose-500/20', icon: 'text-rose-500', text: 'text-rose-400' };
+                                        case 'warning': return { bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: 'text-amber-500', text: 'text-amber-400' };
+                                        case 'success': return { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: 'text-emerald-500', text: 'text-emerald-400' };
+                                        case 'neutral': return { bg: 'bg-blue-500/10', border: 'border-blue-500/20', icon: 'text-blue-500', text: 'text-blue-400' };
+                                        default: return { bg: 'bg-neutral-800', border: 'border-neutral-700', icon: 'text-neutral-400', text: 'text-neutral-300' };
+                                    }
+                                };
+                                const style = getInsightStyle(insight.type);
+
+                                return (
+                                    <div key={idx} className={`p-4 rounded-xl border flex gap-3 items-start transition-all hover:translate-x-1 ${style.bg} ${style.border}`}>
+                                        <div className="mt-1">
+                                            {insight.type === 'critical' ? <AlertCircle size={14} className={style.icon} /> :
+                                                insight.type === 'warning' ? <AlertCircle size={14} className={style.icon} /> :
+                                                    insight.type === 'success' ? <TrendingDown size={14} className={style.icon} /> :
+                                                        <Activity size={14} className={style.icon} />}
+                                        </div>
+                                        <div>
+                                            {insight.title && <h4 className={`text-xs font-bold mb-0.5 ${style.text}`}>{insight.title}</h4>}
+                                            <p className={`text-xs font-medium leading-relaxed ${style.text} opacity-90`}>
+                                                {insight.text}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <p className={`text-xs font-semibold leading-relaxed ${insight.type === 'success' ? 'text-emerald-400' :
-                                        insight.type === 'warning' ? 'text-rose-400' :
-                                            'text-blue-400'
-                                        }`}>
-                                        {insight.text}
-                                    </p>
-                                </div>
-                            ))}
+                                );
+                            })}
 
                             {/* Health Meter Hook */}
                             <div className="mt-8 pt-6 border-t border-neutral-800">

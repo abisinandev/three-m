@@ -9,6 +9,7 @@ import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import { IXirrCalculationUseCase } from "@application/use_cases/portfolio/interfaces/xirr-calculation-usecase.interface";
+import { IPortfolioProjectionUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-projection-usecase.interface";
 
 @injectable()
 export class PortFolioController {
@@ -18,6 +19,7 @@ export class PortFolioController {
         @inject(PORTFOLIO_TYPES.ConfirmRedeemUseCase) private readonly _confirmRedeem: IConfirmRedeemUseCase,
         @inject(PORTFOLIO_TYPES.PortfolioCalculationsUseCase) private readonly _portfolioCalcuationUseCase: IPortfolioCalculationsUseCase,
         @inject(PORTFOLIO_TYPES.XirrCalculationUseCase) private readonly _xirrCalculation: IXirrCalculationUseCase,
+        @inject(PORTFOLIO_TYPES.PortfolioProjectionUseCase) private readonly _portfolioProjection: IPortfolioProjectionUseCase,
     ) { }
 
     async listAllInvestments(req: Request, res: Response, next: NextFunction) {
@@ -89,6 +91,24 @@ export class PortFolioController {
         try {
             const userId = req?.user?.id;
             const result = await this._xirrCalculation.execute(userId as string);
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.FETCHED,
+                result,
+                HttpStatus.OK,
+            )
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async returnProjection(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req?.user?.id;
+            const result = await this._portfolioProjection.execute({
+                expectedReturnRate: 12,
+                years: 10,
+            }, userId as string);
             return ResponseHelper.success(
                 res,
                 SuccessMessages.DATA.FETCHED,

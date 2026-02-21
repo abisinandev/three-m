@@ -3,5 +3,5 @@ export enum PortfolioRoutes {
     DATAS = "/datas",
     RETURN_XIRR = "/return-xirr",
     REDEEM_INVESTMENT = '/redeem-investment',
-    CONFIRM_REDEEM = "/confirm-redeem"
+    CONFIRM_REDEEM = "/confirm-redeem",
 }
