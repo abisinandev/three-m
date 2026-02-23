@@ -1,21 +1,12 @@
+import { container } from '@infrastructure/inversify_di/container';
+import { AI_SYSTEM_TYPES } from '@infrastructure/inversify_di/features/ai-system/ai-system.type';
+import { AiChatbotController } from '@presentation/http/controllers/ai-chatbot/ai-chatbot.controller';
+import { ChatbotRoutes } from '@shared/routes/chatbot.routes';
 import { Router } from 'express'
-import { HumanMessage } from 'langchain';
 const router = Router();
 
-// router.post("/chat", async (req, res) => {
-//     try {
-//         const { message } = req.body;
+const controller = container.get<AiChatbotController>(AI_SYSTEM_TYPES.AiChatbotController)
 
-//         const response = await model.invoke([
-//             new HumanMessage(message),
-//         ]);
-
-//         res.json({ reply: response.content });
-
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ error: "Something went wrong" });
-//     }
-// });
+router.post(ChatbotRoutes.CHAT, controller.chat.bind(controller));
 
 export default router;
