@@ -9,6 +9,7 @@ import { LOGOUT } from '@shared/constants/userContants';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
 import { NotificationDropdown } from '@shared/components/notification/NotificationDropdown';
 import { useProfileQuery } from '@shared/services/user/ProfileApi';
+import AiAssistantPanel from '@shared/components/ai-chatbot/AiChatbot';
 
 const UserLayout = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -157,7 +158,7 @@ const UserLayout = () => {
             <main className="max-w-7xl mx-auto px-4 py-6">
                 <Outlet />
             </main>
-
+<AiAssistantPanel />
             <Footer />
 
             <ConfirmModal
