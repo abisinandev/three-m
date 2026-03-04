@@ -3,13 +3,14 @@ import { env } from "@presentation/express/utils/constants/env.constants";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
 import { NavDailyScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-cron.scheduler";
 import { CagrUpdateScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/cagr-cron-scheduler";
-import { NavMontlyScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-monthly-scheduler";
-import { NavYearScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-yearly.scheduler";
+// import { NavMontlyScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-monthly-scheduler";
+// import { NavYearScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-yearly.scheduler";
 import { NavAllocationScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-allocatation-scheduler";
 import { StartSipScheduler } from "@infrastructure/providers/cron-scheduler/sip/sip-process-scheduler";
 import { initSocketConfigs } from "@infrastructure/providers/notification/socket.configs";
 import http from "http";
 import app from "./app";
+import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/ingest-docs";
 
 const bootstrap = async () => {
   try {
@@ -17,12 +18,13 @@ const bootstrap = async () => {
 
     //cron-scheduler
     NavDailyScheduler();
-    NavMontlyScheduler();
-    NavYearScheduler();
+    // NavMontlyScheduler();
+    // NavYearScheduler();
     CagrUpdateScheduler();
     NavAllocationScheduler();
     StartSipScheduler();
-
+    // IngestDocuments()
+ 
     const server = http.createServer(app);
     initSocketConfigs(server);
 

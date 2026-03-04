@@ -5,6 +5,7 @@ import { getRedeemableInvestments } from '@shared/services/feature/portfolio/Por
 import type { IRedeemedInvestment } from '@shared/types/portfolio.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import api from '@lib/axiosUser';
+import { ROUTES } from '@shared/constants/routes';
 
 const formatCurrency = (value: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value);
@@ -96,7 +97,7 @@ const RedeemFundsPage = () => {
         <div className="min-h-screen bg-black text-white font-sans">
             <div className="sticky top-0 z-10 border-b border-zinc-900 bg-black/90 backdrop-blur px-6 py-4 flex items-center gap-4">
                 <button
-                    onClick={() => navigate({ to: "/user/portfolio" })}
+                    onClick={() => navigate({ to: ROUTES.USER.PORTFOLIO.ROOT })}
                     className="p-2 -ml-2 hover:bg-zinc-900 rounded-full transition-colors"
                 >
                     <ArrowLeft size={20} className="text-zinc-400" />

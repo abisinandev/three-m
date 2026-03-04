@@ -17,6 +17,7 @@ import type { IInvestmentBaseResponse, IPortfolioDatasResponse, IPortfolioProjec
 import { formatDateTime } from '@utils/date-converter/DateConverter';
 import { useNavigate } from '@tanstack/react-router';
 import api from '@lib/axiosUser';
+import { ROUTES } from '@shared/constants/routes';
 
 const recent = [
     {
@@ -481,7 +482,7 @@ const PortfolioDashboard = () => {
                             </h3>
                             <div className="space-y-2">
                                 <button
-                                    onClick={() => navigate({ to: '/user/portfolio/redeem-profit' })}
+                                    onClick={() => navigate({ to: ROUTES.USER.PORTFOLIO.REDEEM_PROFIT })}
                                     className="w-full py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white text-xs font-semibold rounded-lg transition-all shadow-lg shadow-green-600/20 flex items-center justify-center gap-2"
                                 >
                                     <TrendingUp size={14} />

@@ -2,6 +2,7 @@ import adminApi from '@lib/axiosAdmin';
 import OTPVerification from '@shared/components/otp/OtpComponet'
 import { RESEND_OTP, VERIFY_OTP } from '@shared/constants/adminConstants';
 import { useOtpControls } from '@shared/hooks/auth/useOtpControls';
+import { ROUTES } from '@shared/constants/routes';
 import { useAuthStore } from '@stores/user/UserAuthStore';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -38,7 +39,7 @@ const OtpVerificationPage = () => {
             toast.success(res.data.message || "Email verified successfully");
 
             resetOtpState();
-            navigate({ to: "/admin/dashboard", replace: true });
+            navigate({ to: ROUTES.ADMIN.DASHBOARD, replace: true });
         },
         onError: () => {
             toast.error("Invalid OTP. Please try again.");

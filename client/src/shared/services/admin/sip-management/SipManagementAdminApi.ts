@@ -1,5 +1,5 @@
 import adminApi from "@lib/axiosAdmin";
-import api from "@lib/axiosUser";
+import { API_ROUTES } from "@shared/constants/apiRoutes";
 import type { SipStatus, SIP, SipInstallment } from "@modules/admin/types/SipTypes";
 
 
@@ -34,7 +34,7 @@ export const fetchSipsApi = async (
     filters?: SipFilters
 ): Promise<SipListResponse> => {
     const { data } = await adminApi.get<{ data: SipListResponse }>(
-        `/sip-management`,
+        API_ROUTES.ADMIN.SIP.GET_ALL,
         {
             params: filters,
         }
@@ -59,7 +59,7 @@ export const fetchSipDetailsApi = async (
     }
 ): Promise<SipDetailsApiResponse> => {
     const { data } = await adminApi.get(
-        `/sip-management/${sipId}`,
+        API_ROUTES.ADMIN.SIP.DETAILS(sipId),
         { params }
     );
 

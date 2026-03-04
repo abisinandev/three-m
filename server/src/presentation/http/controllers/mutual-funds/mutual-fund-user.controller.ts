@@ -59,7 +59,7 @@ export class MutualFundUserController {
         try {
             const { interval } = req.query;
             const schemeCode = req.params.schemeCode;
-            const result = await this._mfDetailsUsecase.execute(schemeCode, interval as NavInterval);
+            const result = await this._mfDetailsUsecase.execute(schemeCode as string, interval as NavInterval);
             return ResponseHelper.success(
                 res,
                 SuccessMessage.DATA_FETCHED,

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { CheckCircle, ArrowLeft, Wallet, Sparkles } from "lucide-react";
+import { ROUTES } from "@shared/constants/routes";
 
 const PaymentSuccessPage = () => {
     const navigate = useNavigate();
@@ -101,14 +102,14 @@ const PaymentSuccessPage = () => {
                         }`}
                 >
                     <button
-                        onClick={() => navigate({ to: "/user/wallet" })}
+                        onClick={() => navigate({ to: ROUTES.USER.WALLET.ROOT })}
                         className="w-full py-3.5 rounded-xl font-medium text-sm transition shadow-lg bg-gradient-to-r from-[#22C55E] to-[#16a34a] hover:from-[#1fa856] hover:to-[#15803d] shadow-green-500/20"
                     >
                         View Wallet
                     </button>
 
                     <button
-                        onClick={() => navigate({ to: "/" })}
+                        onClick={() => navigate({ to: ROUTES.HOME })}
                         className="w-full py-3 rounded-xl font-medium text-sm border border-[#333] hover:bg-[#111] transition"
                     >
                         Back to Home
@@ -117,7 +118,7 @@ const PaymentSuccessPage = () => {
 
                 {/* Subtle back link */}
                 <button
-                    onClick={() => navigate({ to: "/user/wallet" })}
+                    onClick={() => navigate({ to: ROUTES.USER.WALLET.ROOT })}
                     className="text-xs text-gray-500 hover:text-gray-300 transition flex items-center gap-1.5 mx-auto mt-8"
                 >
                     <ArrowLeft size={14} />

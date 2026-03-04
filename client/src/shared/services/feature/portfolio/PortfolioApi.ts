@@ -1,4 +1,5 @@
 import api from "@lib/axiosUser";
+import { API_ROUTES } from "@shared/constants/apiRoutes";
 import type { IInvestmentBaseResponse, IPortfolioDatasResponse, IPortfolioProjectionResponse, IRedeemedInvestment } from "@shared/types/portfolio.types";
 
 export const getPortfolioInvestments = async (
@@ -7,7 +8,7 @@ export const getPortfolioInvestments = async (
     status?: string | null,
     search?: string
 ): Promise<IInvestmentBaseResponse> => {
-    const { data } = await api.get('/user/portfolio', {
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.GET_INVESTMENTS, {
         params: { page, limit, status: status || undefined, search: search || undefined },
     });
 
@@ -22,7 +23,7 @@ export const getPortfolioInvestments = async (
 };
 
 export const getPortfolioDatas = async (): Promise<IPortfolioDatasResponse> => {
-    const { data } = await api.get('/user/portfolio/datas');
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.GET_DATAS);
 
     const responseData = data?.data;
 
@@ -36,7 +37,7 @@ export const getPortfolioDatas = async (): Promise<IPortfolioDatasResponse> => {
 };
 
 export const getRedeemableInvestments = async (): Promise<IRedeemedInvestment[]> => {
-    const { data } = await api.get('/user/portfolio/redeem-investment');
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.REDEEM_INVESTMENT);
     return data?.data ?? [];
 };
 
@@ -45,11 +46,11 @@ export const confirmRedeemInvestment = async (payload: {
     amount?: number | string;
     units?: number | string;
 }) => {
-    const { data } = await api.patch('/user/portfolio/confirm-redeem', payload);
+    const { data } = await api.patch(API_ROUTES.USER.PORTFOLIO.CONFIRM_REDEEM, payload);
     return data;
 };
 
 export const getPortfolioProjection = async (): Promise<IPortfolioProjectionResponse> => {
-    const { data } = await api.get('/user/portfolio/projection');
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.PROJECTION);
     return data?.data;
 };

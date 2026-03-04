@@ -6,7 +6,6 @@ import {
   DollarSign,
   TrendingUp,
   Receipt,
-  BarChart3,
   Bell,
   Settings,
   Bot,
@@ -22,19 +21,20 @@ import adminApi from '@lib/axiosAdmin';
 import { LOGOUT } from '@shared/constants/adminConstants';
 import { toast } from 'sonner';
 import { useAdminStore } from '@stores/admin/useAdminStore';
+import { ROUTES } from '@shared/constants/routes';
 
 const navItems = [
-  { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/admin/sip-management', label: 'SIP Management', icon: DollarSign },
-  // { to: '/admin/installments', label: 'Installments', icon: Receipt },
-  // { to: '/admin/nav-monitoring', label: 'NAV Monitoring', icon: BarChart3 },
-  { to: '/admin/users-management', label: 'Users', icon: Users },
-  { to: '/admin/kyc-management', label: 'KYC Verification', icon: BadgeCheck },
-  { to: '/admin/mutual-funds-management', label: 'Mutual Funds', icon: TrendingUp },
-  { to: '/admin/transactions-management', label: 'Transactions', icon: Receipt },
-  { to: '/admin/notifications', label: 'Notifications', icon: Bell },
-  { to: '/admin/bot-management', label: 'Bot Management', icon: Bot },
-  { to: '/admin/settings', label: 'Settings', icon: Settings },
+  { to: ROUTES.ADMIN.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
+  { to: ROUTES.ADMIN.SIP_MANAGEMENT.ROOT, label: 'SIP Management', icon: DollarSign },
+  // { to: ROUTES.ADMIN.INSTALLMENTS, label: 'Installments', icon: Receipt },
+  // { to: ROUTES.ADMIN.NAV_MONITORING, label: 'NAV Monitoring', icon: BarChart3 },
+  { to: ROUTES.ADMIN.USERS_MANAGEMENT, label: 'Users', icon: Users },
+  { to: ROUTES.ADMIN.KYC_MANAGEMENT.ROOT, label: 'KYC Verification', icon: BadgeCheck },
+  { to: ROUTES.ADMIN.MUTUAL_FUNDS_MANAGEMENT.ROOT, label: 'Mutual Funds', icon: TrendingUp },
+  { to: ROUTES.ADMIN.TRANSACTIONS_MANAGEMENT, label: 'Transactions', icon: Receipt },
+  { to: ROUTES.ADMIN.NOTIFICATIONS, label: 'Notifications', icon: Bell },
+  { to: ROUTES.ADMIN.BOT_MANAGEMENT, label: 'Bot Management', icon: Bot },
+  { to: ROUTES.ADMIN.SETTINGS, label: 'Settings', icon: Settings },
 ];
 
 interface AdminLayoutProps {
@@ -57,7 +57,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       await adminApi.post(LOGOUT, {}, { withCredentials: true });
       logout();
       toast.success('Logged out successfully');
-      navigate({ to: '/admin/authentication', replace: true });
+      navigate({ to: ROUTES.ADMIN.AUTH.LOGIN, replace: true });
     } catch (error) {
       console.error('Logout failed:', error);
       toast.error('Failed to logout. Please try again.');
@@ -132,8 +132,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 to={item.to}
                 onClick={closeSidebar}
                 className={`flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${active
-                    ? 'text-emerald-500 bg-emerald-500/10'
-                    : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
+                  ? 'text-emerald-500 bg-emerald-500/10'
+                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800'
                   }`}
               >
                 <Icon size={18} className="shrink-0" strokeWidth={2} />
@@ -209,7 +209,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </button>
 
             <button
-              onClick={() => navigate({ to: '/admin/dashboard' })}
+              onClick={() => navigate({ to: ROUTES.ADMIN.DASHBOARD })}
               className="p-2 hover:bg-neutral-800 rounded-md transition-colors"
               aria-label="Settings"
             >
@@ -253,7 +253,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     <button
                       onClick={() => {
                         setShowProfileMenu(false);
-                        navigate({ to: '/admin/dashboard' });
+                        navigate({ to: ROUTES.ADMIN.DASHBOARD });
                       }}
                       className="w-full px-3 py-2 text-left text-[13px] text-neutral-300 hover:bg-neutral-700 transition-colors flex items-center gap-2"
                     >

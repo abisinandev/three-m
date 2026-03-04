@@ -5,8 +5,10 @@ import { GetSignatureApi } from '@shared/services/user/GetSignatureApi';
 import { useUserStore } from '@stores/user/UserStore';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { KYC_SUMBIT_URL } from '@shared/constants/userContants';
+import { KYC_SUMBIT_URL } from '@shared/constants/userContants';
 import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
+import { ROUTES } from '@shared/constants/routes';
 
 const steps = [
     { id: 1, title: 'Your Details', field: 'details', isForm: true },
@@ -217,7 +219,7 @@ const KYCVerificationPage = () => {
 
             toast.success('KYC submitted successfully!');
             setSubmitStatus('success');
-            setTimeout(() => navigate({ to: '/user/profile' }), 2000);
+            setTimeout(() => navigate({ to: ROUTES.USER.PROFILE }), 2000);
         } catch (error: any) {
             toast.error(error.response?.data?.message || 'Upload failed. Please try again.');
             setSubmitStatus('error');
@@ -445,8 +447,8 @@ const KYCVerificationPage = () => {
                                         onClick={currentStep === steps.length - 1 ? handleSubmit : goNext}
                                         disabled={!isStepComplete() || isSubmitting}
                                         className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition ${isStepComplete() && !isSubmitting
-                                                ? 'bg-[#22C55E] hover:bg-[#1ea853] text-white'
-                                                : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                            ? 'bg-[#22C55E] hover:bg-[#1ea853] text-white'
+                                            : 'bg-gray-800 text-gray-500 cursor-not-allowed'
                                             }`}
                                     >
                                         {isSubmitting ? (

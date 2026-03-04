@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import api from "@lib/axiosUser";
 import { GOOGLE_AUTH } from "@shared/constants/userContants";
 import { GoogleLogin } from "@react-oauth/google";
+import { ROUTES } from "@shared/constants/routes";
 
 interface LoginFormProps {
     formData: LoginType;
@@ -34,8 +35,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
         onSuccess: () => {
             setTimeout(() => {
-                navigate({ to: "/user", replace: true });
-            }, 1000); 
+                navigate({ to: ROUTES.USER.HOME, replace: true });
+            }, 1000);
         },
 
         onError: (err) => {
@@ -67,7 +68,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
             <div className="flex justify-between items-center text-[12px] mt-3 mb-3">
                 <a
-                    onClick={() => navigate({ to: "/auth/forgot-password" })}
+                    onClick={() => navigate({ to: ROUTES.AUTH.FORGOT_PASSWORD.ROOT })}
                     className="text-teal-green hover:underline cursor-pointer"
                 >
                     Forgot password?

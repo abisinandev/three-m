@@ -1,5 +1,5 @@
 import adminApi from "@lib/axiosAdmin";
-import { FETCH_USER_URL } from "@shared/constants/adminConstants";
+import { API_ROUTES } from "@shared/constants/apiRoutes";
 
 export type UserFilters = {
     page?: number;
@@ -11,7 +11,7 @@ export type UserFilters = {
 };
 
 export const FetchUserDetail = async (filters: UserFilters) => {
-    const response = await adminApi.get(FETCH_USER_URL, {
+    const response = await adminApi.get(API_ROUTES.ADMIN.USERS.FETCH_ALL, {
         withCredentials: true,
         params: filters,
         headers: { "Content-Type": "application/json" },

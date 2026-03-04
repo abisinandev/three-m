@@ -14,7 +14,8 @@ export class ChatbotUseCase implements IChatbotUseCase {
     async execute(userInput: string): Promise<string> {
 
         const agentType = await this._detectAgent.detectAgent(userInput);
-
+        console.log("Agnent: ", agentType);
+        
         switch (agentType) {
             case "education":
                 return this._educationService.getResponses(userInput);

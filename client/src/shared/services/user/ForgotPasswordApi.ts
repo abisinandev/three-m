@@ -1,8 +1,8 @@
 import api from "@lib/axiosUser";
-import { FORGOT_PASSWORD } from "@shared/constants/userContants";
+import { API_ROUTES } from "@shared/constants/apiRoutes";
 
 export const ForgotPasswordApi = async (data: { email: string }) => {
-    const response = await api.post(FORGOT_PASSWORD, data, {
+    const response = await api.post(API_ROUTES.USER.AUTH.FORGOT_PASSWORD, data, {
         headers: { "Content-Type": "application/json" }
     })
     console.log("Forgotpassword response: ", response);

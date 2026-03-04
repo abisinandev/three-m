@@ -12,6 +12,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { FetchUserWallet } from '@shared/services/user/FetchUserWallet';
 import { useUserStore } from '@stores/user/UserStore';
+import { ROUTES } from '@shared/constants/routes';
 
 
 export type WalletTransaction = {
@@ -45,7 +46,7 @@ const KycWarningBox = () => {
                 </p>
             </div>
             <button
-                onClick={() => navigate({ to: '/user/profile' })}
+                onClick={() => navigate({ to: ROUTES.USER.PROFILE })}
                 className="text-[11px] font-bold text-yellow-500 hover:text-yellow-400 uppercase tracking-wider"
             >
                 Complete Now
@@ -167,10 +168,10 @@ const WalletPage = () => {
                 <div className="flex items-center gap-4 w-full max-w-sm">
                     <button
                         disabled={!canTransact}
-                        onClick={() => navigate({ to: '/user/wallet/add-to-wallet' })}
+                        onClick={() => navigate({ to: ROUTES.USER.WALLET.ADD })}
                         className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold transition-all ${canTransact
-                                ? 'bg-green-600 text-white hover:bg-green-700 active:scale-95'
-                                : 'bg-white/5 text-white/10 cursor-not-allowed'
+                            ? 'bg-green-600 text-white hover:bg-green-700 active:scale-95'
+                            : 'bg-white/5 text-white/10 cursor-not-allowed'
                             }`}
                     >
                         <ArrowUpRight size={16} />

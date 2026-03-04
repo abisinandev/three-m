@@ -5,7 +5,7 @@ import cron from 'node-cron';
 
 export function NavDailyScheduler() {
     cron.schedule(
-        // "* * * * * *", 
+        // "* * * * *", 
         "0 2,3,9 * * *",
         async () => {
             console.log("[NAV-CRON] NAV sync started");

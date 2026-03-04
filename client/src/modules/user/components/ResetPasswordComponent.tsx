@@ -7,11 +7,12 @@ import { useAuthStore } from "@stores/user/UserAuthStore";
 import { ArrowLeft } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { ResetPasswordApi } from "@shared/services/user/ResetPasswordApi";
+import { ROUTES } from "@shared/constants/routes";
 
 export const ResetPasswordForm = () => {
   const navigate = useNavigate();
   const { email, token, clearData } = useAuthStore();
-  console.log('Email: ',email,"---","Token: ",token)
+  console.log('Email: ', email, "---", "Token: ", token)
   const [formData, setFormData] = useState({
     newPassword: "",
     confirmPassword: "",
@@ -30,7 +31,7 @@ export const ResetPasswordForm = () => {
     onSuccess: (res) => {
       toast.success(res.data.message || "Password reset successful");
       clearData();
-      navigate({ to: "/auth/login" });
+      navigate({ to: ROUTES.AUTH.LOGIN });
     },
 
     onError: (err) => {
@@ -81,7 +82,7 @@ export const ResetPasswordForm = () => {
           <div className="backdrop-blur-xl bg-deep-charcoal/70 rounded-2xl p-6 shadow-xl">
             <button
               onClick={() =>
-                navigate({ to: "/auth/login" })
+                navigate({ to: ROUTES.AUTH.LOGIN })
               }
               className="flex items-center gap-2 text-cool-white/60 hover:text-teal-green transition mb-6 text-sm"
             >
@@ -125,7 +126,7 @@ export const ResetPasswordForm = () => {
             <p className="text-center text-xs text-cool-white/50 mt-6">
               Remembered your password?{" "}
               <button
-                onClick={() => navigate({ to: "/auth/login" })}
+                onClick={() => navigate({ to: ROUTES.AUTH.LOGIN })}
                 className="text-teal-green font-medium hover:underline"
               >
                 Login here

@@ -52,7 +52,7 @@ export class MutualFundsAdminController {
     async updateStatus(req: Request, res: Response, next: NextFunction) {
         try {
             const fundId = req.params.fundId
-            await this._changeFundStatus.execute(fundId);
+            await this._changeFundStatus.execute(fundId as string);
             await this._mutualFundNavUpdate.execute(NavInterval.DAILY);
             await this._mutualFundNavUpdate.execute(NavInterval.WEEKLY);
             await this._mutualFundNavUpdate.execute(NavInterval.MONTHLY);

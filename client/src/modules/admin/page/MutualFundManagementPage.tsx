@@ -13,6 +13,7 @@ import { Pagination } from '@shared/components/pagination/Pagination';
 import { MutualFundsTable } from '../components/MutualFundTable';
 import { fetchMutualFunds, updateStatus } from '@shared/services/admin/mutual-fund-management/MutualFundAdminSide';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
+import { ROUTES } from '@shared/constants/routes';
 
 
 export default function MutualFundsPage() {
@@ -111,7 +112,7 @@ export default function MutualFundsPage() {
                     </button>
 
                     <button
-                        onClick={() => navigate({ to: '/admin/add-new-fund' })}
+                        onClick={() => navigate({ to: ROUTES.ADMIN.MUTUAL_FUNDS_MANAGEMENT.ADD_NEW })}
                         aria-label="Add new fund"
                         className="flex items-center gap-1.5 px-3 py-2 text-xs bg-emerald-600 hover:bg-emerald-700 rounded-md font-medium transition"
                     >

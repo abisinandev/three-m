@@ -4,6 +4,7 @@ import { ArrowLeft, Smartphone, CreditCard, Building2, ChevronRight } from "luci
 import api from "@lib/axiosUser";
 import { PAYMENT_ROUTE } from "@shared/constants/userContants";
 import { useUserStore } from "@stores/user/UserStore";
+import { ROUTES } from "@shared/constants/routes";
 
 const QUICK_AMOUNTS = [500, 1000, 2000, 5000, 10000];
 
@@ -66,7 +67,7 @@ const AddToWallet = () => {
             window.location.href = res.data.checkoutUrl;
         } catch (err) {
             console.error("Payment error", err);
-            navigate({ to: "/user/payment-failed", replace: true });
+            navigate({ to: ROUTES.USER.PAYMENT.FAILED, replace: true });
         } finally {
             setLoading(false);
         }
@@ -80,7 +81,7 @@ const AddToWallet = () => {
             {/* Header */}
             <div className="sticky top-0 z-10 border-b border-[#1f1f1f] bg-black/80 backdrop-blur px-4 py-3 flex items-center gap-3">
                 <button
-                    onClick={() => navigate({ to: "/user/wallet" })}
+                    onClick={() => navigate({ to: ROUTES.USER.WALLET.ROOT })}
                     className="p-2 hover:bg-[#1a1a1a] rounded-lg transition"
                 >
                     <ArrowLeft size={18} />

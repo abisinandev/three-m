@@ -53,5 +53,7 @@ export const env = {
   MARKET_NEWS_API_KEY: requireEnv("MARKET_NEWS_API_KEY"),
   MARKET_NEWS_API: requireEnv("MARKET_NEWS_API"),
 
-  OPENAI_API_KEY: requireEnv("OPENAI_API_KEY")
+  OPENAI_API_KEY: requireEnv("OPENAI_API_KEY"),
+
+  PINECONE_API_KEY: requireEnv("PINECONE_API_KEY"),
 }; 

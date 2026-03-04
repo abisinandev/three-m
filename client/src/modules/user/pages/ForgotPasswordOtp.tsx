@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { FORGOT_PASSWORD_VERIFY, FORGOT_PASSWORD_RESEND } from "@shared/constants/userContants";
 import api from "@lib/axiosUser";
 import { toast } from "sonner";
+import { ROUTES } from "@shared/constants/routes";
 
 export default function ForgotPasswordOTP() {
   const { email, setData } = useAuthStore();
@@ -15,16 +16,16 @@ export default function ForgotPasswordOTP() {
 
   // --- VERIFY OTP ---
   const verifyOtp = useMutation({
-    mutationFn:async (otp: string) =>
+    mutationFn: async (otp: string) =>
       await api.post(FORGOT_PASSWORD_VERIFY, { email, otp }),
 
     onSuccess: (res) => {
       toast.success(res.data.message || "Otp verified. You can reset your password");
       controls.resetOtpState();
-      console.log("Forgot otp verify: ",res.data)
+      console.log("Forgot otp verify: ", res.data)
       localStorage.removeItem(controls.storageKey);
       setData(email as string, expirationTime, res.data.data.resetToken);
-      navigate({ to: "/auth/reset-password" })
+      navigate({ to: ROUTES.AUTH.RESET_PASSWORD })
     },
 
     onError: () => toast.error("Invalid OTP"),

@@ -1,4 +1,5 @@
 import adminApi from "@lib/axiosAdmin";
+import { API_ROUTES } from "@shared/constants/apiRoutes";
 import type { MutualFundType, PaginatedMutualFundsResponse } from "@shared/types/mutual-funds/MutualFundType";
 
 export type AddFundPayload = {
@@ -15,7 +16,7 @@ export const addFundApi = async (
     payload: AddFundPayload
 ): Promise<any> => {
     const response = await adminApi.post(
-        "/mutual-funds/add-fund",
+        API_ROUTES.ADMIN.MUTUAL_FUNDS.ADD,
         payload
     );
 
@@ -34,7 +35,7 @@ export const fetchMutualFunds = async ({
     search: string;
     sort: string;
 }): Promise<PaginatedMutualFundsResponse> => {
-    const res = await adminApi.get('/mutual-funds/list', {
+    const res = await adminApi.get(API_ROUTES.ADMIN.MUTUAL_FUNDS.LIST, {
         params: {
             page,
             limit: 10,
@@ -48,8 +49,8 @@ export const fetchMutualFunds = async ({
 
 
 
-export const updateStatus = async (fund: MutualFundType, newStatus:string) => {
-    await adminApi.patch(`/mutual-funds/${fund.id}/status`, {
-        status: newStatus ,
+export const updateStatus = async (fund: MutualFundType, newStatus: string) => {
+    await adminApi.patch(API_ROUTES.ADMIN.MUTUAL_FUNDS.UPDATE_STATUS(fund.id), {
+        status: newStatus,
     });
 }

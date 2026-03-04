@@ -39,6 +39,8 @@ export class PortfolioProjectionUseCase implements IPortfolioProjectionUseCase {
 
         const schemeCodes = [...new Set(investments.map(i => i.schemeCode))];
         const navMap = new Map<string, number>();
+
+        //setting latest nav
         await Promise.all(
             schemeCodes.map(async (schemeCode) => {
                 const navHistory = await this._navUpdateProvider.fetchNavHistories(schemeCode);
@@ -73,7 +75,7 @@ export class PortfolioProjectionUseCase implements IPortfolioProjectionUseCase {
                 });
             }
         }
-
+ 
         const futureTotalInvestment = totalInvestment;
         const projectedProfit = futureValue - futureTotalInvestment;
 
@@ -83,6 +85,5 @@ export class PortfolioProjectionUseCase implements IPortfolioProjectionUseCase {
             futureTotalInvestment,
             yearlyBreakdown
         };
-
     }
 }

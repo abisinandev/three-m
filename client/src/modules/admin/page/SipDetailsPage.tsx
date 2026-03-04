@@ -9,14 +9,15 @@ import {
     Loader2,
     Ban,
 } from 'lucide-react';
-import { useNavigate, useParams } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ROUTES } from '@shared/constants/routes';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { SipStatusBadge } from '../components/SipStatusBadges';
 import { fetchSipDetailsApi } from '@shared/services/admin/sip-management/SipManagementAdminApi';
 import { toast } from 'sonner';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
 import axios from 'axios';
+import { useNavigate, useParams } from '@tanstack/react-router';
 
 const SipDetailsPage = () => {
     const navigate = useNavigate();
@@ -82,7 +83,7 @@ const SipDetailsPage = () => {
             <div className="flex flex-col items-center justify-center min-h-[50vh] gap-2">
                 <p className="text-xs text-rose-500">Failed to load SIP details</p>
                 <button
-                    onClick={() => navigate({ to: '/admin/sip-management' })}
+                    onClick={() => navigate({ to: ROUTES.ADMIN.SIP_MANAGEMENT.ROOT })}
                     className="text-[10px] text-neutral-400 hover:text-neutral-200 mt-1"
                 >
                     ← Back
@@ -111,7 +112,7 @@ const SipDetailsPage = () => {
             {/* Header */}
             <div className="space-y-2">
                 <button
-                    onClick={() => navigate({ to: '/admin/sip-management' })}
+                    onClick={() => navigate({ to: ROUTES.ADMIN.SIP_MANAGEMENT.ROOT })}
                     className="flex items-center gap-1.5 text-neutral-500 hover:text-neutral-200 text-[10px] font-semibold uppercase tracking-wide"
                 >
                     <ArrowLeft size={13} />

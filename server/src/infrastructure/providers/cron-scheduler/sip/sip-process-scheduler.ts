@@ -8,7 +8,7 @@ let isRunning = false;
 export const StartSipScheduler = () => {
     cron.schedule(
         "0 6,9 * * * *",
-        // "* * * * * * *",
+        // "* * * * * *",
         async () => {
 
             if (isRunning) {

@@ -42,10 +42,10 @@ export class InvestmentUseCase implements IInvestmentUseCase {
     async execute(data: InvestmentDTO, userId: string): Promise<void> {
         const session = await mongoose.startSession();
 
-        try {
+        try {  
             await session.withTransaction(async () => {
                 const { amount, schemeCode, investmentType, paymentMethod } = data;
-
+ 
                 const user = await this._userRepository.findById(userId, session);
                 if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
@@ -58,7 +58,7 @@ export class InvestmentUseCase implements IInvestmentUseCase {
                 if (wallet.balance < amount) {
                     throw new ValidationError(ErrorMessages.PAYMENT.INSUFFICIENT_BALANCE);
                 }
-
+ 
                 await this._walletRepository.debit(userId, amount, session);
 
                 const investment = InvestmentEntity.create({

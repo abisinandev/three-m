@@ -1,10 +1,11 @@
 import adminApi from "@lib/axiosAdmin"
+import { API_ROUTES } from "@shared/constants/apiRoutes"
 
 export const fetchKycUsers = async ({ page = 1, status = "pending" }: {
     page: number;
     status: string;
 }) => {
-    const res = await adminApi.get("/kyc-management",
+    const res = await adminApi.get(API_ROUTES.ADMIN.KYC.GET_ALL,
         {
             params: { page, limit: 10, status },
         });
@@ -14,14 +15,14 @@ export const fetchKycUsers = async ({ page = 1, status = "pending" }: {
 
 export const FetchUserKycApi = async (kycId: string) => {
     console.log("kyc: ", kycId)
-    const response = await adminApi.get(`/view-kyc/${kycId}`);
+    const response = await adminApi.get(API_ROUTES.ADMIN.KYC.VIEW(kycId));
     console.log("FetchUserKycApi: ", response.data)
     return response.data
 }
 
 export const approveKycApi = async (kycId: string) => {
-    await adminApi.patch(`/verify-kyc/${kycId}`);
+    await adminApi.patch(API_ROUTES.ADMIN.KYC.APPROVE(kycId));
 }
 export const rejectKycApi = async (kycId: string, reason: string) => {
-    adminApi.patch(`/reject-kyc/${kycId}`, { reason });
+    adminApi.patch(API_ROUTES.ADMIN.KYC.REJECT(kycId), { reason });
 }

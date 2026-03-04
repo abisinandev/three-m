@@ -4,6 +4,7 @@ import type { SipInstallment } from '../types/SipTypes';
 import { InstallmentStatusBadge } from '../components/SipStatusBadges';
 import { useNavigate } from '@tanstack/react-router';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
+import { ROUTES } from '@shared/constants/routes';
 
 const MOCK_INSTALLMENTS: SipInstallment[] = [
     {
@@ -74,7 +75,7 @@ const SipInstallmentsPage = () => {
         };
     }, [installments]);
 
- 
+
 
     console.log("Dictory: ",)
 
@@ -92,7 +93,7 @@ const SipInstallmentsPage = () => {
             <div className="flex items-center justify-between">
                 <div>
                     <button
-                        onClick={() => navigate({ to: '/admin/sip-management' })}
+                        onClick={() => navigate({ to: ROUTES.ADMIN.SIP_MANAGEMENT.ROOT })}
                         className="flex items-center gap-2 text-neutral-500 hover:text-white transition-colors mb-2 text-[11px] font-bold uppercase tracking-widest"
                     >
                         <ArrowLeft size={14} />

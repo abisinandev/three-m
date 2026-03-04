@@ -1,6 +1,7 @@
 import React from "react";
 import { Menu, X } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import { ROUTES } from "@shared/constants/routes";
 
 interface HeaderProps {
   scrolled: boolean;
@@ -54,13 +55,13 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Desktop Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <button
-              onClick={() => navigate({ to: '/auth/login' })}
+              onClick={() => navigate({ to: ROUTES.AUTH.LOGIN })}
               className="text-teal-green hover:text-teal-green/80 font-medium transition-colors duration-200 text-sm"
             >
               Log In
             </button>
             <button
-              onClick={() => navigate({ to: '/auth/signup' })}
+              onClick={() => navigate({ to: ROUTES.AUTH.SIGNUP.ROOT })}
               className="bg-teal-green text-white px-5 py-2 rounded-lg font-semibold hover:bg-teal-green/90 transition-transform duration-200 hover:scale-105 text-sm"
             >
               Start Free
@@ -103,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
-                navigate({ to: '/auth/login' });
+                navigate({ to: ROUTES.AUTH.LOGIN });
               }}
               className="w-full text-teal-green hover:text-teal-green/80 py-2 font-medium transition-colors duration-200"
             >
@@ -112,7 +113,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
-                navigate({ to: '/auth/signup' });
+                navigate({ to: ROUTES.AUTH.SIGNUP.ROOT });
               }}
               className="w-full bg-teal-green text-deep-charcoal py-2 rounded-lg font-semibold hover:bg-teal-green/90 transition-transform duration-200"
             >

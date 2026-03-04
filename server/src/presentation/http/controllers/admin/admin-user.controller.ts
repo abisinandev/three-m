@@ -34,7 +34,7 @@ export class AdminUserController {
   async blockUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-      await this._blockUserUsecase.execute(userId);
+      await this._blockUserUsecase.execute(userId as string);
 
       return ResponseHelper.success(
         res,
@@ -50,7 +50,7 @@ export class AdminUserController {
   async unblockUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-      await this._unblockUserUsecase.execute(userId);
+      await this._unblockUserUsecase.execute(userId as string);
 
       return ResponseHelper.success(
         res,

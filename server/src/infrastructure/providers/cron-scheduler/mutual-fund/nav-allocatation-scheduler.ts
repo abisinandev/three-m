@@ -5,7 +5,7 @@ import cron from 'node-cron';
 let isRunning = false;
 export function NavAllocationScheduler() {
     cron.schedule(
-        // "* * * * * *",
+        // "* * * * *",
         "0 2,3,9 * * *",
         
         async () => {
@@ -27,4 +27,4 @@ export function NavAllocationScheduler() {
             timezone: "Asia/Kolkata",
         }
     );
-};   
+};     

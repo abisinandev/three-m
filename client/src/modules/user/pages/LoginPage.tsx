@@ -11,6 +11,7 @@ import { TwoFAModal } from "@shared/components/modals/TwoFaModal";
 import { useMutation } from "@tanstack/react-query";
 import api from "@lib/axiosUser";
 import { LOGIN_API } from "@shared/constants/userContants";
+import { ROUTES } from "@shared/constants/routes";
 
 export const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -46,8 +47,8 @@ export const LoginPage: React.FC = () => {
             toast.info("Scan QR Code and verify your 2FA");
         },
         onError: (err: any) => {
-            console.log(err,'==============')
-             toast.error(err.response?.data?.message || "Login failed")
+            console.log(err, '==============')
+            toast.error(err.response?.data?.message || "Login failed")
         },
     })
 
@@ -73,7 +74,7 @@ export const LoginPage: React.FC = () => {
                 onSuccess: (res) => {
                     toast.success(res.data?.message || "2FA verified successfully!");
                     setIs2faModalOpen(false);
-                    navigate({ to: "/user/profile", replace: true });
+                    navigate({ to: ROUTES.USER.PROFILE, replace: true });
                 },
                 onError: () => toast.error("Invalid 2FA code"),
             }
@@ -99,7 +100,7 @@ export const LoginPage: React.FC = () => {
                     <p className="text-center text-[12px] text-neutral-500 mt-4">
                         Don’t have an account?{" "}
                         <a
-                            onClick={() => navigate({ to: "/auth/signup" })}
+                            onClick={() => navigate({ to: ROUTES.AUTH.SIGNUP.ROOT })}
                             className="text-teal-green font-medium hover:underline cursor-pointer"
                         >
                             Sign up

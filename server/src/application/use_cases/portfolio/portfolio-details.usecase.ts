@@ -88,7 +88,7 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
 
         const cashFlows: { date: Date; amount: number }[] = [];
         let totalRemainingUnits = 0;
-
+ 
         for (const inv of investments) {
             cashFlows.push({
                 date: inv.createdAt,

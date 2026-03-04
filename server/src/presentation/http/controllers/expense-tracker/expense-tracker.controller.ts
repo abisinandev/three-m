@@ -77,7 +77,7 @@ export class ExpenseTrackerController {
             const userId = req?.user?.id as string;
             const { index } = req.params;
 
-            await this._deleteExpenseUseCase.execute(userId, parseInt(index));
+            await this._deleteExpenseUseCase.execute(userId, parseInt(index as string));
             return ResponseHelper.success(
                 res,
                 SuccessMessage.OPERATION_SUCCESSFUL,
