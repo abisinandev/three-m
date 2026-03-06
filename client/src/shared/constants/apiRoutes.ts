@@ -92,5 +92,8 @@ export const API_ROUTES = {
             GET_ALL: "/sip-management",
             DETAILS: (sipId: string) => `/sip-management/${sipId}`,
         }
-    }
+    },
+    CHATBOT: {
+        CHAT: "/bot/chat",
+    },
 } as const;

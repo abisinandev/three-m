@@ -1,6 +1,7 @@
 // src/shared/components/ai-chatbot/AiChatbot.tsx
 import { useState, useRef, useEffect } from 'react';
 import { X, Send, Bot, Loader2, Sparkles, MessageSquare, ShieldCheck, Zap } from 'lucide-react';
+import { sendChatMessage } from '@shared/services/chatbot/chatbotApi';
 
 interface Message {
     id: string;
@@ -36,8 +37,8 @@ export default function AiAssistantPanel() {
         }
     }, [isOpen]);
 
-    const sendMessage = () => {
-        if (!inputValue.trim()) return;
+    const sendMessage = async () => {
+        if (!inputValue.trim() || isThinking) return;
 
         const userMsg: Message = {
             id: Date.now().toString(),
@@ -50,17 +51,26 @@ export default function AiAssistantPanel() {
         setInputValue('');
         setIsThinking(true);
 
-        setTimeout(() => {
+        try {
+            const reply = await sendChatMessage(userMsg.content);
             const aiMsg: Message = {
                 id: (Date.now() + 1).toString(),
                 role: 'assistant',
-                content: 'Based on your portfolio, I recommend reallocating ₹45,000 into Parag Parikh Flexi Cap. Expected 1-year return: 18.4%. Would you like me to prepare the order?',
+                content: reply,
                 timestamp: new Date(),
-                type: 'confirmation',
             };
             setMessages(prev => [...prev, aiMsg]);
+        } catch {
+            const errorMsg: Message = {
+                id: (Date.now() + 1).toString(),
+                role: 'assistant',
+                content: 'Unable to get a response right now. Please try again.',
+                timestamp: new Date(),
+            };
+            setMessages(prev => [...prev, errorMsg]);
+        } finally {
             setIsThinking(false);
-        }, 1250);
+        }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
