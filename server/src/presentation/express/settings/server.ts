@@ -10,7 +10,7 @@ import { StartSipScheduler } from "@infrastructure/providers/cron-scheduler/sip/
 import { initSocketConfigs } from "@infrastructure/providers/notification/socket.configs";
 import http from "http";
 import app from "./app";
-import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/ingest-docs";
+import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/RAG/ingest-docs";
 
 const bootstrap = async () => {
   try {
@@ -23,10 +23,12 @@ const bootstrap = async () => {
     CagrUpdateScheduler();
     NavAllocationScheduler();
     StartSipScheduler();
-    // IngestDocuments()
+
+    //vector-db
+    // IngestDocuments() 
  
     const server = http.createServer(app);
-    initSocketConfigs(server);
+    initSocketConfigs(server); 
 
     server.listen(env.PORT, () => {
       logger.info(`Server running on PORT: ${env.PORT}`);

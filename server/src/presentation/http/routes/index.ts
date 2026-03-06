@@ -18,7 +18,7 @@ import type { Application } from "express";
 import { AdminAuthMiddleware } from "@presentation/express/middlewares/admin-auth.middleware";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import marketNewsRoutes from "@presentation/http/routes/market-news/markets-news.routes"
-import chatbotRoutes from '@presentation/http/routes/ai-chat-bot/ai-chatbot.route';
+import chatbotRoutes from '@presentation/http/routes/ai-chatbot/ai-chatbot.route';
 
 export const RegisterRoutes = (app: Application) => {
   const authMiddleware = container.get<AuthMiddleware>(AUTH_TYPES.AuthMiddleware);

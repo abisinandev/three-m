@@ -21,7 +21,7 @@ export class DetectAgent implements IDetectAgent {
             - execution
 
             Respond ONLY with the category name.
-            `;
+        `;
 
         const result = await this.agentService.generateResponse(systemPrompt, message);
         return result.trim().toLowerCase();

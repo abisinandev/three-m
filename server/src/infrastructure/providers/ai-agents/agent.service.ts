@@ -8,7 +8,7 @@ import { IAgentService } from "@application/interfaces/services/ai-chatbot/agent
 @injectable()
 export class AgentService implements IAgentService {
 
-  async generateResponse(systemPrompt: string, userInput: string): Promise<string> {
+    async generateResponse(systemPrompt: string, userInput: string): Promise<string> {
 
         const prompt = ChatPromptTemplate.fromMessages([
             ["system", systemPrompt],
@@ -17,7 +17,7 @@ export class AgentService implements IAgentService {
 
         const chain = RunnableSequence.from([
             prompt,
-            model
+            model,
         ]);
 
         const response: AIMessage = await chain.invoke({

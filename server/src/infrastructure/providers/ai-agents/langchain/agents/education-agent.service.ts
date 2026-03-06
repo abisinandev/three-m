@@ -1,11 +1,11 @@
-import { inject, injectable } from "inversify";
+import { IAgentService } from "@application/interfaces/services/ai-chatbot/agent-service.interface";
+import { IAgent } from "@application/interfaces/services/ai-chatbot/agent.interface";
 import { IEducationAgentService } from "@application/interfaces/services/ai-chatbot/education-service-usecase.interface";
 import { AI_SYSTEM_TYPES } from "@infrastructure/inversify_di/features/ai-system/ai-system.type";
-import { IAgentService } from "@application/interfaces/services/ai-chatbot/agent-service.interface";
-import { getRetriever } from "./langchain/retriever";
+import { inject, injectable } from "inversify";
 
 @injectable()
-export class EducationAgentService implements IEducationAgentService {
+export class EducationAgentService  {
 
     private readonly systemPrompt = `
     You are a Financial Education Agent specialized in Indian markets.
@@ -33,37 +33,28 @@ export class EducationAgentService implements IEducationAgentService {
         @inject(AI_SYSTEM_TYPES.AgentService) private readonly _agentService: IAgentService,
     ) { }
 
-    // async getResponses(userInput: string): Promise<string> {
-    //     return this._agentService.generateResponse(
-    //         this.systemPrompt,
-    //         userInput
-    //     );
-    // }
-
     async getResponses(userInput: string): Promise<string> {
 
-        const retriever = await getRetriever();
+        // const retriever = await getRetriever();
 
-        const docs = await retriever._getRelevantDocuments(userInput);
-        console.log("Retrieval: ", docs);
+        // const docs = await retriever._getRelevantDocuments(userInput);
+        // console.log("Retrieval: ", docs);
         
-        const context = docs.map(d => d.pageContent).join("\n");
+        // const context = docs.map(d => d.pageContent).join("\n");
 
-        const prompt = `
-            ${this.systemPrompt}
+        // const prompt = `
+        //     ${this.systemPrompt}
+        //     Context:
+        //     ${context}
+        //     User Question:
+        //     ${userInput}
+        //     Answer only using the provided context.
+        //     `;
 
-            Context:
-            ${context}
-
-            User Question:
-            ${userInput}
-
-            Answer only using the provided context.
-            `;
-
-        return this._agentService.generateResponse(
-            prompt,
-            userInput
-        );
+        // return this._agentService.generateResponse(
+        //     prompt,
+        //     userInput
+        // );
+        return ""
     }
-}
+}    

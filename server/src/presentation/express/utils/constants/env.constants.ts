@@ -56,4 +56,5 @@ export const env = {
   OPENAI_API_KEY: requireEnv("OPENAI_API_KEY"),
 
   PINECONE_API_KEY: requireEnv("PINECONE_API_KEY"),
+  PINECONE_INDEX_NAME: requireEnv("PINECONE_INDEX_NAME"),
 }; 
