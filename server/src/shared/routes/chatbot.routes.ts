@@ -1,3 +1,4 @@
 export enum ChatbotRoutes {
-    CHAT = "/chat"
+    CHAT = "/chat",
+    HISTORY = "/history",
 }

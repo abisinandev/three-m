@@ -15,15 +15,23 @@ export class AiChatbotController {
     async chat(req: Request, res: Response, next: NextFunction) {
         try {
             const { message } = req.body;
+            const userId = req.user?.id as string;
 
-            const result = await this._chatbotUseCase.execute(message);
+            const result = await this._chatbotUseCase.execute(userId, message);
 
-            return ResponseHelper.success(
-                res,
-                SuccessMessage.DATA_FETCHED,
-                result,
-                HttpStatus.OK
-            );
+            return ResponseHelper.success(res, SuccessMessage.DATA_FETCHED, result, HttpStatus.OK);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getHistory(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.id as string;
+
+            const history = await this._chatbotUseCase.getHistory(userId);
+
+            return ResponseHelper.success(res, SuccessMessage.DATA_FETCHED, history, HttpStatus.OK);
         } catch (error) {
             next(error);
         }

@@ -1,29 +1,33 @@
-import { IAgentService } from "@application/interfaces/services/ai-chatbot/agent-service.interface";
 import { IDetectAgent } from "@application/interfaces/services/ai-chatbot/detect-agent.service.interface";
-import { AI_SYSTEM_TYPES } from "@infrastructure/inversify_di/features/ai-system/ai-system.type";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { RunnableSequence } from "@langchain/core/runnables";
+import { model } from "./ollama.config";
+import { normalizeAIResponse } from "./utils/normalize-response";
 
 @injectable()
 export class DetectAgent implements IDetectAgent {
 
-    constructor(
-        @inject(AI_SYSTEM_TYPES.AgentService) private agentService: IAgentService
-    ) { }
+    private readonly systemPrompt = `
+        You are an intent classifier.
+
+        Classify the user's message into ONE of these:
+        - education
+        - suggestion
+        - execution
+
+        Respond ONLY with the category name.
+    `;
 
     async detectAgent(message: string): Promise<string> {
 
-        const systemPrompt = `
-            You are an intent classifier.
+        const prompt = ChatPromptTemplate.fromMessages([
+            ["system", this.systemPrompt],
+            ["human", "{input}"],
+        ]);
 
-            Classify the user's message into ONE of these:
-            - education
-            - suggestion
-            - execution
-
-            Respond ONLY with the category name.
-        `;
-
-        const result = await this.agentService.generateResponse(systemPrompt, message);
-        return result.trim().toLowerCase();
+        const chain = RunnableSequence.from([prompt, model]);
+        const response = await chain.invoke({ input: message });
+        return normalizeAIResponse(response.content).trim().toLowerCase();
     }
 }

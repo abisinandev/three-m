@@ -3,7 +3,10 @@ import { embeddings } from "./ollama.embedded";
 import { pineconeIndex } from "../pinecone-vector-db";
 
 export const getVectorStore = async () => {
-  return await PineconeStore.fromExistingIndex(embeddings, { pineconeIndex });
+  return await PineconeStore.fromExistingIndex(embeddings, {
+    pineconeIndex,
+    namespace: "documents",
+  });
 };
 
 export const createRetriever = async () => {

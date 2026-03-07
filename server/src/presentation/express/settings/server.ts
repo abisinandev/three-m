@@ -22,7 +22,7 @@ const bootstrap = async () => {
     // NavYearScheduler();
     CagrUpdateScheduler();
     NavAllocationScheduler();
-    StartSipScheduler();
+    StartSipScheduler(); 
 
     //vector-db
     // IngestDocuments() 
