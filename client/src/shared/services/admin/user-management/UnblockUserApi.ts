@@ -1,7 +1,8 @@
 import adminApi from "@lib/axiosAdmin";
+import { API_ROUTES } from "@shared/constants/apiRoutes";
 
 export const UnblockUserApi = async (id: string) => {
-    const response = await adminApi.patch(`/user/unblock/${id}`, {
+    const response = await adminApi.patch(API_ROUTES.ADMIN.USERS.UNBLOCK(id), {
         withCredentials: true,
     });
 

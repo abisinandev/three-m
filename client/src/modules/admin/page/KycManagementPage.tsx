@@ -7,6 +7,7 @@ import { useNavigate } from '@tanstack/react-router';
 
 import type { KycUser } from '@shared/types/user/KycUserType';
 import { fetchKycUsers } from '@shared/services/admin/user-management/KycApis';
+import { ROUTES } from '@shared/constants/routes';
 
 import { Pagination } from '@shared/components/pagination/Pagination';
 import { KycUsersTable } from '../components/KycTable';
@@ -93,8 +94,7 @@ const KycVerificationPage = () => {
                 users={users}
                 onView={(user) => {
                   navigate({
-                    to: '/admin/view-kyc/$kycId',
-                    params: { kycId: user.id },
+                    to: ROUTES.ADMIN.KYC_MANAGEMENT.VIEW(user.id) as any,
                   });
                 }}
               />

@@ -1,12 +1,12 @@
 import type { SignupType } from '@shared/types/user/SignupTypes'
-import { SIGNUP_API } from '@shared/constants/userContants'
+import { API_ROUTES } from '@shared/constants/apiRoutes'
 import api from "../../../lib/axiosUser";
- 
 
-export const SignupApi = async (data: SignupType)=>{
-    const response = await api.post(SIGNUP_API, data, {
-        headers:{'Content-Type':'application/json'},
+
+export const SignupApi = async (data: SignupType) => {
+    const response = await api.post(API_ROUTES.USER.AUTH.SIGNUP, data, {
+        headers: { 'Content-Type': 'application/json' },
     })
-    console.log('Signup response: ',response)
+    console.log('Signup response: ', response)
     return response
 }

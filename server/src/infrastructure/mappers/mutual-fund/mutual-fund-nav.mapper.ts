@@ -3,7 +3,7 @@ import { MutualFundNavDocument } from "@infrastructure/databases/mongo_db/models
 
 const toDomain = (doc: MutualFundNavDocument): MutualFundNavEntity => {
     return MutualFundNavEntity.fromPersistance({
-        id: doc._id as string,
+        id: doc._id.toString(),
         nav: doc.nav,
         navDate: doc.navDate,
         schemeCode: doc.schemeCode,

@@ -3,8 +3,11 @@ import { useParams, Link } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle, XCircle, AlertCircle, User, Mail, Hash, MapPin, FileText } from "lucide-react";
 import { FetchUserKycApi, approveKycApi, rejectKycApi } from "@shared/services/admin/user-management/KycApis";
 import { toast } from "sonner";
+import { FetchUserKycApi, approveKycApi, rejectKycApi } from "@shared/services/admin/user-management/KycApis";
+import { toast } from "sonner";
 import { useState } from "react";
 import KycActionModal from "@shared/components/modals/KycActionModal";
+import { ROUTES } from "@shared/constants/routes";
 
 const ViewKycDocPage = () => {
   const { kycId } = useParams({ from: "/admin/view-kyc/$kycId" });
@@ -63,7 +66,7 @@ const ViewKycDocPage = () => {
         <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
-              to="/admin/kyc-management"
+              to={ROUTES.ADMIN.KYC_MANAGEMENT.ROOT}
               className="p-2 hover:bg-white/10 rounded-lg transition-all"
             >
               <ArrowLeft className="w-5 h-5" />

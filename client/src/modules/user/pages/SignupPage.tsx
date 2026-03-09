@@ -13,6 +13,7 @@ import api from "@lib/axiosUser";
 import { useMutation } from "@tanstack/react-query";
 import { GOOGLE_AUTH } from "@shared/constants/userContants";
 import { useUserStore } from "@stores/user/UserStore";
+import { ROUTES } from "@shared/constants/routes";
 
 export const SignupPage: React.FC = () => {
     const navigate = useNavigate();
@@ -37,8 +38,8 @@ export const SignupPage: React.FC = () => {
 
     useEffect(() => {
         const handleNavigate = () => {
-            if (window.location.pathname.includes('/auth/signup/verify-otp')) {
-                window.history.replaceState(null, '', '/auth/signup');
+            if (window.location.pathname.includes(ROUTES.AUTH.SIGNUP.VERIFY_OTP)) {
+                window.history.replaceState(null, '', ROUTES.AUTH.SIGNUP.ROOT);
             }
         };
         window.addEventListener('popstate', handleNavigate);
@@ -71,7 +72,7 @@ export const SignupPage: React.FC = () => {
 
         onSuccess: (res) => {
             setUser(res.data.user);
-            navigate({ to: "/user/home", replace: true });
+            navigate({ to: ROUTES.USER.HOME, replace: true });
         },
 
         onError: (err) => {
@@ -118,7 +119,7 @@ export const SignupPage: React.FC = () => {
 
                     setTimeout(() => {
                         navigate({
-                            to: "/auth/signup/verify-otp",
+                            to: ROUTES.AUTH.SIGNUP.VERIFY_OTP,
                             replace: true,
                         });
                     }, 50);
@@ -144,7 +145,7 @@ export const SignupPage: React.FC = () => {
                     />
                     <div className="text-xs text-center mt-4 mb-4">
                         <span className="text-white">Already have an account? </span>
-                        <a onClick={() => navigate({ to: "/auth/login" })} className="text-teal-green hover:underline font-medium">
+                        <a onClick={() => navigate({ to: ROUTES.AUTH.LOGIN })} className="text-teal-green hover:underline font-medium">
                             Login
                         </a>
                     </div>

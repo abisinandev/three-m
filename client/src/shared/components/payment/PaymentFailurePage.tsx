@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { XCircle, AlertCircle, ArrowLeft, RefreshCw } from "lucide-react";
+import { ROUTES } from "@shared/constants/routes";
 
 const PaymentFailurePage = () => {
     const navigate = useNavigate();
- 
+
     const [animated, setAnimated] = useState(false);
 
     useEffect(() => {
@@ -96,7 +97,7 @@ const PaymentFailurePage = () => {
                         }`}
                 >
                     <button
-                        onClick={() => navigate({ to: "/user/wallet/add-to-wallet" })} // Change to your add money route
+                        onClick={() => navigate({ to: ROUTES.USER.WALLET.ADD })} // Change to your add money route
                         className="w-full py-3.5 rounded-xl font-medium text-sm transition shadow-lg flex items-center justify-center gap-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 shadow-orange-500/20"
                     >
                         <RefreshCw size={18} />
@@ -104,14 +105,14 @@ const PaymentFailurePage = () => {
                     </button>
 
                     <button
-                        onClick={() => navigate({ to: "/user/wallet" })}
+                        onClick={() => navigate({ to: ROUTES.USER.WALLET.ROOT })}
                         className="w-full py-3 rounded-xl font-medium text-sm border border-[#333] hover:bg-[#111] transition"
                     >
                         Go to Wallet
                     </button>
 
                     <button
-                        onClick={() => navigate({ to: "/" })}
+                        onClick={() => navigate({ to: ROUTES.HOME })}
                         className="w-full py-3 rounded-xl font-medium text-sm border border-[#333] hover:bg-[#111] transition"
                     >
                         Back to Home
@@ -120,7 +121,7 @@ const PaymentFailurePage = () => {
 
                 {/* Subtle back link */}
                 <button
-                    onClick={() => navigate({ to: "/user/wallet" })}
+                    onClick={() => navigate({ to: ROUTES.USER.WALLET.ROOT })}
                     className="text-xs text-gray-500 hover:text-gray-300 transition flex items-center gap-1.5 mx-auto mt-8"
                 >
                     <ArrowLeft size={14} />

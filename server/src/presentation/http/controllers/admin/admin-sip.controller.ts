@@ -35,7 +35,7 @@ export class AdminSipController {
         try {
             const sipId = req.params.sipId;
             const result = await this._sipDetailsUseCase.execute(
-                sipId,
+                sipId as string,
                 req.query
             );
             return ResponseHelper.success(
@@ -52,7 +52,7 @@ export class AdminSipController {
     async blockSip(req: Request, res: Response, next: NextFunction) {
         try {
             const sipId = req.params.sipId;
-            await this._sipBlockUseCase.execute(sipId);
+            await this._sipBlockUseCase.execute(sipId as string);
             return ResponseHelper.success(
                 res,
                 SuccessMessage.DATA_UPDATED,

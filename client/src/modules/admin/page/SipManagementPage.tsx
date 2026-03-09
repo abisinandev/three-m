@@ -5,6 +5,7 @@ import { SipStatusBadge } from '../components/SipStatusBadges';
 import { useNavigate } from '@tanstack/react-router';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
+import { ROUTES } from '@shared/constants/routes';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchSipsApi, type SipFilters } from '@shared/services/admin/sip-management/SipManagementAdminApi';
 
@@ -210,7 +211,7 @@ const SipManagementPage = () => {
                     key={sip.id}
                     className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
                     onClick={() => {
-                      navigate({ to: `/admin/sip-details/$sipId`, params: { sipId: sip.id } });
+                      navigate({ to: ROUTES.ADMIN.SIP_MANAGEMENT.DETAILS(sip.id) as any });
                     }}
                   >
                     <td className="px-5 py-4">
@@ -280,7 +281,7 @@ const SipManagementPage = () => {
                           className="p-1.5 hover:bg-blue-500/10 rounded text-blue-400 transition-all"
                           title="View Details"
                           onClick={() => {
-                            navigate({ to: `/admin/sip-details/$sipId`, params: { sipId: sip.id } });
+                            navigate({ to: ROUTES.ADMIN.SIP_MANAGEMENT.DETAILS(sip.id) as any });
                           }}
                         >
                           <List size={16} />

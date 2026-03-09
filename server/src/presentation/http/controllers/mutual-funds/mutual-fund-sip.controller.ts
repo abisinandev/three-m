@@ -55,7 +55,7 @@ export class MutualFundSipController {
             const sipId = req.params?.sipId;
             const userId = req.user?.id;
 
-            await this._pauseSipUseCase.execute(userId as string, sipId);
+            await this._pauseSipUseCase.execute(userId as string, sipId as string );
             return ResponseHelper.success(
                 res,
                 SuccessMessage.SIP_PAUSED,
@@ -72,7 +72,7 @@ export class MutualFundSipController {
             const sipId = req.params?.sipId;
             const userId = req.user?.id;
 
-            await this._resumeSipUseCase.execute(userId as string, sipId);
+            await this._resumeSipUseCase.execute(userId as string, sipId as string);
             return ResponseHelper.success(
                 res,
                 SuccessMessage.SIP_RESUME,
@@ -88,7 +88,7 @@ export class MutualFundSipController {
             const sipId = req.params?.sipId;
             const userId = req.user?.id;
 
-            await this._cancelSipUseCase.execute(userId as string, sipId);
+            await this._cancelSipUseCase.execute(userId as string, sipId as string);
             return ResponseHelper.success(
                 res,
                 SuccessMessage.SIP_CANCELLED,

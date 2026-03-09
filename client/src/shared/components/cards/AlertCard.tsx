@@ -1,5 +1,6 @@
 import { AlertTriangle, Sparkles } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
+import { ROUTES } from '@shared/constants/routes';
 
 export function VerificationAlertCard() {
   return (
@@ -29,7 +30,7 @@ export function VerificationAlertCard() {
 
             <div className="mt-4 flex flex-wrap items-center gap-4">
               <Link
-                to="/user/profile"
+                to={ROUTES.USER.PROFILE}
                 className="rounded-lg bg-amber-500 px-5 py-2 text-xs font-bold text-black transition-all hover:bg-amber-400 hover:shadow-amber-400/20 active:scale-98 transition-all"
               >
                 Verify Now
@@ -72,7 +73,7 @@ export function PremiumUpgradeCard() {
 
             <div className="mt-4 flex flex-wrap items-center gap-4">
               <Link
-                to="/user/home"
+                to={ROUTES.USER.HOME}
                 className="rounded-lg bg-emerald-500 px-5 py-2 text-xs font-bold text-black transition-all hover:bg-emerald-400 hover:shadow-emerald-400/20 active:scale-98"
               >
                 Go Premium — ₹499/mo

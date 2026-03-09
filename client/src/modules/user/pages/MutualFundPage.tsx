@@ -7,6 +7,7 @@ import { fetchMutualFunds, fetchSips } from '@shared/services/feature/mutual-fun
 import { useNavigate } from '@tanstack/react-router';
 import type { SipDto } from '../types/mutual-fund.types';
 import api from '@lib/axiosUser';
+import { ROUTES } from '@shared/constants/routes';
 
 import FundsTab from '../components/mutual-fund/FundsTab';
 import SipsTab from '../components/mutual-fund/SipsTab';
@@ -103,7 +104,7 @@ const MutualFundDashboard = () => {
                         <p className="text-xs text-gray-400 mt-0.5">Your investment portfolio</p>
                     </div>
                     <button
-                        onClick={() => navigate({ to: '/user/mutual-funds' })}
+                        onClick={() => navigate({ to: ROUTES.USER.MUTUAL_FUNDS.ROOT })}
                         className="flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
                     >
                         <Plus size={16} />
@@ -116,11 +117,10 @@ const MutualFundDashboard = () => {
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab as any)}
-                            className={`pb-2 text-sm font-medium transition-colors ${
-                                activeTab === tab
-                                    ? 'text-white border-b-2 border-green-500'
-                                    : 'text-gray-400 hover:text-gray-300'
-                            }`}
+                            className={`pb-2 text-sm font-medium transition-colors ${activeTab === tab
+                                ? 'text-white border-b-2 border-green-500'
+                                : 'text-gray-400 hover:text-gray-300'
+                                }`}
                         >
                             {tab === 'funds' ? 'Funds' : tab === 'sips' ? 'SIPs' : 'History'}
                         </button>
@@ -167,8 +167,8 @@ const MutualFundDashboard = () => {
 
                     <DashboardSidebar
                         recentNAVUpdates={recentNAVUpdates}
-                        onNewSipClick={() => navigate({ to: '/user/mutual-funds' })}
-                        onOneTimeClick={() => navigate({ to: '/user/mutual-funds' })}
+                        onNewSipClick={() => navigate({ to: ROUTES.USER.MUTUAL_FUNDS.ROOT })}
+                        onOneTimeClick={() => navigate({ to: ROUTES.USER.MUTUAL_FUNDS.ROOT })}
                     />
                 </div>
             </div>

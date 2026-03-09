@@ -18,6 +18,7 @@ import type { Application } from "express";
 import { AdminAuthMiddleware } from "@presentation/express/middlewares/admin-auth.middleware";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import marketNewsRoutes from "@presentation/http/routes/market-news/markets-news.routes"
+import chatbotRoutes from '@presentation/http/routes/ai-chatbot/ai-chatbot.route';
 
 export const RegisterRoutes = (app: Application) => {
   const authMiddleware = container.get<AuthMiddleware>(AUTH_TYPES.AuthMiddleware);
@@ -35,6 +36,8 @@ export const RegisterRoutes = (app: Application) => {
 
   app.use("/api/user", (req, res, next) => authMiddleware.handle(req, res, next), userRoute);
 
+  app.use('/api/bot', (req, res, next) => authMiddleware.handle(req, res, next), chatbotRoutes);
+
   app.use('/api/admin/mutual-funds', (req, res, next) => authAdminMiddleware.handle(req, res, next), mutualFundRoutes);
   app.use("/api/admin/sip-management", (req, res, next) => authAdminMiddleware.handle(req, res, next), adminSipRoutes);
   app.use('/api/payments', (req, res, next) => authMiddleware.handle(req, res, next), paymentRoutes);
@@ -42,4 +45,5 @@ export const RegisterRoutes = (app: Application) => {
   app.use("/api/market-news", (req, res, next) => authMiddleware.handle(req, res, next), marketNewsRoutes);
   app.use("/api/file-upload", fileUploadRoutes);
 
-};
+  
+}; 

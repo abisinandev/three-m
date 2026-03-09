@@ -7,6 +7,7 @@ import OTPVerification from "@shared/components/otp/OtpComponet";
 import { RESEND_OTP, VERIFY_OTP } from "@shared/constants/userContants";
 import api from "@lib/axiosUser";
 import { toast } from "sonner";
+import { ROUTES } from "@shared/constants/routes";
 
 
 
@@ -39,7 +40,7 @@ export default function SignupOTP() {
             toast.success(res.data.message || "Email verified successfully");
 
             resetOtpState();
-            navigate({ to: "/auth/login" });
+            navigate({ to: ROUTES.AUTH.LOGIN });
         },
         onError: () => {
             toast.error("Invalid OTP. Please try again.");

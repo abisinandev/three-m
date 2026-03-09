@@ -22,6 +22,8 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         return this.mapper.toDomain(createdDoc);
     }
 
+
+
     async findInitiatedFunds(): Promise<InvestmentEntity[] | null> {
         const docs = await this.model.find({ status: InvestmentStatus.INITIATED });
         if (!docs) return null;
@@ -363,5 +365,4 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
 
         return result.length > 0 ? result[0].count : 0;
     }
-
-}
+}  

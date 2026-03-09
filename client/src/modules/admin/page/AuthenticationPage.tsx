@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { AuthenticationApi } from "@shared/services/admin/AuthenticationApi";
 import { useAuthStore } from "@stores/user/UserAuthStore";
 import { useNavigate } from "@tanstack/react-router";
+import { ROUTES } from "@shared/constants/routes";
 
 interface FormErrors {
     adminCode?: string;
@@ -27,11 +28,11 @@ const AuthenticationPage = () => {
             setData(res.data.data.email, expirationTime)
             toast.success(res.data.message || "OTP sent to your registered email");
             navigation({
-                to: "/admin/authentication/verify-otp",
-                replace:true
+                to: ROUTES.ADMIN.AUTH.VERIFY_OTP,
+                replace: true
             })
         },
-        onError: (err:any) => {
+        onError: (err: any) => {
             toast.error(err.response?.data?.message || "Authentication failed");
         },
     });
@@ -50,7 +51,7 @@ const AuthenticationPage = () => {
     };
 
     const handleAdminCodeChange = (value: string) => {
-        const upperValue = value.toUpperCase().replace(/[^A-Z0-9]/g, ""); 
+        const upperValue = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
         setAdminCode(upperValue);
 
         const error = validateField("adminCode", upperValue);

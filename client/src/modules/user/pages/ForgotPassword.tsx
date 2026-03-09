@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { RightSidePanel } from "@shared/components/auth/RightSidePanel";
 import ForgotPasswordForm from "../components/ForgotPassword";
+import { ROUTES } from "@shared/constants/routes";
 
 const ForgotPasswordPage = () => {
     const navigate = useNavigate();
@@ -20,7 +21,7 @@ const ForgotPasswordPage = () => {
                     <div className="backdrop-blur-xl bg-deep-charcoal/70 rounded-2xl p-6 shadow-xl">
 
                         <button
-                            onClick={() => navigate({ to: "/auth/login" })}
+                            onClick={() => navigate({ to: ROUTES.AUTH.LOGIN })}
                             className="flex items-center gap-2 text-cool-white/60 hover:text-teal-green transition mb-6 text-sm"
                         >
                             <ArrowLeft size={18} />

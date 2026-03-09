@@ -9,6 +9,7 @@ import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { GetSignatureApi } from '@shared/services/user/GetSignatureApi';
 import api from '@lib/axiosUser';
 import { UPLOAD_PROFILE_IMAGE } from '@shared/constants/userContants';
+import { ROUTES } from '@shared/constants/routes';
 
 const UserProfilePage = () => {
   const { user, setUser } = useUserStore();
@@ -210,7 +211,7 @@ const UserProfilePage = () => {
                 <div>
                   {kycInfo.button ? kycInfo.button : (
                     <button
-                      onClick={() => navigate({ to: "/user/kyc-verification" })}
+                      onClick={() => navigate({ to: ROUTES.USER.KYC_VERIFICATION })}
                       className={`px-6 py-2.5 rounded-lg font-semibold text-xs text-white shadow-lg transition-all ${kycInfo.buttonColor}`}
                     >
                       {kycInfo.buttonText}

@@ -34,10 +34,10 @@ export class MutualFundNavUpdate implements IMutualFundNavUpdatesUseCase {
                     source: "MF_API",
                 }));
                 await this._mutualFundNavRepository.bulkUpsertNavs(navEntities);
-                logger.info("Nav updation done")
-                
+                logger.info("Nav updation done");
+
             } catch (error) {
-                logger.info("Nav updation failed")
+                logger.info("Nav updation failed");
                 return
             }
         }

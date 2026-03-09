@@ -33,7 +33,7 @@ export class AdminTransactionsController {
     async verifyTransaction(req: Request, res: Response, next: NextFunction) {
         try {
             const txId = req.params.txId;
-            const result = await this._verifyTransaction.execute(txId);
+            const result = await this._verifyTransaction.execute(txId as string);
             if (!result.isVerified) {
                 return ResponseHelper.failure(
                     res,

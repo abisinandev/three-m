@@ -9,6 +9,8 @@ import { LOGOUT } from '@shared/constants/userContants';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
 import { NotificationDropdown } from '@shared/components/notification/NotificationDropdown';
 import { useProfileQuery } from '@shared/services/user/ProfileApi';
+import AiAssistantPanel from '@shared/components/ai-chatbot/AiChatbot';
+import { ROUTES } from '@shared/constants/routes';
 
 const UserLayout = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -41,7 +43,7 @@ const UserLayout = () => {
             await api.post(LOGOUT, {}, { withCredentials: true });
             logout();
             useUserStore.persist.clearStorage();
-            navigate({ to: '/auth/login', replace: true });
+            navigate({ to: ROUTES.AUTH.LOGIN, replace: true });
             toast.success('Logged out successfully');
         } catch (error) {
             console.log('Logout failed: ', error);
@@ -58,7 +60,7 @@ const UserLayout = () => {
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between text-sm">
 
                     {/* Logo */}
-                    <Link to="/user/home" className="flex items-center">
+                    <Link to={ROUTES.USER.HOME} className="flex items-center">
                         <h1 className="text-xl font-bold tracking-tighter">
                             <span className="text-white">three</span>
                             <span className="text-[#22C55E]">M</span>
@@ -66,16 +68,16 @@ const UserLayout = () => {
                     </Link>
 
                     <nav className="hidden lg:flex items-center gap-8 font-medium text-gray-400">
-                        {[
-                            { to: '/user/home', label: 'Dashboard' },
-                            { to: '/user/expense-tracker', label: 'Expense tracker' },
-                            { to: '/user/wallet', label: 'Wallet' },
-                            { to: '/user/mutual-funds', label: 'Mutual Funds' },
-                            { to: '/user/algo', label: 'Algo trading' },
-                            { to: '/user/portfolio', label: 'Portfolio' },
-                            { to: '/user/market-news', label: "News" },
-                            { to: '/user/ai-bot', label: "AI bot" }
-                        ].map((item) => (
+                        {([
+                            { to: ROUTES.USER.HOME, label: 'Dashboard' },
+                            { to: ROUTES.USER.EXPENSE_TRACKER, label: 'Expense tracker' },
+                            { to: ROUTES.USER.WALLET.ROOT, label: 'Wallet' },
+                            { to: ROUTES.USER.MUTUAL_FUNDS.ROOT, label: 'Mutual Funds' },
+                            { to: ROUTES.USER.ALGO, label: 'Algo trading' },
+                            { to: ROUTES.USER.PORTFOLIO.ROOT, label: 'Portfolio' },
+                            { to: ROUTES.USER.MARKET_NEWS, label: "News" },
+                            { to: ROUTES.USER.AI_BOT, label: "AI bot" }
+                        ] as any[]).map((item) => (
                             <Link
                                 key={item.to}
                                 to={item.to}
@@ -116,7 +118,7 @@ const UserLayout = () => {
                                 <div className="absolute right-0 mt-2 w-48 bg-[#111] rounded-lg shadow-2xl border border-[#2a2a2a] overflow-hidden z-50">
                                     <div className="py-1">
                                         <Link
-                                            to="/user/profile"
+                                            to={ROUTES.USER.PROFILE}
                                             onClick={() => setIsDropdownOpen(false)}
                                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] transition"
                                         >
@@ -124,7 +126,7 @@ const UserLayout = () => {
                                             Profile
                                         </Link>
                                         <Link
-                                            to="/user/home"
+                                            to={ROUTES.USER.HOME}
                                             onClick={() => setIsDropdownOpen(false)}
                                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] transition"
                                         >
@@ -157,7 +159,7 @@ const UserLayout = () => {
             <main className="max-w-7xl mx-auto px-4 py-6">
                 <Outlet />
             </main>
-
+            <AiAssistantPanel />
             <Footer />
 
             <ConfirmModal

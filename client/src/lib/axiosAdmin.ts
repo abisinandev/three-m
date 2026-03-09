@@ -2,6 +2,7 @@ import { REFRESH_TOKEN_URL } from "@shared/constants/adminConstants";
 import { useAdminStore } from "@stores/admin/useAdminStore";
 import { redirect } from '@tanstack/react-router'
 import axios from "axios";
+import { ROUTES } from "@shared/constants/routes";
 
 const adminApi = axios.create({
     baseURL: import.meta.env.VITE_ADMIN_BASE_URL,
@@ -51,7 +52,7 @@ adminApi.interceptors.response.use(
 
         if (err.response.status === 403) {
             useAdminStore.getState().logout();
-            throw redirect({ to: "/admin/authentication" })
+            throw redirect({ to: ROUTES.ADMIN.AUTH.LOGIN })
         }
 
         if (err.response.status === 401 && !originalRequest._retry) {

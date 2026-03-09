@@ -37,7 +37,7 @@ export class AdminKycController {
   async viewKycDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const { kycId } = req.params;
-      const result = await this._viewKycDetails.execute(kycId);
+      const result = await this._viewKycDetails.execute(kycId as string);
 
       return ResponseHelper.success(
         res,
@@ -56,7 +56,7 @@ export class AdminKycController {
       const data = { ...req.body };
 
       await this._rejectKycUseCase.execute({
-        kycId,
+        kycId: kycId as string,
         reason: data.reason,
       });
 
@@ -70,11 +70,11 @@ export class AdminKycController {
       next(error);
     }
   }
-
+ 
   async verifyKyc(req: Request, res: Response, next: NextFunction) {
     try {
       const { kycId } = req.params;
-      await this._verifyKycUseCase.execute(kycId);
+      await this._verifyKycUseCase.execute(kycId as string);
 
       return ResponseHelper.success(
         res,

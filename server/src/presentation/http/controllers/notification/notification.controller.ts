@@ -48,7 +48,7 @@ export class NotificationController {
             const userId = req.user?.id as string;
             const { id } = req.params;
 
-            await this.notificationRepository.markAsRead(id, userId);
+            await this.notificationRepository.markAsRead(id as string, userId);
             return ResponseHelper.success(
                 res,
                 SuccessMessages.NOTIFICATION.MARK_AS_READ,

@@ -7,6 +7,7 @@ import { useAuthStore } from "@stores/user/UserAuthStore";
 import { useMutation } from "@tanstack/react-query";
 import api from "@lib/axiosUser";
 import { FORGOT_PASSWORD } from "@shared/constants/userContants";
+import { ROUTES } from "@shared/constants/routes";
 
 const ForgotPasswordForm: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -23,7 +24,7 @@ const ForgotPasswordForm: React.FC = () => {
       setData(email, expirationTime);
 
       navigate({
-        to: "/auth/forgot-password/verify-otp",
+        to: ROUTES.AUTH.FORGOT_PASSWORD.VERIFY_OTP,
         replace: true,
       });
     },
@@ -66,7 +67,7 @@ const ForgotPasswordForm: React.FC = () => {
         <button
           type="button"
           className="text-teal-green font-medium hover:underline"
-          onClick={() => navigate({ to: "/auth/login" })}
+          onClick={() => navigate({ to: ROUTES.AUTH.LOGIN })}
         >
           Login here
         </button>

@@ -70,5 +70,4 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
             }
         }
     }
-
 }

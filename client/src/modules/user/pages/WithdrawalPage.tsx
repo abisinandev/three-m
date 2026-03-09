@@ -1,3 +1,4 @@
+import { ROUTES } from '@shared/constants/routes';
 import { useNavigate } from '@tanstack/react-router';
 import { ArrowLeft, Info, ShieldCheck } from 'lucide-react';
 
@@ -8,8 +9,8 @@ const WithdrawPage = () => {
     <div className="min-h-screen bg-black text-white">
       <div className="sticky top-0 z-10 border-b border-[#1f1f1f] bg-black/80 backdrop-blur px-5 py-3 flex items-center gap-3">
         <button
-          onClick={() => navigate({ to: "/user/wallet" })}
-          className="p-2 hover:bg-[#1a1a1a] rounded-lg transition"
+          onClick={() => navigate({ to: ROUTES.USER.WALLET.ROOT })}
+          className="p-2 hover:bg-white/10 rounded-xl transition-all mr-2 group/back"
         >
           <ArrowLeft size={18} />
         </button>
@@ -84,8 +85,8 @@ const WithdrawPage = () => {
         </div>
 
         <button
-          onClick={() => navigate({ to: "/user/wallet" })}
-          className="text-xs text-gray-400 hover:text-white transition flex items-center gap-1.5 mx-auto"
+          onClick={() => navigate({ to: ROUTES.USER.WALLET.ROOT })}
+          className="text-zinc-500 hover:text-white transition-colors flex items-center gap-1.5 mx-auto"
         >
           <ArrowLeft size={14} />
           Go back

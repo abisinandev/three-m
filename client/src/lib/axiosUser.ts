@@ -2,6 +2,7 @@ import axios from "axios"
 import { useUserStore } from "@stores/user/UserStore";
 import { redirect } from '@tanstack/react-router'
 import { USER_REFRESH_TOKEN } from "@shared/constants/userContants";
+import { ROUTES } from "@shared/constants/routes";
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_USER_BASE_URL,
@@ -56,7 +57,7 @@ api.interceptors.response.use(
 
         if (err.response.status === 403) {
             useUserStore.getState().logout();
-            throw redirect({ to: "/auth/login" })
+            throw redirect({ to: ROUTES.AUTH.LOGIN })
         }
 
         if (err.response.status === 401 && !originalRequest._retry) {

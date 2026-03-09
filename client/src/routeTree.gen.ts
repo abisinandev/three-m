@@ -23,10 +23,13 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AdminUsersManagementRouteImport } from './routes/admin/users-management'
 import { Route as AdminTransactionsManagementRouteImport } from './routes/admin/transactions-management'
 import { Route as AdminSipManagementRouteImport } from './routes/admin/sip-management'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminNotificationsRouteImport } from './routes/admin/notifications'
 import { Route as AdminNavMonitoringRouteImport } from './routes/admin/nav-monitoring'
 import { Route as AdminKycManagementRouteImport } from './routes/admin/kyc-management'
 import { Route as AdminInstallmentsRouteImport } from './routes/admin/installments'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminBotManagementRouteImport } from './routes/admin/bot-management'
 import { Route as UserWalletIndexRouteImport } from './routes/user/wallet/index'
 import { Route as UserPortfolioIndexRouteImport } from './routes/user/portfolio/index'
 import { Route as UserMutualFundsIndexRouteImport } from './routes/user/mutual-funds/index'
@@ -118,6 +121,16 @@ const AdminSipManagementRoute = AdminSipManagementRouteImport.update({
   path: '/sip-management',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminNavMonitoringRoute = AdminNavMonitoringRouteImport.update({
   id: '/nav-monitoring',
   path: '/nav-monitoring',
@@ -136,6 +149,11 @@ const AdminInstallmentsRoute = AdminInstallmentsRouteImport.update({
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBotManagementRoute = AdminBotManagementRouteImport.update({
+  id: '/bot-management',
+  path: '/bot-management',
   getParentRoute: () => AdminRoute,
 } as any)
 const UserWalletIndexRoute = UserWalletIndexRouteImport.update({
@@ -253,10 +271,13 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/user': typeof UserRouteWithChildren
+  '/admin/bot-management': typeof AdminBotManagementRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/installments': typeof AdminInstallmentsRoute
   '/admin/kyc-management': typeof AdminKycManagementRoute
   '/admin/nav-monitoring': typeof AdminNavMonitoringRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
@@ -292,10 +313,13 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/user': typeof UserRouteWithChildren
+  '/admin/bot-management': typeof AdminBotManagementRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/installments': typeof AdminInstallmentsRoute
   '/admin/kyc-management': typeof AdminKycManagementRoute
   '/admin/nav-monitoring': typeof AdminNavMonitoringRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
@@ -333,10 +357,13 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/user': typeof UserRouteWithChildren
+  '/admin/bot-management': typeof AdminBotManagementRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/installments': typeof AdminInstallmentsRoute
   '/admin/kyc-management': typeof AdminKycManagementRoute
   '/admin/nav-monitoring': typeof AdminNavMonitoringRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
@@ -374,10 +401,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/user'
+    | '/admin/bot-management'
     | '/admin/dashboard'
     | '/admin/installments'
     | '/admin/kyc-management'
     | '/admin/nav-monitoring'
+    | '/admin/notifications'
+    | '/admin/settings'
     | '/admin/sip-management'
     | '/admin/transactions-management'
     | '/admin/users-management'
@@ -413,10 +443,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/user'
+    | '/admin/bot-management'
     | '/admin/dashboard'
     | '/admin/installments'
     | '/admin/kyc-management'
     | '/admin/nav-monitoring'
+    | '/admin/notifications'
+    | '/admin/settings'
     | '/admin/sip-management'
     | '/admin/transactions-management'
     | '/admin/users-management'
@@ -453,10 +486,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/user'
+    | '/admin/bot-management'
     | '/admin/dashboard'
     | '/admin/installments'
     | '/admin/kyc-management'
     | '/admin/nav-monitoring'
+    | '/admin/notifications'
+    | '/admin/settings'
     | '/admin/sip-management'
     | '/admin/transactions-management'
     | '/admin/users-management'
@@ -596,6 +632,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSipManagementRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/nav-monitoring': {
       id: '/admin/nav-monitoring'
       path: '/nav-monitoring'
@@ -622,6 +672,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bot-management': {
+      id: '/admin/bot-management'
+      path: '/bot-management'
+      fullPath: '/admin/bot-management'
+      preLoaderRoute: typeof AdminBotManagementRouteImport
       parentRoute: typeof AdminRoute
     }
     '/user/wallet/': {
@@ -784,10 +841,13 @@ const AdminAuthRouteRouteWithChildren = AdminAuthRouteRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
+  AdminBotManagementRoute: typeof AdminBotManagementRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminInstallmentsRoute: typeof AdminInstallmentsRoute
   AdminKycManagementRoute: typeof AdminKycManagementRoute
   AdminNavMonitoringRoute: typeof AdminNavMonitoringRoute
+  AdminNotificationsRoute: typeof AdminNotificationsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSipManagementRoute: typeof AdminSipManagementRoute
   AdminTransactionsManagementRoute: typeof AdminTransactionsManagementRoute
   AdminUsersManagementRoute: typeof AdminUsersManagementRoute
@@ -798,10 +858,13 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminBotManagementRoute: AdminBotManagementRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminInstallmentsRoute: AdminInstallmentsRoute,
   AdminKycManagementRoute: AdminKycManagementRoute,
   AdminNavMonitoringRoute: AdminNavMonitoringRoute,
+  AdminNotificationsRoute: AdminNotificationsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
   AdminSipManagementRoute: AdminSipManagementRoute,
   AdminTransactionsManagementRoute: AdminTransactionsManagementRoute,
   AdminUsersManagementRoute: AdminUsersManagementRoute,
