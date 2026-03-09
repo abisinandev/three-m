@@ -1,7 +1,7 @@
 // src/shared/components/ai-chatbot/AiChatbot.tsx
 import { useState, useRef, useEffect } from 'react';
 import { X, Send, Bot, Loader2, Sparkles, MessageSquare, ShieldCheck, Zap } from 'lucide-react';
-import { sendChatMessage } from '@shared/services/chatbot/chatbotApi';
+import { sendChatMessage, getChatHistory } from '@shared/services/chatbot/chatbotApi';
 
 interface Message {
     id: string;
@@ -26,13 +26,27 @@ export default function AiAssistantPanel() {
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
+    const historyLoaded = useRef(false);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
     useEffect(() => {
-        if (isOpen && inputRef.current) {
+        if (isOpen && !historyLoaded.current) {
+            historyLoaded.current = true;
+            getChatHistory().then((history) => {
+                if (history.length > 0) {
+                    const loadedMessages: Message[] = history.map((msg, i) => ({
+                        id: `history-${i}`,
+                        role: msg.role,
+                        content: msg.content,
+                        timestamp: new Date(msg.timestamp),
+                    }));
+                    setMessages(loadedMessages);
+                }
+            }).catch(() => { });
+
             setTimeout(() => inputRef.current?.focus(), 300);
         }
     }, [isOpen]);
