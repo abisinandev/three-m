@@ -95,5 +95,6 @@ export const API_ROUTES = {
     },
     CHATBOT: {
         CHAT: "/bot/chat",
+        HISTORY: "/bot/history",
     },
 } as const;

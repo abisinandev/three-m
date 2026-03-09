@@ -20,7 +20,7 @@ export function NavDailyScheduler() {
             }
         },
         {
-            timezone: "Asia/Kolkata",
+            timezone: "Asia/Kolkata", 
         }
     );
-}
+}          
