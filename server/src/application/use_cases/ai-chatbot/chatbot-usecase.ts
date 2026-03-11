@@ -25,7 +25,7 @@ export class ChatbotUseCase implements IChatbotUseCase {
             "mutual fund",
             "sebi",
             "stock"
-        ];
+        ]; 
 
         const isFinance = financeKeywords.some(k =>
             userInput.toLowerCase().includes(k)

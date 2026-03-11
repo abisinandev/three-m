@@ -10,6 +10,7 @@ import { ExpenseTrackerModule } from "./features/expense-tracker/expense-tracker
 import { NotificationModules } from "./features/notification/notification.module";
 import { MarketNewsModules } from "./features/market-news/market-news.module";
 import { AiSystemModules } from "./features/ai-system/ai-system.module";
+import { StockModules } from "./features/stock/stock.modules";
 
 const container = new Container({
   defaultScope: "Singleton",
@@ -28,6 +29,7 @@ container.load(
   NotificationModules,
   MarketNewsModules,
   AiSystemModules,
+  StockModules,
 );
 
 export { container };

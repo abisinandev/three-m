@@ -11,10 +11,11 @@ import { initSocketConfigs } from "@infrastructure/providers/notification/socket
 import http from "http";
 import app from "./app";
 import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/RAG/ingest-docs";
+import { SyncStocksScheduler } from "@infrastructure/providers/cron-scheduler/stock/sync-stocks.scheduler";
 
 const bootstrap = async () => {
   try {
-    await connectDB();
+    await connectDB(); 
 
     //cron-scheduler
     NavDailyScheduler();
@@ -24,7 +25,10 @@ const bootstrap = async () => {
     NavAllocationScheduler();
     StartSipScheduler(); 
 
-    //vector-db
+ 
+    SyncStocksScheduler(); 
+
+    //vector-db 
     // IngestDocuments() 
  
     const server = http.createServer(app);
@@ -38,6 +42,7 @@ const bootstrap = async () => {
     logger.error(`Server startup failed: ${error}`);
     process.exit(1);
   } 
-};
+};   
 
 bootstrap();
+   
