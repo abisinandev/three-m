@@ -45,4 +45,9 @@ export const StockSchema = new Schema<StockDocument>(
     }
 );
 
+StockSchema.index(
+  { symbol: 1, exchange: 1 },
+  { unique: true }
+);
+
 export const StockModel = model<StockDocument>("Stocks", StockSchema);

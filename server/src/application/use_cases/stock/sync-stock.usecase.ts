@@ -7,6 +7,7 @@ import { ISyncStockUseCase } from "./interfaces/sync-stock-usecase.interface";
 
 @injectable()
 export class SyncStocksUseCase implements ISyncStockUseCase {
+
   constructor(
     @inject(STOCK_TYPES.StockApiClient) private stockApiClient: IStockApiClient,
     @inject(STOCK_TYPES.StockRepository) private stockRepository: IStockRepository,
@@ -14,27 +15,21 @@ export class SyncStocksUseCase implements ISyncStockUseCase {
 
   async execute(): Promise<void> {
 
-    const [usStocks, nseStocks, bseStocks] = await Promise.all([
-      this.stockApiClient.fetchUSStocks(),
-      this.stockApiClient.fetchNSEStocks(),
-      this.stockApiClient.fetchBSEStocks(),
-    ]);
+    const nseStocks = await this.stockApiClient.fetchNSEStocks();
 
-    const allStocks = [...usStocks, ...nseStocks, ...bseStocks];
-
-    const stockEntities = allStocks.map(dto =>
+    const stockEntities = nseStocks.map((dto) =>
       StockEntity.create({
         symbol: dto.symbol,
         name: dto.name,
         exchange: dto.exchange,
-        sector: dto.sector ?? '',
-        status: dto.status ?? 'ACTIVE',
+        sector: dto.sector ?? "",
+        status: dto.status ?? "ACTIVE",
         isTradable: dto.isTradable ?? true,
       })
     );
 
     await this.stockRepository.saveMany(stockEntities);
 
-    console.log(`Successfully synced ${stockEntities.length} stocks.`);
+    console.log(`Successfully synced ${stockEntities.length} stocks`);
   }
 }

@@ -17,14 +17,14 @@ const bootstrap = async () => {
   try {
     await connectDB(); 
 
-    //cron-scheduler
+    //cron-scheduler 
     NavDailyScheduler();
     // NavMontlyScheduler();
     // NavYearScheduler();
     CagrUpdateScheduler();
     NavAllocationScheduler();
     StartSipScheduler(); 
-
+ 
  
     SyncStocksScheduler(); 
 

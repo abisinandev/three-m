@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ext": "ts,tsx,js,json",
+  "ignore": ["node_modules", "dist"],
+  "exec": "tsx src/presentation/express/settings/server.ts"
+}

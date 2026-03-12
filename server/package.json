@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/presentation/express/settings/server.js",
-    "dev": "tsx watch src/presentation/express/settings/server.ts",
+    "dev": "nodemon",
     "lint": "biome lint .",
     "check": "biome check .",
     "format": "biome format . --write",
@@ -36,6 +36,7 @@
     "cloudinary": "^2.8.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "fs-extra": "^11.3.3",

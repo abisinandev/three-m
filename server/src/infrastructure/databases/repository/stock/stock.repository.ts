@@ -11,24 +11,24 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
         super(StockModel, StockMapper)
     }
 
-    public async saveMany(stocks: StockEntity[]): Promise<void> {
-        if (!stocks.length) return;
+    async saveMany(stocks: StockEntity[]): Promise<void> {
 
-        const bulkOps = stocks.map((entity) => {
-            const persistenceModel = StockMapper.toPersistance(entity);
-            return {
-                updateOne: {
-                    filter: { symbol: persistenceModel.symbol },
-                    update: { $set: persistenceModel },
-                    upsert: true
-                }
-            };
+        const docs = stocks.map((stock) => ({
+            symbol: stock.symbol,
+            name: stock.name,
+            exchange: stock.exchange,
+            sector: stock.sector,
+            status: stock.status,
+            isTradable: stock.isTradable,
+        }));
+
+        await this.model.insertMany(docs, {
+            ordered: false,
         });
 
-        await StockModel.bulkWrite(bulkOps);
     }
 
-    public async findBySymbol(symbol: string): Promise<StockEntity | null> {
+    async findBySymbol(symbol: string): Promise<StockEntity | null> {
         const document = await StockModel.findOne({ symbol }).lean();
         return document ? this.mapper.toDomain(document as unknown as StockDocument) : null;
     }
