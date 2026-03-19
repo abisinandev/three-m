@@ -8,7 +8,7 @@ import { NotificationPayload } from "@application/interfaces/services/notificati
 
 let io: Server | null = null;
 
-export const initSocketConfigs = (server: http.Server) => {
+export const InitSocketConfigs = (server: http.Server) => {
     io = new Server(server, {
         cors: {
             origin: true,

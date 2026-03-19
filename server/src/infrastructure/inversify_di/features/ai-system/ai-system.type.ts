@@ -1,11 +1,11 @@
 export const AI_SYSTEM_TYPES = {
-    DetectAgent: Symbol.for("DetectAgent"),
+    // DetectAgent: Symbol.for("DetectAgent"),
 
     EducationAgent: Symbol.for("EducationAgent"),
 
     AgentRouter: Symbol.for("AgentRouter"),
 
-    RedisChatMemoryService: Symbol.for("RedisChatMemoryService"),
+    ChatHistoryService: Symbol.for("ChatHistoryService"),
 
     ChatbotUseCase: Symbol.for("ChatbotUseCase"),
 
