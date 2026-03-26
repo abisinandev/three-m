@@ -9,6 +9,7 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
     private ws: WebSocket | null = null;
     private apiKey: string;
     private subscribers: ((trade: Trade) => void)[] = [];
+    private activeSymbols = new Set<string>();
 
     constructor() {
         this.apiKey = env.FINNHUB_API_KEY_SECRET
@@ -16,10 +17,20 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
 
 
     connect(): void {
+        if (this.ws && (this.ws.readyState === WebSocket.CONNECTING || this.ws.readyState === WebSocket.OPEN)) {
+            return;
+        }
+
         this.ws = new WebSocket(`wss://ws.finnhub.io?token=${this.apiKey}`);
 
         this.ws.on('open', () => {
             console.log("✅ Websocket connected");
+            
+            // Flush the queued active symbols automatically on reconnect/open
+            this.activeSymbols.forEach(symbol => {
+                this.ws?.send(JSON.stringify({ type: "subscribe", symbol }));
+                console.log(`📡 Subscribed to ${symbol}`);
+            });
         })
 
         this.ws.on("message", (data) => {
@@ -49,7 +60,9 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
     }
 
     subscribe(symbol: string): void {
-        if (!this.ws) return;
+        this.activeSymbols.add(symbol);
+
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
 
         this.ws.send(
             JSON.stringify({
@@ -62,7 +75,9 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
     }
 
     unsubscribe(symbol: string) {
-        if (!this.ws) return;
+        this.activeSymbols.delete(symbol);
+
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
 
         this.ws.send(
             JSON.stringify({

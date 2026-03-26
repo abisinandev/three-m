@@ -41,8 +41,6 @@ import { IUserRepository } from "@application/interfaces/repositories/user/user-
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 // import { IBlockRepository } from "@application/interfaces/repositories/feature/block-repository.interface";
 import { EditProfileUseCase } from "@application/use_cases/user/profile/edit-profile.usecase";
-import { GetUserStocksUseCase } from "@application/use_cases/user/stocks/get-user-stocks.use-case";
-import { UserStocksController } from "@presentation/http/controllers/user/user-stocks.controller";
 
 export const UserModule = new ContainerModule(({ bind }) => {
   //Repository
@@ -55,7 +53,6 @@ export const UserModule = new ContainerModule(({ bind }) => {
   bind<WalletController>(USER_TYPES.WalletController).to(WalletController);
   bind<PaymentController>(USER_TYPES.PaymentController).to(PaymentController);
   bind<WebhookController>(USER_TYPES.WebhookController).to(WebhookController);
-  bind<UserStocksController>(USER_TYPES.UserStocksController).to(UserStocksController);
 
   //Usecases
   bind<IUserLoginUseCase>(USER_TYPES.UserLoginUseCase).to(UserLoginUseCase);
@@ -75,5 +72,4 @@ export const UserModule = new ContainerModule(({ bind }) => {
   // bind<IBlockRepository>(USER_TYPES.BlockRepository).to(BlockRepository);
   bind<IAddToWalletUseCase>(USER_TYPES.AddToWalletUseCase).to(AddToWalletUseCase);
   bind<StripePaymentHandler>(USER_TYPES.StripePaymentHandler).to(StripePaymentHandler);
-  bind<GetUserStocksUseCase>(USER_TYPES.GetUserStocksUseCase).to(GetUserStocksUseCase);
 });

@@ -68,3 +68,9 @@ export const emitNotificationToUser = (userId: string, payload: NotificationPayl
 
     io.to(userId).emit("notification", payload);
 };
+
+export const emitStockUpdate = (trade: any) => {
+    if (io) {
+        io.emit("stock-update", trade);
+    }
+};

@@ -20,6 +20,7 @@ import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.t
 import marketNewsRoutes from "@presentation/http/routes/market-news/markets-news.routes"
 import chatbotRoutes from '@presentation/http/routes/ai-chatbot/ai-chatbot.route';
 import adminStockRoutes from '@presentation/http/routes/stocks/admin-stock-management.routes';
+import userStockRoutes from '@presentation/http/routes/stocks/user-stock.routes';
 
 export const RegisterRoutes = (app: Application) => {
   const authMiddleware = container.get<AuthMiddleware>(AUTH_TYPES.AuthMiddleware);
@@ -47,4 +48,5 @@ export const RegisterRoutes = (app: Application) => {
   app.use("/api/file-upload", fileUploadRoutes);
 
   app.use('/api/admin/stocks', (req, res, next) => authAdminMiddleware.handle(req, res, next), adminStockRoutes);
+  app.use('/api/user/stocks', (req, res, next) => authMiddleware.handle(req, res, next), userStockRoutes);
 }; 

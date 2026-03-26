@@ -5,9 +5,11 @@ import { ICacheProvider } from "@application/interfaces/services/externals/redis
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { inject, injectable } from "inversify";
+import { emitStockUpdate } from "@infrastructure/providers/notification/socket.configs";
 
 @injectable()
 export class MarketDataProvider implements IMarketDataProvider {
+    private isInitialized = false;
 
     constructor(
         @inject(STOCK_TYPES.StockWebSocketClient) private readonly websocketClient: IStockWebsocketProvider,
@@ -15,16 +17,28 @@ export class MarketDataProvider implements IMarketDataProvider {
     ) { }
 
     start(symbol: string[]) {
-
-        this.websocketClient.connect();
+        if (!this.isInitialized) {
+            this.websocketClient.connect();
+            this.websocketClient.onTrade((trade) => {
+                this.handleCache(trade);
+            });
+            this.isInitialized = true;
+        }
 
         symbol.forEach(s => this.websocketClient.subscribe(s));
-
-        this.websocketClient.onTrade((trade) => {
-            this.handleCache(trade);
-        })
     }
 
+    async getLatestPrices(symbols: string[]): Promise<Record<string, number>> {
+        const prices: Record<string, number> = {};
+        const fetchPromises = symbols.map(async (symbol) => {
+            const cachedPrice = await this.redis.get(`stock:${symbol}:latest`);
+            if (cachedPrice) {
+                prices[symbol] = parseFloat(cachedPrice);
+            }
+        });
+        await Promise.all(fetchPromises);
+        return prices;
+    }
 
     private async handleCache(trade: Trade) {
         // 1. store latest price in Redis
@@ -32,7 +46,7 @@ export class MarketDataProvider implements IMarketDataProvider {
         await this.redis.set(`stock:${trade.symbol}:latest`, String(trade.price), ttl);
 
         // 2. push to frontend
-        // this.socket.broadcast("price_update", trade);
+        emitStockUpdate(trade);
 
         // (later) 3. candle aggregation
     }

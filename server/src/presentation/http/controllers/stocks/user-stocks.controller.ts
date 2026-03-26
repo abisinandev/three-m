@@ -1,15 +1,15 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { injectable, inject } from "inversify";
-import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
-import { GetUserStocksUseCase } from "@application/use_cases/user/stocks/get-user-stocks.use-case";
+import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
+import { IFetchStocks } from "@application/use_cases/stock/interfaces/fetch-stocks.interface";
 
 @injectable()
 export class UserStocksController {
     constructor(
-        @inject(USER_TYPES.GetUserStocksUseCase) private getUserStocksUseCase: GetUserStocksUseCase
-    ) {}
+        @inject(STOCK_TYPES.FetchStocksUseCase) private fetchStocksUseCase: IFetchStocks
+    ) { }
 
-    async getStocks(req: Request, res: Response) {
+    async getStocks(req: Request, res: Response, next: NextFunction) {
         try {
             const { page = 1, limit = 20, search, exchange } = req.query;
 
@@ -18,7 +18,7 @@ export class UserStocksController {
                 exchange: exchange as string
             };
 
-            const result = await this.getUserStocksUseCase.execute(
+            const result = await this.fetchStocksUseCase.execute(
                 filters,
                 Number(page) || 1,
                 Number(limit) || 20
@@ -33,11 +33,7 @@ export class UserStocksController {
                 total: result.total,
             });
         } catch (error) {
-            console.error("Error fetching user stocks: ", error);
-            res.status(500).json({
-                success: false,
-                message: "Internal server error"
-            });
+            next(error)
         }
     }
 }

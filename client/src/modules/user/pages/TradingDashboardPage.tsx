@@ -1,11 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, Plus, TrendingUp, TrendingDown, Clock, Filter, SlidersHorizontal, ChevronDown } from 'lucide-react';
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, keepPreviousData, useQueryClient } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
 import { INDICES, RECENT_ACTIVITY } from '@shared/constants/dummyStocks';
 import { FetchUserStocksApi } from '@shared/services/user/stocks/FetchUserStocksApi';
 import type { UserStockFilters } from '@shared/services/user/stocks/FetchUserStocksApi';
 import { Pagination } from '@shared/components/pagination/Pagination';
+import { socket } from '@socket';
 
 // A tiny SVG sparkline component
 const Sparkline = ({ data, positive }: { data: number[]; positive: boolean }) => {
@@ -38,6 +39,7 @@ const Sparkline = ({ data, positive }: { data: number[]; positive: boolean }) =>
 };
 
 const TradingDashboardPage = () => {
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('all');
   
   const [filters, setFilters] = useState<UserStockFilters>({
@@ -61,6 +63,29 @@ const TradingDashboardPage = () => {
 
   const stocks = useMemo(() => data?.data ?? [], [data]);
   const total = data?.total ?? 0;
+
+  useEffect(() => {
+    const handleStockUpdate = (trade: any) => {
+        queryClient.setQueryData(['user-stocks', filters], (old: any) => {
+            if (!old || !old.data) return old;
+            
+            return {
+                ...old,
+                data: old.data.map((stock: any) => {
+                    if (stock.symbol === trade.symbol) {
+                        return { ...stock, price: trade.price };
+                    }
+                    return stock;
+                })
+            };
+        });
+    };
+
+    socket.on('stock-update', handleStockUpdate);
+    return () => {
+        socket.off('stock-update', handleStockUpdate);
+    };
+  }, [queryClient, filters]);
 
   return (
     <div className="min-h-screen bg-black text-white font-inter pb-10">
@@ -158,7 +183,7 @@ const TradingDashboardPage = () => {
                     </tr>
                   )}
                   {!isLoading && !isError && stocks.map((stock: any) => {
-                    const price = stock.c || 100.00; // API placeholder if price not embedded yet
+                    const price = stock.price || stock.c || 100.00; // Prefer real-time price over static 'c'
                     const changePercent = stock.dp || 0; 
                     const change = stock.d || 0;
                     const isPositive = changePercent >= 0;

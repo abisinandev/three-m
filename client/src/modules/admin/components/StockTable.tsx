@@ -1,7 +1,11 @@
 import React from 'react';
 import type { IStockTableProps } from '@shared/components/interfaces/IStockTable';
 
+
 export const StockTable: React.FC<IStockTableProps> = ({ stocks, isLoading, isError, onStatusToggle }) => {
+
+
+
     if (isLoading) {
         return (
             <div className="animate-pulse flex flex-col space-y-4 p-6">
