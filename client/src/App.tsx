@@ -27,12 +27,13 @@ const App = () => {
     useEffect(() => {
         getNotifications().then(setNotifications);
 
-        socket.on("notification", (data) => {
+        const handler = (data: any) => {
             addNotification(data);
-        });
+        }
+        socket.on("notification", handler);
 
         return () => {
-            socket.off("notification");
+            socket.off("notification", handler);
         };
     }, [addNotification, setNotifications]);
 

@@ -23,7 +23,7 @@ export const ROUTES = {
             SUCCESS: "/user/payment-success",
             FAILED: "/user/payment-failed",
         },
-        ALGO: "/user/algo",
+        TRADING: "/user/trading",
         AI_BOT: "/user/ai-bot",
     },
     AUTH: {
@@ -49,7 +49,7 @@ export const ROUTES = {
             ROOT: "/admin/kyc-management",
             VIEW: (kycId: string) => `/admin/view-kyc/${kycId}`,
         },
-        NAV_MONITORING: "/admin/nav-monitoring",
+        STOCK_MANAGEMENT: "/admin/stock-management",
         SIP_MANAGEMENT: {
             ROOT: "/admin/sip-management",
             DETAILS: (sipId: string) => `/admin/sip-details/${sipId}`,

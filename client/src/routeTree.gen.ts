@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminAuthRouteRouteImport } from './routes/_admin-auth/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UserTradingRouteImport } from './routes/user/trading'
 import { Route as UserProfileRouteImport } from './routes/user/profile'
 import { Route as UserMarketNewsRouteImport } from './routes/user/market-news'
 import { Route as UserKycVerificationRouteImport } from './routes/user/kyc-verification'
@@ -22,6 +23,7 @@ import { Route as UserExpenseTrackerRouteImport } from './routes/user/expense-tr
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AdminUsersManagementRouteImport } from './routes/admin/users-management'
 import { Route as AdminTransactionsManagementRouteImport } from './routes/admin/transactions-management'
+import { Route as AdminStockManagementRouteImport } from './routes/admin/stock-management'
 import { Route as AdminSipManagementRouteImport } from './routes/admin/sip-management'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminNotificationsRouteImport } from './routes/admin/notifications'
@@ -75,6 +77,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UserTradingRoute = UserTradingRouteImport.update({
+  id: '/trading',
+  path: '/trading',
+  getParentRoute: () => UserRoute,
+} as any)
 const UserProfileRoute = UserProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -116,6 +123,11 @@ const AdminTransactionsManagementRoute =
     path: '/transactions-management',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminStockManagementRoute = AdminStockManagementRouteImport.update({
+  id: '/stock-management',
+  path: '/stock-management',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSipManagementRoute = AdminSipManagementRouteImport.update({
   id: '/sip-management',
   path: '/sip-management',
@@ -279,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
+  '/admin/stock-management': typeof AdminStockManagementRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
@@ -287,6 +300,7 @@ export interface FileRoutesByFullPath {
   '/user/kyc-verification': typeof UserKycVerificationRoute
   '/user/market-news': typeof UserMarketNewsRoute
   '/user/profile': typeof UserProfileRoute
+  '/user/trading': typeof UserTradingRoute
   '/admin/add-new-fund': typeof AdminMutualFundAddNewFundRoute
   '/admin/mutual-funds-management': typeof AdminMutualFundMutualFundsManagementRoute
   '/admin/sip-details/$sipId': typeof AdminSipDetailsSipIdRoute
@@ -321,6 +335,7 @@ export interface FileRoutesByTo {
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
+  '/admin/stock-management': typeof AdminStockManagementRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
@@ -329,6 +344,7 @@ export interface FileRoutesByTo {
   '/user/kyc-verification': typeof UserKycVerificationRoute
   '/user/market-news': typeof UserMarketNewsRoute
   '/user/profile': typeof UserProfileRoute
+  '/user/trading': typeof UserTradingRoute
   '/admin/add-new-fund': typeof AdminMutualFundAddNewFundRoute
   '/admin/mutual-funds-management': typeof AdminMutualFundMutualFundsManagementRoute
   '/admin/sip-details/$sipId': typeof AdminSipDetailsSipIdRoute
@@ -365,6 +381,7 @@ export interface FileRoutesById {
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
+  '/admin/stock-management': typeof AdminStockManagementRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
@@ -373,6 +390,7 @@ export interface FileRoutesById {
   '/user/kyc-verification': typeof UserKycVerificationRoute
   '/user/market-news': typeof UserMarketNewsRoute
   '/user/profile': typeof UserProfileRoute
+  '/user/trading': typeof UserTradingRoute
   '/admin/_mutual-fund/add-new-fund': typeof AdminMutualFundAddNewFundRoute
   '/admin/_mutual-fund/mutual-funds-management': typeof AdminMutualFundMutualFundsManagementRoute
   '/admin/sip-details/$sipId': typeof AdminSipDetailsSipIdRoute
@@ -409,6 +427,7 @@ export interface FileRouteTypes {
     | '/admin/notifications'
     | '/admin/settings'
     | '/admin/sip-management'
+    | '/admin/stock-management'
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
@@ -417,6 +436,7 @@ export interface FileRouteTypes {
     | '/user/kyc-verification'
     | '/user/market-news'
     | '/user/profile'
+    | '/user/trading'
     | '/admin/add-new-fund'
     | '/admin/mutual-funds-management'
     | '/admin/sip-details/$sipId'
@@ -451,6 +471,7 @@ export interface FileRouteTypes {
     | '/admin/notifications'
     | '/admin/settings'
     | '/admin/sip-management'
+    | '/admin/stock-management'
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
@@ -459,6 +480,7 @@ export interface FileRouteTypes {
     | '/user/kyc-verification'
     | '/user/market-news'
     | '/user/profile'
+    | '/user/trading'
     | '/admin/add-new-fund'
     | '/admin/mutual-funds-management'
     | '/admin/sip-details/$sipId'
@@ -494,6 +516,7 @@ export interface FileRouteTypes {
     | '/admin/notifications'
     | '/admin/settings'
     | '/admin/sip-management'
+    | '/admin/stock-management'
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
@@ -502,6 +525,7 @@ export interface FileRouteTypes {
     | '/user/kyc-verification'
     | '/user/market-news'
     | '/user/profile'
+    | '/user/trading'
     | '/admin/_mutual-fund/add-new-fund'
     | '/admin/_mutual-fund/mutual-funds-management'
     | '/admin/sip-details/$sipId'
@@ -569,6 +593,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/user/trading': {
+      id: '/user/trading'
+      path: '/trading'
+      fullPath: '/user/trading'
+      preLoaderRoute: typeof UserTradingRouteImport
+      parentRoute: typeof UserRoute
+    }
     '/user/profile': {
       id: '/user/profile'
       path: '/profile'
@@ -623,6 +654,13 @@ declare module '@tanstack/react-router' {
       path: '/transactions-management'
       fullPath: '/admin/transactions-management'
       preLoaderRoute: typeof AdminTransactionsManagementRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/stock-management': {
+      id: '/admin/stock-management'
+      path: '/stock-management'
+      fullPath: '/admin/stock-management'
+      preLoaderRoute: typeof AdminStockManagementRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/sip-management': {
@@ -849,6 +887,7 @@ interface AdminRouteChildren {
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSipManagementRoute: typeof AdminSipManagementRoute
+  AdminStockManagementRoute: typeof AdminStockManagementRoute
   AdminTransactionsManagementRoute: typeof AdminTransactionsManagementRoute
   AdminUsersManagementRoute: typeof AdminUsersManagementRoute
   AdminMutualFundAddNewFundRoute: typeof AdminMutualFundAddNewFundRoute
@@ -866,6 +905,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSipManagementRoute: AdminSipManagementRoute,
+  AdminStockManagementRoute: AdminStockManagementRoute,
   AdminTransactionsManagementRoute: AdminTransactionsManagementRoute,
   AdminUsersManagementRoute: AdminUsersManagementRoute,
   AdminMutualFundAddNewFundRoute: AdminMutualFundAddNewFundRoute,
@@ -903,6 +943,7 @@ interface UserRouteChildren {
   UserKycVerificationRoute: typeof UserKycVerificationRoute
   UserMarketNewsRoute: typeof UserMarketNewsRoute
   UserProfileRoute: typeof UserProfileRoute
+  UserTradingRoute: typeof UserTradingRoute
   UserPaymentPaymentFailedRoute: typeof UserPaymentPaymentFailedRoute
   UserPaymentPaymentSuccessRoute: typeof UserPaymentPaymentSuccessRoute
   UserMutualFundsSchemeCodeRoute: typeof UserMutualFundsSchemeCodeRoute
@@ -920,6 +961,7 @@ const UserRouteChildren: UserRouteChildren = {
   UserKycVerificationRoute: UserKycVerificationRoute,
   UserMarketNewsRoute: UserMarketNewsRoute,
   UserProfileRoute: UserProfileRoute,
+  UserTradingRoute: UserTradingRoute,
   UserPaymentPaymentFailedRoute: UserPaymentPaymentFailedRoute,
   UserPaymentPaymentSuccessRoute: UserPaymentPaymentSuccessRoute,
   UserMutualFundsSchemeCodeRoute: UserMutualFundsSchemeCodeRoute,

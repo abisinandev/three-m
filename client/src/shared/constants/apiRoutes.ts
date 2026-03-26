@@ -58,6 +58,9 @@ export const API_ROUTES = {
             PAUSE_SIP: (sipId: string) => `/user/mutual-funds/sip/pause/${sipId}`,
             RESUME_SIP: (sipId: string) => `/user/mutual-funds/sip/resume/${sipId}`,
             CANCEL_SIP: (sipId: string) => `/user/mutual-funds/sip/cancel/${sipId}`,
+        },
+        STOCKS: {
+            GET_ALL: "/user/stocks",
         }
     },
     ADMIN: {
@@ -91,6 +94,10 @@ export const API_ROUTES = {
         SIP: {
             GET_ALL: "/sip-management",
             DETAILS: (sipId: string) => `/sip-management/${sipId}`,
+        },
+        STOCKS: {
+            GET_ALL: "/stocks",
+            UPDATE_STATUS: (symbol: string) => `/stocks/${symbol}/status`,
         }
     },
     CHATBOT: {
