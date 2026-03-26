@@ -20,6 +20,7 @@ export const USER_TYPES = {
   ProfileImageUploadUseCase: Symbol.for("ProfileImageUploadUseCase"),
   UserWalletUseCase: Symbol.for('UserWalletUseCase'),
   AddToWalletUseCase: Symbol.for("AddToWalletUseCase"),
+  GetUserStocksUseCase: Symbol.for("GetUserStocksUseCase"),
 
 
 
@@ -29,4 +30,5 @@ export const USER_TYPES = {
   PaymentController: Symbol.for("PaymentController"),
   WebhookController: Symbol.for("WebhookController"),
   StripePaymentHandler: Symbol.for('StripePaymentHandler'),
+  UserStocksController: Symbol.for("UserStocksController"),
 };

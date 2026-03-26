@@ -1,6 +1,5 @@
 import { model, Schema } from "mongoose";
 import { IStock } from "../../interfaces/stocks/stock-schema-interface";
-import { StocksStatus } from "@domain/entities/stock/stocks.enum";
 
 export type StockDocument = Document & IStock;
 
@@ -13,6 +12,9 @@ export const StockSchema = new Schema<StockDocument>(
             index: true
         },
 
+        logo: {
+            type: String
+        },
         exchange: {
             type: String,
             required: true
@@ -23,21 +25,29 @@ export const StockSchema = new Schema<StockDocument>(
             required: true
         },
 
-        status: {
-            type: String,
-            enum: Object.values(StocksStatus),
-            default: StocksStatus.ACTIVE
-            // required:true,
+        isVisible: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
+
+        isTracked: {
+            type: Boolean,
+            required: true,
+            default: true
         },
 
         isTradable: {
             type: Boolean,
             required: true,
+            default: true,
         },
 
         sector: {
             type: String,
-            required: true
+            required: true,
+            default: 'Unknown',
+
         }
     },
     {
@@ -46,8 +56,10 @@ export const StockSchema = new Schema<StockDocument>(
 );
 
 StockSchema.index(
-  { symbol: 1, exchange: 1 },
-  { unique: true }
+    { symbol: 1, exchange: 1 },
+    { unique: true }
 );
+
+StockSchema.index({ name: 1 });
 
 export const StockModel = model<StockDocument>("Stocks", StockSchema);

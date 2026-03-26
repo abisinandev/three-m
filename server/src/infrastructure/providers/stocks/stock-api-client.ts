@@ -12,21 +12,11 @@ export class StockApiClient implements IStockApiClient {
     private readonly baseUrl = env.ALPHA_VANTAGE_BASE_URL;
     private readonly apiKey = env.ALPHA_VANTAGE_API_KEY;
 
-    async fetchNSEStocks(): Promise<StockDTO[]> {
-        const filePath = path.join(
-            process.cwd(),
-            "src",
-            "infrastructure",
-            "providers",
-            "stocks",
-            "data",
-            "Equity.csv"
-        );
-
-        const rows = await readCSV<any>(filePath);
-        return rows
+    async fetchNYCStocks(): Promise<StockDTO[]> {
+        return []
     }
-
+    // 📌📌📌📌📌📌 not using anywhere
+    
     // async fetchNSEStocks(): Promise<StockDTO[]> {
     //     const csv = await this.http.get<string>(
     //         "https://archives.nseindia.com/content/equities/EQUITY_L.csv"

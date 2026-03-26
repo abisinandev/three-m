@@ -22,6 +22,11 @@ export enum AdminProtectedRoutes {
     VERIFY_TRANSACTIONS = "/transaction-verify/:txId",
 }
 
+export enum AdminStockRoutes {
+    LIST_STOCKS = "/",
+    UPDATE_STATUS = "/:symbol/status",
+}
+
 export enum AdminSipRoutes {
     LIST_ALL = '/',
     FETCH_DETAILS = '/:sipId',

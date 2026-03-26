@@ -10,8 +10,8 @@ import { StartSipScheduler } from "@infrastructure/providers/cron-scheduler/sip/
 import { InitSocketConfigs } from "@infrastructure/providers/notification/socket.configs";
 import http from "http";
 import app from "./app";
-import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/RAG/ingest-docs";
-import { SyncStocksScheduler } from "@infrastructure/providers/cron-scheduler/stock/sync-stocks.scheduler";
+import { SyncStocks } from "@infrastructure/providers/stocks/finnhub/finnhub.client";
+// import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/RAG/ingest-docs";
 
 const bootstrap = async () => {
   try {
@@ -23,13 +23,12 @@ const bootstrap = async () => {
     // NavYearScheduler();
     CagrUpdateScheduler();
     NavAllocationScheduler();
-    StartSipScheduler(); 
- 
- 
-    // SyncStocksScheduler(); 
+    // StartSipScheduler(); 
+    
 
     //vector-db 
     // IngestDocuments() 
+    // SyncStocks()
   
     const server = http.createServer(app);
     InitSocketConfigs(server); 

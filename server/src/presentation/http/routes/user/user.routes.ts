@@ -10,12 +10,14 @@ import { validateDTO } from "@presentation/express/middlewares/validation-dto.mi
 import { UserRoutes } from "@shared/routes/user.routes";
 import type { UserController } from "@presentation/http/controllers/user/user.controller";
 import { WalletController } from "@presentation/http/controllers/wallet/wallet.controller";
+import { UserStocksController } from "@presentation/http/controllers/user/user-stocks.controller";
 import { Router } from "express";
 
 const router = Router();
 
 const userController = container.get<UserController>(USER_TYPES.UserController);
 const walletController = container.get<WalletController>(USER_TYPES.WalletController);
+const userStocksController = container.get<UserStocksController>(USER_TYPES.UserStocksController);
 
 router.get(UserRoutes.PROFILE, userController.getProfile.bind(userController));
 router.post(UserRoutes.CHANGE_PASSWORD, validateDTO(ChangePasswordDTO), userController.ChangePassword.bind(userController));
@@ -26,5 +28,6 @@ router.post(UserRoutes.EMAIL_UPDATE_VERIFY, validateDTO(VerifyOtpDTO), userContr
 router.patch(UserRoutes.UPLOAD_PROFILE_IMAGE, validateDTO(UploadProfileImageDTO), userController.uploadProfile.bind(userController));
 router.get(UserRoutes.WALLET, walletController.getWallet.bind(walletController));
 router.post(UserRoutes.LOGOUT, userController.logout.bind(userController));
+router.get(UserRoutes.STOCKS, userStocksController.getStocks.bind(userStocksController));
 
 export default router;

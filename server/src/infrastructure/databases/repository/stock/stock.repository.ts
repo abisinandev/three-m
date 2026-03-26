@@ -18,8 +18,9 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
             name: stock.name,
             exchange: stock.exchange,
             sector: stock.sector,
-            status: stock.status,
             isTradable: stock.isTradable,
+            isVisible: stock.isVisible,
+            isTracked: stock.isTracked,
         }));
 
         await this.model.insertMany(docs, {
@@ -31,5 +32,36 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
     async findBySymbol(symbol: string): Promise<StockEntity | null> {
         const document = await StockModel.findOne({ symbol }).lean();
         return document ? this.mapper.toDomain(document as unknown as StockDocument) : null;
+    }
+
+    async findFilteredPaginated(filters: any, skip: number, limit: number): Promise<{ data: StockEntity[], total: number }> {
+        const query: any = {};
+        
+        if (filters.search) {
+            query.$or = [
+                { symbol: { $regex: filters.search, $options: "i" } },
+                { name: { $regex: filters.search, $options: "i" } }
+            ];
+        }
+        
+        if (filters.exchange) query.exchange = filters.exchange;
+        if (filters.isTradable !== undefined) query.isTradable = filters.isTradable === 'true' || filters.isTradable === true;
+        if (filters.isTracked !== undefined) query.isTracked = filters.isTracked === 'true' || filters.isTracked === true;
+        if (filters.isVisible !== undefined) query.isVisible = filters.isVisible === 'true' || filters.isVisible === true;
+
+        const [documents, total] = await Promise.all([
+            StockModel.find(query).skip(skip).limit(limit).sort({ symbol: 1 }).lean(),
+            StockModel.countDocuments(query)
+        ]);
+
+        return {
+            data: documents.map(doc => this.mapper.toDomain(doc as unknown as StockDocument)),
+            total
+        };
+    }
+
+    async updateStatus(symbol: string, statusUpdate: Partial<{ isTradable: boolean; isTracked: boolean; isVisible: boolean }>): Promise<boolean> {
+        const result = await StockModel.updateOne({ symbol }, { $set: statusUpdate });
+        return result.modifiedCount > 0;
     }
 } 

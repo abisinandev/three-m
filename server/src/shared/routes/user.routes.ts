@@ -8,7 +8,8 @@ export enum UserRoutes {
     EMAIL_UPDATE_VERIFY = '/profile/update/email/verify-otp',
     UPLOAD_PROFILE_IMAGE = '/profile/update/profile-image',
     WALLET = '/wallet',
-    MF_FUND = "/:schemeCode"
+    MF_FUND = "/:schemeCode",
+    STOCKS = "/stocks"
 }
 
 export enum UserMutualFundRoutes {
