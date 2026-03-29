@@ -52,5 +52,9 @@ export const SuccessMessages = {
     },
     NOTIFICATION: {
         MARK_AS_READ: "Notification marked as read",
+    },
+
+    STOCK: {
+        STOCK_FETCHED: "Stocks fetched successfully"
     }
 } as const;

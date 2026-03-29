@@ -6,48 +6,66 @@ import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/e
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { inject, injectable } from "inversify";
 import { emitStockUpdate } from "@infrastructure/providers/notification/socket.configs";
+import { FinnhubService } from "./finnhub.service";
 
 @injectable()
 export class MarketDataProvider implements IMarketDataProvider {
     private isInitialized = false;
+    private subscribed = new Set<string>();
 
     constructor(
         @inject(STOCK_TYPES.StockWebSocketClient) private readonly websocketClient: IStockWebsocketProvider,
         @inject(EXTERNAL_TYPES.RedisCacheProvider) private readonly redis: ICacheProvider,
+        @inject(STOCK_TYPES.FinnhubService) private readonly finnhubService: FinnhubService
     ) { }
 
-    start(symbol: string[]) {
-        if (!this.isInitialized) {
-            this.websocketClient.connect();
-            this.websocketClient.onTrade((trade) => {
-                this.handleCache(trade);
-            });
-            this.isInitialized = true;
-        }
+    init() {
+        if (this.isInitialized) return;
 
-        symbol.forEach(s => this.websocketClient.subscribe(s));
+        this.websocketClient.connect();
+        this.websocketClient.onTrade((trade) => this.handleTrade(trade));
+        this.isInitialized = true;
+    }
+
+    subscribe(symbols: string[]) {
+        symbols.forEach(symbol => {
+            if (this.subscribed.has(symbol)) return;
+
+            this.websocketClient.subscribe(symbol);
+            this.subscribed.add(symbol);
+        });
     }
 
     async getLatestPrices(symbols: string[]): Promise<Record<string, number>> {
         const prices: Record<string, number> = {};
-        const fetchPromises = symbols.map(async (symbol) => {
-            const cachedPrice = await this.redis.get(`stock:${symbol}:latest`);
-            if (cachedPrice) {
-                prices[symbol] = parseFloat(cachedPrice);
+        const missing: string[] = [];
+
+        await Promise.all(symbols.map(async (symbol) => {
+            const cached = await this.redis.get(`stock:${symbol}:latest`);
+
+            if (cached) {
+                prices[symbol] = parseFloat(cached);
+            } else {
+                missing.push(symbol);
             }
-        });
-        await Promise.all(fetchPromises);
+        }));
+
+        if (missing.length) {
+            await Promise.all(missing.map(async (symbol) => {
+                const price = await this.finnhubService.getQuote(symbol);
+
+                if (price) {
+                    prices[symbol] = price;
+                    await this.redis.set(`stock:${symbol}:latest`, String(price), 300);
+                }
+            }));
+        }
+
         return prices;
     }
 
-    private async handleCache(trade: Trade) {
-        // 1. store latest price in Redis
-        const ttl = 3600;
-        await this.redis.set(`stock:${trade.symbol}:latest`, String(trade.price), ttl);
-
-        // 2. push to frontend
+    private async handleTrade(trade: Trade) {
+        await this.redis.set(`stock:${trade.symbol}:latest`, String(trade.price), 3600);
         emitStockUpdate(trade);
-
-        // (later) 3. candle aggregation
     }
 }

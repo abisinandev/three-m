@@ -1,9 +1,11 @@
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
 import { StockEntity } from "@domain/entities/stock/stock.entity";
+import { StockQueryOptions } from "@application/dto/stocks/stock.dto";
 import { StockDocument, StockModel } from "@infrastructure/databases/mongo_db/models/schemas/stock/stock.schema";
 import { BaseRepository } from "@infrastructure/databases/repository/base.repository";
 import { StockMapper } from "@infrastructure/mappers/stock/stock.mapper";
 import { injectable } from "inversify";
+import { FilterQuery } from "mongoose";
 
 @injectable()
 export class StockRepository extends BaseRepository<StockEntity, StockDocument> implements IStockRepository {
@@ -34,29 +36,34 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
         return document ? this.mapper.toDomain(document as unknown as StockDocument) : null;
     }
 
-    async findFilteredPaginated(filters: any, skip: number, limit: number): Promise<{ data: StockEntity[], total: number }> {
-        const query: any = {};
-        
-        if (filters.search) {
+    async finAllStocks(options: StockQueryOptions): Promise<{ data: StockEntity[], total: number }> {
+        const { page, limit, search, exchange, isTradable, isTracked, isVisible, sort } = options;
+
+        const query: FilterQuery<StockDocument> = {};
+
+        if (search) {
             query.$or = [
-                { symbol: { $regex: filters.search, $options: "i" } },
-                { name: { $regex: filters.search, $options: "i" } }
+                { symbol: { $regex: search, $options: "i" } },
+                { name: { $regex: search, $options: "i" } },
             ];
         }
-        
-        if (filters.exchange) query.exchange = filters.exchange;
-        if (filters.isTradable !== undefined) query.isTradable = filters.isTradable === 'true' || filters.isTradable === true;
-        if (filters.isTracked !== undefined) query.isTracked = filters.isTracked === 'true' || filters.isTracked === true;
-        if (filters.isVisible !== undefined) query.isVisible = filters.isVisible === 'true' || filters.isVisible === true;
+
+        if (exchange) query.exchange = exchange;
+        if (isTradable !== undefined) query.isTradable = isTradable;
+        if (isTracked !== undefined) query.isTracked = isTracked;
+        if (isVisible !== undefined) query.isVisible = isVisible;
+
+        const skip = (page - 1) * limit;
+        const sortOrder = sort ?? { symbol: 1 };
 
         const [documents, total] = await Promise.all([
-            StockModel.find(query).skip(skip).limit(limit).sort({ symbol: 1 }).lean(),
-            StockModel.countDocuments(query)
+            StockModel.find(query).skip(skip).limit(limit).sort(sortOrder).lean(),
+            StockModel.countDocuments(query),
         ]);
 
         return {
             data: documents.map(doc => this.mapper.toDomain(doc as unknown as StockDocument)),
-            total
+            total,
         };
     }
 
@@ -64,4 +71,5 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
         const result = await StockModel.updateOne({ symbol }, { $set: statusUpdate });
         return result.modifiedCount > 0;
     }
-} 
+}
+

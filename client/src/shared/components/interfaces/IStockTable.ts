@@ -4,13 +4,15 @@ export interface Stock {
     name: string;
     exchange: string;
     sector: string;
-    logo?: string;
+    logo?: string | null;
     isTradable: boolean;
     isTracked: boolean;
     isVisible: boolean;
+    price?: number;
     createdAt?: string;
     updatedAt?: string;
 }
+
 
 export interface IStockTableProps {
     stocks: Stock[];

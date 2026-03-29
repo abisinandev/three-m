@@ -1,5 +1,5 @@
-import { StockDTO } from "@application/dto/stocks/stock.dto";
+import { StockDTO, StockQueryOptions } from "@application/dto/stocks/stock.dto";
 
-export interface IFetchStocks {
-    execute(filters: { search?: string, exchange?: string }, page: number, limit: number): Promise<any>;
+export interface IFetchStocksUseCase {
+    execute(options: StockQueryOptions): Promise<{ data: (StockDTO & { price?: number })[], total: number }>;
 }

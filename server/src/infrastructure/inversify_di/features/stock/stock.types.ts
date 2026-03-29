@@ -1,10 +1,13 @@
-
 export const STOCK_TYPES = {
     StockRepository: Symbol.for("StockRepository"),
-    StockApiClient: Symbol.for("StockApiClient"),
 
     StockWebSocketClient: Symbol.for("StockWebSocketClient"),
     MarketDataProvider: Symbol.for("MarketDataProvider"),
     FetchStocksUseCase: Symbol.for("FetchStocksUseCase"),
     UserStocksController: Symbol.for("UserStocksController"),
+
+    StockDetailsUseCase: Symbol.for("StockDetailsUseCase"),
+    FetchStockCandlesUseCase: Symbol.for("FetchStockCandlesUseCase"),
+
+    FinnhubService: Symbol.for("FinnhubService"),
 }

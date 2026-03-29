@@ -9,7 +9,9 @@
     "baseUrl": "src",
     "skipLibCheck": true,
       "paths": {
+      "@/*": ["*"],
       "@components/*": ["components/*"],
+      "@modules": ["modules"],
       "@modules/*": ["modules/*"],
       "@apis/*":["apis/*"],
       "@routes/*":["routes/*"],
@@ -41,5 +43,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "src/routes/user/profile.tsx"]
+  "include": ["src/**/*"]
 }

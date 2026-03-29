@@ -33,7 +33,6 @@ export default function StockManagementPage() {
             await queryClient.cancelQueries({ queryKey: ['admin-stocks', filters] });
             const previousData = queryClient.getQueryData(['admin-stocks', filters]);
 
-            // Optimistic update
             queryClient.setQueryData(['admin-stocks', filters], (old: any) => {
                 if (!old) return old;
                 return {

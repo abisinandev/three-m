@@ -70,5 +70,8 @@ export const ErrorMessages = {
     },
     EXPENSE_TRACKER: {
         INSUFFICIENT_BALANCE: "Insufficient funds: You don't have enough balance to add this expense."
+    },
+    STOCKS: {
+        NOTFOUND:"StockS not found",
     }
 } as const;

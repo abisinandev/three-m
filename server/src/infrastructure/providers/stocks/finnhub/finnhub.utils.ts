@@ -29,7 +29,6 @@ export async function buildStock(raw: FinnhubStock): Promise<NormalizedStock> {
     };
 }
 
-
 export async function saveStocks(stocks: NormalizedStock[]): Promise<void> {
     const ops = stocks.map(stock => ({
         updateOne: {

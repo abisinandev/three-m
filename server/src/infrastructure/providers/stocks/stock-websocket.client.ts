@@ -21,12 +21,11 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
             return;
         }
 
-        this.ws = new WebSocket(`wss://ws.finnhub.io?token=${this.apiKey}`);
+        this.ws = new WebSocket(`${env.FINNHUB_WEBSOCKET}${this.apiKey}`);
 
         this.ws.on('open', () => {
             console.log("✅ Websocket connected");
-            
-            // Flush the queued active symbols automatically on reconnect/open
+
             this.activeSymbols.forEach(symbol => {
                 this.ws?.send(JSON.stringify({ type: "subscribe", symbol }));
                 console.log(`📡 Subscribed to ${symbol}`);

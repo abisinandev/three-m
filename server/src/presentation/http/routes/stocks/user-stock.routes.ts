@@ -7,5 +7,7 @@ const router = Router();
 const userStocksController = container.get<UserStocksController>(STOCK_TYPES.UserStocksController);
 
 router.get('/', userStocksController.getStocks.bind(userStocksController));
+router.get('/:symbol', userStocksController.getStockDetails.bind(userStocksController));
+router.get('/:symbol/candles', userStocksController.getStockCandles.bind(userStocksController));
 
 export default router;

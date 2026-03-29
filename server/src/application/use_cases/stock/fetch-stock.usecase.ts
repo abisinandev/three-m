@@ -1,47 +1,55 @@
-import { IFetchStocks } from "./interfaces/fetch-stocks.interface";
+import { IFetchStocksUseCase } from "./interfaces/fetch-stocks.interface";
 import { inject, injectable } from "inversify";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
+import { StockDTO, StockQueryOptions } from "@application/dto/stocks/stock.dto";
 
 @injectable()
-export class FetchStocks implements IFetchStocks {
+export class FetchStocksUseCase implements IFetchStocksUseCase {
 
     constructor(
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
     ) { }
 
-    async execute(filters: { search?: string, exchange?: string }, page: number, limit: number) {
-        const safeFilters = {
-            ...filters,
-            isVisible: true
+    async execute(options: StockQueryOptions) {
+        const safeOptions: StockQueryOptions = {
+            ...options,
+            isVisible: true,
         };
 
-        const skip = (page - 1) * limit;
-        const result = await this._stockRepository.findFilteredPaginated(safeFilters, skip, limit);
+        const result = await this._stockRepository.finAllStocks(safeOptions);
 
-        const symbols = result.data.map((stock: any) => stock.symbol);
+        const symbols = result.data.map((stock) => stock.symbol);
         let latestPrices: Record<string, number> = {};
 
         if (symbols.length > 0) {
-            this._marketDataProvider.start(symbols);
+            this._marketDataProvider.init();
+            this._marketDataProvider.subscribe(symbols);
+
             latestPrices = await this._marketDataProvider.getLatestPrices(symbols);
         }
 
-        // Voodoo logic: Override static DB prices with Real-Time Redis Caches before shipping to Client!
-        const dataWithPrices = result.data.map((stock: any) => {
-            // Unpack mongoose doc if necessary to mutate payload safely
-            const doc = stock.toObject ? stock.toObject() : stock;
-            if (latestPrices[doc.symbol]) {
-                doc.price = latestPrices[doc.symbol];
-            }
-            return doc;
-        });
+        const dataWithPrices: (StockDTO & { price: number | undefined })[] =
+            result.data.map(stock => ({
+                id: stock.id as string,
+                symbol: stock.symbol,
+                name: stock.name,
+                exchange: stock.exchange,
+                logo: stock.logo,
+                sector: stock.sector,
+                isTradable: stock.isTradable,
+                isVisible: stock.isVisible,
+                isTracked: stock.isTracked,
+
+                price: latestPrices[stock.symbol] ?? null,
+            }));
 
         return {
             ...result,
-            data: dataWithPrices
+            data: dataWithPrices,
         };
+        
     }
 }
