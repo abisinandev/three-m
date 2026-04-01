@@ -40,8 +40,10 @@ import { IAdminRepository } from "@application/interfaces/repositories/admin/adm
 import { AdminSipController } from "@presentation/http/controllers/admin/admin-sip.controller";
 import { ISipManagementUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-management-usecase.interface";
 import { SipManagementUseCase } from "@application/use_cases/admin/sip-management/sip-management-usecase";
-import { IAdminStocksUseCase } from "@application/use_cases/admin/interfaces/admin-stocks-usecase.interface";
+import { IAdminStocksUseCase } from "@application/use_cases/admin/stocks-management/interface/admin-stocks-usecase.interface";
 import { AdminStocksUseCase } from "@application/use_cases/admin/stocks-management/admin-stocks.usecase";
+import { IAdminStockUpdateUseCase } from "@application/use_cases/admin/stocks-management/interface/admin-stock-update-usecase.interface";
+import { AdminStockUpdateUseCase } from "@application/use_cases/admin/stocks-management/admin-stock-update.usecase";
 import { AdminStocksController } from "@presentation/http/controllers/admin/admin-stocks.controller";
 import { AdminAuthMiddleware } from "@presentation/express/middlewares/admin-auth.middleware";
 
@@ -64,6 +66,7 @@ export const AdminModule = new ContainerModule(({ bind }) => {
   bind<IAdminVerifyTransactionUseCase>(ADMIN_TYPES.VerifyTransactionUseCase).to(AdminVerifyTransactionUseCase);
   bind<ISipManagementUseCase>(ADMIN_TYPES.SipManagementUseCase).to(SipManagementUseCase);
   bind<IAdminStocksUseCase>(ADMIN_TYPES.AdminStocksUseCase).to(AdminStocksUseCase);
+  bind<IAdminStockUpdateUseCase>(ADMIN_TYPES.AdminStockUpdateUseCase).to(AdminStockUpdateUseCase);
 
 
   //Repository

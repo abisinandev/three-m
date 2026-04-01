@@ -60,7 +60,7 @@ export class MarketDataProvider implements IMarketDataProvider {
                 }
             }));
         }
-
+        
         return prices;
     }
 

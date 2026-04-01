@@ -23,6 +23,7 @@ export const ADMIN_TYPES = {
   VerifyTransactionUseCase: Symbol.for("VerifyTransactionUseCase"),
   SipManagementUseCase: Symbol.for("SipManagementUseCase"),
   AdminStocksUseCase: Symbol.for("AdminStocksUseCase"),
+  AdminStockUpdateUseCase: Symbol.for("AdminStockUpdateUseCase"),
 
   AdminAuthController: Symbol.for("AdminAuthController"),
   AdminController: Symbol.for("AdminController"),

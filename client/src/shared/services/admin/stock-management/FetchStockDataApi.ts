@@ -21,7 +21,7 @@ export const FetchStockDataApi = async (filters: StockFilters) => {
         });
 
         const response = await adminApi.get(`${API_ROUTES.ADMIN.STOCKS.GET_ALL}?${params.toString()}`);
-        return response.data;
+        return response.data.data;
     } catch (error) {
         throw error;
     }

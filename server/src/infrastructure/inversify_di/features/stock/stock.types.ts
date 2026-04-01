@@ -10,4 +10,10 @@ export const STOCK_TYPES = {
     FetchStockCandlesUseCase: Symbol.for("FetchStockCandlesUseCase"),
 
     FinnhubService: Symbol.for("FinnhubService"),
-}
+    AlpacaProvider: Symbol.for("AlpacaProvider"),
+
+    CandleBuilderService: Symbol.for("CandleBuilderService"),
+    TimeframeAggregatorService: Symbol.for("TimeframeAggregatorService"),
+    MarketDataService: Symbol.for("MarketDataService"),
+    WsGateway: Symbol.for("WsGateway"),
+}

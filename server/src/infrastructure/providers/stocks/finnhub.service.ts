@@ -15,13 +15,4 @@ export class FinnhubService implements IFinnhubService {
         const price = res.data.c || res.data.pc;
         return price > 0 ? price : null;
     }
-
-    async getCandles(symbol: string, resolution: string, from: number, to: number) {
-        const res = await axios.get(
-            env.FINNHUB_CANDLE,
-            { params: { symbol, resolution, from, to, token: env.FINNHUB_API_KEY_SECRET } }
-        );
-
-        return res.data.s === 'ok' ? res.data : null;
-    }
 }

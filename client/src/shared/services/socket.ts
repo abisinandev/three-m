@@ -2,7 +2,7 @@ import { io, Socket } from 'socket.io-client';
 
 class SocketService {
   private socket: Socket | null = null;
-  private url = import.meta.env.VITE_API_URL || 'http://localhost:5000'; // Adjust as needed
+  private url = import.meta.env.VITE_API_URL || 'http://localhost:3000'; // Adjust as needed
 
   connect() {
     if (!this.socket) {
@@ -38,6 +38,18 @@ class SocketService {
   unsubscribeFromSymbol(symbol: string) {
     if (this.socket) {
       this.socket.emit('unsubscribe', symbol);
+    }
+  }
+
+  subscribeToCandle(symbol: string, timeframe: string) {
+    if (this.socket) {
+      this.socket.emit('subscribe-candle', { symbol, timeframe });
+    }
+  }
+
+  unsubscribeFromCandle(symbol: string, timeframe: string) {
+    if (this.socket) {
+      this.socket.emit('unsubscribe-candle', { symbol, timeframe });
     }
   }
 

@@ -66,5 +66,10 @@ export const env = {
   FINNHUB_WEBSOCKET: requireEnv("FINNHUB_WEBSOCKET"),
   FINNHUB_QUOTE_PRICE: requireEnv("FINNHUB_QUOTE_PRICE"),
   FINNHUB_CANDLE: requireEnv("FINNHUB_CANDLE"),
-  
-}; 
+
+  POLYGON_API_KEY: requireEnv("POLYGON_API_KEY"),
+
+  ALPACA_API_KEY: requireEnv("ALPACA_API_KEY"),
+  ALPACA_API_SECRET: requireEnv("ALPACA_API_SECRET"),
+  ALPACA_BASE_URL: requireEnv("ALPACA_BASE_URL"),
+};

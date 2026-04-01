@@ -5,6 +5,10 @@ import cookie from "cookie";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import { logger } from "../logger/pino.logger";
 import { NotificationPayload } from "@application/interfaces/services/notification/notification-service.interface";
+import { container } from "@infrastructure/inversify_di/container";
+import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
+import { WsGateway } from "@presentation/express/websocket/ws.gateway";
+import { MarketDataService } from "@application/services/stocks/market-data.service";
 
 let io: Server | null = null;
 
@@ -58,6 +62,11 @@ export const InitSocketConfigs = (server: http.Server) => {
     });
 
     logger.info("Socket.IO initialized");
+
+    // Initialize WsGateway for stocks
+    const wsGateway = container.get<WsGateway>(STOCK_TYPES.WsGateway);
+    const marketDataService = container.get<MarketDataService>(STOCK_TYPES.MarketDataService);
+    wsGateway.init(io, marketDataService);
 };
 
 

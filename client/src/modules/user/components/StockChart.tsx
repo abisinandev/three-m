@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useRealtimeChart } from '@modules/user/hooks/useRealtimeChart';
 
 interface StockChartProps {
@@ -15,11 +15,61 @@ const timeframes = [
   { label: '1W', value: 'W' },
 ];
 
+const useChartTimer = (timeframe: string) => {
+  const [timeLeft, setTimeLeft] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (timeframe === 'D' || timeframe === 'W') {
+      setTimeLeft(null);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      let bucketMs = 60000;
+      switch (timeframe) {
+        case '1': bucketMs = 1 * 60000; break;
+        case '5': bucketMs = 5 * 60000; break;
+        case '15': bucketMs = 15 * 60000; break;
+        case '30': bucketMs = 30 * 60000; break;
+        case '60': bucketMs = 60 * 60000; break;
+        default: bucketMs = 60000; break;
+      }
+
+      // Calculate next candle boundary
+      const nextBoundary = Math.ceil(now / bucketMs) * bucketMs;
+      const diffMs = nextBoundary - now;
+
+      if (diffMs <= 0) {
+        setTimeLeft('00:00');
+        return;
+      }
+
+      const totalSeconds = Math.floor(diffMs / 1000);
+      const m = Math.floor(totalSeconds / 60);
+      const s = totalSeconds % 60;
+
+      if (m >= 60) {
+        const h = Math.floor(m / 60);
+        const mRemaining = m % 60;
+        setTimeLeft(`${h.toString().padStart(2, '0')}:${mRemaining.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+      } else {
+        setTimeLeft(`${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeframe]);
+
+  return timeLeft;
+};
+
 export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const [timeframe, setTimeframe] = useState<string>('1');
 
-  const { isLoading } = useRealtimeChart(chartContainerRef, symbol, timeframe);
+  const { isLoading, status, hasHistory } = useRealtimeChart(chartContainerRef, symbol, timeframe);
+  const timeLeft = useChartTimer(timeframe);
 
   return (
     <div className="flex flex-col w-full h-full relative">
@@ -37,10 +87,26 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
             {tf.label}
           </button>
         ))}
-        <div className="ml-auto flex items-center gap-2">
-          {isLoading && <span className="text-xs text-blue-400 animate-pulse">Syncing...</span>}
-          <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
-          <span className="text-xs text-green-500 font-medium">Real-time</span>
+        <div className="ml-auto flex items-center gap-3">
+          {timeLeft && (
+            <div className="flex items-center gap-1.5 bg-[#1e1e1e] px-2 py-1 rounded">
+              <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span className="text-xs font-medium text-gray-300 font-mono tracking-wide">{timeLeft}</span>
+            </div>
+          )}
+          {isLoading ? (
+            <span className="text-xs text-blue-400 animate-pulse">Syncing...</span>
+          ) : !hasHistory ? (
+            <span className="text-[10px] text-yellow-500/70 bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20">
+              Live Only (History Restricted)
+            </span>
+          ) : null}
+          <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${status === 'live' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-600'}`}></span>
+            <span className={`text-xs font-medium ${status === 'live' ? 'text-green-500' : 'text-gray-600'}`}>
+              {status === 'live' ? 'Live' : 'Connecting'}
+            </span>
+          </div>
         </div>
       </div>
 

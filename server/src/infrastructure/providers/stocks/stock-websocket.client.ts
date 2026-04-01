@@ -15,7 +15,6 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
         this.apiKey = env.FINNHUB_API_KEY_SECRET
     }
 
-
     connect(): void {
         if (this.ws && (this.ws.readyState === WebSocket.CONNECTING || this.ws.readyState === WebSocket.OPEN)) {
             return;
@@ -40,6 +39,7 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
                     const trade: Trade = {
                         symbol: t.s,
                         price: t.p,
+                        volume: t.v,
                         timestamp: t.t,
                     };
 

@@ -13,6 +13,7 @@ export interface StockDTO {
 export interface Trade {
     symbol: string;
     price: number;
+    volume?: number;
     timestamp: number;
 }
 

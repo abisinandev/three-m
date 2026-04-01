@@ -67,27 +67,33 @@ export class UserStocksController {
 
             const now = Math.floor(Date.now() / 1000);
             
-            // Handle missing or invalid timestamps
             if (!to || isNaN(to)) to = now;
             if (!from || isNaN(from)) from = to - (24 * 60 * 60);
 
-            // Convert milliseconds to seconds if necessary (Finnhub expects seconds)
             if (from > 10 ** 12) from = Math.floor(from / 1000);
             if (to > 10 ** 12) to = Math.floor(to / 1000);
 
-            // Safety: Ensure 'to' is not in the future and 'from' is before 'to'
-            if (to > now) to = now;
+            if (to > now) to = now; 
             if (from >= to) from = to - 3600; 
 
             const result = await this.fetchStockCandlesUseCase.execute(symbol, resolution, from, to);
+            console.log("Result: ", result);
 
             return ResponseHelper.success(
                 res,
                 "Stock candles fetched successfully",
                 result,
                 HttpStatus.OK
-            );
-        } catch (error) {
+            );   
+        } catch (error: any) {
+            if (error.response && (error.response.status === 403 || error.response.status === 429)) {
+                return ResponseHelper.success(
+                    res,
+                    "Historical data restricted by API provider. Use live data.",
+                    { s: 'no_data', t: [], o: [], h: [], l: [], c: [], v: [] },
+                    HttpStatus.OK
+                );
+            }
             next(error);
         }
     }

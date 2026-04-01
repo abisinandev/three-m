@@ -16,6 +16,12 @@ import { FinnhubService } from "@infrastructure/providers/stocks/finnhub.service
 import { IFetchStockCandlesUseCase } from "@application/use_cases/stock/interfaces/fetch-stock-candles.interface";
 import { FetchStockCandlesUseCase } from "@application/use_cases/stock/fetch-stock-candles.usecase";
 
+import { AlpacaProvider } from "@infrastructure/providers/stocks/alpaca.provider";
+import { CandleBuilderService } from "@application/services/stocks/candle-builder.service";
+import { TimeframeAggregatorService } from "@application/services/stocks/timeframe-aggregator.service";
+import { MarketDataService } from "@application/services/stocks/market-data.service";
+import { WsGateway } from "@presentation/express/websocket/ws.gateway";
+
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
 
@@ -27,4 +33,10 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IFetchStockCandlesUseCase>(STOCK_TYPES.FetchStockCandlesUseCase).to(FetchStockCandlesUseCase);
 
     bind<IFinnhubService>(STOCK_TYPES.FinnhubService).to(FinnhubService);
+
+    bind<AlpacaProvider>(STOCK_TYPES.AlpacaProvider).to(AlpacaProvider);
+    bind<CandleBuilderService>(STOCK_TYPES.CandleBuilderService).to(CandleBuilderService);
+    bind<TimeframeAggregatorService>(STOCK_TYPES.TimeframeAggregatorService).to(TimeframeAggregatorService);
+    bind<MarketDataService>(STOCK_TYPES.MarketDataService).to(MarketDataService).inSingletonScope();
+    bind<WsGateway>(STOCK_TYPES.WsGateway).to(WsGateway).inSingletonScope();
 })
