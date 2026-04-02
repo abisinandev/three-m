@@ -36,8 +36,14 @@ const StockDetailPage = () => {
   const apiPrice = responseData?.latestPrice;
   const currentPrice = realtimePrice ?? apiPrice;
 
+  const isIndianStock = symbol.endsWith('.NS') || symbol.endsWith('.BO');
+  
   const currentPriceINR = currentPrice != null 
-    ? stockCurrencyService.convertUSDtoINR(currentPrice) 
+    ? (isIndianStock ? currentPrice : stockCurrencyService.convertUSDtoINR(currentPrice))
+    : null;
+
+  const currentPriceUSD = currentPrice != null
+    ? (isIndianStock ? currentPrice / 83 : currentPrice) // Approximate backward conversion for display if needed
     : null;
 
   const isPositive = true;
@@ -99,9 +105,9 @@ const StockDetailPage = () => {
                 <p className="text-4xl font-bold tracking-tight text-white">
                   {currentPriceINR != null ? stockCurrencyService.formatCurrency(currentPriceINR, 'INR') : '—'}
                 </p>
-                {currentPrice != null && (
+                {currentPriceUSD != null && (
                   <p className="text-sm text-gray-400 font-medium">
-                    ({stockCurrencyService.formatCurrency(currentPrice, 'USD')})
+                    ({stockCurrencyService.formatCurrency(currentPriceUSD, 'USD')})
                   </p>
                 )}
                 <div className={`flex items-center gap-1 text-sm font-semibold ml-2 ${isPositive ? 'text-[#22C55E]' : 'text-red-500'}`}>
