@@ -12,9 +12,9 @@ import { HttpStatus } from "@domain/enum/express/status-code";
 @injectable()
 export class UserStocksController {
     constructor(
-        @inject(STOCK_TYPES.FetchStocksUseCase) private fetchStocksUseCase: IFetchStocksUseCase,
-        @inject(STOCK_TYPES.StockDetailsUseCase) private stockDetailsUseCase: IStockDetailsUseCase,
-        @inject(STOCK_TYPES.FetchStockCandlesUseCase) private fetchStockCandlesUseCase: IFetchStockCandlesUseCase,
+        @inject(STOCK_TYPES.FetchStocksUseCase) private _fetchStocksUseCase: IFetchStocksUseCase,
+        @inject(STOCK_TYPES.StockDetailsUseCase) private _stockDetailsUseCase: IStockDetailsUseCase,
+        @inject(STOCK_TYPES.FetchStockCandlesUseCase) private _fetchStockCandlesUseCase: IFetchStockCandlesUseCase,
     ) { }
 
     async getStocks(req: Request, res: Response, next: NextFunction) {
@@ -28,13 +28,13 @@ export class UserStocksController {
                 exchange: exchange as string | undefined,
             };
 
-            const result = await this.fetchStocksUseCase.execute(options);
+            const result = await this._fetchStocksUseCase.execute(options);
 
             return ResponseHelper.success(
                 res,
                 SuccessMessages.STOCK.STOCK_FETCHED,
                 result,
-                HttpStatus.ACCEPTED
+                HttpStatus.OK
             );
         } catch (error) {
             next(error);
@@ -44,7 +44,7 @@ export class UserStocksController {
     async getStockDetails(req: Request, res: Response, next: NextFunction) {
         try {
             const symbol = String(req.params.symbol);
-            const result = await this.stockDetailsUseCase.execute(symbol);
+            const result = await this._stockDetailsUseCase.execute(symbol);
 
             return ResponseHelper.success(
                 res,
@@ -57,44 +57,26 @@ export class UserStocksController {
         }
     }
 
+
     async getStockCandles(req: Request, res: Response, next: NextFunction) {
         try {
-            const symbol = String(req.params.symbol);
-            const resolution = String(req.query.resolution || '1');
-            
-            let from = Number(req.query.from);
-            let to = Number(req.query.to);
+            const input = {
+                symbol: String(req.params.symbol),
+                resolution: String(req.query.resolution || '1'),
+                from: Number(req.query.from),
+                to: Number(req.query.to),
+            };
 
-            const now = Math.floor(Date.now() / 1000);
-            
-            if (!to || isNaN(to)) to = now;
-            if (!from || isNaN(from)) from = to - (24 * 60 * 60);
-
-            if (from > 10 ** 12) from = Math.floor(from / 1000);
-            if (to > 10 ** 12) to = Math.floor(to / 1000);
-
-            if (to > now) to = now; 
-            if (from >= to) from = to - 3600; 
-
-            const result = await this.fetchStockCandlesUseCase.execute(symbol, resolution, from, to);
-            console.log("Result: ", result);
+            const result = await this._fetchStockCandlesUseCase.execute(input);
 
             return ResponseHelper.success(
                 res,
                 "Stock candles fetched successfully",
                 result,
                 HttpStatus.OK
-            );   
-        } catch (error: any) {
-            if (error.response && (error.response.status === 403 || error.response.status === 429)) {
-                return ResponseHelper.success(
-                    res,
-                    "Historical data restricted by API provider. Use live data.",
-                    { s: 'no_data', t: [], o: [], h: [], l: [], c: [], v: [] },
-                    HttpStatus.OK
-                );
-            }
-            next(error);
+            );
+        } catch (error) {
+            return next(error);
         }
     }
 }

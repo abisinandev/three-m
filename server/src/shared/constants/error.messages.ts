@@ -72,6 +72,6 @@ export const ErrorMessages = {
         INSUFFICIENT_BALANCE: "Insufficient funds: You don't have enough balance to add this expense."
     },
     STOCKS: {
-        NOTFOUND:"StockS not found",
+        FAILED_TO_FETCH:"Failed to fetch latest price",
     }
 } as const;

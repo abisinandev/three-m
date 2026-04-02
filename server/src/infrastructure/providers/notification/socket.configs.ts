@@ -8,7 +8,7 @@ import { NotificationPayload } from "@application/interfaces/services/notificati
 import { container } from "@infrastructure/inversify_di/container";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { WsGateway } from "@presentation/express/websocket/ws.gateway";
-import { MarketDataService } from "@application/services/stocks/market-data.service";
+import { MarketDataService } from "@infrastructure/providers/stocks/market-data.service";
 
 let io: Server | null = null;
 

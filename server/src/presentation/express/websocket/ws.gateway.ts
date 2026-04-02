@@ -1,8 +1,8 @@
 import { Server, Socket } from "socket.io";
 import { injectable, inject } from "inversify";
-import { Candle } from "@domain/entities/stock/candle.entity";
+import { CandleEntity } from "@domain/entities/stock/candle.entity";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
-import { MarketDataService } from "@application/services/stocks/market-data.service";
+import { MarketDataService } from "@infrastructure/providers/stocks/market-data.service";
 
 // To make it injectable and easily integrated where io is actually created
 @injectable()
@@ -57,17 +57,18 @@ export class WsGateway {
         });
     }
 
-    public broadcastToSubscribers(candle: Candle) {
+    public broadcastToSubscribers(candle: CandleEntity) {
         const room = `${candle.symbol}:${candle.timeframe}`;
         if (this.io) {
             this.io.to(room).emit("candle-update", {
+                symbol: candle.symbol,
+                timeframe: candle.timeframe,
                 time: candle.time,
                 open: candle.open,
                 high: candle.high,
                 low: candle.low,
                 close: candle.close,
-                // optionally volume, though TV lightweight charts focus on time,open,high,low,close
-                volume: candle.volume
+                volume: candle.volume,
             });
         }
     }

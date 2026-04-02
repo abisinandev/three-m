@@ -23,7 +23,7 @@ export const StockSchema = new Schema<StockDocument>(
         name: {
             type: String,
             required: true
-        },
+        }, 
 
         isVisible: {
             type: Boolean,

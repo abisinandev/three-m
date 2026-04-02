@@ -1,3 +1,12 @@
+import { CandlesResponseDTO } from "@application/dto/stocks/candle.dto";
+
+export interface FetchStockCandlesInput {
+    symbol: string;
+    resolution: string;
+    from: number;
+    to: number;
+}
+
 export interface IFetchStockCandlesUseCase {
-    execute(symbol: string, resolution: string, from: number, to: number): Promise<any>;
+    execute(input: FetchStockCandlesInput): Promise<CandlesResponseDTO>;
 }

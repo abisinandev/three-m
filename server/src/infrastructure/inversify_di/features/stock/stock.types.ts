@@ -12,8 +12,12 @@ export const STOCK_TYPES = {
     FinnhubService: Symbol.for("FinnhubService"),
     AlpacaProvider: Symbol.for("AlpacaProvider"),
 
-    CandleBuilderService: Symbol.for("CandleBuilderService"),
-    TimeframeAggregatorService: Symbol.for("TimeframeAggregatorService"),
     MarketDataService: Symbol.for("MarketDataService"),
     WsGateway: Symbol.for("WsGateway"),
-}
+
+    YahooProvider: Symbol.for("YahooProvider"),
+    PollingService: Symbol.for("PollingService"),
+
+    CandleEngineService: Symbol.for("CandleEngineService"),
+    TimeframeAggregatorService: Symbol.for("TimeframeAggregatorService"),
+}

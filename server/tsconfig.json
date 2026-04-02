@@ -6,7 +6,6 @@
 
     "rootDir": "./src",
     "outDir": "./dist",
-
     "baseUrl": "./src",
     "paths": {
       "@application/*": ["application/*"],

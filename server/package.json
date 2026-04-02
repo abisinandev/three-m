@@ -64,6 +64,7 @@
     "stripe": "^20.0.0",
     "uuid": "^8.3.2",
     "xirr": "^1.1.0",
+    "yahoo-finance2": "^3.14.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
