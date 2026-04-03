@@ -21,6 +21,7 @@ import marketNewsRoutes from "@presentation/http/routes/market-news/markets-news
 import chatbotRoutes from '@presentation/http/routes/ai-chatbot/ai-chatbot.route';
 import adminStockRoutes from '@presentation/http/routes/stocks/admin-stock-management.routes';
 import userStockRoutes from '@presentation/http/routes/stocks/user-stock.routes';
+import ordersRoutes from '@presentation/http/routes/stocks/orders.routes';
 
 export const RegisterRoutes = (app: Application) => {
   const authMiddleware = container.get<AuthMiddleware>(AUTH_TYPES.AuthMiddleware);
@@ -49,4 +50,6 @@ export const RegisterRoutes = (app: Application) => {
 
   app.use('/api/admin/stocks', (req, res, next) => authAdminMiddleware.handle(req, res, next), adminStockRoutes);
   app.use('/api/user/stocks', (req, res, next) => authMiddleware.handle(req, res, next), userStockRoutes);
+  app.use('/api/user/stock/order/:symbol', (req, res, next) => authMiddleware.handle(req, res, next), ordersRoutes);
+  
 }; 

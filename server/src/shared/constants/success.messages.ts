@@ -55,6 +55,8 @@ export const SuccessMessages = {
     },
 
     STOCK: {
-        STOCK_FETCHED: "Stocks fetched successfully"
+        STOCK_FETCHED: "Stocks fetched successfully",
+        SELL_ORDER: "Sell order done successfully",
+        BUY_ORDER:"Buy order received successfully",
     }
 } as const;

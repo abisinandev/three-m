@@ -18,9 +18,12 @@ const WalletSchema = new Schema<WalletDocument>(
       type: Number,
       required: true,
       min: 0,
-      max: 50000,
+      max: 1_00000,
     },
-
+    lockedBalance: {
+      type: Number,
+      min: 0,
+    },
     currency: {
       type: String,
       enum: Object.values(CurrencyTypes),

@@ -1,4 +1,4 @@
-import { MarketNews } from "../../application/dto/market-news/MarketNews";
+import { MarketNews } from "../../../dto/market-news/MarketNews";
 
 export interface IMarketNewsRepository {
     getMarketNews(): Promise<MarketNews[]>;

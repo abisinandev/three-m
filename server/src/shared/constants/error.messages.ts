@@ -72,6 +72,14 @@ export const ErrorMessages = {
         INSUFFICIENT_BALANCE: "Insufficient funds: You don't have enough balance to add this expense."
     },
     STOCKS: {
-        FAILED_TO_FETCH:"Failed to fetch latest price",
+        FAILED_TO_FETCH: "Failed to fetch latest price",
+        NOT_FOUND: "Stock not found",
+        STOCK_NOT_AVAILABLE: "Stock is not available for trading",
+        STOCK_NOT_TRADABLE: "Stock is currently not tradable",
+        MARKET_CLOSED: "Market is currently closed",
+    },
+    WALLET: {
+        NOT_FOUND: "Wallet not found",
+        INSUFFICIENT_BALANCE: 'Inssufienct balance',
     }
 } as const;

@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Search, Plus, TrendingUp, TrendingDown, Clock, Filter, SlidersHorizontal, ChevronDown } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, Clock, Filter, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import { useQuery, keepPreviousData, useQueryClient } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
 import { INDICES, RECENT_ACTIVITY } from '@shared/constants/dummyStocks';
@@ -70,14 +70,9 @@ const TradingDashboardPage = () => {
   const filtersRef = useRef(filters);
   useEffect(() => { filtersRef.current = filters; }, [filters]);
 
-  // useEffect(() => {
-  //   stockCurrencyService.getExchangeRate();
-  // }, []);
-
   useEffect(() => {
     const handleStockUpdate = (trade: Pick<Stock, 'symbol' | 'price'>) => {
       console.log('[socket] stock-update received', trade);
-      const priceINR = stockCurrencyService.convertUSDtoINR(trade.price ?? 0);
       queryClient.setQueryData<StockListResponse>(
         ['user-stocks', filtersRef.current],
         (old) => {
@@ -88,7 +83,7 @@ const TradingDashboardPage = () => {
               ...old.data,
               data: old.data.data.map((stock: Stock) =>
                 stock.symbol === trade.symbol
-                  ? { ...stock, price: priceINR }
+                  ? { ...stock, price: trade.price }
                   : stock
               ),
             },
@@ -199,17 +194,19 @@ const TradingDashboardPage = () => {
                     </tr>
                   )}
                   {!isLoading && !isError && stocks.map((stock: Stock) => {
-                    const priceINR = stockCurrencyService.convertUSDtoINR(stock.price ?? 0);
+                    const price = stock.price ?? 0;
                     const changePercent = 0;
                     const change = 0;
                     const isPositive = changePercent >= 0;
                     return (
                       <tr
                         key={stock.symbol}
-                        onClick={() => navigate({ to: '/user/trading/$symbol', params: { symbol: stock.symbol } })}
-                        className="hover:bg-[#151515] transition-colors group cursor-pointer"
+                        className="hover:bg-[#151515] transition-colors group"
                       >
-                        <td className="px-5 py-4">
+                        <td
+                          className="px-5 py-4 cursor-pointer"
+                          onClick={() => navigate({ to: '/user/trading/$symbol', params: { symbol: stock.symbol } })}
+                        >
                           <div className="flex items-center gap-3">
                             {stock.logo ? (
                               <img src={stock.logo} alt={stock.symbol} className="w-8 h-8 rounded-full border border-neutral-700 bg-white object-contain" />
@@ -224,10 +221,16 @@ const TradingDashboardPage = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="px-5 py-4 text-right">
-                          <div className="font-medium text-sm">₹{priceINR.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                        <td
+                          className="px-5 py-4 text-right cursor-pointer"
+                          onClick={() => navigate({ to: '/user/trading/$symbol', params: { symbol: stock.symbol } })}
+                        >
+                          <div className="font-medium text-sm">{stockCurrencyService.formatCurrency(price, 'INR')}</div>
                         </td>
-                        <td className="px-5 py-4 text-right">
+                        <td
+                          className="px-5 py-4 text-right cursor-pointer"
+                          onClick={() => navigate({ to: '/user/trading/$symbol', params: { symbol: stock.symbol } })}
+                        >
                           <div className={`flex items-center justify-end gap-1 text-sm font-medium ${isPositive ? 'text-[#22C55E]' : 'text-red-500'}`}>
                             {isPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                             {isPositive ? '+' : ''}{changePercent.toFixed(2)}%
@@ -236,18 +239,24 @@ const TradingDashboardPage = () => {
                             {isPositive ? '+' : ''}₹{change.toFixed(2)}
                           </div>
                         </td>
-                        <td className="px-5 py-4">
+                        <td
+                          className="px-5 py-4 cursor-pointer"
+                          onClick={() => navigate({ to: '/user/trading/$symbol', params: { symbol: stock.symbol } })}
+                        >
                           <div className="flex justify-center">
                             <Sparkline data={[0, 10, 5, 20, -5, 10]} positive={isPositive} />
                           </div>
                         </td>
                         <td className="px-5 py-4 text-right">
-                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button className="p-1.5 rounded-md hover:bg-[#22C55E]/20 text-[#22C55E] transition-colors tooltip-trigger" title="Trade">
-                              <TrendingUp className="w-4 h-4" />
-                            </button>
-                            <button className="p-1.5 rounded-md hover:bg-white/10 text-gray-300 transition-colors tooltip-trigger" title="Add to Watchlist">
-                              <Plus className="w-4 h-4" />
+                          <div className="flex items-center justify-end gap-2 transition-opacity">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate({ to: '/user/trading/$symbol', params: { symbol: stock.symbol } });
+                              }}
+                              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 text-[10px] font-bold transition-all border border-white/10"
+                            >
+                              VIEW
                             </button>
                           </div>
                         </td>
@@ -341,7 +350,6 @@ const TradingDashboardPage = () => {
               ))}
             </div>
           </div>
-
         </div>
       </div>
     </div>

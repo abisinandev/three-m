@@ -1,3 +1,4 @@
+
 export const STOCK_TYPES = {
     StockRepository: Symbol.for("StockRepository"),
 
@@ -20,4 +21,12 @@ export const STOCK_TYPES = {
 
     CandleEngineService: Symbol.for("CandleEngineService"),
     TimeframeAggregatorService: Symbol.for("TimeframeAggregatorService"),
+
+    //orders
+    OrdersController: Symbol.for("OrdersController"),
+    MarketBuyOrderUseCase: Symbol.for("MarketBuyOrderUseCase"),
+    MarketSellOrderUseCase: Symbol.for("MarketSellOrderUseCase"),
+    OrderRepository: Symbol.for("OrderRepository"),
+    TradeRepository: Symbol.for("TradeRepository"),
+
 }

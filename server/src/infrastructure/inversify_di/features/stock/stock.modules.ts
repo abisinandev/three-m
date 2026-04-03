@@ -18,9 +18,17 @@ import { WsGateway } from "@presentation/express/websocket/ws.gateway";
 import { CandleEngineService } from "@infrastructure/providers/stocks/market-data/services/candle-engine.service";
 import { TimeframeAggregatorService } from "@infrastructure/providers/stocks/market-data/services/timeframe-aggregator.service";
 import { PollingService } from "@infrastructure/providers/stocks/market-data/services/polling.service";
-import { ICandleEngineService } from "@application/interfaces/services/stocks/candle-chart-service.interface";
 import { IYahooProvider } from "@application/interfaces/services/stocks/yahoo-provider.interface";
 import { YahooProvider } from "@infrastructure/providers/stocks/market-data/providers/yahoo.provider";
+import { OrdersController } from "@presentation/http/controllers/stocks/orders.controller";
+import { MarketBuyOrderUseCase } from "@application/use_cases/stock/market-buy-order.usecase";
+import { IMarketBuyOrderUseCase } from "@application/use_cases/stock/interfaces/buy-order-usecase.interface";
+import { IMarketSellOrderUseCase } from "@application/use_cases/stock/interfaces/sell-order-usecase.interface";
+import { MarketSellOrderUseCase } from "@application/use_cases/stock/sell-order.usecase";
+import { IOrderRepository } from "@application/interfaces/repositories/stock/order-repository.interface";
+import { OrderRepository } from "@infrastructure/databases/repository/stock/order.repository";
+import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
+import { TradeRepository } from "@infrastructure/databases/repository/stock/trade.repository";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
@@ -39,4 +47,10 @@ export const StockModules = new ContainerModule(({ bind }) => {
 
     bind<CandleEngineService>(STOCK_TYPES.CandleEngineService).to(CandleEngineService);
     bind<TimeframeAggregatorService>(STOCK_TYPES.TimeframeAggregatorService).to(TimeframeAggregatorService);
-});
+
+    bind<OrdersController>(STOCK_TYPES.OrdersController).to(OrdersController);
+    bind<IMarketBuyOrderUseCase>(STOCK_TYPES.MarketBuyOrderUseCase).to(MarketBuyOrderUseCase);
+    bind<IMarketSellOrderUseCase>(STOCK_TYPES.MarketSellOrderUseCase).to(MarketSellOrderUseCase);
+    bind<IOrderRepository>(STOCK_TYPES.OrderRepository).to(OrderRepository);
+    bind<ITradeRepository>(STOCK_TYPES.TradeRepository).to(TradeRepository);
+});

@@ -45,10 +45,10 @@ export class UserStocksController {
         try {
             const symbol = String(req.params.symbol);
             const result = await this._stockDetailsUseCase.execute(symbol);
-
+            
             return ResponseHelper.success(
                 res,
-                "Stock details fetched successfully",
+                SuccessMessages.STOCK.STOCK_FETCHED,
                 result,
                 HttpStatus.OK
             );
@@ -71,7 +71,7 @@ export class UserStocksController {
 
             return ResponseHelper.success(
                 res,
-                "Stock candles fetched successfully",
+                SuccessMessages.STOCK.STOCK_FETCHED,
                 result,
                 HttpStatus.OK
             );

@@ -55,6 +55,7 @@ export class CandleEngineService implements ICandleEngineService {
         } else if (candle.time < currentMinute) {
             // New minute started, seal and emit old candle
             candle.isComplete = true;
+            this.emitUpdate(candle);
             this.emitComplete(candle);
 
             // Handle potential gaps by filling them with "no-trade" candles

@@ -2,11 +2,12 @@ import { io, Socket } from 'socket.io-client';
 
 class SocketService {
   private socket: Socket | null = null;
-  private url = import.meta.env.VITE_API_URL || 'http://localhost:3000'; // Adjust as needed
+  private url = import.meta.env.VITE_SOCKET_URL
 
   connect() {
     if (!this.socket) {
       this.socket = io(this.url, {
+        withCredentials: true,
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,

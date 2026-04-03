@@ -59,4 +59,16 @@ export class MarketDataService {
         
         this.wsGateway.broadcastToSubscribers(candleEntity);
     }
+
+    public subscribeToSymbol(symbol: string) {
+        console.log(`[MarketDataService] Subscribing to ${symbol}`);
+        this.pollingService.addSymbol(symbol);
+        this.websocketClient.subscribe(symbol);
+    }
+
+    public unsubscribeFromSymbol(symbol: string) {
+        console.log(`[MarketDataService] Unsubscribing from ${symbol}`);
+        this.pollingService.removeSymbol(symbol);
+        this.websocketClient.unsubscribe(symbol);
+    }
 }

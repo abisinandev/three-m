@@ -6,10 +6,17 @@ import { finnhubService } from '@shared/services/finnhub.service'
 import stockCurrencyService from '@shared/services/stockCurrency.service'
 import { StockChart } from '@modules/user/components/StockChart'
 import { socketService } from '@shared/services/socket'
+import TradeModal from '@shared/components/modals/TradeModal'
+import type { TradeData } from '@shared/components/modals/TradeModal'
+import { useTradeMutation } from '@shared/hooks/useTradeMutation'
 
 const StockDetailPage = () => {
   const { symbol } = useParams({ strict: false }) as { symbol: string }
   const [realtimePrice, setRealtimePrice] = useState<number | null>(null);
+  
+  // Trade Modal State
+  const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
+  const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
 
   const { data: queryData, isLoading, isError } = useQuery({
     queryKey: ['stockDetails', symbol],
@@ -36,17 +43,40 @@ const StockDetailPage = () => {
   const apiPrice = responseData?.latestPrice;
   const currentPrice = realtimePrice ?? apiPrice;
 
-  const isIndianStock = symbol.endsWith('.NS') || symbol.endsWith('.BO');
-  
-  const currentPriceINR = currentPrice != null 
-    ? (isIndianStock ? currentPrice : stockCurrencyService.convertUSDtoINR(currentPrice))
-    : null;
-
-  const currentPriceUSD = currentPrice != null
-    ? (isIndianStock ? currentPrice / 83 : currentPrice) // Approximate backward conversion for display if needed
-    : null;
-
   const isPositive = true;
+
+  const { buy, sell, isTrading } = useTradeMutation();
+
+  const handleTradeClick = (type: 'buy' | 'sell') => {
+    console.log(`[DetailPage] Opening Trade Modal for: ${symbol} as ${type}`);
+    setTradeType(type);
+    setIsTradeModalOpen(true);
+  };
+
+  const handleTradeConfirm = async (tradeData: TradeData) => {
+    try {
+      if (tradeData.type === 'buy') {
+        await buy({
+          symbol: tradeData.symbol,
+          quantity: tradeData.quantity,
+          orderType: tradeData.orderType as any,
+          price: tradeData.price,
+          stopLoss: tradeData.stopLoss,
+          takeProfit: tradeData.takeProfit,
+        });
+      } else {
+        await sell({
+          symbol: tradeData.symbol,
+          quantity: tradeData.quantity,
+          orderType: tradeData.orderType as any,
+          price: tradeData.price,
+        });
+      }
+      setIsTradeModalOpen(false);
+    } catch (error) {
+      // Error is handled by the hook's toast
+    }
+  };
 
   if (isLoading) {
     return (
@@ -103,13 +133,8 @@ const StockDetailPage = () => {
               <p className="text-xs text-gray-500 uppercase tracking-widest mb-2">Current Price</p>
               <div className="flex items-baseline gap-3">
                 <p className="text-4xl font-bold tracking-tight text-white">
-                  {currentPriceINR != null ? stockCurrencyService.formatCurrency(currentPriceINR, 'INR') : '—'}
+                  {stockCurrencyService.formatCurrency(currentPrice, 'INR')}
                 </p>
-                {currentPriceUSD != null && (
-                  <p className="text-sm text-gray-400 font-medium">
-                    ({stockCurrencyService.formatCurrency(currentPriceUSD, 'USD')})
-                  </p>
-                )}
                 <div className={`flex items-center gap-1 text-sm font-semibold ml-2 ${isPositive ? 'text-[#22C55E]' : 'text-red-500'}`}>
                   {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                   <span>—% today</span>
@@ -130,6 +155,7 @@ const StockDetailPage = () => {
           <div className="bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-6 flex flex-col gap-3">
             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Trade {symbol}</h3>
             <button
+              onClick={() => handleTradeClick('buy')}
               className={`w-full py-3 rounded-lg font-bold text-sm transition-all shadow-[0_4px_14px_rgba(34,197,94,0.15)] ${stockInfo.isTradable ? 'bg-[#22C55E] text-black hover:bg-[#16a34a] hover:-translate-y-0.5' : 'bg-gray-800 text-gray-500 cursor-not-allowed shadow-none'
                 }`}
               disabled={!stockInfo.isTradable}
@@ -137,6 +163,7 @@ const StockDetailPage = () => {
               Buy
             </button>
             <button
+              onClick={() => handleTradeClick('sell')}
               className={`w-full py-3 rounded-lg font-bold text-sm transition-all ${stockInfo.isTradable ? 'bg-[#0f0f0f] border border-red-500/40 text-red-400 hover:bg-red-500/10 hover:-translate-y-0.5' : 'bg-gray-800 border-gray-700 text-gray-500 cursor-not-allowed'
                 }`}
               disabled={!stockInfo.isTradable}
@@ -166,6 +193,17 @@ const StockDetailPage = () => {
           </div>
         </div>
       </div>
+
+      <TradeModal
+        isOpen={isTradeModalOpen}
+        onClose={() => setIsTradeModalOpen(false)}
+        symbol={symbol}
+        name={stockInfo.name || symbol}
+        currentPrice={currentPrice ?? 0}
+        initialType={tradeType}
+        isLoading={isTrading}
+        onConfirm={handleTradeConfirm}
+      />
     </div>
   )
 }

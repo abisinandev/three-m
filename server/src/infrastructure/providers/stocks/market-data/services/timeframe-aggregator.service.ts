@@ -51,6 +51,7 @@ export class TimeframeAggregatorService {
             } else if (htfCandle.time < tfStartTime) {
                 // The previous HTF candle is now complete
                 htfCandle.isComplete = true;
+                this.emitUpdate(htfCandle);
                 this.emitComplete(htfCandle);
 
                 // Start new HTF candle
