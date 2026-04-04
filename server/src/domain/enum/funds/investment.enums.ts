@@ -1,6 +1,7 @@
 export enum InvestmentType {
     ONETIME = "ONE_TIME",
     SIP = "SIP",
+    STOCK = "STOCK",
 }
 
 export enum InvestmentStatus {

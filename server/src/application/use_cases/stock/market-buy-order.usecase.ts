@@ -16,6 +16,9 @@ import AppError from "@presentation/express/utils/error-handling/app.error";
 import mongoose from "mongoose";
 import { TradeEntity } from "@domain/entities/stock/trade.entity";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
+import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
+import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
+import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 
 @injectable()
 export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
@@ -26,6 +29,7 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
         @inject(STOCK_TYPES.OrderRepository) private readonly _orderRepository: IOrderRepository,
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
+        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
     ) { }
 
     async execute(data: BuyOrderDTO, userId: string): Promise<void> {
@@ -87,7 +91,27 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
 
             await this._wallet.update(userId, wallet, session);
 
-            //1.update portfolio
+            // 1. update portfolio
+            let portfolio = await this._portfolioRepository.findByUserIdAndSymbol(userId, data.symbol, session);
+
+            if (portfolio) {
+                const newTotalQuantity = portfolio.quantity + data.quantity;
+                const newTotalInvested = portfolio.investedAmount + actualCost;
+                const newAvgPrice = newTotalInvested / newTotalQuantity;
+
+                portfolio.updateQuantityAndPrice(newTotalQuantity, newAvgPrice, newTotalInvested);
+                
+                await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
+            } else {
+                portfolio = PortfolioEntity.create({
+                    userId,
+                    symbol: data.symbol,
+                    quantity: data.quantity,
+                    avgPrice: executionPrice,
+                    investedAmount: actualCost
+                });
+                await this._portfolioRepository.create(portfolio, session);
+            }
 
             //create order
             const marketOrder = OrderEntity.create({
@@ -117,6 +141,7 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
 
         } catch (error) {
             await session.abortTransaction();
+            if (error instanceof AppError || error instanceof Error) throw error;
             throw new AppError("Buy order transaction failed");
         } finally {
             session.endSession();

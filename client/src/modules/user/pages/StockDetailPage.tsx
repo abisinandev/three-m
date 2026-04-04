@@ -9,12 +9,12 @@ import { socketService } from '@shared/services/socket'
 import TradeModal from '@shared/components/modals/TradeModal'
 import type { TradeData } from '@shared/components/modals/TradeModal'
 import { useTradeMutation } from '@shared/hooks/useTradeMutation'
+import { getPortfolioInvestments } from '@shared/services/feature/portfolio/PortfolioApi';
 
 const StockDetailPage = () => {
   const { symbol } = useParams({ strict: false }) as { symbol: string }
   const [realtimePrice, setRealtimePrice] = useState<number | null>(null);
-  
-  // Trade Modal State
+
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
 
@@ -24,6 +24,17 @@ const StockDetailPage = () => {
     refetchInterval: 3000,
     enabled: !!symbol,
   });
+
+  const { data: holdingsData } = useQuery({
+    queryKey: ['portfolio', symbol],
+    queryFn: () => getPortfolioInvestments(1, 10, undefined, symbol),
+    enabled: !!symbol,
+  });
+
+  const position = holdingsData?.data?.find(inv => 
+    (inv.schemeCode === symbol || (inv as any).symbol === symbol) && 
+    (inv.investmentType?.toLowerCase() === 'stock' || inv.category?.toLowerCase() === 'stock' || !inv.investmentType)
+  );
 
   useEffect(() => {
     if (!symbol) return;
@@ -74,7 +85,6 @@ const StockDetailPage = () => {
       }
       setIsTradeModalOpen(false);
     } catch (error) {
-      // Error is handled by the hook's toast
     }
   };
 
@@ -96,7 +106,6 @@ const StockDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-inter pb-10 p-6">
-      {/* Back navigation */}
       <div className="mb-6">
         <Link
           to="/user/trading"
@@ -107,7 +116,6 @@ const StockDetailPage = () => {
         </Link>
       </div>
 
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center font-bold text-lg overflow-hidden">
@@ -125,9 +133,7 @@ const StockDetailPage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* LEFT COLUMN: Price & Chart */}
         <div className="lg:col-span-9 flex flex-col gap-6">
-          {/* Price Header */}
           <div className="flex items-end justify-between bg-[#0f0f0f] p-6 rounded-xl border border-[#1f1f1f]">
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-widest mb-2">Current Price</p>
@@ -143,15 +149,12 @@ const StockDetailPage = () => {
             </div>
           </div>
 
-          {/* Chart Wrapper */}
           <div className="w-full h-[550px] bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-1 flex flex-col">
-            <StockChart symbol={symbol} />
+            <StockChart symbol={symbol} position={position} />
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Order Entry & Stats */}
         <div className="lg:col-span-3 flex flex-col gap-6">
-          {/* Action Buttons */}
           <div className="bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-6 flex flex-col gap-3">
             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Trade {symbol}</h3>
             <button
@@ -175,7 +178,6 @@ const StockDetailPage = () => {
             )}
           </div>
 
-          {/* Core Stats */}
           <div className="bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-6 flex flex-col gap-4">
             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Market Stats</h3>
             {[

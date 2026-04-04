@@ -9,7 +9,6 @@ export const TradeSchema = new Schema<TradeDocument>(
         orderId: {
             type: String,
             required: true,
-            index: true,
         },
 
         userId: {

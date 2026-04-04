@@ -6,8 +6,12 @@ import { InvestmentResponseDTO } from "@application/dto/mutual-funds/investment-
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { QueryOptions } from "mongoose";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
-import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
+import { InvestmentStatus, InvestmentType, PaymentMethod } from "@domain/enum/funds/investment.enums";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
+import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
+import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
+import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
+import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
 
 interface PortfolioQueryOptions extends QueryOptions {
     status?: InvestmentStatus;
@@ -28,13 +32,14 @@ interface InvestmentData {
     remainingUnits?: number;
 }
 
-//📌📌📌📌📌MANAGE THIS USECASE PROPERLY. SOLID BROKEN HERE💢💢
 @injectable()
 export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
     constructor(
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
         @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
+        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
+        @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
     ) { }
 
     async execute(userId: string, options: QueryOptions): Promise<{
@@ -75,11 +80,47 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
             data.push(toInvestmentResponse(inv, fund, profit, fundXirr ?? undefined));
         }
 
+        // --- ADD STOCK PORTFOLIOS ---
+        // Exclude stocks if filtering specifically for Redeemed/Initiated/Failed that doesn't apply to stocks
+        if (!status || status === InvestmentStatus.ALLOTTED) {
+            const stockPortfolios = await this._portfolioRepository.findByUserId(userId);
+            for (const stockPf of stockPortfolios) {
+                // optional: search filtering on stocks
+                if (portfolioOptions.search && !stockPf.symbol.toLowerCase().includes(portfolioOptions.search.toLowerCase())) {
+                    continue;
+                }
+
+                // get stock details for logo/name
+                const stockDetails = await this._stockRepository.findBySymbol(stockPf.symbol);
+                
+                // create InvestmentResponseDTO shape
+                data.push({
+                    id: stockPf.id as string,
+                    userId: stockPf.userId,
+                    schemeCode: stockPf.symbol, // ticker
+                    schemeName: stockDetails?.name || stockPf.symbol,
+                    amount: stockPf.investedAmount,
+                    units: stockPf.quantity,
+                    nav: stockPf.avgPrice, // avg entry price
+                    navDate: stockPf.updatedAt || stockPf.createdAt,
+                    category: "Stock",
+                    status: InvestmentStatus.ALLOTTED,
+                    paymentMethod: PaymentMethod.WALLET, // assumed default
+                    investmentType: InvestmentType.STOCK,
+                    logo: stockDetails?.logo || "",
+                    profit: 0, // In reality, we'd calculate this with live price. 
+                    // Let's set it to 0 as live calculation might happen either in another service or frontend can calculate it based on live ltp update.
+                    createdAt: stockPf.createdAt,
+                    updatedAt: stockPf.updatedAt,
+                });
+            }
+        }
+
         return {
             data,
             page: Number(page),
             limit: Number(limit),
-            totalCount,
+            totalCount: totalCount + (status && status !== InvestmentStatus.ALLOTTED ? 0 : (await this._portfolioRepository.findByUserId(userId)).length),
         };
     }
 

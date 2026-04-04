@@ -1,8 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useRealtimeChart } from '@modules/user/hooks/useRealtimeChart';
 
+import { Eye, EyeOff } from 'lucide-react';
+
 interface StockChartProps {
   symbol: string;
+  position?: any;
 }
 
 const timeframes = [
@@ -64,11 +67,12 @@ const useChartTimer = (timeframe: string) => {
   return timeLeft;
 };
 
-export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
+export const StockChart: React.FC<StockChartProps> = ({ symbol, position }) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const [timeframe, setTimeframe] = useState<string>('1');
+  const [showPosition, setShowPosition] = useState<boolean>(true);
 
-  const { isLoading, status, hasHistory } = useRealtimeChart(chartContainerRef, symbol, timeframe);
+  const { isLoading, status, hasHistory } = useRealtimeChart(chartContainerRef, symbol, timeframe, position, showPosition);
   const timeLeft = useChartTimer(timeframe);
 
   return (
@@ -88,6 +92,16 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol }) => {
           </button>
         ))}
         <div className="ml-auto flex items-center gap-3">
+          {position && (
+            <button 
+              onClick={() => setShowPosition(!showPosition)} 
+              className={`flex items-center gap-1.5 px-2 py-1.5 rounded text-xs font-semibold transition-colors border ${showPosition ? 'bg-[#2962ff]/10 text-[#2962ff] border-[#2962ff]/20' : 'bg-transparent text-gray-500 border-transparent hover:text-gray-300'}`}
+              title="Toggle Position Line"
+            >
+              {showPosition ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+              <span>Position</span>
+            </button>
+          )}
           {timeLeft && (
             <div className="flex items-center gap-1.5 bg-[#1e1e1e] px-2 py-1 rounded">
               <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>

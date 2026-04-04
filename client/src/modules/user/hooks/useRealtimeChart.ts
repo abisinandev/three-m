@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createChart, CandlestickSeries } from 'lightweight-charts';
-import type { IChartApi, ISeriesApi, Time, DeepPartial, ChartOptions } from 'lightweight-charts';
+import type { IChartApi, ISeriesApi, Time, DeepPartial, ChartOptions, IPriceLine } from 'lightweight-charts';
 import { socketService } from '@shared/services/socket';
 import api from '@lib/axiosUser';
 import { API_ROUTES } from '@shared/constants/apiRoutes';
@@ -51,6 +51,8 @@ export const useRealtimeChart = (
   containerRef: React.RefObject<HTMLDivElement | null>,
   symbol: string,
   timeframe: string = '1',
+  position?: any,
+  showPosition?: boolean
 ) => {
   const chartRef = useRef<IChartApi | null>(null);
   const candlestickSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
@@ -61,6 +63,8 @@ export const useRealtimeChart = (
   const [hasHistory, setHasHistory] = useState(false);
 
   const [currentPrice, setCurrentPrice] = useState<number | null>(null);
+  
+  const priceLineRef = useRef<IPriceLine | null>(null);
 
   // Initialize Chart
   useEffect(() => {
@@ -253,6 +257,116 @@ export const useRealtimeChart = (
       socketService.unsubscribeFromCandle(symbol, backendTimeframe);
     };
   }, [symbol, timeframe]);
+
+  // Manage Price Line & ToolTip overlays for position
+  useEffect(() => {
+    if (!candlestickSeriesRef.current || !chartRef.current || !position || !showPosition || (!position.amount && !position.investedAmount) || (!position.units && !position.quantity)) {
+      if (priceLineRef.current && candlestickSeriesRef.current) {
+        candlestickSeriesRef.current.removePriceLine(priceLineRef.current);
+        priceLineRef.current = null;
+      }
+      return;
+    }
+
+    const qty = position.units || position.quantity || 0;
+    const avgPriceValue = position.avgPrice ?? (position.amount / qty);
+
+    const isProfit = currentPrice !== null && currentPrice > avgPriceValue;
+    const isLoss = currentPrice !== null && currentPrice < avgPriceValue;
+    const lineColor = isProfit ? '#22c55e' : (isLoss ? '#ef4444' : '#eab308');
+
+    if (!priceLineRef.current) {
+      priceLineRef.current = candlestickSeriesRef.current.createPriceLine({
+        price: avgPriceValue,
+        color: lineColor,
+        lineWidth: 1,
+        lineStyle: 2, // LineStyle.Dashed
+        axisLabelVisible: true,
+        title: `Avg Buy ₹${avgPriceValue.toFixed(2)} (${qty} Qty)`,
+      });
+    } else {
+      priceLineRef.current.applyOptions({
+        color: lineColor,
+        price: avgPriceValue,
+      });
+    }
+
+    // Tooltip logic
+    const container = containerRef.current;
+    if (!container) return;
+    
+    let toolTip = document.getElementById('chart-position-tooltip');
+    if (!toolTip) {
+      toolTip = document.createElement('div');
+      toolTip.id = 'chart-position-tooltip';
+      toolTip.style.width = '180px';
+      toolTip.style.position = 'absolute';
+      toolTip.style.display = 'none';
+      toolTip.style.padding = '12px';
+      toolTip.style.boxSizing = 'border-box';
+      toolTip.style.fontSize = '12px';
+      toolTip.style.textAlign = 'left';
+      toolTip.style.zIndex = '1000';
+      toolTip.style.pointerEvents = 'none';
+      toolTip.style.border = '1px solid #2a2a2a';
+      toolTip.style.borderRadius = '8px';
+      toolTip.style.fontFamily = "'Inter', sans-serif";
+      toolTip.style.background = '#0a0a0a';
+      toolTip.style.color = '#fff';
+      toolTip.style.boxShadow = '0 6px 16px rgba(0,0,0,0.6)';
+      toolTip.style.transition = 'opacity 0.2s, top 0.1s, left 0.1s';
+      container.appendChild(toolTip);
+    }
+
+    const handleCrosshairMove = (param: any) => {
+        if (!param.point || !toolTip) {
+            toolTip!.style.display = 'none';
+            return;
+        }
+
+        const priceY = candlestickSeriesRef.current?.priceToCoordinate(avgPriceValue);
+        
+        // If mouse is near the price line Y coordinate (+- 20 pixels)
+        if (priceY !== null && priceY !== undefined && Math.abs(param.point.y - priceY) < 20) {
+            const currentClose = currentCandleRef.current?.close ?? currentPrice ?? avgPriceValue;
+            const pnl = (currentClose - avgPriceValue) * qty;
+            const pnlColor = pnl >= 0 ? '#22c55e' : '#ef4444';
+            const sign = pnl >= 0 ? '+' : '';
+
+            toolTip.style.display = 'block';
+            toolTip.style.left = (param.point.x + 20) + 'px';
+            toolTip.style.top = (param.point.y + 20) + 'px';
+            toolTip.innerHTML = `
+                <div style="color: #9ca3af; font-size: 10px; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; letter-spacing: 0.05em">Trade Position</div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span style="color: #9ca3af">Avg Buy</span>
+                    <span style="font-weight: 600">₹${avgPriceValue.toFixed(2)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span style="color: #9ca3af">Quantity</span>
+                    <span style="font-weight: 600">${qty}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span style="color: #9ca3af">Invested</span>
+                    <span style="font-weight: 600">₹${(position.amount || position.investedAmount || 0).toFixed(0)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid #1f1f1f;">
+                    <span style="color: #9ca3af">Current P&L</span>
+                    <span style="font-weight: 700; color: ${pnlColor}">${sign}₹${pnl.toFixed(2)}</span>
+                </div>
+            `;
+        } else {
+            toolTip.style.display = 'none';
+        }
+    };
+
+    chartRef.current.subscribeCrosshairMove(handleCrosshairMove);
+
+    return () => {
+        chartRef.current?.unsubscribeCrosshairMove(handleCrosshairMove);
+        if (container.contains(toolTip)) container.removeChild(toolTip!);
+    };
+  }, [position, showPosition, currentPrice]);
 
   return { isLoading, currentPrice, status, hasHistory };
 };

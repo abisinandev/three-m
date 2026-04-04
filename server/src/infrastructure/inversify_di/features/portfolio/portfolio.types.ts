@@ -1,4 +1,7 @@
 export const PORTFOLIO_TYPES = {
+    // repositories
+    PortfolioRepository: Symbol.for("PortfolioRepository"),
+
     // usecases
     PortfolioDetailsUseCase: Symbol.for("PortfolioDetailsUseCase"),
     RadeemInvestmentUseCase: Symbol.for("RadeemInvestmentUseCase"),

@@ -73,4 +73,4 @@ export const OrderSchema = new Schema<OrderDocument>(
 
 OrderSchema.index({ status: 1, symbol: 1, price: 1 });
 
-export const OrderModel = model<OrderDocument>('Orders', OrderSchema)
+export const OrderModel = model<OrderDocument>('Orders', OrderSchema) 

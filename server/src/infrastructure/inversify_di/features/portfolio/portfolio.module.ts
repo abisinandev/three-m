@@ -12,8 +12,13 @@ import { IXirrCalculationUseCase } from "@application/use_cases/portfolio/interf
 import { XirrCalculationUseCase } from "@application/use_cases/portfolio/xirr-calculation.usecase";
 import { PortfolioProjectionUseCase } from "@application/use_cases/portfolio/portfolio-projection.usecase";
 import { IPortfolioProjectionUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-projection-usecase.interface";
+import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
+import { PortfolioRepository } from "@infrastructure/databases/repository/portfolio/portfolio.repository";
 
 export const PortfolioModule = new ContainerModule(({ bind }) => {
+    // Repositories
+    bind<IPortfolioRepository>(PORTFOLIO_TYPES.PortfolioRepository).to(PortfolioRepository);
+
     // UseCases
     bind<IPortfolioDetailsUseCase>(PORTFOLIO_TYPES.PortfolioDetailsUseCase).to(PortfolioDetailsUseCase);
     bind<IRadeemInvestmentUseCase>(PORTFOLIO_TYPES.RadeemInvestmentUseCase).to(RadeemInvestmentUseCase);
