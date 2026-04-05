@@ -5,6 +5,7 @@ export class PortfolioEntity {
     private _quantity: number;
     private _avgPrice: number;
     private _investedAmount: number;
+    private _lockQty: number;
     private readonly _createdAt: Date;
     private _updatedAt?: Date;
 
@@ -15,6 +16,7 @@ export class PortfolioEntity {
         quantity: number;
         avgPrice: number;
         investedAmount: number;
+        lockQty?: number;
         createdAt?: Date;
         updatedAt?: Date;
     }) {
@@ -24,6 +26,7 @@ export class PortfolioEntity {
         this._quantity = props.quantity;
         this._avgPrice = props.avgPrice;
         this._investedAmount = props.investedAmount;
+        this._lockQty = props.lockQty ?? 0;
         this._createdAt = props.createdAt ?? new Date();
         this._updatedAt = props.updatedAt;
     }
@@ -41,6 +44,7 @@ export class PortfolioEntity {
             quantity: data.quantity,
             avgPrice: data.avgPrice,
             investedAmount: data.investedAmount,
+            lockQty: 0,
         });
     }
 
@@ -51,6 +55,7 @@ export class PortfolioEntity {
         quantity: number;
         avgPrice: number;
         investedAmount: number;
+        lockQty: number;
         createdAt: Date;
         updatedAt?: Date;
     }): PortfolioEntity {
@@ -61,6 +66,7 @@ export class PortfolioEntity {
             quantity: data.quantity,
             avgPrice: data.avgPrice,
             investedAmount: data.investedAmount,
+            lockQty: data.lockQty,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
         });
@@ -90,6 +96,10 @@ export class PortfolioEntity {
         return this._investedAmount;
     }
 
+    get lockQty(): number {
+        return this._lockQty;
+    }
+
     get createdAt(): Date {
         return this._createdAt;
     }
@@ -98,7 +108,23 @@ export class PortfolioEntity {
         return this._updatedAt;
     }
 
-    public updateQuantityAndPrice(quantity: number, avgPrice: number, investedAmount: number) {
+    lockQuantity(qty: number) {
+        if (this._quantity - this._lockQty < qty) {
+            throw new Error("Insufficient unlocked quantity");
+        }
+        this._lockQty += qty;
+        this._updatedAt = new Date();
+    }
+
+    unlockQuantity(qty: number) {
+        if (this._lockQty < qty) {
+            throw new Error("Cannot unlock more than locked quantity");
+        }
+        this._lockQty -= qty;
+        this._updatedAt = new Date();
+    }
+
+    updateQuantityAndPrice(quantity: number, avgPrice: number, investedAmount: number) {
         this._quantity = quantity;
         this._avgPrice = avgPrice;
         this._investedAmount = investedAmount;
@@ -113,6 +139,7 @@ export class PortfolioEntity {
             quantity: this._quantity,
             avgPrice: this._avgPrice,
             investedAmount: this._investedAmount,
+            lockQty: this._lockQty,
             createdAt: this._createdAt,
             updatedAt: this._updatedAt,
         };

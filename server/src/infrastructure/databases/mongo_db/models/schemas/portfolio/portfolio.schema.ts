@@ -31,6 +31,11 @@ export const PortfolioSchema = new Schema<PortfolioDocument>(
             type: Number,
             required: true,
             default: 0
+        },
+        lockQty: {
+            type: Number,
+            required: true,
+            default: 0
         }
     },
     {

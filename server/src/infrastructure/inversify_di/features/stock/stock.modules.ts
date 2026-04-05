@@ -23,8 +23,8 @@ import { YahooProvider } from "@infrastructure/providers/stocks/market-data/prov
 import { OrdersController } from "@presentation/http/controllers/stocks/orders.controller";
 import { MarketBuyOrderUseCase } from "@application/use_cases/stock/market-buy-order.usecase";
 import { IMarketBuyOrderUseCase } from "@application/use_cases/stock/interfaces/buy-order-usecase.interface";
-import { IMarketSellOrderUseCase } from "@application/use_cases/stock/interfaces/sell-order-usecase.interface";
-import { MarketSellOrderUseCase } from "@application/use_cases/stock/sell-order.usecase";
+import { IMarketSellOrderUseCase } from "@application/use_cases/stock/interfaces/market-sell-order-usecase.interface";
+import { MarketSellOrderUseCase } from "@application/use_cases/stock/market-sell-order.usecase";
 import { IOrderRepository } from "@application/interfaces/repositories/stock/order-repository.interface";
 import { OrderRepository } from "@infrastructure/databases/repository/stock/order.repository";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";

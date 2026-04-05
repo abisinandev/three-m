@@ -27,8 +27,6 @@ import { useNavigate } from '@tanstack/react-router';
 import api from '@lib/axiosUser';
 import { ROUTES } from '@shared/constants/routes';
 
-/* ─── helpers ─────────────────────────────────────────────────── */
-
 const fmt = (v: number, digits = 2) =>
     v.toLocaleString('en-IN', {
         minimumFractionDigits: digits,
@@ -52,7 +50,6 @@ const getStatusStyle = (status: string = '') => {
 
 type Tab = 'all' | 'stocks' | 'mf';
 
-/* ─── sub-components ──────────────────────────────────────────── */
 
 const SummaryBar = ({
     currentValue,
@@ -161,7 +158,6 @@ const StatCol = ({
     );
 };
 
-/* ─── Main component ──────────────────────────────────────────── */
 
 const PortfolioDashboard = () => {
     const [page, setPage] = useState(1);

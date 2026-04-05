@@ -77,9 +77,15 @@ export const ErrorMessages = {
         STOCK_NOT_AVAILABLE: "Stock is not available for trading",
         STOCK_NOT_TRADABLE: "Stock is currently not tradable",
         MARKET_CLOSED: "Market is currently closed",
+        QTY_VALIDATION: "Sell quantity must be greater than zero",
+        INVALID_MARKET_PRICE: "Invalid market price",
     },
     WALLET: {
         NOT_FOUND: "Wallet not found",
         INSUFFICIENT_BALANCE: 'Inssufienct balance',
+    },
+    PORTFOLIO: {
+        NOT_FOUND: "Portfolio not found",
+        INSUFFICIENT_SHARES: "Insufficient stock holding or there are pending sell orders for this stock. Check the orderbook. Order quantity",
     }
 } as const;

@@ -7,7 +7,7 @@ import { ResponseHelper } from "@presentation/express/utils/response-handling/re
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { IMarketBuyOrderUseCase } from "@application/use_cases/stock/interfaces/buy-order-usecase.interface";
-import { IMarketSellOrderUseCase } from "@application/use_cases/stock/interfaces/sell-order-usecase.interface";
+import { IMarketSellOrderUseCase } from "@application/use_cases/stock/interfaces/market-sell-order-usecase.interface";
 
 @injectable()
 export class OrdersController {

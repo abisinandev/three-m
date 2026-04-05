@@ -7,6 +7,7 @@ export interface IPortfolio {
     quantity: number;
     avgPrice: number;
     investedAmount: number;
+    lockQty: number;
     createdAt?: Date;
     updatedAt?: Date;
 }

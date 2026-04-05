@@ -54,39 +54,33 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
             //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
             const marketPrice = data.price// 📌📌 this should be latest price. so update;
-            console.log("marketprice: ", marketPrice);
-            if (!marketPrice || marketPrice <= 0) {
-                throw new ValidationError("Invalid market price");
-            }
+            if (!marketPrice || marketPrice <= 0)
+                throw new ValidationError(ErrorMessages.STOCKS.INVALID_MARKET_PRICE);
 
             const requiredPrice = marketPrice * data.quantity * 1.01;
-            console.log('Required: ', requiredPrice);
 
             const wallet = await this._wallet.findByUserId(userId, session);
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
 
-            if (wallet.availableBalance < requiredPrice) {
+            if (wallet.availableBalance < requiredPrice)
                 throw new ValidationError(ErrorMessages.WALLET.INSUFFICIENT_BALANCE);
-            }
+
 
             wallet.lock(requiredPrice);
             await this._wallet.update(userId, wallet, session);
 
             const executionPrice = data.price;// 📌📌 this should be latest price. so update;
-            if (!executionPrice || executionPrice <= 0) {
+            if (!executionPrice || executionPrice <= 0)
                 throw new ValidationError("Invalid execution price");
-            }
 
             const actualCost = executionPrice * data.quantity;
-            console.log("ActualCost: ", actualCost);
 
             wallet.unlock(requiredPrice);
             wallet.debit(actualCost);
 
             if (requiredPrice > actualCost) {
                 const refund = requiredPrice - actualCost;
-                wallet.credit(refund);
-
+                wallet.credit(refund);// adding buffered amount
             }
 
             await this._wallet.update(userId, wallet, session);
@@ -100,7 +94,7 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
                 const newAvgPrice = newTotalInvested / newTotalQuantity;
 
                 portfolio.updateQuantityAndPrice(newTotalQuantity, newAvgPrice, newTotalInvested);
-                
+
                 await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
             } else {
                 portfolio = PortfolioEntity.create({
