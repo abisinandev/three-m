@@ -12,12 +12,11 @@ export interface TradeOrderRequest {
   quantity: number;
   orderType: OrderType;
   price?: number;
-}
-
-export interface BuyOrderRequest extends TradeOrderRequest {
   stopLoss?: number;
   takeProfit?: number;
 }
+
+export interface BuyOrderRequest extends TradeOrderRequest {}
 
 export interface SellOrderRequest extends TradeOrderRequest {}
 

@@ -65,6 +65,8 @@ export const useRealtimeChart = (
   const [currentPrice, setCurrentPrice] = useState<number | null>(null);
   
   const priceLineRef = useRef<IPriceLine | null>(null);
+  const stopLossLineRef = useRef<IPriceLine | null>(null);
+  const takeProfitLineRef = useRef<IPriceLine | null>(null);
 
   // Initialize Chart
   useEffect(() => {
@@ -265,16 +267,27 @@ export const useRealtimeChart = (
         candlestickSeriesRef.current.removePriceLine(priceLineRef.current);
         priceLineRef.current = null;
       }
+      if (stopLossLineRef.current && candlestickSeriesRef.current) {
+          candlestickSeriesRef.current.removePriceLine(stopLossLineRef.current);
+          stopLossLineRef.current = null;
+      }
+      if (takeProfitLineRef.current && candlestickSeriesRef.current) {
+          candlestickSeriesRef.current.removePriceLine(takeProfitLineRef.current);
+          takeProfitLineRef.current = null;
+      }
       return;
     }
 
     const qty = position.units || position.quantity || 0;
     const avgPriceValue = position.avgPrice ?? (position.amount / qty);
+    const slValue = position.stopLoss;
+    const tpValue = position.takeProfit;
 
     const isProfit = currentPrice !== null && currentPrice > avgPriceValue;
     const isLoss = currentPrice !== null && currentPrice < avgPriceValue;
     const lineColor = isProfit ? '#22c55e' : (isLoss ? '#ef4444' : '#eab308');
 
+    // Main Position Price Line
     if (!priceLineRef.current) {
       priceLineRef.current = candlestickSeriesRef.current.createPriceLine({
         price: avgPriceValue,
@@ -289,6 +302,44 @@ export const useRealtimeChart = (
         color: lineColor,
         price: avgPriceValue,
       });
+    }
+
+    // Stop Loss Line
+    if (slValue && slValue > 0) {
+        if (!stopLossLineRef.current) {
+            stopLossLineRef.current = candlestickSeriesRef.current.createPriceLine({
+                price: slValue,
+                color: '#ef4444',
+                lineWidth: 1,
+                lineStyle: 1, // LineStyle.Dotted
+                axisLabelVisible: true,
+                title: `SL ₹${slValue.toFixed(2)}`,
+            });
+        } else {
+            stopLossLineRef.current.applyOptions({ price: slValue });
+        }
+    } else if (stopLossLineRef.current) {
+        candlestickSeriesRef.current.removePriceLine(stopLossLineRef.current);
+        stopLossLineRef.current = null;
+    }
+
+    // Take Profit Line
+    if (tpValue && tpValue > 0) {
+        if (!takeProfitLineRef.current) {
+            takeProfitLineRef.current = candlestickSeriesRef.current.createPriceLine({
+                price: tpValue,
+                color: '#2962ff',
+                lineWidth: 1,
+                lineStyle: 1, // LineStyle.Dotted
+                axisLabelVisible: true,
+                title: `TP ₹${tpValue.toFixed(2)}`,
+            });
+        } else {
+            takeProfitLineRef.current.applyOptions({ price: tpValue });
+        }
+    } else if (takeProfitLineRef.current) {
+        candlestickSeriesRef.current.removePriceLine(takeProfitLineRef.current);
+        takeProfitLineRef.current = null;
     }
 
     // Tooltip logic

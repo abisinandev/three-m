@@ -48,6 +48,10 @@ export const API_ROUTES = {
             REDEEM_INVESTMENT: "/user/portfolio/redeem-investment",
             CONFIRM_REDEEM: "/user/portfolio/confirm-redeem",
             PROJECTION: "/user/portfolio/projection",
+            TRADE_HISTORY: "/user/portfolio/history",
+            INVESTMENTS: "/user/portfolio/investments",
+            TRADES: "/user/portfolio/trades",
+            HISTORIES: "/user/portfolio/histories",
         },
         MUTUAL_FUNDS: {
             LIST: "/user/mutual-funds/lists",

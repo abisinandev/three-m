@@ -86,6 +86,7 @@ export const ErrorMessages = {
     },
     PORTFOLIO: {
         NOT_FOUND: "Portfolio not found",
+        NOT_HOLDING: "Not holding on your portfolio",
         INSUFFICIENT_SHARES: "Insufficient stock holding or there are pending sell orders for this stock. Check the orderbook. Order quantity",
     }
 } as const;

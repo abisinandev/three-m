@@ -42,6 +42,14 @@ export const OrderSchema = new Schema<OrderDocument>(
             type: Number,
             default: null,
         },
+        stopLoss: {
+            type: Number,
+            default: null,
+        },
+        takeProfit: {
+            type: Number,
+            default: null,
+        },
 
         status: {
             type: String,

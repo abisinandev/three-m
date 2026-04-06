@@ -8,6 +8,8 @@ export interface IPortfolio {
     avgPrice: number;
     investedAmount: number;
     lockQty: number;
+    stopLoss?: number | null;
+    takeProfit?: number | null;
     createdAt?: Date;
     updatedAt?: Date;
 }

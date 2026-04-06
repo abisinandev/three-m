@@ -8,6 +8,7 @@ export class TradeEntity {
     private readonly _side: OrderSide;
     private readonly _quantity: number;
     private readonly _price: number;
+    private readonly _profit?: number;
 
     private readonly _createdAt: Date;
     private readonly _updatedAt: Date;
@@ -20,6 +21,7 @@ export class TradeEntity {
         side: OrderSide;
         quantity: number;
         price: number;
+        profit?: number;
         createdAt?: Date;
         updatedAt?: Date;
     }) {
@@ -30,6 +32,7 @@ export class TradeEntity {
         this._side = props.side;
         this._quantity = props.quantity;
         this._price = props.price;
+        this._profit = props.profit;
         this._createdAt = props.createdAt ?? new Date();
         this._updatedAt = props.updatedAt ?? new Date();
     }
@@ -41,6 +44,7 @@ export class TradeEntity {
         side: OrderSide;
         quantity: number;
         price: number;
+        profit?: number;
     }): TradeEntity {
         return new TradeEntity({
             orderId: data.orderId,
@@ -49,6 +53,7 @@ export class TradeEntity {
             side: data.side,
             quantity: data.quantity,
             price: data.price,
+            profit: data.profit,
         });
     }
 
@@ -60,6 +65,7 @@ export class TradeEntity {
         side: OrderSide;
         quantity: number;
         price: number;
+        profit?: number;
         createdAt: Date;
         updatedAt: Date;
     }): TradeEntity {
@@ -71,6 +77,7 @@ export class TradeEntity {
             side: data.side,
             quantity: data.quantity,
             price: data.price,
+            profit: data.profit,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
         });
@@ -84,6 +91,7 @@ export class TradeEntity {
     get side() { return this._side; }
     get quantity() { return this._quantity; }
     get price() { return this._price; }
+    get profit() { return this._profit; }
     get createdAt() { return this._createdAt; }
     get updatedAt() { return this._updatedAt; }
 
@@ -96,8 +104,13 @@ export class TradeEntity {
             side: this._side,
             quantity: this._quantity,
             price: this._price,
+            profit: this._profit,
             createdAt: this._createdAt,
             updatedAt: this._updatedAt,
         };
+    }
+
+    toJSON() {
+        return this.toPersistance();
     }
 }

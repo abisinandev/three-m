@@ -51,7 +51,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
       setStopLoss('');
       setTakeProfit('');
     }
-  }, [isOpen, symbol, initialType, currentPrice]);
+  }, [isOpen, symbol, initialType]);
 
   if (!isOpen) return null;
 
@@ -177,9 +177,8 @@ const TradeModal: React.FC<TradeModalProps> = ({
               </div>
             </div>
 
-            {/* Advanced Trigger Price Fields (Stop Loss / Take Profit) - Only for Buy */}
-            {isBuy && (
-              <div className="pt-2 border-t border-[#1f1f1f]">
+            {/* Advanced Trigger Price Fields (Stop Loss / Take Profit) */}
+            <div className="pt-2 border-t border-[#1f1f1f]">
                  <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-3">Risk Management (Optional)</label>
                  <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -203,8 +202,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
                     />
                   </div>
                 </div>
-              </div>
-            )}
+            </div>
           </div>
 
           {/* Footer Integration - Action Bar */}

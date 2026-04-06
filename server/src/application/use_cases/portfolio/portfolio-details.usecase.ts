@@ -90,10 +90,8 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
                     continue;
                 }
 
-                // get stock details for logo/name
                 const stockDetails = await this._stockRepository.findBySymbol(stockPf.symbol);
                 
-                // create InvestmentResponseDTO shape
                 data.push({
                     id: stockPf.id as string,
                     userId: stockPf.userId,
@@ -110,6 +108,8 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
                     logo: stockDetails?.logo || "",
                     profit: 0, // In reality, we'd calculate this with live price. 
                     // Let's set it to 0 as live calculation might happen either in another service or frontend can calculate it based on live ltp update.
+                    stopLoss: stockPf.stopLoss,
+                    takeProfit: stockPf.takeProfit,
                     createdAt: stockPf.createdAt,
                     updatedAt: stockPf.updatedAt,
                 });

@@ -1,6 +1,5 @@
 import YahooFinance from 'yahoo-finance2';
-import { ICandle } from '../../providers/stocks/market-data/interfaces/candle.interface';
-
+import { ICandle } from '../interfaces/candle.interface';
 import { injectable } from 'inversify';
 import { IHistoricalDataParams, IQuote, IYahooProvider } from '@application/interfaces/services/stocks/yahoo-provider.interface';
 

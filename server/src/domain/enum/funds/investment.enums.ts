@@ -10,6 +10,8 @@ export enum InvestmentStatus {
     PARTIALLY_REDEEMED = "PARTIALLY_REDEEMED",
     REDEEMED = "REDEEMED",
     FAILED = "FAILED",
+    HOLDING = "HOLDING",
+    EXECUTED = "EXECUTED",
 }
 
 

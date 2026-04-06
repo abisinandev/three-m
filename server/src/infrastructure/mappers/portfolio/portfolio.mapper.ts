@@ -10,6 +10,8 @@ export const toDomain = (doc: PortfolioDocument): PortfolioEntity => {
         avgPrice: doc.avgPrice,
         investedAmount: doc.investedAmount,
         lockQty: doc.lockQty || 0,
+        stopLoss: doc.stopLoss,
+        takeProfit: doc.takeProfit,
         createdAt: doc.createdAt as Date,
         updatedAt: doc.updatedAt as Date,
     });
@@ -24,6 +26,8 @@ export const toPersistance = (entity: PortfolioEntity): Partial<PortfolioDocumen
         avgPrice: persistence.avgPrice,
         investedAmount: persistence.investedAmount,
         lockQty: persistence.lockQty,
+        stopLoss: persistence.stopLoss,
+        takeProfit: persistence.takeProfit,
         createdAt: persistence.createdAt,
         updatedAt: new Date(),
     };

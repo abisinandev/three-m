@@ -1,4 +1,4 @@
-import { SellOrderDTO } from "@application/dto/stocks/SellOrderDTO";
+import { SellOrderDTO } from "@application/dto/stocks/sell-order.dto";
 
 export interface IMarketSellOrderUseCase {
     execute(data: SellOrderDTO, userId: string): Promise<void>

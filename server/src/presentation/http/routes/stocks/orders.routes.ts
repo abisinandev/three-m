@@ -3,8 +3,8 @@ import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.t
 import { OrdersController } from '@presentation/http/controllers/stocks/orders.controller';
 import { Router } from 'express';
 import { validateDTO } from '@presentation/express/middlewares/validation-dto.middlewares';
-import { BuyOrderDTO } from '@application/dto/stocks/BuyOrderDTO';
-import { SellOrderDTO } from "@application/dto/stocks/SellOrderDTO";
+import { BuyOrderDTO } from '@application/dto/stocks/buy-order.dto';
+import { SellOrderDTO } from "@application/dto/stocks/sell-order.dto";
 
 const router = Router();
 const controller = container.get<OrdersController>(STOCK_TYPES.OrdersController);

@@ -12,6 +12,8 @@ export interface IOrder {
 
     quantity: number;
     price?: number | null;
+    stopLoss?: number | null;
+    takeProfit?: number | null;
 
     status: OrderStatus;
     filledQty: number;

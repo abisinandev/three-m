@@ -11,6 +11,7 @@ const toDomain = (doc: TradeDocument): TradeEntity => {
         side: doc.side as OrderSide,
         quantity: doc.quantity,
         price: doc.price,
+        profit: doc.profit,
         createdAt: (doc as any).createdAt,
         updatedAt: (doc as any).updatedAt,
     });
@@ -24,6 +25,7 @@ const toPersistance = (entity: TradeEntity): Partial<TradeDocument> => {
         side: entity.side,
         quantity: entity.quantity,
         price: entity.price,
+        profit: entity.profit,
         createdAt: entity.createdAt,
         updatedAt: new Date(),
     };

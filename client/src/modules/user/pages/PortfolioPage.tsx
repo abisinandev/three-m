@@ -14,11 +14,12 @@ import AssetAllocationDonut from '../components/PieChart';
 import { Pagination } from '@shared/components/pagination/Pagination';
 import {
     getPortfolioDatas,
-    getPortfolioInvestments,
     getPortfolioProjection,
+    getTradeHistory,
+    getMFHoldings,
+    getStockHoldings,
 } from '@shared/services/feature/portfolio/PortfolioApi';
 import type {
-    IInvestmentBaseResponse,
     IPortfolioDatasResponse,
     IPortfolioProjectionResponse,
 } from '@shared/types/portfolio.types';
@@ -27,11 +28,13 @@ import { useNavigate } from '@tanstack/react-router';
 import api from '@lib/axiosUser';
 import { ROUTES } from '@shared/constants/routes';
 
-const fmt = (v: number, digits = 2) =>
-    v.toLocaleString('en-IN', {
+const fmt = (v: any, digits = 2) => {
+    if (v === undefined || v === null || isNaN(Number(v))) return '0.00';
+    return Number(v).toLocaleString('en-IN', {
         minimumFractionDigits: digits,
         maximumFractionDigits: digits,
     });
+};
 
 const pnlColor = (v: number) =>
     v >= 0 ? '#00C853' : '#FF1744';
@@ -48,23 +51,24 @@ const getStatusStyle = (status: string = '') => {
     return { color: '#5a5f6e', bg: 'rgba(90,95,110,0.1)', border: 'rgba(90,95,110,0.2)' };
 };
 
-type Tab = 'all' | 'stocks' | 'mf';
-
+type Tab = 'all' | 'stocks' | 'mf' | 'history';
 
 const SummaryBar = ({
     currentValue,
     totalInvestment,
-    totalProfit,
+    realizedProfit,
+    totalReturns,
     profitPercentage,
     isLoading,
 }: {
     currentValue: number;
     totalInvestment: number;
-    totalProfit: number;
+    realizedProfit: number;
+    totalReturns: number;
     profitPercentage: number;
     isLoading: boolean;
 }) => {
-    const positive = totalProfit >= 0;
+    const positive = totalReturns >= 0;
 
     return (
         <div style={{
@@ -96,17 +100,17 @@ const SummaryBar = ({
                     plain
                 />
                 <StatCol
-                    label="Total Returns"
-                    value={`${positive ? '+' : ''}₹${fmt(Math.abs(totalProfit), 2)}`}
+                    label="Returns"
+                    value={`${positive ? '+' : ''}₹${fmt(Math.abs(totalReturns), 2)}`}
                     sub={`${positive ? '+' : ''}${profitPercentage.toFixed(2)}%`}
                     positive={positive}
                     showArrow
                 />
                 <StatCol
-                    label="Today's P&L"
-                    value="—"
-                    sub="—"
-                    positive={undefined}
+                    label="Realized P&L"
+                    value={`${realizedProfit >= 0 ? '+' : ''}₹${fmt(realizedProfit, 2)}`}
+                    sub="Settled"
+                    positive={realizedProfit >= 0}
                 />
             </div>
         </div>
@@ -171,13 +175,22 @@ const PortfolioDashboard = () => {
     const navigate = useNavigate();
 
     /* queries */
-    const { data: holdingsData, isLoading: isHoldingsLoading, isError, error: queryError } =
-        useQuery<IInvestmentBaseResponse>({
-            queryKey: ['portfolio', 'holdings', page, limit, status, search],
-            queryFn: () => getPortfolioInvestments(page, limit, status, search),
+    const { data: mfData, isLoading: isMfLoading, isError: isMfError, error: mfError } =
+        useQuery({
+            queryKey: ['portfolio', 'mf', page, limit, search],
+            queryFn: () => getMFHoldings(page, limit, search),
+            enabled: activeTab === 'all' || activeTab === 'mf',
             staleTime: 5 * 60 * 1000,
-            placeholderData: (prev: any) => prev,
         });
+
+    const { data: stockData, isLoading: isStockLoading, isError: isStockError, error: stockError } =
+        useQuery({
+            queryKey: ['portfolio', 'stocks', page, limit, search],
+            queryFn: () => getStockHoldings(page, limit, search),
+            enabled: activeTab === 'all' || activeTab === 'stocks',
+            staleTime: 5 * 60 * 1000,
+        });
+
 
     const { data: summaryData, isLoading: isSummaryLoading } =
         useQuery<IPortfolioDatasResponse>({
@@ -199,29 +212,38 @@ const PortfolioDashboard = () => {
             staleTime: 5 * 60 * 1000,
         });
 
+    const { data: tradeHistory } = useQuery({
+        queryKey: ['portfolio', 'trades', page, limit],
+        queryFn: () => getTradeHistory(page, limit),
+        enabled: activeTab === 'history',
+    });
+
     /* derived */
-    const investments = holdingsData?.data || [];
-    const totalCount = holdingsData?.totalCount ?? 0;
+    const investments = useMemo(() => {
+        if (activeTab === 'mf') return mfData?.data || [];
+        if (activeTab === 'stocks') return stockData?.data || [];
+        if (activeTab === 'all') return [...(mfData?.data || []), ...(stockData?.data || [])];
+        if (activeTab === 'history') return tradeHistory?.data || [];
+        return [];
+    }, [activeTab, mfData, stockData, tradeHistory]);
+
+    const totalCount = useMemo(() => {
+        if (activeTab === 'mf') return mfData?.totalCount || 0;
+        if (activeTab === 'stocks') return stockData?.totalCount || 0;
+        if (activeTab === 'history') return tradeHistory?.totalCount || 0;
+        return (mfData?.totalCount || 0) + (stockData?.totalCount || 0);
+    }, [activeTab, mfData, stockData, tradeHistory]);
 
     const totalInvestment = summaryData?.totalInvestment ?? 0;
-    const totalProfit = summaryData?.totalProfit ?? 0;
     const currentValue = summaryData?.currentValue ?? 0;
     const profitPercentage = summaryData?.profitPercentage ?? 0;
     const xirrValue = Number(xirrData?.data?.data).toFixed(2) || 0;
 
-    const isLoading = isHoldingsLoading || isSummaryLoading;
+    const isLoading = isMfLoading || isStockLoading || isSummaryLoading;
+    const isError = activeTab === 'stocks' ? isStockError : activeTab === 'mf' ? isMfError : (isStockError || isMfError);
+    const queryError = activeTab === 'stocks' ? stockError : mfError;
 
-    /* tab filtering */
-    const filtered = useMemo(() => {
-        if (activeTab === 'all') return investments;
-        if (activeTab === 'stocks')
-            return investments.filter(
-                i => i.investmentType?.toLowerCase() === 'stock' || i.category?.toLowerCase() === 'stock'
-            );
-        return investments.filter(
-            i => i.investmentType?.toLowerCase() !== 'stock' && i.category?.toLowerCase() !== 'stock'
-        );
-    }, [investments, activeTab]);
+    const filtered = investments;
 
     const handlePageChange = (newPage: number) => {
         const maxPage = Math.ceil(totalCount / limit);
@@ -232,6 +254,7 @@ const PortfolioDashboard = () => {
         { id: 'all', label: 'All' },
         { id: 'stocks', label: 'Stocks' },
         { id: 'mf', label: 'Mutual Funds' },
+        { id: 'history', label: 'History' },
     ];
 
     const tableHeaders = useMemo(() => {
@@ -239,6 +262,8 @@ const PortfolioDashboard = () => {
             return ['Symbol', 'Qty & Avg Paid', 'Cur. Value', returnType === 'XIRR' ? 'XIRR' : 'P&L', 'LTP', ''];
         } else if (activeTab === 'mf') {
             return ['Scheme', 'Invested', 'Cur. Value', returnType === 'XIRR' ? 'XIRR' : 'P&L', 'NAV', ''];
+        } else if (activeTab === 'history') {
+            return ['Trade', 'Quantity', 'Price', 'Value', 'Date', ''];
         }
         return ['Instrument', 'Invested/Qty', 'Cur. Value', returnType === 'XIRR' ? 'XIRR' : 'P&L', 'NAV / LTP', ''];
     }, [activeTab, returnType]);
@@ -300,7 +325,8 @@ const PortfolioDashboard = () => {
                 <SummaryBar
                     currentValue={currentValue}
                     totalInvestment={totalInvestment}
-                    totalProfit={totalProfit}
+                    realizedProfit={summaryData?.realizedProfit ?? 0}
+                    totalReturns={summaryData?.totalReturns ?? 0}
                     profitPercentage={profitPercentage}
                     isLoading={isLoading}
                 />
@@ -428,13 +454,57 @@ const PortfolioDashboard = () => {
                                 <div style={{ padding: '40px 0', textAlign: 'center', fontSize: 12, color: '#FF1744' }}>
                                     Failed — {(queryError as Error)?.message || 'Unknown error'}
                                 </div>
+                            ) : activeTab === 'history' ? (
+                                <>
+                                    {!tradeHistory?.data?.length ? (
+                                        <div style={{ padding: '40px 0', textAlign: 'center', fontSize: 12, color: '#5a5f6e' }}>
+                                            No trade history yet
+                                        </div>
+                                    ) : (
+                                        tradeHistory.data.map((trade: any, idx: number) => (
+                                            <div key={trade.id || idx} style={{
+                                                display: 'grid',
+                                                gridTemplateColumns: '1fr 100px 110px 120px 110px 14px',
+                                                gap: 8,
+                                                padding: '11px 16px',
+                                                borderBottom: idx < tradeHistory.length - 1 ? '1px solid #1a1c20' : 'none',
+                                                background: 'transparent',
+                                            }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                                    <div style={{
+                                                        fontSize: 9,
+                                                        fontWeight: 700,
+                                                        padding: '2px 6px',
+                                                        borderRadius: 4,
+                                                        background: trade.side?.toLowerCase() === 'sell' ? 'rgba(255,23,68,0.1)' : 'rgba(0,200,83,0.1)',
+                                                        color: trade.side?.toLowerCase() === 'sell' ? '#FF1744' : '#00C853',
+                                                        textTransform: 'uppercase'
+                                                    }}>
+                                                        {trade.side}
+                                                    </div>
+                                                    <div>
+                                                        <p style={{ fontSize: 13, fontWeight: 600, color: '#e8eaed', margin: 0 }}>{trade.symbol}</p>
+                                                        <p style={{ fontSize: 10, color: '#5a5f6e', margin: 0 }}>{trade.orderType || 'Market'}</p>
+                                                    </div>
+                                                </div>
+                                                <div style={{ textAlign: 'right', fontSize: 12, color: '#e8eaed' }}>{trade.quantity}</div>
+                                                <div style={{ textAlign: 'right', fontSize: 12, color: '#e8eaed' }}>₹{fmt(trade.price, 2)}</div>
+                                                    {new Date(trade.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                                                <div style={{ textAlign: 'right', fontSize: 12, fontWeight: 600, color: '#e8eaed' }}>₹{fmt(trade.price * trade.quantity, 2)}</div>
+                                                <div style={{ textAlign: 'right', fontSize: 11, color: '#5a5f6e' }}>
+                                                </div>
+                                                <div />
+                                            </div>
+                                        ))
+                                    )}
+                                </>
                             ) : filtered.length === 0 ? (
                                 <div style={{ padding: '40px 0', textAlign: 'center', fontSize: 12, color: '#5a5f6e' }}>
                                     {search ? 'No matching holdings' : 'No holdings yet'}
                                 </div>
                             ) : (
                                 <>
-                                    {filtered.map((inv, idx) => {
+                                    {filtered.map((inv: any, idx: number) => {
                                         const profit = inv.profit ?? 0;
                                         const holdingValue = (inv.amount ?? 0) + profit;
                                         const isExpanded = expandedId === (inv.id || inv.schemeCode);
@@ -473,9 +543,7 @@ const PortfolioDashboard = () => {
                                                         !isExpanded && ((e.currentTarget as HTMLDivElement).style.background = 'transparent')
                                                     }
                                                 >
-                                                    {/* Instrument */}
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
-                                                        {/* Avatar */}
                                                         <div style={{
                                                             width: 32,
                                                             height: 32,
@@ -706,17 +774,17 @@ const PortfolioDashboard = () => {
                                                 {filtered.length} holding{filtered.length !== 1 ? 's' : ''}
                                             </p>
                                             <p style={{ textAlign: 'right', fontSize: 11, fontWeight: 600, color: '#9ca3af', margin: 0 }}>
-                                                ₹{fmt(filtered.reduce((s, i) => s + (i.amount ?? 0), 0), 0)}
+                                                ₹{fmt(filtered.reduce((s: number, i: any) => s + (i.amount ?? 0), 0), 0)}
                                             </p>
                                             <p style={{ textAlign: 'right', fontSize: 11, fontWeight: 600, color: '#e8eaed', margin: 0 }}>
-                                                ₹{fmt(filtered.reduce((s, i) => s + (i.amount ?? 0) + (i.profit ?? 0), 0), 0)}
+                                                ₹{fmt(filtered.reduce((s: number, i: any) => s + (i.amount ?? 0) + (i.profit ?? 0), 0), 0)}
                                             </p>
                                             <p style={{
                                                 textAlign: 'right', fontSize: 11, fontWeight: 700, margin: 0,
-                                                color: pnlColor(filtered.reduce((s, i) => s + (i.profit ?? 0), 0)),
+                                                color: pnlColor(filtered.reduce((s: number, i: any) => s + (i.profit ?? 0), 0)),
                                             }}>
                                                 {(() => {
-                                                    const tot = filtered.reduce((s, i) => s + (i.profit ?? 0), 0);
+                                                    const tot = filtered.reduce((s: number, i: any) => s + (i.profit ?? 0), 0);
                                                     return `${tot >= 0 ? '+' : ''}₹${fmt(Math.abs(tot), 1)}`;
                                                 })()}
                                             </p>

@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import type { NextFunction, Request, Response } from "express";
 import { HttpStatus } from "@domain/enum/express/status-code";
-import { BuyOrderDTO } from "@application/dto/stocks/BuyOrderDTO";
-import { SellOrderDTO } from "@application/dto/stocks/SellOrderDTO";
+import { BuyOrderDTO } from "@application/dto/stocks/buy-order.dto";
+import { SellOrderDTO } from "@application/dto/stocks/sell-order.dto";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";

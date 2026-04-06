@@ -81,6 +81,8 @@ const StockDetailPage = () => {
           quantity: tradeData.quantity,
           orderType: tradeData.orderType as any,
           price: tradeData.price,
+          stopLoss: tradeData.stopLoss,
+          takeProfit: tradeData.takeProfit,
         });
       }
       setIsTradeModalOpen(false);

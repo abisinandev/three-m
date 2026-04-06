@@ -33,6 +33,8 @@ export interface IPortfolioDatasResponse {
     totalCount: number;
     totalInvestment: number;
     totalProfit: number;
+    realizedProfit: number;
+    totalReturns: number;
     currentValue: number;
     profitPercentage: number;
 }

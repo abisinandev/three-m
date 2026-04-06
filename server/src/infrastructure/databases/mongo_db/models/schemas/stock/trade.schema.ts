@@ -38,6 +38,10 @@ export const TradeSchema = new Schema<TradeDocument>(
         price: {
             type: Number,
             required: true,
+        },
+        profit: {
+            type: Number,
+            required: false,
         }
     },
     {

@@ -36,6 +36,14 @@ export const PortfolioSchema = new Schema<PortfolioDocument>(
             type: Number,
             required: true,
             default: 0
+        },
+        stopLoss: {
+            type: Number,
+            default: null
+        },
+        takeProfit: {
+            type: Number,
+            default: null
         }
     },
     {

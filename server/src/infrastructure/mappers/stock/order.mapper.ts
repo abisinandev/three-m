@@ -14,6 +14,8 @@ const toDomain = (doc: OrderDocument): OrderEntity => {
         status: doc.status as OrderStatus,
         filledQty: doc.filledQty,
         executedPrice: doc.executedPrice ?? null,
+        stopLoss: doc.stopLoss ?? null,
+        takeProfit: doc.takeProfit ?? null,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
         executedAt: doc.executedAt ?? null,
@@ -32,11 +34,13 @@ const toPersistance = (entity: OrderEntity): Partial<OrderDocument> => {
         filledQty: entity.filledQty,
         executedPrice: entity.executedPrice ?? undefined,
         executedAt: entity.executedAt ?? undefined,
+        stopLoss: entity.stopLoss,
+        takeProfit: entity.takeProfit,
         createdAt: entity.createdAt,
         updatedAt: new Date(),
     };
 };
- 
+
 export const OrderMapper = {
     toDomain,
     toPersistance,

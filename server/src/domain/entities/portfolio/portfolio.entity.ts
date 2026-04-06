@@ -6,6 +6,8 @@ export class PortfolioEntity {
     private _avgPrice: number;
     private _investedAmount: number;
     private _lockQty: number;
+    private _stopLoss?: number | null;
+    private _takeProfit?: number | null;
     private readonly _createdAt: Date;
     private _updatedAt?: Date;
 
@@ -17,6 +19,8 @@ export class PortfolioEntity {
         avgPrice: number;
         investedAmount: number;
         lockQty?: number;
+        stopLoss?: number | null;
+        takeProfit?: number | null;
         createdAt?: Date;
         updatedAt?: Date;
     }) {
@@ -27,6 +31,8 @@ export class PortfolioEntity {
         this._avgPrice = props.avgPrice;
         this._investedAmount = props.investedAmount;
         this._lockQty = props.lockQty ?? 0;
+        this._stopLoss = props.stopLoss ?? null;
+        this._takeProfit = props.takeProfit ?? null;
         this._createdAt = props.createdAt ?? new Date();
         this._updatedAt = props.updatedAt;
     }
@@ -45,6 +51,8 @@ export class PortfolioEntity {
             avgPrice: data.avgPrice,
             investedAmount: data.investedAmount,
             lockQty: 0,
+            stopLoss: null,
+            takeProfit: null,
         });
     }
 
@@ -56,6 +64,8 @@ export class PortfolioEntity {
         avgPrice: number;
         investedAmount: number;
         lockQty: number;
+        stopLoss?: number | null;
+        takeProfit?: number | null;
         createdAt: Date;
         updatedAt?: Date;
     }): PortfolioEntity {
@@ -67,6 +77,8 @@ export class PortfolioEntity {
             avgPrice: data.avgPrice,
             investedAmount: data.investedAmount,
             lockQty: data.lockQty,
+            stopLoss: data.stopLoss ?? null,
+            takeProfit: data.takeProfit ?? null,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
         });
@@ -100,6 +112,14 @@ export class PortfolioEntity {
         return this._lockQty;
     }
 
+    get stopLoss(): number | null | undefined {
+        return this._stopLoss;
+    }
+
+    get takeProfit(): number | null | undefined {
+        return this._takeProfit;
+    }
+
     get createdAt(): Date {
         return this._createdAt;
     }
@@ -131,6 +151,12 @@ export class PortfolioEntity {
         this._updatedAt = new Date();
     }
 
+    updateRiskLevels(sl?: number | null, tp?: number | null) {
+        if (sl !== undefined) this._stopLoss = sl;
+        if (tp !== undefined) this._takeProfit = tp;
+        this._updatedAt = new Date();
+    }
+
     toPersistence() {
         return {
             id: this._id,
@@ -140,8 +166,14 @@ export class PortfolioEntity {
             avgPrice: this._avgPrice,
             investedAmount: this._investedAmount,
             lockQty: this._lockQty,
+            stopLoss: this._stopLoss,
+            takeProfit: this._takeProfit,
             createdAt: this._createdAt,
             updatedAt: this._updatedAt,
         };
+    }
+
+    toJSON() {
+        return this.toPersistence();
     }
 }

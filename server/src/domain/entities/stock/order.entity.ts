@@ -10,6 +10,8 @@ export class OrderEntity {
     private readonly _orderType: OrderType;
     private readonly _quantity: number;
     private readonly _price?: number | null;
+    private readonly _stopLoss?: number | null;
+    private readonly _takeProfit?: number | null;
 
     private _status: OrderStatus;
     private _filledQty: number;
@@ -30,6 +32,8 @@ export class OrderEntity {
         status: OrderStatus;
         filledQty?: number;
         executedPrice?: number | null;
+        stopLoss?: number | null;
+        takeProfit?: number | null;
         createdAt?: Date;
         updatedAt?: Date;
         executedAt?: Date | null;
@@ -41,6 +45,8 @@ export class OrderEntity {
         this._orderType = props.orderType;
         this._quantity = props.quantity;
         this._price = props.price ?? null;
+        this._stopLoss = props.stopLoss ?? null;
+        this._takeProfit = props.takeProfit ?? null;
 
         this._status = props.status;
         this._filledQty = props.filledQty ?? 0;
@@ -58,6 +64,8 @@ export class OrderEntity {
         orderType: OrderType;
         quantity: number;
         price?: number;
+        stopLoss?: number;
+        takeProfit?: number;
     }): OrderEntity {
         return new OrderEntity({
             userId: data.userId,
@@ -66,6 +74,8 @@ export class OrderEntity {
             orderType: data.orderType,
             quantity: data.quantity,
             price: data.price ?? null,
+            stopLoss: data.stopLoss ?? null,
+            takeProfit: data.takeProfit ?? null,
             status: OrderStatus.OPEN,
         });
     }
@@ -78,6 +88,8 @@ export class OrderEntity {
         orderType: OrderType;
         quantity: number;
         price: number | null;
+        stopLoss?: number | null;
+        takeProfit?: number | null;
         status: OrderStatus;
         filledQty: number;
         executedPrice: number | null;
@@ -93,6 +105,8 @@ export class OrderEntity {
             orderType: data.orderType,
             quantity: data.quantity,
             price: data.price,
+            stopLoss: data.stopLoss ?? null,
+            takeProfit: data.takeProfit ?? null,
             status: data.status,
             filledQty: data.filledQty,
             executedPrice: data.executedPrice,
@@ -110,6 +124,8 @@ export class OrderEntity {
     get orderType() { return this._orderType; }
     get quantity() { return this._quantity; }
     get price() { return this._price; }
+    get stopLoss() { return this._stopLoss; }
+    get takeProfit() { return this._takeProfit; }
     get status() { return this._status; }
     get filledQty() { return this._filledQty; }
     get executedPrice() { return this._executedPrice; }
@@ -117,10 +133,10 @@ export class OrderEntity {
     get updatedAt() { return this._updatedAt; }
     get executedAt() { return this._executedAt; }
 
-    markFilled(executedPrice: number) {
+    markFilled() {
         this._status = OrderStatus.FILLED;
         this._filledQty = this._quantity;
-        this._executedPrice = executedPrice;
+        // this._executedPrice = executedPrice;
         this._executedAt = new Date();
         this._updatedAt = new Date();
     }
@@ -152,6 +168,8 @@ export class OrderEntity {
             orderType: this._orderType,
             quantity: this._quantity,
             price: this._price,
+            stopLoss: this._stopLoss,
+            takeProfit: this._takeProfit,
             status: this._status,
             filledQty: this._filledQty,
             executedPrice: this._executedPrice,

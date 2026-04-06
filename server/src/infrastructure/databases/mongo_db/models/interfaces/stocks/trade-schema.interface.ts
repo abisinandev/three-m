@@ -8,6 +8,7 @@ export interface ITrade {
     side: OrderSide;
     quantity: number;
     price: number;
+    profit?: number;
     createdAt: Date;
     updatedAt: Date;
 }
