@@ -10,5 +10,4 @@ export class AlgoStrategyRepository extends
     constructor() {
         super(AlgoStrategyModel, AlgoStrategyMapper)
     }
-
 }

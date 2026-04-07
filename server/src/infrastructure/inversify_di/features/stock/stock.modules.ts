@@ -29,6 +29,8 @@ import { IOrderRepository } from "@application/interfaces/repositories/stock/ord
 import { OrderRepository } from "@infrastructure/databases/repository/stock/order.repository";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
 import { TradeRepository } from "@infrastructure/databases/repository/stock/trade.repository";
+import { AlgoTradingController } from "@presentation/http/controllers/algo-trading/algo-trading.controller";
+import { GetStrategiesUseCase } from "@application/use_cases/algo-trading/get-strategies.usecase";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
@@ -53,4 +55,7 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IMarketSellOrderUseCase>(STOCK_TYPES.MarketSellOrderUseCase).to(MarketSellOrderUseCase);
     bind<IOrderRepository>(STOCK_TYPES.OrderRepository).to(OrderRepository);
     bind<ITradeRepository>(STOCK_TYPES.TradeRepository).to(TradeRepository);
+
+    bind<AlgoTradingController>(STOCK_TYPES.AlgoTradingController).to(AlgoTradingController);
+    bind<GetStrategiesUseCase>(STOCK_TYPES.GetStrategiesUseCase).to(GetStrategiesUseCase);
 });

@@ -29,4 +29,7 @@ export const STOCK_TYPES = {
     OrderRepository: Symbol.for("OrderRepository"),
     TradeRepository: Symbol.for("TradeRepository"),
 
+    AlgoTradingController: Symbol.for("AlgoTradingController"),
+    GetStrategiesUseCase: Symbol.for("GetStrategiesUseCase"),
+
 }
