@@ -27,16 +27,14 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
 
         let stockPortfolios = await this._portfolioRepository.findByUserId(userId) ?? [];
 
-        // App-level filtering for search
         if (search) {
-            stockPortfolios = stockPortfolios.filter(sp => 
+            stockPortfolios = stockPortfolios.filter(sp =>
                 sp.symbol.toLowerCase().includes(search.toLowerCase())
             );
         }
 
         const totalCount = stockPortfolios.length;
-        
-        // App-level pagination
+
         const startIndex = (Number(page) - 1) * Number(limit);
         const paginatedPortfolios = stockPortfolios.slice(startIndex, startIndex + Number(limit));
 
@@ -44,7 +42,7 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
 
         for (const stockPf of paginatedPortfolios) {
             const stockDetails = await this._stockRepository.findBySymbol(stockPf.symbol);
-            
+
             let currentPrice = stockPf.avgPrice;
             try {
                 const quote = await this._yahooProvider.getLatestQuote(stockPf.symbol);
@@ -72,7 +70,7 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
                 paymentMethod: PaymentMethod.WALLET,
                 investmentType: InvestmentType.STOCK,
                 logo: stockDetails?.logo || "",
-                profit: profit, 
+                profit: profit,
                 createdAt: stockPf.createdAt,
                 updatedAt: stockPf.updatedAt,
             });

@@ -42,6 +42,8 @@ export class UserEntity {
   private _twoFactorSecret: string | null;
   private _qrCodeUrl: string | null;
 
+  private _isAlgoEnabled: boolean;
+
   private readonly _createdAt: Date;
   private _updatedAt: Date;
 
@@ -71,6 +73,7 @@ export class UserEntity {
     isTwoFactorEnabled: boolean;
     twoFactorSecret?: string | null;
     qrCodeUrl?: string | null;
+    isAlgoEnabled: boolean;
     createdAt?: Date;
     updatedAt?: Date;
     authProvider: AuthProvider;
@@ -107,6 +110,7 @@ export class UserEntity {
     this._isTwoFactorEnabled = props.isTwoFactorEnabled;
     this._twoFactorSecret = props.twoFactorSecret ?? null;
     this._qrCodeUrl = props.qrCodeUrl ?? null;
+    this._isAlgoEnabled = props.isAlgoEnabled;
 
     this._createdAt = props.createdAt ?? new Date();
     this._updatedAt = props.updatedAt ?? new Date();
@@ -140,6 +144,7 @@ export class UserEntity {
       kycStatus: KycStatusType.NULL,
       isTwoFactorEnabled: false,
       authProvider: AuthProvider.MANUAL,
+      isAlgoEnabled: false,
     });
   }
 
@@ -168,6 +173,7 @@ export class UserEntity {
       authProvider: data.provider,
       avatar: data.avatar ?? null,
       googleId: data.googleId ?? null,
+      isAlgoEnabled: false,
     });
   }
 
@@ -195,6 +201,7 @@ export class UserEntity {
     isTwoFactorEnabled: boolean;
     twoFactorSecret?: string | null;
     qrCodeUrl?: string | null;
+    isAlgoEnabled: boolean;
     createdAt: Date;
     updatedAt: Date;
     authProvider: AuthProvider;
@@ -210,8 +217,6 @@ export class UserEntity {
       password: props.password ? Password.rebuild(props.password) : null,
     });
   }
-
-
 
   get id() {
     return this._id;
@@ -279,6 +284,11 @@ export class UserEntity {
   get qrCodeUrl() {
     return this._qrCodeUrl ?? null;
   }
+
+  get isAlgoEnabled() {
+    return this._isAlgoEnabled;
+  }
+
   get createdAt() {
     return this._createdAt ?? null;
   }
@@ -328,5 +338,10 @@ export class UserEntity {
     this._kycStatus = status;
   }
 
+  updateAlgoStatus(enabled: boolean): void {
+    this._isAlgoEnabled = enabled;
+  }
+
 
 }
+
