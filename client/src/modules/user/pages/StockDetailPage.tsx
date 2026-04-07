@@ -10,13 +10,7 @@ import TradeModal from '@shared/components/modals/TradeModal'
 import type { TradeData } from '@shared/components/modals/TradeModal'
 import { useTradeMutation } from '@shared/hooks/useTradeMutation'
 import { getPortfolioInvestments } from '@shared/services/feature/portfolio/PortfolioApi';
-
-const ALGO_STRATEGIES = [
-  { id: 'momentum', name: 'Momentum Scalper', desc: 'Captures fast trend movements' },
-  { id: 'mean_reversion', name: 'Mean Reversion', desc: 'Trades on price-average deviations' },
-  { id: 'macd_cross', name: 'MACD Crossover', desc: 'Signal based on trend momentum' },
-  { id: 'bollinger', name: 'Bollinger Band Breakout', desc: 'Volatility based entry/exit' },
-];
+import { getAlgoStrategies } from '@shared/services/feature/algo-trading/AlgoTradingApi';
 
 const StockDetailPage = () => {
   const { symbol } = useParams({ strict: false }) as { symbol: string }
@@ -27,7 +21,19 @@ const StockDetailPage = () => {
 
   // Algo Trading State
   const [algoStep, setAlgoStep] = useState<'idle' | 'selecting' | 'active'>('idle');
-  const [selectedStrategy, setSelectedStrategy] = useState(ALGO_STRATEGIES[0].id);
+  const [selectedStrategy, setSelectedStrategy] = useState('');
+
+  // Fetch Algo Strategies
+  const { data: strategies = [], isLoading: isLoadingStrategies } = useQuery({
+    queryKey: ['algoStrategies'],
+    queryFn: getAlgoStrategies,
+  });
+
+  useEffect(() => {
+    if (strategies.length > 0 && !selectedStrategy) {
+      setSelectedStrategy(strategies[0].name);
+    }
+  }, [strategies, selectedStrategy]);
 
   const { data: queryData, isLoading, isError } = useQuery({
     queryKey: ['stockDetails', symbol],
@@ -148,7 +154,7 @@ const StockDetailPage = () => {
         {algoStep === 'active' && (
           <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-[#22C55E]/10 border border-[#22C55E]/30 animate-pulse">
             <div className="w-2 h-2 rounded-full bg-[#22C55E]"></div>
-            <span className="text-[10px] font-bold text-[#22C55E] tracking-widest uppercase">Algo Active: {ALGO_STRATEGIES.find(s => s.id === selectedStrategy)?.name}</span>
+            <span className="text-[10px] font-bold text-[#22C55E] tracking-widest uppercase">Algo Active: {strategies.find(s => s.name === selectedStrategy)?.displayName}</span>
           </div>
         )}
       </div>
@@ -227,12 +233,19 @@ const StockDetailPage = () => {
                         value={selectedStrategy}
                         onChange={(e) => setSelectedStrategy(e.target.value)}
                         className="w-full bg-[#151515] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#22C55E]/50 focus:ring-1 focus:ring-[#22C55E]/20 transition-all appearance-none cursor-pointer"
+                        disabled={isLoadingStrategies}
                       >
-                        {ALGO_STRATEGIES.map(strategy => (
-                          <option key={strategy.id} value={strategy.id} className="bg-[#0f0f0f]">
-                            {strategy.name}
-                          </option>
-                        ))}
+                        {isLoadingStrategies ? (
+                           <option value="" disabled>Loading strategies...</option>
+                        ) : strategies.length > 0 ? (
+                           strategies.map(strategy => (
+                             <option key={strategy.name} value={strategy.name} className="bg-[#0f0f0f]">
+                               {strategy.displayName}
+                             </option>
+                           ))
+                        ) : (
+                           <option value="" disabled>No strategies available</option>
+                        )}
                       </select>
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                         <ChevronRight className="w-3.5 h-3.5 text-gray-500 rotate-90" />
@@ -241,7 +254,7 @@ const StockDetailPage = () => {
                     
                     <div className="p-3 rounded-lg bg-blue-500/5 border border-blue-500/10 backdrop-blur-sm">
                       <p className="text-[10px] text-gray-300 leading-relaxed italic">
-                        "{ALGO_STRATEGIES.find(s => s.id === selectedStrategy)?.desc}"
+                        "{strategies.find(s => s.name === selectedStrategy)?.displayName || 'Select a strategy...'} - Configure algorithmic parameters upon execution."
                       </p>
                     </div>
                   </div>
@@ -260,7 +273,7 @@ const StockDetailPage = () => {
                   <div className="p-4 rounded-xl bg-[#22C55E]/5 border border-[#22C55E]/20">
                     <div className="flex items-center gap-3 mb-3">
                        <Zap className="w-4 h-4 text-[#22C55E] fill-[#22C55E]/20" />
-                       <p className="text-xs font-bold text-white uppercase tracking-tight">Strategy: {ALGO_STRATEGIES.find(s => s.id === selectedStrategy)?.name}</p>
+                       <p className="text-xs font-bold text-white uppercase tracking-tight">Strategy: {strategies.find(s => s.name === selectedStrategy)?.displayName}</p>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4">
