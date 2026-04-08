@@ -5,3 +5,4 @@ export * from './expense.routes';
 export * from './portfolio.routes';
 export * from './user.routes';
 export * from './notification.routes';
+export * from './algo-trading.routes';
