@@ -1,6 +1,7 @@
 export class AlgoStrategyEntity {
   private readonly _id?: string | null;
   private readonly _userId: string;
+  private readonly _symbol: string;
   private readonly _strategyName: string;
   private readonly _config: any;
   private _isActive: boolean;
@@ -10,6 +11,7 @@ export class AlgoStrategyEntity {
   private constructor(props: {
     id?: string | null;
     userId: string;
+    symbol: string;
     strategyName: string;
     config: any;
     isActive: boolean;
@@ -18,6 +20,7 @@ export class AlgoStrategyEntity {
   }) {
     this._id = props.id ?? null;
     this._userId = props.userId;
+    this._symbol = props.symbol;
     this._strategyName = props.strategyName;
     this._config = props.config;
     this._isActive = props.isActive;
@@ -27,12 +30,14 @@ export class AlgoStrategyEntity {
 
   static create(data: {
     userId: string;
+    symbol: string;
     strategyName: string;
     config: any;
     isActive?: boolean;
   }): AlgoStrategyEntity {
     return new AlgoStrategyEntity({
       userId: data.userId,
+      symbol: data.symbol,
       strategyName: data.strategyName,
       config: data.config,
       isActive: data.isActive ?? true,
@@ -42,6 +47,7 @@ export class AlgoStrategyEntity {
   static fromPersistence(data: {
     id: string;
     userId: string;
+    symbol: string;
     strategyName: string;
     config: any;
     isActive: boolean;
@@ -51,6 +57,7 @@ export class AlgoStrategyEntity {
     return new AlgoStrategyEntity({
       id: data.id,
       userId: data.userId,
+      symbol: data.symbol,
       strategyName: data.strategyName,
       config: data.config,
       isActive: data.isActive,
@@ -61,6 +68,7 @@ export class AlgoStrategyEntity {
 
   get id() { return this._id; }
   get userId() { return this._userId; }
+  get symbol() { return this._symbol; }
   get strategyName() { return this._strategyName; }
   get config() { return this._config; }
   get isActive() { return this._isActive; }
@@ -75,6 +83,7 @@ export class AlgoStrategyEntity {
     return {
       id: this._id,
       userId: this._userId,
+      symbol: this._symbol,
       strategyName: this._strategyName,
       config: this._config,
       isActive: this._isActive,

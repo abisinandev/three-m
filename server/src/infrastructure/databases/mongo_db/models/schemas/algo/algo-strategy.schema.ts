@@ -6,6 +6,7 @@ export type AlgoStrategyDocument = Document & IAlgoStrategySchema;
 const AlgoStrategySchema = new Schema<AlgoStrategyDocument>(
   {
     userId: { type: String, required: true, index: true },
+    symbol: { type: String, required: true, index: true },
     strategyName: { type: String, required: true },
     config: { type: Schema.Types.Mixed, required: true },
     isActive: { type: Boolean, default: true },
