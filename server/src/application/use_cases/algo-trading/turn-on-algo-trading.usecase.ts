@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
-import { IToggleAlgoStrategyUseCase } from "./interfaces/toggle-algo-strategy.interface";
+import { ITurnOnAlgoTradingUseCase } from "./interfaces/turn-on-algo-trading.interface";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { IAlgoStrategyRepository } from "@application/interfaces/repositories/algo/algo-strategy-repository.interface";
 
 @injectable()
-export class ToggleAlgoStrategyUseCase implements IToggleAlgoStrategyUseCase {
+export class TurnOnAlgoTradingUseCase implements ITurnOnAlgoTradingUseCase {
     constructor(
         @inject(STOCK_TYPES.AlgoStrategyRepository) private readonly algoStrategyRepository: IAlgoStrategyRepository
     ) { }

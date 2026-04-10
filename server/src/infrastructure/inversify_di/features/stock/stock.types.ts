@@ -32,10 +32,11 @@ export const STOCK_TYPES = {
     GetStrategiesUseCase: Symbol.for("GetStrategiesUseCase"),
     SaveAlgoStrategyUseCase: Symbol.for("SaveAlgoStrategyUseCase"),
     GetActiveStrategyUseCase: Symbol.for("GetActiveStrategyUseCase"),
-    ToggleAlgoStrategyUseCase: Symbol.for("ToggleAlgoStrategyUseCase"),
+    TurnOnAlgoTradingUseCase: Symbol.for("TurnOnAlgoTradingUseCase"),
     AlgoStrategyRepository: Symbol.for("AlgoStrategyRepository"),
     AlgoSignalRepository: Symbol.for("AlgoSignalRepository"),
     SignalService: Symbol.for("SignalService"),
+    ConfirmSignalUseCase: Symbol.for("ConfirmSignalUseCase"),
     StrategyService: Symbol.for("StrategyService"),
     SignalManager: Symbol.for("SignalManager"),
 

@@ -41,11 +41,10 @@ export class SignalService implements ISignalService {
             return;
         }
 
-        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        const expiresAt = new Date(Date.now() + 5 * 60 * 60 * 1000);
 
         const signal = AlgoSignalEntity.create({
             userId: input.userId,
-            algoId: input.algoId,
             symbol: input.symbol,
             strategyName: input.strategyName,
             price: input.price,
@@ -54,7 +53,7 @@ export class SignalService implements ISignalService {
             expiresAt,
 
         })
-        await this._signalRepository.create(signal);
+        const savedSignal = await this._signalRepository.create(signal);
 
         const message = `${input.action} signal for ${input.symbol}: ${input.reason}`;
 
@@ -74,7 +73,8 @@ export class SignalService implements ISignalService {
                 type: NotificationType.ALGO_SIGNAL,
                 title: 'Algo signal',
                 message: message,
-                createdAt: new Date(notification.createdAt)
+                createdAt: new Date(notification.createdAt),
+                signalId: savedSignal.id as string,
             }
         )
     }

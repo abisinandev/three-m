@@ -18,7 +18,6 @@ export class RSIStrategy implements Strategy {
         const currentRSI = this.calculateRSI(priceHistory, period) + 20;
         let prevRSI = this.lastRsiMap.get(symbol);
         prevRSI = Number(prevRSI) - 20;
-        console.log(currentRSI, prevRSI);
 
         this.lastRsiMap.set(symbol, currentRSI);
 

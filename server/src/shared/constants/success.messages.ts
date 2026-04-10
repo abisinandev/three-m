@@ -66,5 +66,6 @@ export const SuccessMessages = {
         STRATEGY_DEACTIVATED: "Strategy deactivated successfully",
         STRATEGY_FETCHED: "Strategies fetched successfully",
         ACTIVE_STRATEGY_FETCHED: "Active strategy fetched successfully",
+        SIGNAL_CONFIRMED: "Signal confirmed and order placed successfully",
     }
 } as const;

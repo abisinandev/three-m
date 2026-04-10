@@ -33,17 +33,20 @@ import { ISaveAlgoStrategyUseCase } from "@application/use_cases/algo-trading/in
 import { SaveAlgoStrategyUseCase } from "@application/use_cases/algo-trading/save-algo-strategy.usecase";
 import { IGetActiveStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/get-active-strategy.interface";
 import { GetActiveStrategyUseCase } from "@application/use_cases/algo-trading/get-active-strategy.usecase";
-import { IToggleAlgoStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/toggle-algo-strategy.interface";
-import { ToggleAlgoStrategyUseCase } from "@application/use_cases/algo-trading/toggle-algo-strategy.usecase";
+import { TurnOnAlgoTradingUseCase } from "@application/use_cases/algo-trading/turn-on-algo-trading.usecase";
 import { IAlgoSignalRepository } from "@application/interfaces/repositories/algo/algo-signal-repository.interface";
 import { AlgoSignalRepository } from "@infrastructure/databases/repository/algo-trading/algo-signal.repository";
 import { SignalService } from "@infrastructure/providers/algos/signal.service";
 import { ISignalService } from "@application/interfaces/services/algo-trading/signal.service.interface";
 import { IStrategyService } from "@application/interfaces/services/algo-trading/strategy-service.interface";
 import { StrategyService } from "@infrastructure/providers/algos/strategy.service";
+import { IConfirmSignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-signal-usecase.interface";
+import { ConfirmSignalUseCase } from "@application/use_cases/algo-trading/confirm-signal.usecase";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { YahooProvider } from "@infrastructure/providers/stocks/market-data/providers/yahoo.provider";
-import { ISignalManager, SignalManager } from "@infrastructure/providers/algos/signal-manager";
+import { SignalManager } from "@infrastructure/providers/algos/signal-manager";
+import { ISignalManager } from "@application/interfaces/repositories/algo/signal-manager.interface";
+import { ITurnOnAlgoTradingUseCase } from "@application/use_cases/algo-trading/interfaces/turn-on-algo-trading.interface";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
@@ -73,10 +76,11 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<GetStrategiesUseCase>(STOCK_TYPES.GetStrategiesUseCase).to(GetStrategiesUseCase);
     bind<ISaveAlgoStrategyUseCase>(STOCK_TYPES.SaveAlgoStrategyUseCase).to(SaveAlgoStrategyUseCase);
     bind<IGetActiveStrategyUseCase>(STOCK_TYPES.GetActiveStrategyUseCase).to(GetActiveStrategyUseCase);
-    bind<IToggleAlgoStrategyUseCase>(STOCK_TYPES.ToggleAlgoStrategyUseCase).to(ToggleAlgoStrategyUseCase);
+    bind<ITurnOnAlgoTradingUseCase>(STOCK_TYPES.TurnOnAlgoTradingUseCase).to(TurnOnAlgoTradingUseCase);
     bind<IAlgoStrategyRepository>(STOCK_TYPES.AlgoStrategyRepository).to(AlgoStrategyRepository);
     bind<IAlgoSignalRepository>(STOCK_TYPES.AlgoSignalRepository).to(AlgoSignalRepository);
     bind<ISignalService>(STOCK_TYPES.SignalService).to(SignalService);
+    bind<IConfirmSignalUseCase>(STOCK_TYPES.ConfirmSignalUseCase).to(ConfirmSignalUseCase);
     bind<IStrategyService>(STOCK_TYPES.StrategyService).to(StrategyService);
     bind<ISignalManager>(STOCK_TYPES.SignalManager).to(SignalManager);
 

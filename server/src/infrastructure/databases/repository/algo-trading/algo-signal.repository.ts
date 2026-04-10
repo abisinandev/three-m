@@ -11,6 +11,12 @@ export class AlgoSignalRepository extends
         super(AlgoSignalModel, AlgoSignalMapper)
     }
 
+    async create(signal: AlgoSignalEntity): Promise<AlgoSignalEntity> {
+        const data = this.mapper.toPersistance(signal);
+        const doc = await this.model.create(data);
+        return this.mapper.toDomain(doc)
+    }
+
     async existsRecentSignal(userId: string, symbol: string, algoId: string, action: string, cooldownMinutes: number = 30): Promise<boolean> {
         const lookback = new Date(Date.now() - cooldownMinutes * 60 * 1000);
         const latestSignal = await AlgoSignalModel.findOne({
@@ -25,5 +31,5 @@ export class AlgoSignalRepository extends
         }
         return false;
     }
-    
+
 }

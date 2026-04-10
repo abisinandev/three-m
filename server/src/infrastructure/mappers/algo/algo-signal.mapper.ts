@@ -5,9 +5,8 @@ import { Types } from "mongoose";
 
 export const toDomain = (doc: AlgoSignalDocument): AlgoSignalEntity => {
     return AlgoSignalEntity.fromPersistence({
-        id: doc._id?.toString(),
+        id: doc._id.toString(),
         userId: doc.userId.toString(),
-        algoId: doc.algoId.toString(),
         symbol: doc.symbol,
         strategyName: doc.strategyName,
         action: doc.action as SignalAction,
@@ -22,7 +21,6 @@ export const toDomain = (doc: AlgoSignalDocument): AlgoSignalEntity => {
 export const toPersistance = (entity: AlgoSignalEntity): Partial<AlgoSignalDocument> => {
     return {
         userId: new Types.ObjectId(entity.userId),
-        algoId: new Types.ObjectId(entity.algoId),
         symbol: entity.symbol,
         strategyName: entity.strategyName,
         action: entity.action,

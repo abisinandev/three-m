@@ -10,6 +10,7 @@ const controller = container.get<AlgoTradingController>(STOCK_TYPES.AlgoTradingC
 router.get(AlgoTradingRoutes.GET_STRATEGIES, controller.getStrategies.bind(controller));
 router.get(AlgoTradingRoutes.GET_ACTIVE_STRATEGY, controller.getActiveStrategy.bind(controller));
 router.post(AlgoTradingRoutes.SAVE_STRATEGY, controller.saveStrategy.bind(controller));
-router.post(AlgoTradingRoutes.TOGGLE_STRATEGY_STATUS, controller.toggleStatus.bind(controller));
+router.post(AlgoTradingRoutes.TOGGLE_STRATEGY_STATUS, controller.TurnOnStrategy.bind(controller));
+router.post(AlgoTradingRoutes.CONFIRM_SIGNAL, controller.confirmSignal.bind(controller));
 
 export default router;

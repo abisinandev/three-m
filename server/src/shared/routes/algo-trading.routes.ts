@@ -3,5 +3,6 @@ export enum AlgoTradingRoutes {
     GET_STRATEGIES = '/strategies',
     SAVE_STRATEGY = '/strategy',
     TOGGLE_STRATEGY_STATUS = '/toggle-status/:strategyId',
-    GET_ACTIVE_STRATEGY = '/active/:symbol'
+    GET_ACTIVE_STRATEGY = '/active/:symbol',
+    CONFIRM_SIGNAL = '/confirm-signal'
 }

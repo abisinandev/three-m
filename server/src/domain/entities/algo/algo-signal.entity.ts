@@ -3,7 +3,6 @@ import { SignalAction, SignalStatus } from "./enum/signal-enums";
 export class AlgoSignalEntity {
     private readonly _id?: string | null;
     private readonly _userId: string;
-    private readonly _algoId: string;
     private readonly _symbol: string;
     private readonly _strategyName: string;
     private readonly _action: SignalAction;
@@ -13,10 +12,9 @@ export class AlgoSignalEntity {
     private readonly _createdAt: Date;
     private readonly _expiresAt: Date;
 
-    private constructor(props: {
+    private constructor(props: { 
         id?: string | null;
         userId: string;
-        algoId: string;
         symbol: string;
         strategyName: string;
         action: SignalAction;
@@ -28,7 +26,6 @@ export class AlgoSignalEntity {
     }) {
         this._id = props.id ?? null;
         this._userId = props.userId;
-        this._algoId = props.algoId;
         this._symbol = props.symbol;
         this._strategyName = props.strategyName;
         this._action = props.action;
@@ -41,7 +38,6 @@ export class AlgoSignalEntity {
 
     static create(data: {
         userId: string;
-        algoId: string;
         symbol: string;
         strategyName: string;
         action: SignalAction;
@@ -55,7 +51,6 @@ export class AlgoSignalEntity {
 
         return new AlgoSignalEntity({
             userId: data.userId,
-            algoId: data.algoId,
             symbol: data.symbol,
             strategyName: data.strategyName,
             action: data.action,
@@ -69,7 +64,6 @@ export class AlgoSignalEntity {
     static fromPersistence(data: {
         id: string;
         userId: string;
-        algoId: string;
         symbol: string;
         strategyName: string;
         action: SignalAction;
@@ -82,7 +76,6 @@ export class AlgoSignalEntity {
         return new AlgoSignalEntity({
             id: data.id,
             userId: data.userId,
-            algoId: data.algoId,
             symbol: data.symbol,
             strategyName: data.strategyName,
             action: data.action,
@@ -96,7 +89,6 @@ export class AlgoSignalEntity {
 
     get id() { return this._id; }
     get userId() { return this._userId; }
-    get algoId() { return this._algoId; }
     get symbol() { return this._symbol; }
     get strategyName() { return this._strategyName; }
     get action() { return this._action; }
@@ -138,7 +130,6 @@ export class AlgoSignalEntity {
         return {
             id: this._id,
             userId: this._userId,
-            algoId: this._algoId,
             symbol: this._symbol,
             action: this._action,
             price: this._price,
