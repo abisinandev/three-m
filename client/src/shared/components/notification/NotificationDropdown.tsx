@@ -1,4 +1,4 @@
-import { Bell, MoreHorizontal, Settings, Info, AlertTriangle, Zap, CheckCircle2 } from 'lucide-react';
+import { Bell, MoreHorizontal, Settings, Info, AlertTriangle, Zap, CheckCircle2, Activity } from 'lucide-react';
 import { useNotificationStore } from '@stores/notification/useNotificationStore';
 import { markNotificationRead, markAllNotificationsRead } from '@shared/services/notification/notification.service';
 import { useState, useRef, useEffect } from 'react';
@@ -57,6 +57,7 @@ export const NotificationDropdown = () => {
             case 'EXPENSE': return <AlertTriangle className="text-rose-500" size={16} />;
             case 'WALLET': return <Zap className="text-amber-500" size={16} />;
             case 'SIP': return <CheckCircle2 className="text-emerald-500" size={16} />;
+            case 'ALGO_SIGNAL': return <Activity className="text-purple-500" size={16} />;
             default: return <Info className="text-blue-500" size={16} />;
         }
     };
@@ -143,12 +144,23 @@ export const NotificationDropdown = () => {
                                             <p className={`text-[11px] leading-relaxed mb-2 ${notif.read ? 'text-neutral-500' : 'text-neutral-400'}`}>
                                                 {notif.message}
                                             </p>
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center justify-between gap-2">
                                                 <span className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest">
                                                     {notif.createdAt && !isNaN(new Date(notif.createdAt).getTime())
                                                         ? formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true })
                                                         : 'Just now'}
                                                 </span>
+                                                {notif.type === 'ALGO_SIGNAL' && !notif.read && (
+                                                    <button 
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleMarkAsRead(notif.id, e as any);
+                                                        }}
+                                                        className="text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 hover:text-purple-300 px-3 py-1 rounded-md transition-colors shadow-sm"
+                                                    >
+                                                        Confirm
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
