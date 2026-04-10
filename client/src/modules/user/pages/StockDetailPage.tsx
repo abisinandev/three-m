@@ -1,6 +1,6 @@
 import { useParams, Link } from '@tanstack/react-router'
 import { TrendingUp, TrendingDown, ArrowLeft, Bot, Cpu, ChevronRight, Zap } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
 import { finnhubService } from '@shared/services/finnhub.service'
 import stockCurrencyService from '@shared/services/stockCurrency.service'
@@ -10,7 +10,7 @@ import TradeModal from '@shared/components/modals/TradeModal'
 import type { TradeData } from '@shared/components/modals/TradeModal'
 import { useTradeMutation } from '@shared/hooks/useTradeMutation'
 import { getPortfolioInvestments } from '@shared/services/feature/portfolio/PortfolioApi';
-import { getAlgoStrategies } from '@shared/services/feature/algo-trading/AlgoTradingApi';
+import { getAlgoStrategies, saveAlgoStrategy, getActiveStrategyBySymbol, toggleAlgoStrategyStatus } from '@shared/services/feature/algo-trading/AlgoTradingApi';
 
 const StockDetailPage = () => {
   const { symbol } = useParams({ strict: false }) as { symbol: string }
@@ -19,15 +19,73 @@ const StockDetailPage = () => {
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
 
-  // Algo Trading State
   const [algoStep, setAlgoStep] = useState<'idle' | 'selecting' | 'active'>('idle');
   const [selectedStrategy, setSelectedStrategy] = useState('');
 
-  // Fetch Algo Strategies
   const { data: strategies = [], isLoading: isLoadingStrategies } = useQuery({
     queryKey: ['algoStrategies'],
     queryFn: getAlgoStrategies,
   });
+
+  const saveAlgoMutation = useMutation({
+    mutationFn: saveAlgoStrategy,
+    onSuccess: () => {
+      setAlgoStep('active');
+    },
+    onError: (error) => {
+      console.error("Failed to save algo strategy:", error);
+      alert("Failed to start algo trading. Please try again.");
+    }
+  });
+
+  const handleAlgoStart = async () => {
+    if (!selectedStrategy || !symbol) return;
+
+    const strategy = strategies.find(s => s.name === selectedStrategy);
+    const config: Record<string, any> = {};
+    strategy?.configSchema.forEach(field => {
+      config[field.key] = field.default;
+    });
+
+    saveAlgoMutation.mutate({
+      symbol,
+      strategyName: selectedStrategy,
+      config
+    });
+  };
+
+  const { data: activeStrategy, refetch: refetchActiveStrategy } = useQuery({
+    queryKey: ['activeAlgoStrategy', symbol],
+    queryFn: () => getActiveStrategyBySymbol(symbol),
+    enabled: !!symbol,
+  });
+
+  const toggleStatusMutation = useMutation({
+    mutationFn: ({ strategyId, isActive }: { strategyId: string, isActive: boolean }) =>
+      toggleAlgoStrategyStatus(strategyId, isActive),
+    onSuccess: () => {
+      refetchActiveStrategy();
+      setAlgoStep('idle');
+    },
+    onError: (error) => {
+      console.error("Failed to toggle strategy status:", error);
+    }
+  });
+
+  const handleAlgoStop = () => {
+    if (activeStrategy?._id) {
+      toggleStatusMutation.mutate({ strategyId: activeStrategy._id, isActive: false });
+    } else {
+      setAlgoStep('idle');
+    }
+  };
+
+  useEffect(() => {
+    if (activeStrategy) {
+      setAlgoStep('active');
+      setSelectedStrategy(activeStrategy.strategyName);
+    }
+  }, [activeStrategy]);
 
   useEffect(() => {
     if (strategies.length > 0 && !selectedStrategy) {
@@ -48,8 +106,8 @@ const StockDetailPage = () => {
     enabled: !!symbol,
   });
 
-  const position = holdingsData?.data?.find(inv => 
-    (inv.schemeCode === symbol || (inv as any).symbol === symbol) && 
+  const position = holdingsData?.data?.find(inv =>
+    (inv.schemeCode === symbol || (inv as any).symbol === symbol) &&
     (inv.investmentType?.toLowerCase() === 'stock' || inv.category?.toLowerCase() === 'stock' || !inv.investmentType)
   );
 
@@ -186,7 +244,7 @@ const StockDetailPage = () => {
           <div className="bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-6 relative overflow-hidden group">
             {/* Background Glow Effect */}
             <div className={`absolute -top-10 -right-10 w-32 h-32 blur-[60px] rounded-full transition-all duration-700 ${algoStep === 'active' ? 'bg-[#22C55E]/20' : algoStep === 'selecting' ? 'bg-blue-500/10' : 'bg-gray-800/10'}`}></div>
-            
+
             <div className="flex items-center justify-between gap-2 mb-6 relative z-10">
               <div className="flex items-center gap-2">
                 <div className={`p-2 rounded-lg ${algoStep === 'active' ? 'bg-[#22C55E]/10 text-[#22C55E]' : 'bg-white/5 text-gray-400'}`}>
@@ -210,7 +268,7 @@ const StockDetailPage = () => {
                     <p className="text-xs font-semibold text-gray-100">AI-Powered Trading</p>
                     <p className="text-[10px] text-gray-500 mt-1 leading-relaxed">Automate your execution strategy for {symbol} using advanced algorithms.</p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setAlgoStep('selecting')}
                     className="w-full py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs font-bold hover:bg-white/10 transition-all flex items-center justify-center gap-2 group/btn"
                   >
@@ -227,31 +285,31 @@ const StockDetailPage = () => {
                       <p className="text-[10px] font-bold text-[#22C55E] uppercase tracking-widest">Choose Strategy</p>
                       <button onClick={() => setAlgoStep('idle')} className="text-[10px] text-gray-500 hover:text-white transition-colors">Cancel</button>
                     </div>
-                    
+
                     <div className="relative">
-                      <select 
+                      <select
                         value={selectedStrategy}
                         onChange={(e) => setSelectedStrategy(e.target.value)}
                         className="w-full bg-[#151515] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#22C55E]/50 focus:ring-1 focus:ring-[#22C55E]/20 transition-all appearance-none cursor-pointer"
                         disabled={isLoadingStrategies}
                       >
                         {isLoadingStrategies ? (
-                           <option value="" disabled>Loading strategies...</option>
+                          <option value="" disabled>Loading strategies...</option>
                         ) : strategies.length > 0 ? (
-                           strategies.map(strategy => (
-                             <option key={strategy.name} value={strategy.name} className="bg-[#0f0f0f]">
-                               {strategy.displayName}
-                             </option>
-                           ))
+                          strategies.map(strategy => (
+                            <option key={strategy.name} value={strategy.name} className="bg-[#0f0f0f]">
+                              {strategy.displayName}
+                            </option>
+                          ))
                         ) : (
-                           <option value="" disabled>No strategies available</option>
+                          <option value="" disabled>No strategies available</option>
                         )}
                       </select>
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                         <ChevronRight className="w-3.5 h-3.5 text-gray-500 rotate-90" />
                       </div>
                     </div>
-                    
+
                     <div className="p-3 rounded-lg bg-blue-500/5 border border-blue-500/10 backdrop-blur-sm">
                       <p className="text-[10px] text-gray-300 leading-relaxed italic">
                         "{strategies.find(s => s.name === selectedStrategy)?.displayName || 'Select a strategy...'} - Configure algorithmic parameters upon execution."
@@ -259,11 +317,12 @@ const StockDetailPage = () => {
                     </div>
                   </div>
 
-                  <button 
-                    onClick={() => setAlgoStep('active')}
-                    className="w-full py-3 rounded-lg bg-[#22C55E] text-black text-xs font-bold hover:bg-[#16a34a] transition-all shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:scale-[1.02] active:scale-[0.98]"
+                  <button
+                    onClick={handleAlgoStart}
+                    disabled={saveAlgoMutation.isPending}
+                    className="w-full py-3 rounded-lg bg-[#22C55E] text-black text-xs font-bold hover:bg-[#16a34a] transition-all shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Confirm & Start Trading
+                    {saveAlgoMutation.isPending ? 'Starting Engine...' : 'Confirm & Start Trading'}
                   </button>
                 </div>
               )}
@@ -272,10 +331,10 @@ const StockDetailPage = () => {
                 <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
                   <div className="p-4 rounded-xl bg-[#22C55E]/5 border border-[#22C55E]/20">
                     <div className="flex items-center gap-3 mb-3">
-                       <Zap className="w-4 h-4 text-[#22C55E] fill-[#22C55E]/20" />
-                       <p className="text-xs font-bold text-white uppercase tracking-tight">Strategy: {strategies.find(s => s.name === selectedStrategy)?.displayName}</p>
+                      <Zap className="w-4 h-4 text-[#22C55E] fill-[#22C55E]/20" />
+                      <p className="text-xs font-bold text-white uppercase tracking-tight">Strategy: {strategies.find(s => s.name === selectedStrategy)?.displayName}</p>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-black/40 rounded p-2 border border-white/5">
                         <p className="text-[8px] text-gray-500 uppercase font-bold tracking-widest mb-1">Status</p>
@@ -288,22 +347,23 @@ const StockDetailPage = () => {
                     </div>
                   </div>
 
-                  <button 
-                    onClick={() => setAlgoStep('idle')}
-                    className="w-full py-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-500 text-xs font-bold hover:bg-red-500/20 transition-all flex items-center justify-center gap-2"
+                  <button
+                    onClick={handleAlgoStop}
+                    disabled={toggleStatusMutation.isPending}
+                    className="w-full py-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-500 text-xs font-bold hover:bg-red-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                   >
-                    <Zap className="w-3.5 h-3.5 rotate-180" />
-                    Stop Algo Trading
+                    <Zap className={`w-3.5 h-3.5 rotate-180 ${toggleStatusMutation.isPending ? 'animate-pulse' : ''}`} />
+                    {toggleStatusMutation.isPending ? 'Stopping...' : 'Stop Algo Trading'}
                   </button>
                 </div>
               )}
 
               {/* Engine Bar */}
               <div className="pt-2">
-                 <div className="flex items-center gap-2 px-3 py-2 rounded bg-black/40 border border-[#1f1f1f]">
-                   <Cpu className={`w-3 h-3 ${algoStep === 'active' ? 'text-[#22C55E]' : 'text-gray-600'}`} />
-                   <span className="text-[10px] text-gray-400 font-medium tracking-tight">Execution Engine: <span className={algoStep === 'active' ? 'text-white' : 'text-gray-600'}>v1.0.4 r2</span></span>
-                 </div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded bg-black/40 border border-[#1f1f1f]">
+                  <Cpu className={`w-3 h-3 ${algoStep === 'active' ? 'text-[#22C55E]' : 'text-gray-600'}`} />
+                  <span className="text-[10px] text-gray-400 font-medium tracking-tight">Execution Engine: <span className={algoStep === 'active' ? 'text-white' : 'text-gray-600'}>v1.0.4 r2</span></span>
+                </div>
               </div>
             </div>
           </div>
