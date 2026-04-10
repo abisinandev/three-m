@@ -1,12 +1,12 @@
-import { Strategy, StrategyResult } from "@application/interfaces/services/algos/strategy-interfaces";
+import { Strategy, StrategyResult } from "@application/interfaces/services/algo-trading/strategy-interfaces";
 
 export class MovingAverageStrategy implements Strategy {
     name = "MA";
 
-    evaluate({ priceHistory, config }: {
+    evaluate({ symbol, priceHistory, config }: {
         symbol: string;
         priceHistory: number[];
-        config: { shortPeriod: number; longPeriod: number };
+        config: any;
     }): StrategyResult | null {
 
         const { shortPeriod, longPeriod } = config;

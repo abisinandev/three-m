@@ -4,17 +4,17 @@ import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
-import { IYahooProvider } from "@application/interfaces/services/stocks/yahoo-provider.interface";
 import { InvestmentResponseDTO } from "@application/dto/mutual-funds/investment-response.dto";
 import { QueryOptions } from "mongoose";
 import { InvestmentStatus, InvestmentType, PaymentMethod } from "@domain/enum/funds/investment.enums";
+import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 
 @injectable()
 export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
     constructor(
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
-        @inject(STOCK_TYPES.YahooProvider) private readonly _yahooProvider: IYahooProvider,
+        @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
     ) { }
 
     async execute(userId: string, options: QueryOptions = {}): Promise<{
@@ -45,7 +45,7 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
 
             let currentPrice = stockPf.avgPrice;
             try {
-                const quote = await this._yahooProvider.getLatestQuote(stockPf.symbol);
+                const quote = await this._marketDataProvider.getLatestQuote(stockPf.symbol);
                 if (quote) {
                     currentPrice = quote.price;
                 }

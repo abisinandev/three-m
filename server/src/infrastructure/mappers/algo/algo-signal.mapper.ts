@@ -1,6 +1,6 @@
 import { SignalAction, SignalStatus } from "@domain/entities/algo/enum/signal-enums";
 import { AlgoSignalEntity } from "@domain/entities/algo/algo-signal.entity";
-import { AlgoSignalDocument } from "@infrastructure/databases/mongo_db/models/schemas/algo/algo-schema";
+import { AlgoSignalDocument } from "@infrastructure/databases/mongo_db/models/schemas/algo-trading/algo-signal.schema";
 import { Types } from "mongoose";
 
 export const toDomain = (doc: AlgoSignalDocument): AlgoSignalEntity => {
@@ -9,6 +9,7 @@ export const toDomain = (doc: AlgoSignalDocument): AlgoSignalEntity => {
         userId: doc.userId.toString(),
         algoId: doc.algoId.toString(),
         symbol: doc.symbol,
+        strategyName: doc.strategyName,
         action: doc.action as SignalAction,
         price: doc.price,
         reason: doc.reason,
@@ -23,6 +24,7 @@ export const toPersistance = (entity: AlgoSignalEntity): Partial<AlgoSignalDocum
         userId: new Types.ObjectId(entity.userId),
         algoId: new Types.ObjectId(entity.algoId),
         symbol: entity.symbol,
+        strategyName: entity.strategyName,
         action: entity.action,
         price: entity.price,
         reason: entity.reason,

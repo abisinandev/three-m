@@ -1,7 +1,7 @@
 import YahooFinance from 'yahoo-finance2';
 import { ICandle } from '../interfaces/candle.interface';
 import { injectable } from 'inversify';
-import { IHistoricalDataParams, IQuote, IYahooProvider } from '@application/interfaces/services/stocks/yahoo-provider.interface';
+import { IHistoricalDataParams, IMarketDataProvider, IQuote } from '@application/interfaces/repositories/stock/market-data-provider.interface';
 
 const yahooFinance = new YahooFinance();
 const MAX_DAYS: Record<string, number> = {
@@ -13,7 +13,7 @@ const MAX_DAYS: Record<string, number> = {
 };
 
 @injectable()
-export class YahooProvider implements IYahooProvider {
+export class YahooProvider implements IMarketDataProvider {
 
     async getHistoricalData(params: IHistoricalDataParams): Promise<ICandle[]> {
         const { symbol, period1, period2, interval = '1m' } = params;
@@ -50,6 +50,12 @@ export class YahooProvider implements IYahooProvider {
         } catch {
             return [];
         }
+    }
+
+    async getPriceHistory(params: IHistoricalDataParams): Promise<number[]> {
+        const candles = await this.getHistoricalData(params);
+
+        return candles.map(c => c.close);
     }
 
     async getLatestQuote(symbol: string): Promise<IQuote | null> {

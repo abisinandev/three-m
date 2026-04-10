@@ -11,15 +11,11 @@ import { IStockDetailsUseCase } from "@application/use_cases/stock/interfaces/st
 import { StockDetailsUseCase } from "@application/use_cases/stock/stock-details.usecase";
 import { IFetchStockCandlesUseCase } from "@application/use_cases/stock/interfaces/fetch-stock-candles.interface";
 import { FetchStockCandlesUseCase } from "@application/use_cases/stock/fetch-stock-candles.usecase";
-
 import { MarketDataService } from "@infrastructure/providers/stocks/market-data.service";
 import { WsGateway } from "@presentation/express/websocket/ws.gateway";
-
 import { CandleEngineService } from "@infrastructure/providers/stocks/market-data/services/candle-engine.service";
 import { TimeframeAggregatorService } from "@infrastructure/providers/stocks/market-data/services/timeframe-aggregator.service";
 import { PollingService } from "@infrastructure/providers/stocks/market-data/services/polling.service";
-import { IYahooProvider } from "@application/interfaces/services/stocks/yahoo-provider.interface";
-import { YahooProvider } from "@infrastructure/providers/stocks/market-data/providers/yahoo.provider";
 import { OrdersController } from "@presentation/http/controllers/stocks/orders.controller";
 import { MarketBuyOrderUseCase } from "@application/use_cases/stock/market-buy-order.usecase";
 import { IMarketBuyOrderUseCase } from "@application/use_cases/stock/interfaces/buy-order-usecase.interface";
@@ -32,13 +28,21 @@ import { TradeRepository } from "@infrastructure/databases/repository/stock/trad
 import { AlgoTradingController } from "@presentation/http/controllers/algo-trading/algo-trading.controller";
 import { GetStrategiesUseCase } from "@application/use_cases/algo-trading/get-strategies.usecase";
 import { IAlgoStrategyRepository } from "@application/interfaces/repositories/algo/algo-strategy-repository.interface";
-import { AlgoStrategyRepository } from "@infrastructure/databases/repository/algo/algo-strategy.repository";
+import { AlgoStrategyRepository } from "@infrastructure/databases/repository/algo-trading/algo-strategy.repository";
 import { ISaveAlgoStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/save-algo-strategy.interface";
 import { SaveAlgoStrategyUseCase } from "@application/use_cases/algo-trading/save-algo-strategy.usecase";
 import { IGetActiveStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/get-active-strategy.interface";
 import { GetActiveStrategyUseCase } from "@application/use_cases/algo-trading/get-active-strategy.usecase";
 import { IToggleAlgoStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/toggle-algo-strategy.interface";
 import { ToggleAlgoStrategyUseCase } from "@application/use_cases/algo-trading/toggle-algo-strategy.usecase";
+import { IAlgoSignalRepository } from "@application/interfaces/repositories/algo/algo-signal-repository.interface";
+import { AlgoSignalRepository } from "@infrastructure/databases/repository/algo-trading/algo-signal.repository";
+import { SignalService } from "@infrastructure/providers/algos/signal.service";
+import { ISignalService } from "@application/interfaces/services/algo-trading/signal.service.interface";
+import { IStrategyService } from "@application/interfaces/services/algo-trading/strategy-service.interface";
+import { StrategyService } from "@infrastructure/providers/algos/strategy.service";
+import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
+import { YahooProvider } from "@infrastructure/providers/stocks/market-data/providers/yahoo.provider";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
@@ -52,7 +56,7 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<MarketDataService>(STOCK_TYPES.MarketDataService).to(MarketDataService);
     bind<WsGateway>(STOCK_TYPES.WsGateway).to(WsGateway);
 
-    bind<IYahooProvider>(STOCK_TYPES.YahooProvider).to(YahooProvider);
+    bind<IMarketDataProvider>(STOCK_TYPES.MarketDataProvider).to(YahooProvider);
     bind<PollingService>(STOCK_TYPES.PollingService).to(PollingService);
 
     bind<CandleEngineService>(STOCK_TYPES.CandleEngineService).to(CandleEngineService);
@@ -70,4 +74,9 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IGetActiveStrategyUseCase>(STOCK_TYPES.GetActiveStrategyUseCase).to(GetActiveStrategyUseCase);
     bind<IToggleAlgoStrategyUseCase>(STOCK_TYPES.ToggleAlgoStrategyUseCase).to(ToggleAlgoStrategyUseCase);
     bind<IAlgoStrategyRepository>(STOCK_TYPES.AlgoStrategyRepository).to(AlgoStrategyRepository);
+    bind<IAlgoSignalRepository>(STOCK_TYPES.AlgoSignalRepository).to(AlgoSignalRepository);
+    bind<ISignalService>(STOCK_TYPES.SignalService).to(SignalService);
+    bind<IStrategyService>(STOCK_TYPES.StrategyService).to(StrategyService);
+
+    // bind<IEngineRunner>(STOCK_TYPES.EngineRunner).to(EngineRunner);
 });

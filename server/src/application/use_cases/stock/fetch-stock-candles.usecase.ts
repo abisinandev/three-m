@@ -1,14 +1,14 @@
 import { inject, injectable } from "inversify";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { FetchStockCandlesInput, IFetchStockCandlesUseCase } from "./interfaces/fetch-stock-candles.interface";
-import { IYahooProvider } from "@application/interfaces/services/stocks/yahoo-provider.interface";
 import { CandleMapper } from "@application/mappers/stock/candle.mapper";
 import { CandlesResponseDTO } from "@application/dto/stocks/candle.dto";
+import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 
 @injectable()
 export class FetchStockCandlesUseCase implements IFetchStockCandlesUseCase {
     constructor(
-        @inject(STOCK_TYPES.YahooProvider) private readonly yahooProvider: IYahooProvider,
+        @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
     ) { }
 
     async execute(input: FetchStockCandlesInput): Promise<CandlesResponseDTO> {
@@ -17,7 +17,7 @@ export class FetchStockCandlesUseCase implements IFetchStockCandlesUseCase {
         const { from, to } = this.normalizeTime(input);
         const interval = this.mapResolution(resolution);
 
-        const rawCandles = await this.yahooProvider.getHistoricalData({
+        const rawCandles = await this._marketDataProvider.getHistoricalData({
             symbol,
             period1: from,
             period2: to,

@@ -11,11 +11,7 @@ export const AlgoSignalSchema = new Schema<AlgoSignalDocument>(
             required: true,
             index: true,
         },
-        algoId: {
-            type: Schema.Types.ObjectId,
-            required: true,
-            index: true,
-        },
+
         strategyName: {
             type: String,
         },
@@ -35,7 +31,7 @@ export const AlgoSignalSchema = new Schema<AlgoSignalDocument>(
 
         price: {
             type: Number,
-            required: true,
+            required: true, 
             min: 0,
         },
 

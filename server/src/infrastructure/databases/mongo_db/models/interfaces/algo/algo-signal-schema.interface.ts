@@ -7,6 +7,7 @@ export interface IAlgoSignalSchema {
     algoId: Types.ObjectId;
     symbol: string;
     action: SignalAction;
+    strategyName: string;
     price: number;
     reason: string;
     status: SignalStatus;

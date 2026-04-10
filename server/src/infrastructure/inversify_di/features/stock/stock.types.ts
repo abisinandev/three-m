@@ -16,7 +16,6 @@ export const STOCK_TYPES = {
     MarketDataService: Symbol.for("MarketDataService"),
     WsGateway: Symbol.for("WsGateway"),
 
-    YahooProvider: Symbol.for("YahooProvider"),
     PollingService: Symbol.for("PollingService"),
 
     CandleEngineService: Symbol.for("CandleEngineService"),
@@ -35,5 +34,10 @@ export const STOCK_TYPES = {
     GetActiveStrategyUseCase: Symbol.for("GetActiveStrategyUseCase"),
     ToggleAlgoStrategyUseCase: Symbol.for("ToggleAlgoStrategyUseCase"),
     AlgoStrategyRepository: Symbol.for("AlgoStrategyRepository"),
+    AlgoSignalRepository: Symbol.for("AlgoSignalRepository"),
+    SignalService: Symbol.for("SignalService"),
+    StrategyService: Symbol.for("StrategyService"),
+
+    // EngineRunner:Symbol.for("EngineRunner")
 
 }

@@ -7,9 +7,9 @@ import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
-import { IYahooProvider } from "@application/interfaces/services/stocks/yahoo-provider.interface";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
 import { OrderSide } from "@domain/entities/stock/enum/order-side.enum";
+import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 
 @injectable()
 export class PortfolioCalculationsUseCase implements IPortfolioCalculationsUseCase {
@@ -18,7 +18,7 @@ export class PortfolioCalculationsUseCase implements IPortfolioCalculationsUseCa
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
         @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
-        @inject(STOCK_TYPES.YahooProvider) private readonly _yahooProvider: IYahooProvider,
+        @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
     ) { }
 
@@ -75,24 +75,23 @@ export class PortfolioCalculationsUseCase implements IPortfolioCalculationsUseCa
         // --- STOCKS ---
         for (const stock of stockPortfolios) {
             totalInvestment += Number(stock.investedAmount);
-            
+
             // Fetch real-time price if possible
             let stockPrice = stock.avgPrice; // Fallback
             try {
-                const quote = await this._yahooProvider.getLatestQuote(stock.symbol);
+                const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
                 if (quote) {
                     stockPrice = quote.price;
                 }
             } catch (err) {
                 console.error(`Error fetching quote for ${stock.symbol}:`, err);
             }
-            
+
             currentValue += stock.quantity * stockPrice;
         }
 
-        const totalProfit = currentValue - totalInvestment; // Unrealized
+        const totalProfit = currentValue - totalInvestment; 
 
-        // Calculate Realized Profit from Trades
         const allTrades = await this._tradeRepository.findByUserId(userId);
         const realizedProfit = allTrades.reduce((acc, trade) => {
             if (trade.side === OrderSide.SELL && trade.profit !== undefined) {

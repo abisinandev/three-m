@@ -19,7 +19,7 @@ import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import mongoose from "mongoose";
-import { IYahooProvider } from "@application/interfaces/services/stocks/yahoo-provider.interface";
+import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 
 @injectable()
 export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
@@ -31,7 +31,7 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
         @inject(STOCK_TYPES.OrderRepository) private readonly _orderRepository: IOrderRepository,
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
-        @inject(STOCK_TYPES.YahooProvider) private readonly _yahooProvider: IYahooProvider,
+        @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
     ) { }
 
     async execute(data: BuyOrderDTO, userId: string): Promise<void> {
@@ -58,7 +58,7 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
             if (!data.quantity || data.quantity <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);
 
-            const latestQuote = await this._yahooProvider.getLatestQuote(data.symbol);
+            const latestQuote = await this._marketDataProvider.getLatestQuote(data.symbol);
             const marketPrice = latestQuote?.price ?? data.price;
 
             if (!marketPrice || marketPrice <= 0)

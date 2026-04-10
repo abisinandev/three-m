@@ -4,13 +4,13 @@ import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.t
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
 import { StockDTO, StockQueryOptions } from "@application/dto/stocks/stock.dto";
 import { StockMapper } from "@application/mappers/stock/stock.mapper";
-import { IYahooProvider } from "@application/interfaces/services/stocks/yahoo-provider.interface";
+import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 
 @injectable()
 export class FetchStocksUseCase implements IFetchStocksUseCase {
 
     constructor(
-        @inject(STOCK_TYPES.YahooProvider) private readonly _yahooProvider: IYahooProvider,
+        @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
     ) { }
 
@@ -52,7 +52,7 @@ export class FetchStocksUseCase implements IFetchStocksUseCase {
         let price: number | null = null;
 
         try {
-            const quote = await this._yahooProvider.getLatestQuote(stock.symbol);
+            const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
             price = quote?.price ?? null;
         } catch (error) {
             // TODO: Replace with proper logger (Winston/Pino)

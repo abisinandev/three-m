@@ -1,4 +1,4 @@
-import { Strategy, StrategyResult } from "@application/interfaces/services/algos/strategy-interfaces";
+import { Strategy, StrategyResult } from "@application/interfaces/services/algo-trading/strategy-interfaces";
 
 export class RSIStrategy implements Strategy {
     name = "RSI";
@@ -6,7 +6,7 @@ export class RSIStrategy implements Strategy {
     evaluate({ priceHistory, config }: {
         symbol: string;
         priceHistory: number[];
-        config: { period: number };
+        config: any;
     }): StrategyResult | null {
 
         const { period } = config;

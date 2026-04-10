@@ -1,5 +1,5 @@
 import { AlgoStrategyEntity } from "@domain/entities/algo/algo-strategy.entity";
-import { AlgoStrategyDocument } from "@infrastructure/databases/mongo_db/models/schemas/algo/algo-strategy.schema";
+import { AlgoStrategyDocument } from "@infrastructure/databases/mongo_db/models/schemas/algo-trading/algo-strategy.schema";
 
 
 const toDomain = (doc: AlgoStrategyDocument): AlgoStrategyEntity => {

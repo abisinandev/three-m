@@ -5,14 +5,14 @@ import { IStockRepository } from "@application/interfaces/repositories/stock/sto
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { StockDTO } from "@application/dto/stocks/stock.dto";
 import { StockMapper } from "@application/mappers/stock/stock.mapper";
-import { IYahooProvider } from "@application/interfaces/services/stocks/yahoo-provider.interface";
 import AppError from "@presentation/express/utils/error-handling/app.error";
 import { HttpStatus } from "@domain/enum/express/status-code";
+import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 
 @injectable()
 export class StockDetailsUseCase implements IStockDetailsUseCase {
     constructor(
-        @inject(STOCK_TYPES.YahooProvider) private readonly yahooProvider: IYahooProvider,
+        @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
     ) { }
 
@@ -26,7 +26,7 @@ export class StockDetailsUseCase implements IStockDetailsUseCase {
             );
         }
 
-        const quote = await this.yahooProvider.getLatestQuote(symbol);
+        const quote = await this._marketDataProvider.getLatestQuote(symbol);
 
         return {
             data: StockMapper.toDTO(stock),

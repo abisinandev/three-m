@@ -19,7 +19,7 @@ import { OrderSide } from "@domain/entities/stock/enum/order-side.enum";
 import { OrderType } from "@domain/entities/stock/enum/order-type.enum";
 import { OrderEntity } from "@domain/entities/stock/order.entity";
 import mongoose from "mongoose";
-import { IYahooProvider } from "@application/interfaces/services/stocks/yahoo-provider.interface";
+import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 
 @injectable()
 export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
@@ -30,7 +30,7 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
         @inject(STOCK_TYPES.OrderRepository) private readonly _orderRepository: IOrderRepository,
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
-        @inject(STOCK_TYPES.YahooProvider) private readonly _yahooProvider: IYahooProvider,
+        @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
     ) { }
 
     async execute(data: SellOrderDTO, userId: string): Promise<void> {
@@ -57,7 +57,7 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
             if (!data.quantity || data.quantity <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);
 
-            const latestQuote = await this._yahooProvider.getLatestQuote(data.symbol);
+            const latestQuote = await this._marketDataProvider.getLatestQuote(data.symbol);
             const marketPrice = latestQuote?.price ?? data.price;
 
             if (!marketPrice || marketPrice <= 0)

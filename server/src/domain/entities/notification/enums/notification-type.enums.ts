@@ -5,4 +5,5 @@ export enum NotificationType {
     MUTUAL_FUND = "MUTUAL_FUND",
     INFO = "INFO",
     WARNING = "WARNING",
+    ALGO_SIGNAL = 'ALGO_SIGNAL'
 }

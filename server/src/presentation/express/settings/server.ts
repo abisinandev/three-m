@@ -11,11 +11,14 @@ import { InitSocketConfigs } from "@infrastructure/providers/notification/socket
 import http from "http";
 import app from "./app";
 import { SyncStocks } from "@infrastructure/providers/stocks/finnhub/finnhub.client";
+import { createEngineRunner } from "@infrastructure/providers/algos/engin.runner";
+import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
+import { container } from "@infrastructure/inversify_di/container";
 // import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/RAG/ingest-docs";
 
 const bootstrap = async () => {
   try {
-    await connectDB(); 
+    await connectDB();
 
     //cron-scheduler 
     NavDailyScheduler();
@@ -24,14 +27,16 @@ const bootstrap = async () => {
     CagrUpdateScheduler();
     NavAllocationScheduler();
     // StartSipScheduler(); 
-    
+
 
     //vector-db 
     // IngestDocuments() 
     // SyncStocks()
-  
+    const engine = createEngineRunner();
+    engine.start();
+
     const server = http.createServer(app);
-    InitSocketConfigs(server); 
+    InitSocketConfigs(server);
 
     server.listen(env.PORT, () => {
       logger.info(`Server running on PORT: ${env.PORT}`);
@@ -40,8 +45,8 @@ const bootstrap = async () => {
   } catch (error) {
     logger.error(`Server startup failed: ${error}`);
     process.exit(1);
-  } 
-};   
+  }
+};
 
 bootstrap();
-   
+ 
