@@ -5,6 +5,7 @@ export class AlgoSignalEntity {
     private readonly _userId: string;
     private readonly _algoId: string;
     private readonly _symbol: string;
+    private readonly _strategyName: string;
     private readonly _action: SignalAction;
     private readonly _price: number;
     private readonly _reason: string;
@@ -17,6 +18,7 @@ export class AlgoSignalEntity {
         userId: string;
         algoId: string;
         symbol: string;
+        strategyName: string;
         action: SignalAction;
         price: number;
         reason: string;
@@ -28,6 +30,7 @@ export class AlgoSignalEntity {
         this._userId = props.userId;
         this._algoId = props.algoId;
         this._symbol = props.symbol;
+        this._strategyName = props.strategyName;
         this._action = props.action;
         this._price = props.price;
         this._reason = props.reason;
@@ -40,6 +43,7 @@ export class AlgoSignalEntity {
         userId: string;
         algoId: string;
         symbol: string;
+        strategyName: string;
         action: SignalAction;
         price: number;
         reason: string;
@@ -53,6 +57,7 @@ export class AlgoSignalEntity {
             userId: data.userId,
             algoId: data.algoId,
             symbol: data.symbol,
+            strategyName: data.strategyName,
             action: data.action,
             price: data.price,
             reason: data.reason,
@@ -66,6 +71,7 @@ export class AlgoSignalEntity {
         userId: string;
         algoId: string;
         symbol: string;
+        strategyName: string;
         action: SignalAction;
         price: number;
         reason: string;
@@ -78,6 +84,7 @@ export class AlgoSignalEntity {
             userId: data.userId,
             algoId: data.algoId,
             symbol: data.symbol,
+            strategyName: data.strategyName,
             action: data.action,
             price: data.price,
             reason: data.reason,
@@ -91,6 +98,7 @@ export class AlgoSignalEntity {
     get userId() { return this._userId; }
     get algoId() { return this._algoId; }
     get symbol() { return this._symbol; }
+    get strategyName() { return this._strategyName; }
     get action() { return this._action; }
     get price() { return this._price; }
     get reason() { return this._reason; }
