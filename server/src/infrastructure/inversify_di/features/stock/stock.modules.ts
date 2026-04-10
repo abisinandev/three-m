@@ -31,6 +31,14 @@ import { ITradeRepository } from "@application/interfaces/repositories/stock/tra
 import { TradeRepository } from "@infrastructure/databases/repository/stock/trade.repository";
 import { AlgoTradingController } from "@presentation/http/controllers/algo-trading/algo-trading.controller";
 import { GetStrategiesUseCase } from "@application/use_cases/algo-trading/get-strategies.usecase";
+import { IAlgoStrategyRepository } from "@application/interfaces/repositories/algo/algo-strategy-repository.interface";
+import { AlgoStrategyRepository } from "@infrastructure/databases/repository/algo/algo-strategy.repository";
+import { ISaveAlgoStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/save-algo-strategy.interface";
+import { SaveAlgoStrategyUseCase } from "@application/use_cases/algo-trading/save-algo-strategy.usecase";
+import { IGetActiveStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/get-active-strategy.interface";
+import { GetActiveStrategyUseCase } from "@application/use_cases/algo-trading/get-active-strategy.usecase";
+import { IToggleAlgoStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/toggle-algo-strategy.interface";
+import { ToggleAlgoStrategyUseCase } from "@application/use_cases/algo-trading/toggle-algo-strategy.usecase";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
@@ -58,4 +66,8 @@ export const StockModules = new ContainerModule(({ bind }) => {
 
     bind<AlgoTradingController>(STOCK_TYPES.AlgoTradingController).to(AlgoTradingController);
     bind<GetStrategiesUseCase>(STOCK_TYPES.GetStrategiesUseCase).to(GetStrategiesUseCase);
+    bind<ISaveAlgoStrategyUseCase>(STOCK_TYPES.SaveAlgoStrategyUseCase).to(SaveAlgoStrategyUseCase);
+    bind<IGetActiveStrategyUseCase>(STOCK_TYPES.GetActiveStrategyUseCase).to(GetActiveStrategyUseCase);
+    bind<IToggleAlgoStrategyUseCase>(STOCK_TYPES.ToggleAlgoStrategyUseCase).to(ToggleAlgoStrategyUseCase);
+    bind<IAlgoStrategyRepository>(STOCK_TYPES.AlgoStrategyRepository).to(AlgoStrategyRepository);
 });

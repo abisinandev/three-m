@@ -31,5 +31,9 @@ export const STOCK_TYPES = {
 
     AlgoTradingController: Symbol.for("AlgoTradingController"),
     GetStrategiesUseCase: Symbol.for("GetStrategiesUseCase"),
+    SaveAlgoStrategyUseCase: Symbol.for("SaveAlgoStrategyUseCase"),
+    GetActiveStrategyUseCase: Symbol.for("GetActiveStrategyUseCase"),
+    ToggleAlgoStrategyUseCase: Symbol.for("ToggleAlgoStrategyUseCase"),
+    AlgoStrategyRepository: Symbol.for("AlgoStrategyRepository"),
 
 }

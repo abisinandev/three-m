@@ -58,5 +58,13 @@ export const SuccessMessages = {
         STOCK_FETCHED: "Stocks fetched successfully",
         SELL_ORDER: "Sell order done successfully",
         BUY_ORDER:"Buy order received successfully",
+    },
+
+    ALGO: {
+        STRATEGY_SAVED: "Strategy saved successfully",
+        STRATEGY_ACTIVATED: "Strategy activated successfully",
+        STRATEGY_DEACTIVATED: "Strategy deactivated successfully",
+        STRATEGY_FETCHED: "Strategies fetched successfully",
+        ACTIVE_STRATEGY_FETCHED: "Active strategy fetched successfully",
     }
 } as const;

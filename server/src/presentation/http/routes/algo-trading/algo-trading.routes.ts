@@ -8,5 +8,8 @@ const router = Router();
 const controller = container.get<AlgoTradingController>(STOCK_TYPES.AlgoTradingController);
 
 router.get(AlgoTradingRoutes.GET_STRATEGIES, controller.getStrategies.bind(controller));
+router.get(AlgoTradingRoutes.GET_ACTIVE_STRATEGY, controller.getActiveStrategy.bind(controller));
+router.post(AlgoTradingRoutes.SAVE_STRATEGY, controller.saveStrategy.bind(controller));
+router.post(AlgoTradingRoutes.TOGGLE_STRATEGY_STATUS, controller.toggleStatus.bind(controller));
 
 export default router;
