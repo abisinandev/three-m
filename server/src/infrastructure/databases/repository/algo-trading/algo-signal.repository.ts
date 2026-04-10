@@ -11,16 +11,19 @@ export class AlgoSignalRepository extends
         super(AlgoSignalModel, AlgoSignalMapper)
     }
 
-    async existsRecentSignal(userId: string, symbol: string, algoId: string): Promise<boolean> {
-        const windowInMinutes = 30; 
-        const lookback = new Date(Date.now() - windowInMinutes * 60 * 1000);
-        const signal = await AlgoSignalModel.findOne({
+    async existsRecentSignal(userId: string, symbol: string, algoId: string, action: string, cooldownMinutes: number = 30): Promise<boolean> {
+        const lookback = new Date(Date.now() - cooldownMinutes * 60 * 1000);
+        const latestSignal = await AlgoSignalModel.findOne({
             userId,
             symbol,
             algoId,
             createdAt: { $gte: lookback }
-        });
-        return !!signal;
+        }).sort({ createdAt: -1 });
+
+        if (latestSignal && latestSignal.action === action) {
+            return true;
+        }
+        return false;
     }
     
 }

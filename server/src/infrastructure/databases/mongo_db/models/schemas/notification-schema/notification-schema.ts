@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { NotificationDocument } from "../../interfaces/notification/notification-schema.interface";
+import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 
 const notificationSchema = new Schema<NotificationDocument>({
     userId: {
@@ -10,7 +11,7 @@ const notificationSchema = new Schema<NotificationDocument>({
     type: {
         type: String,
         required: true,
-        enum: ["EXPENSE", "WALLET", "SIP", "MUTUAL_FUND", "INFO", "WARNING"],
+        enum: Object.values(NotificationType),
     },
     title: {
         type: String,
@@ -22,10 +23,16 @@ const notificationSchema = new Schema<NotificationDocument>({
         type: Boolean,
         default: false,
     },
+    expiresAt: {
+        type: Date,
+        required: false,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
     },
 });
+
+notificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 3600 });
 
 export const NotificationModel = mongoose.model("Notification", notificationSchema);

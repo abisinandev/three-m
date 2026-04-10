@@ -4,10 +4,10 @@ import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.t
 import { inject, injectable } from "inversify";
 import { StrategyRegistry } from "./strategy-registry";
 import { AlgoStrategyEntity } from "@domain/entities/algo/algo-strategy.entity";
-import { IAlgoSignalRepository } from "@application/interfaces/repositories/algo/algo-signal-repository.interface";
 import { ISignalService } from "@application/interfaces/services/algo-trading/signal.service.interface";
 import { SignalAction } from "@domain/entities/algo/enum/signal-enums";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
+import { ISignalManager } from "@application/interfaces/repositories/algo/signal-manager.interface";
 
 type StrategyName = keyof typeof StrategyRegistry;
 
@@ -24,7 +24,7 @@ export class StrategyService implements IStrategyService {
         @inject(STOCK_TYPES.AlgoStrategyRepository) private readonly _strategyRepository: IAlgoStrategyRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketData: IMarketDataProvider,
         @inject(STOCK_TYPES.SignalService) private readonly _signalService: ISignalService,
-
+        @inject(STOCK_TYPES.SignalManager) private readonly _signalManager: ISignalManager,
     ) { }
 
     async run(): Promise<void> {
@@ -47,9 +47,9 @@ export class StrategyService implements IStrategyService {
         const priceHistory = await this._marketData.getPriceHistory({
             symbol,
             period1: thirtyDaysAgo,
-            period2: now,
-            interval: '1m'
-        });
+            period2: now, 
+            interval: '1m' 
+        }); 
 
         if (!priceHistory || priceHistory.length < 20) return;
 
@@ -60,12 +60,15 @@ export class StrategyService implements IStrategyService {
 
         const result = strategy.evaluate({
             symbol, 
-            priceHistory,
+            priceHistory, 
             config
         });
-        console.log("Algo result: ", result);
 
-        if (!result) return;
+        const action = result ? (result.action === 'BUY' ? SignalAction.BUY : SignalAction.SELL) : null;
+        
+        const shouldEmit = this._signalManager.shouldEmitSignal(algoId, symbol, action);
+
+        if (!shouldEmit || !result) return;
 
         await this._signalService.createSignal({
             userId,
@@ -77,4 +80,4 @@ export class StrategyService implements IStrategyService {
             reason: result.reason,
         })
     }
-}
+} 

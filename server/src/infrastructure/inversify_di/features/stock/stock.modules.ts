@@ -43,6 +43,7 @@ import { IStrategyService } from "@application/interfaces/services/algo-trading/
 import { StrategyService } from "@infrastructure/providers/algos/strategy.service";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { YahooProvider } from "@infrastructure/providers/stocks/market-data/providers/yahoo.provider";
+import { ISignalManager, SignalManager } from "@infrastructure/providers/algos/signal-manager";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
@@ -77,6 +78,7 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IAlgoSignalRepository>(STOCK_TYPES.AlgoSignalRepository).to(AlgoSignalRepository);
     bind<ISignalService>(STOCK_TYPES.SignalService).to(SignalService);
     bind<IStrategyService>(STOCK_TYPES.StrategyService).to(StrategyService);
+    bind<ISignalManager>(STOCK_TYPES.SignalManager).to(SignalManager);
 
     // bind<IEngineRunner>(STOCK_TYPES.EngineRunner).to(EngineRunner);
 });

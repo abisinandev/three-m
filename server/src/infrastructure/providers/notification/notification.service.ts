@@ -10,7 +10,7 @@ export class NotificationService implements INotificationService {
       type: payload.type,
       title: payload.title,
       message: payload.message,
-      createdAt: new Date(),
+      createdAt: payload.createdAt,
     });
   }
 }

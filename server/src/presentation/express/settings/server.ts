@@ -33,8 +33,8 @@ const bootstrap = async () => {
     // IngestDocuments() 
     // SyncStocks()
     const engine = createEngineRunner();
-    engine.start();
-
+    engine.start(); 
+ 
     const server = http.createServer(app);
     InitSocketConfigs(server);
 

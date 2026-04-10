@@ -37,6 +37,7 @@ export const STOCK_TYPES = {
     AlgoSignalRepository: Symbol.for("AlgoSignalRepository"),
     SignalService: Symbol.for("SignalService"),
     StrategyService: Symbol.for("StrategyService"),
+    SignalManager: Symbol.for("SignalManager"),
 
     // EngineRunner:Symbol.for("EngineRunner")
 

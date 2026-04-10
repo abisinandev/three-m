@@ -2,5 +2,5 @@ import { AlgoSignalEntity } from "@domain/entities/algo/algo-signal.entity";
 import { IBaseRepository } from "@application/interfaces/repositories/base-repository.interface";
 
 export interface IAlgoSignalRepository extends IBaseRepository<AlgoSignalEntity> {
-    existsRecentSignal(userId: string, symbol: string, algoId: string): Promise<boolean>;
+    existsRecentSignal(userId: string, symbol: string, algoId: string, action: string, cooldownMinutes?: number): Promise<boolean>;
 }

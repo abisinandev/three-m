@@ -112,8 +112,8 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
                     takeProfit: stockPf.takeProfit,
                     createdAt: stockPf.createdAt,
                     updatedAt: stockPf.updatedAt,
-                });
-            }
+                }); 
+            } 
         }
 
         return {

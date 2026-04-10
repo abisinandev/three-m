@@ -71,7 +71,7 @@ export function createEngineRunner(intervalMs = 3000) {
     } finally {
       isRunning = false;
     }
-  };
+  }; 
 
   const start = () => {
     if (intervalId) return;

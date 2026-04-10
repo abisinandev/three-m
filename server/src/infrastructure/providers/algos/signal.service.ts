@@ -26,12 +26,13 @@ export class SignalService implements ISignalService {
         strategyName: string;
         price: number;
         reason: string;
-    }): Promise<any> {
+    }): Promise<void> {
 
         const exists = await this._signalRepository.existsRecentSignal(
             input.userId,
             input.symbol,
-            input.strategyName
+            input.algoId,
+            input.action
         );
 
 
@@ -55,22 +56,24 @@ export class SignalService implements ISignalService {
         })
         await this._signalRepository.create(signal);
 
+        const message = `${input.action} signal for ${input.symbol}: ${input.reason}`;
+
         const notification = NotificationEntity.create({
             userId: input.userId,
             type: NotificationType.ALGO_SIGNAL,
             title: 'Algo signal',
-            message: input.action
+            message: message
         });
 
         const notfify = await this._notificationRepository.save(notification);
 
-        await this._notificationService.send(
+        this._notificationService.send(
             input.userId,
             {
                 id: notfify.id as string,
                 type: NotificationType.ALGO_SIGNAL,
                 title: 'Algo signal',
-                message: input.reason,
+                message: message,
                 createdAt: new Date(notification.createdAt)
             }
         )

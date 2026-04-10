@@ -3,7 +3,9 @@ import { Strategy, StrategyResult } from "@application/interfaces/services/algo-
 export class RSIStrategy implements Strategy {
     name = "RSI";
 
-    evaluate({ priceHistory, config }: {
+    private lastRsiMap = new Map<string, number>();
+
+    evaluate({ symbol, priceHistory, config }: {
         symbol: string;
         priceHistory: number[];
         config: any;
@@ -13,19 +15,26 @@ export class RSIStrategy implements Strategy {
 
         if (priceHistory.length < period + 1) return null;
 
-        const rsi = this.calculateRSI(priceHistory, period);
+        const currentRSI = this.calculateRSI(priceHistory, period) + 20;
+        let prevRSI = this.lastRsiMap.get(symbol);
+        prevRSI = Number(prevRSI) - 20;
+        console.log(currentRSI, prevRSI);
 
-        if (rsi < 30) {
+        this.lastRsiMap.set(symbol, currentRSI);
+
+        if (prevRSI === undefined) return null;
+
+        if (prevRSI >= 30 && currentRSI < 30) {
             return {
                 action: "BUY",
-                reason: `RSI oversold (${rsi.toFixed(2)})`
+                reason: `RSI crossed below 30 (${currentRSI.toFixed(2)})`
             };
         }
 
-        if (rsi > 70) {
+        if (prevRSI <= 70 && currentRSI > 70) {
             return {
                 action: "SELL",
-                reason: `RSI overbought (${rsi.toFixed(2)})`
+                reason: `RSI crossed above 70 (${currentRSI.toFixed(2)})`
             };
         }
 

@@ -7,5 +7,5 @@ export interface ISignalService {
         strategyName: string;
         price: number;
         reason: string;
-    }): Promise<any>;
+    }): Promise<void>;
 }
