@@ -5,4 +5,5 @@ import { ClientSession } from "mongoose";
 export interface ITradeRepository extends IBaseRepository<TradeEntity> {
   findByUserId(userId: string, session?: ClientSession): Promise<TradeEntity[]>;
   findByOrderId(orderId: string, session?: ClientSession): Promise<TradeEntity[]>;
+  countTodaysTrades(): Promise<number>;
 }

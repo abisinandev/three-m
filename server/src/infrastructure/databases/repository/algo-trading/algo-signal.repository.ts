@@ -3,6 +3,7 @@ import { BaseRepository } from "../base.repository";
 import { AlgoSignalDocument, AlgoSignalModel } from "@infrastructure/databases/mongo_db/models/schemas/algo-trading/algo-signal.schema";
 import { IAlgoSignalRepository } from "@application/interfaces/repositories/algo/algo-signal-repository.interface";
 import { AlgoSignalMapper } from "@infrastructure/mappers/algo/algo-signal.mapper";
+import { QueryOptions } from "mongoose";
 
 export class AlgoSignalRepository extends
     BaseRepository<AlgoSignalEntity, AlgoSignalDocument> implements IAlgoSignalRepository {
@@ -32,4 +33,48 @@ export class AlgoSignalRepository extends
         return false;
     }
 
-}
+    async findAllSignalsWithFilter(query: QueryOptions): Promise<AlgoSignalEntity[]> {
+        const {
+            page = 1,
+            limit = 10,
+            filter = {},
+            search = "",
+            searchField = ["action", "symbol", "status"],
+            sortBy = "createdAt",
+            sortOrder = "desc",
+        } = query;
+
+        const skip = (page - 1) * limit;
+
+        type SignalFilter = Record<string, unknown> & {
+            $or?: Array<Record<string, unknown>>;
+        };
+
+        const finalFilter: SignalFilter = { ...filter };
+
+        if (search.trim()) {
+            const searchRegex = { $regex: search.trim(), $options: "i" };
+            finalFilter.$or = searchField.map((field: string) => ({
+                [field]: searchRegex,
+            }));
+        }
+
+        const sort: Record<string, 1 | -1> = {
+            [sortBy]: sortOrder === "asc" ? 1 : -1,
+        };
+
+        const docs = await this.model
+            .find(finalFilter)
+            .sort(sort)
+            .skip(skip)
+            .limit(limit)
+            .exec();
+
+        return docs.map((doc) => this.mapper.toDomain(doc));
+    }
+
+    async countSignals(): Promise<number> {
+        return this.model.countDocuments().exec();
+    }
+
+} 

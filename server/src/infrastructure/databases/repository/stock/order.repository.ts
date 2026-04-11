@@ -4,6 +4,7 @@ import { OrderDocument, OrderModel } from "@infrastructure/databases/mongo_db/mo
 import { IOrderRepository } from "@application/interfaces/repositories/stock/order-repository.interface";
 import { OrderMapper } from "@infrastructure/mappers/stock/order.mapper";
 import { ClientSession } from "mongoose";
+import { OrderStatus } from "@domain/entities/stock/enum/order-status.enum";
 
 export class OrderRepository extends BaseRepository<OrderEntity, OrderDocument> implements IOrderRepository {
 
@@ -17,5 +18,9 @@ export class OrderRepository extends BaseRepository<OrderEntity, OrderDocument> 
         const doc = await this.model.create([data], { session });
 
         return this.mapper.toDomain(doc[0]);
+    }
+
+    async countCancelledOrders(): Promise<number> {
+        return this.model.countDocuments({ status: OrderStatus.CANCELLED }).exec();
     }
 }

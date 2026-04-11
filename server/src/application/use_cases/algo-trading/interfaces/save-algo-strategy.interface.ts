@@ -1,4 +1,4 @@
-export interface SaveAlgoStrategyDTO {
+export interface AlgoStrategyDTO {
     userId: string;
     symbol: string;
     strategyName: string;
@@ -6,5 +6,5 @@ export interface SaveAlgoStrategyDTO {
 }
 
 export interface ISaveAlgoStrategyUseCase {
-    execute(data: SaveAlgoStrategyDTO): Promise<void>;
+    execute(data: AlgoStrategyDTO): Promise<void>;
 }

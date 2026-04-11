@@ -11,6 +11,7 @@ import { NotificationModules } from "./features/notification/notification.module
 import { MarketNewsModules } from "./features/market-news/market-news.module";
 import { AiSystemModules } from "./features/ai-system/ai-system.module";
 import { StockModules } from "./features/stock/stock.modules";
+import { AlogTradingModule } from "./features/algo-trading/algo-trading.module";
 
 const container = new Container({
   defaultScope: "Singleton",
@@ -30,6 +31,7 @@ container.load(
   MarketNewsModules,
   AiSystemModules,
   StockModules,
+  AlogTradingModule
 );
 
 export { container };

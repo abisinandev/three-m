@@ -24,6 +24,7 @@ import userStockRoutes from '@presentation/http/routes/stocks/user-stock.routes'
 import ordersRoutes from '@presentation/http/routes/stocks/orders.routes';
 import algoTradingRoute from "@presentation/http/routes/algo-trading/algo-trading.routes";
 import { AlgoTradingRoutes } from "@shared/routes/algo-trading.routes";
+import adminAlgoTradingRoutes from '@presentation/http/routes/admin/admin-algo-trading.routes';
 
 export const RegisterRoutes = (app: Application) => {
   const authMiddleware = container.get<AuthMiddleware>(AUTH_TYPES.AuthMiddleware);
@@ -53,5 +54,8 @@ export const RegisterRoutes = (app: Application) => {
   app.use('/api/admin/stocks', (req, res, next) => authAdminMiddleware.handle(req, res, next), adminStockRoutes);
   app.use('/api/user/stocks', (req, res, next) => authMiddleware.handle(req, res, next), userStockRoutes);
   app.use('/api/user/stock/order/:symbol', (req, res, next) => authMiddleware.handle(req, res, next), ordersRoutes);
-  app.use(AlgoTradingRoutes.BASE_ROUTE, (req, res, next) => authMiddleware.handle(req, res, next), algoTradingRoute)
+  app.use(AlgoTradingRoutes.BASE_ROUTE, (req, res, next) => authMiddleware.handle(req, res, next), algoTradingRoute);
+
+
+  app.use('/api/admin/algo-trading', (req, res, next) => authAdminMiddleware.handle(req, res, next), adminAlgoTradingRoutes);
 };

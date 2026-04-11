@@ -25,4 +25,11 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
         const docs = await query.exec();
         return docs.map(doc => TradeMapper.toDomain(doc));
     }
+
+    async countTodaysTrades(): Promise<number> {
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        return this.model.countDocuments({ createdAt: { $gte: startOfToday } }).exec();
+    }
 }
