@@ -31,6 +31,7 @@ import { Route as AdminKycManagementRouteImport } from './routes/admin/kyc-manag
 import { Route as AdminInstallmentsRouteImport } from './routes/admin/installments'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminBotManagementRouteImport } from './routes/admin/bot-management'
+import { Route as AdminAlgoTradingRouteImport } from './routes/admin/algo-trading'
 import { Route as UserWalletIndexRouteImport } from './routes/user/wallet/index'
 import { Route as UserTradingIndexRouteImport } from './routes/user/trading/index'
 import { Route as UserPortfolioIndexRouteImport } from './routes/user/portfolio/index'
@@ -164,6 +165,11 @@ const AdminBotManagementRoute = AdminBotManagementRouteImport.update({
   path: '/bot-management',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAlgoTradingRoute = AdminAlgoTradingRouteImport.update({
+  id: '/algo-trading',
+  path: '/algo-trading',
+  getParentRoute: () => AdminRoute,
+} as any)
 const UserWalletIndexRoute = UserWalletIndexRouteImport.update({
   id: '/wallet/',
   path: '/wallet/',
@@ -289,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/user': typeof UserRouteWithChildren
+  '/admin/algo-trading': typeof AdminAlgoTradingRoute
   '/admin/bot-management': typeof AdminBotManagementRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/installments': typeof AdminInstallmentsRoute
@@ -334,6 +341,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/user': typeof UserRouteWithChildren
+  '/admin/algo-trading': typeof AdminAlgoTradingRoute
   '/admin/bot-management': typeof AdminBotManagementRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/installments': typeof AdminInstallmentsRoute
@@ -381,6 +389,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/user': typeof UserRouteWithChildren
+  '/admin/algo-trading': typeof AdminAlgoTradingRoute
   '/admin/bot-management': typeof AdminBotManagementRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/installments': typeof AdminInstallmentsRoute
@@ -428,6 +437,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/user'
+    | '/admin/algo-trading'
     | '/admin/bot-management'
     | '/admin/dashboard'
     | '/admin/installments'
@@ -473,6 +483,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/user'
+    | '/admin/algo-trading'
     | '/admin/bot-management'
     | '/admin/dashboard'
     | '/admin/installments'
@@ -519,6 +530,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/user'
+    | '/admin/algo-trading'
     | '/admin/bot-management'
     | '/admin/dashboard'
     | '/admin/installments'
@@ -724,6 +736,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBotManagementRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/algo-trading': {
+      id: '/admin/algo-trading'
+      path: '/algo-trading'
+      fullPath: '/admin/algo-trading'
+      preLoaderRoute: typeof AdminAlgoTradingRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/user/wallet/': {
       id: '/user/wallet/'
       path: '/wallet'
@@ -898,6 +917,7 @@ const AdminAuthRouteRouteWithChildren = AdminAuthRouteRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
+  AdminAlgoTradingRoute: typeof AdminAlgoTradingRoute
   AdminBotManagementRoute: typeof AdminBotManagementRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminInstallmentsRoute: typeof AdminInstallmentsRoute
@@ -916,6 +936,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAlgoTradingRoute: AdminAlgoTradingRoute,
   AdminBotManagementRoute: AdminBotManagementRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminInstallmentsRoute: AdminInstallmentsRoute,

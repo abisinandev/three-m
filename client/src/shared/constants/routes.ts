@@ -62,6 +62,7 @@ export const ROUTES = {
         },
         NOTIFICATIONS: "/admin/notifications",
         BOT_MANAGEMENT: "/admin/bot-management",
+        ALGO_TRADING: "/admin/algo-trading",
         SETTINGS: "/admin/settings",
     }
 } as const;

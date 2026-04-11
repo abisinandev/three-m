@@ -16,7 +16,8 @@ import {
   BadgeCheck,
   ChevronDown,
   User,
-  AlignHorizontalDistributeCenter 
+  AlignHorizontalDistributeCenter,
+  Cpu
 } from 'lucide-react';
 import adminApi from '@lib/axiosAdmin';
 import { LOGOUT } from '@shared/constants/adminConstants';
@@ -35,6 +36,7 @@ const navItems = [
   { to: ROUTES.ADMIN.TRANSACTIONS_MANAGEMENT, label: 'Transactions', icon: Receipt },
   { to: ROUTES.ADMIN.NOTIFICATIONS, label: 'Notifications', icon: Bell },
   { to: ROUTES.ADMIN.BOT_MANAGEMENT, label: 'Bot Management', icon: Bot },
+  { to: ROUTES.ADMIN.ALGO_TRADING, label: 'Algo Trading', icon: Cpu },
   { to: ROUTES.ADMIN.SETTINGS, label: 'Settings', icon: Settings },
 ];
 
