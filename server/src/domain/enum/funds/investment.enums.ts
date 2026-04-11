@@ -1,6 +1,7 @@
 export enum InvestmentType {
     ONETIME = "ONE_TIME",
     SIP = "SIP",
+    STOCK = "STOCK",
 }
 
 export enum InvestmentStatus {
@@ -9,6 +10,8 @@ export enum InvestmentStatus {
     PARTIALLY_REDEEMED = "PARTIALLY_REDEEMED",
     REDEEMED = "REDEEMED",
     FAILED = "FAILED",
+    HOLDING = "HOLDING",
+    EXECUTED = "EXECUTED",
 }
 
 

@@ -48,6 +48,10 @@ export const API_ROUTES = {
             REDEEM_INVESTMENT: "/user/portfolio/redeem-investment",
             CONFIRM_REDEEM: "/user/portfolio/confirm-redeem",
             PROJECTION: "/user/portfolio/projection",
+            TRADE_HISTORY: "/user/portfolio/history",
+            INVESTMENTS: "/user/portfolio/investments",
+            TRADES: "/user/portfolio/trades",
+            HISTORIES: "/user/portfolio/histories",
         },
         MUTUAL_FUNDS: {
             LIST: "/user/mutual-funds/lists",
@@ -58,6 +62,9 @@ export const API_ROUTES = {
             PAUSE_SIP: (sipId: string) => `/user/mutual-funds/sip/pause/${sipId}`,
             RESUME_SIP: (sipId: string) => `/user/mutual-funds/sip/resume/${sipId}`,
             CANCEL_SIP: (sipId: string) => `/user/mutual-funds/sip/cancel/${sipId}`,
+        },
+        STOCKS: {
+            GET_ALL: "/user/stocks",
         }
     },
     ADMIN: {
@@ -91,6 +98,15 @@ export const API_ROUTES = {
         SIP: {
             GET_ALL: "/sip-management",
             DETAILS: (sipId: string) => `/sip-management/${sipId}`,
+        },
+        STOCKS: {
+            GET_ALL: "/stocks",
+            UPDATE_STATUS: (symbol: string) => `/stocks/${symbol}/status`,
+        },
+        ALGO_TRADING: {
+            GET_STATS: "/algo-trading",
+            GET_STRATEGIES: "/algo-trading/strategies",
+            GET_SIGNALS: "/algo-trading/signals",
         }
     },
     CHATBOT: {

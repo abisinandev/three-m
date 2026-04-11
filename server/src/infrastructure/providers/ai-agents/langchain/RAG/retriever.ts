@@ -11,5 +11,12 @@ export const getVectorStore = async () => {
 
 export const createRetriever = async () => {
   const vectorStore = await getVectorStore();
-  return vectorStore.asRetriever({ k: 3 });
+  return vectorStore.asRetriever({
+    k: 3, // keep small
+    searchType: "mmr", // avoid duplicate chunks
+    searchKwargs: {
+      fetchK: 6, // fetch more, then filter best 3
+      lambda: 0.5 // balance relevance vs diversity
+    }
+  });
 };

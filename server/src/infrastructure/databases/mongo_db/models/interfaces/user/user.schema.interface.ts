@@ -39,6 +39,8 @@ export interface IUserSchema {
   twoFactorSecret: string | null;
   qrCodeUrl: string | null;
 
+  isAlgoEnabled: boolean;
+
   authProvider: AuthProvider;
   avatar: string | null;
   googleId: string | null;

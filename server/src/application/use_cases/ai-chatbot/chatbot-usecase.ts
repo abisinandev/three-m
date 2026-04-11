@@ -1,54 +1,55 @@
 import { inject, injectable } from "inversify";
 import { IChatbotUseCase } from "./interface/chatbot-usecase.interface";
 import { AI_SYSTEM_TYPES } from "@infrastructure/inversify_di/features/ai-system/ai-system.type";
-import { IAgentRouter } from "@application/interfaces/services/ai-chatbot/agent-router.interface";
-import { IDetectAgent } from "@application/interfaces/services/ai-chatbot/detect-agent.service.interface";
-import { IRedisChatMemoryService } from "@application/interfaces/services/ai-chatbot/redis-chat-memory.service.interface";
+import { IChatHistoryService } from "@application/interfaces/services/ai-chatbot/chat-history-service.interface";
 import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
+import { directLLM, isSimpleQuestion } from "@shared/utils/agents/detect-agent";
+import { IEducationAgent } from "@application/interfaces/services/ai-chatbot/education-agent.interface";
+import { generateCacheKey } from "@shared/utils/agents/generate-cache-key";
+import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
+import { ICacheProvider } from "@application/interfaces/services/externals/redis-cache.provider.interface";
 
 @injectable()
 export class ChatbotUseCase implements IChatbotUseCase {
     constructor(
-        @inject(AI_SYSTEM_TYPES.AgentRouter) private readonly _agentRouter: IAgentRouter,
-        @inject(AI_SYSTEM_TYPES.DetectAgent) private readonly _detectAgent: IDetectAgent,
-        @inject(AI_SYSTEM_TYPES.RedisChatMemoryService) private readonly _memory: IRedisChatMemoryService,
+        @inject(AI_SYSTEM_TYPES.ChatHistoryService) private readonly _chatHistoryService: IChatHistoryService,
+        @inject(AI_SYSTEM_TYPES.EducationAgent) private readonly _educationAgent: IEducationAgent,
+        @inject(EXTERNAL_TYPES.RedisCacheProvider) private readonly _cacheProvider: ICacheProvider,
     ) { }
 
     async execute(userId: string, userInput: string): Promise<string> {
 
-        const financeKeywords = [
-            "currency",
-            "convert",
-            "money",
-            "investment",
-            "sip",
-            "mutual fund",
-            "sebi",
-            "stock"
-        ];
+        const cacheKey = generateCacheKey(userInput);
+        const cached = await this._cacheProvider.get(cacheKey);
+        if (cached) return cached;
 
-        const isFinance = financeKeywords.some(k =>
-            userInput.toLowerCase().includes(k)
-        );
+        const [_, history] = await Promise.all([
+            this._chatHistoryService.saveMessage(userId, "user", userInput),
+            this._chatHistoryService.getConversationHistory(userId)
+        ]);
 
-        if (!isFinance) {
-            return "I can only help with finance-related questions."
+        let response: string;
+
+        if (isSimpleQuestion(userInput)) {
+            response = String((await directLLM(userInput)).content);
+        } else {
+            response = await this._educationAgent.handle(userInput, history);
         }
 
-        await this._memory.saveMessage(userId, "user", userInput);
-
-        const history = await this._memory.getConversationHistory(userId);
-
-        const agentType = await this._detectAgent.detectAgent(userInput);
-
-        const response = await this._agentRouter.route(agentType, userInput, history);
-
-        await this._memory.saveMessage(userId, "assistant", response);
-
+        const ttl = 3500 as const;
+        await Promise.all([
+            this._chatHistoryService.saveMessage(userId, "assistant", response),
+            this._cacheProvider.set(cacheKey, response, ttl)
+        ]);
+        
         return response;
     }
 
     async getHistory(userId: string): Promise<ChatMessage[]> {
-        return this._memory.getConversationHistory(userId);
+        return this._chatHistoryService.getConversationHistory(userId);
     }
+
+
 }
+
+

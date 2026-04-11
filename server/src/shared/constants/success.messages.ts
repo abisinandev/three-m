@@ -52,5 +52,20 @@ export const SuccessMessages = {
     },
     NOTIFICATION: {
         MARK_AS_READ: "Notification marked as read",
+    },
+
+    STOCK: {
+        STOCK_FETCHED: "Stocks fetched successfully",
+        SELL_ORDER: "Sell order done successfully",
+        BUY_ORDER:"Buy order received successfully",
+    },
+
+    ALGO: {
+        STRATEGY_SAVED: "Strategy saved successfully",
+        STRATEGY_ACTIVATED: "Strategy activated successfully",
+        STRATEGY_DEACTIVATED: "Strategy deactivated successfully",
+        STRATEGY_FETCHED: "Strategies fetched successfully",
+        ACTIVE_STRATEGY_FETCHED: "Active strategy fetched successfully",
+        SIGNAL_CONFIRMED: "Signal confirmed and order placed successfully",
     }
 } as const;

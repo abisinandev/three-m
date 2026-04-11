@@ -22,6 +22,8 @@ export const ADMIN_TYPES = {
   FetchTransactionsUseCase: Symbol.for("FetchTransactionsUseCase"),
   VerifyTransactionUseCase: Symbol.for("VerifyTransactionUseCase"),
   SipManagementUseCase: Symbol.for("SipManagementUseCase"),
+  AdminStocksUseCase: Symbol.for("AdminStocksUseCase"),
+  AdminStockUpdateUseCase: Symbol.for("AdminStockUpdateUseCase"),
 
   AdminAuthController: Symbol.for("AdminAuthController"),
   AdminController: Symbol.for("AdminController"),
@@ -29,5 +31,6 @@ export const ADMIN_TYPES = {
   AdminKycController: Symbol.for("AdminKycController"),
   AdminTransactionsController: Symbol.for("adminTransactionsController"),
   AdminSipController: Symbol.for("AdminSipController"),
+  AdminStocksController: Symbol.for("AdminStocksController"),
   
 };

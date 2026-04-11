@@ -80,10 +80,20 @@ export default {
           from: { 'stroke-dasharray': '0 1000', 'stroke-dashoffset': '1000' },
           to: { 'stroke-dasharray': '1000 1000', 'stroke-dashoffset': '0' },
         },
+        'price-flash-green': {
+          '0%, 100%': { backgroundColor: 'transparent' },
+          '50%': { backgroundColor: 'rgba(34,197,94,0.25)' },
+        },
+        'price-flash-red': {
+          '0%, 100%': { backgroundColor: 'transparent' },
+          '50%': { backgroundColor: 'rgba(239,68,68,0.25)' },
+        },
       },
       animation: {
         'slide-down': 'slide-down 0.25s ease-out',
         'draw-line': 'draw-line 2s ease-out forwards',
+        'price-flash-green': 'price-flash-green 0.6s ease-in-out',
+        'price-flash-red': 'price-flash-red 0.6s ease-in-out',
       },
 
       perspective: {

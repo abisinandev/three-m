@@ -26,7 +26,6 @@ export class EducationAgent implements IEducationAgent {
         });
 
         const finalMessage = result.messages[result.messages.length - 1]
-
         return normalizeAIResponse(finalMessage?.content || "");
     }
 } 

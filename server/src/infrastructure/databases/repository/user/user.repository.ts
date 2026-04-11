@@ -51,7 +51,7 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
     type UserFilter = Record<string, unknown> & {
       $or?: Array<Record<string, unknown>>;
     };
-
+ 
     const finalFilter: UserFilter = { ...filter };
 
     if (search.trim()) {

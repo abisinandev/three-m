@@ -10,6 +10,9 @@ import { inject, injectable } from "inversify";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import { IXirrCalculationUseCase } from "@application/use_cases/portfolio/interfaces/xirr-calculation-usecase.interface";
 import { IPortfolioProjectionUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-projection-usecase.interface";
+import { IFetchTradeHistoryUseCase } from "@application/use_cases/portfolio/interfaces/fetch-trade-history-usecase.interface";
+import { IFetchStockHoldingsUseCase } from "@application/use_cases/portfolio/interfaces/fetch-stock-holdings-usecase.interface";
+import { IFetchMutualFundHoldingsUseCase } from "@application/use_cases/portfolio/interfaces/fetch-mf-holdings-usecase.interface";
 
 @injectable()
 export class PortFolioController {
@@ -20,6 +23,9 @@ export class PortFolioController {
         @inject(PORTFOLIO_TYPES.PortfolioCalculationsUseCase) private readonly _portfolioCalcuationUseCase: IPortfolioCalculationsUseCase,
         @inject(PORTFOLIO_TYPES.XirrCalculationUseCase) private readonly _xirrCalculation: IXirrCalculationUseCase,
         @inject(PORTFOLIO_TYPES.PortfolioProjectionUseCase) private readonly _portfolioProjection: IPortfolioProjectionUseCase,
+        @inject(PORTFOLIO_TYPES.FetchTradeHistoryUseCase) private readonly _fetchTradeHistory: IFetchTradeHistoryUseCase,
+        @inject(PORTFOLIO_TYPES.FetchStockHoldingsUseCase) private readonly _fetchStockHoldings: IFetchStockHoldingsUseCase,
+        @inject(PORTFOLIO_TYPES.FetchMutualFundHoldingsUseCase) private readonly _fetchMFHoldings: IFetchMutualFundHoldingsUseCase,
     ) { }
 
     async listAllInvestments(req: Request, res: Response, next: NextFunction) {
@@ -119,4 +125,49 @@ export class PortFolioController {
             next(error)
         }
     }
-}  
+
+    async listTradeHistory(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req?.user?.id;
+            const result = await this._fetchTradeHistory.execute(userId as string, req.query);
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.FETCHED,
+                result,
+                HttpStatus.OK,
+            )
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async listStockHoldings(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req?.user?.id;
+            const result = await this._fetchStockHoldings.execute(userId as string, req.query);
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.FETCHED,
+                result,
+                HttpStatus.OK,
+            )
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async listMutualFundHoldings(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req?.user?.id;
+            const result = await this._fetchMFHoldings.execute(userId as string, req.query);
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.FETCHED,
+                result,
+                HttpStatus.OK,
+            )
+        } catch (error) {
+            next(error)
+        }
+    }
+}

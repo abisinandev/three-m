@@ -16,7 +16,6 @@ export abstract class BaseRepository<TDomain, TDocument>
     if (session) {
       await this.model.create([data], { session });
     } else {
-      console.log(data, 'invesmtnee')
       await this.model.create(data);
     }
   }

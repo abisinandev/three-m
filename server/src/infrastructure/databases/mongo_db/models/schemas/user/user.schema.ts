@@ -97,6 +97,8 @@ const UserSchema = new Schema<UserDocument>(
 
     qrCodeUrl: { type: String, default: null },
 
+    isAlgoEnabled: { type: Boolean, default: false },
+
     authProvider: {
       type: String,
       enum: Object.values(AuthProvider),

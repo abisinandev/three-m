@@ -23,4 +23,4 @@ export function NavDailyScheduler() {
             timezone: "Asia/Kolkata", 
         }
     );
-}          
+}                  

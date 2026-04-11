@@ -6,6 +6,7 @@ export interface NotificationPayload {
   title: string;
   message: string;
   createdAt: Date;
+  signalId?: string; // present on ALGO_SIGNAL notifications
 }
 
 export interface INotificationService {

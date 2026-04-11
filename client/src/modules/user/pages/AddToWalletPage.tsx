@@ -22,6 +22,9 @@ const AddToWallet = () => {
     const currentBalance = user?.wallet?.balance ?? 0;
     const newBalance = amount ? currentBalance + Number(amount) : currentBalance;
 
+    localStorage.setItem('previousBalance', currentBalance);
+    localStorage.setItem('addedAmount', amount as string);
+    localStorage.setItem('newBalance', newBalance);
 
     const validateAmount = (value: number | ""): boolean => {
         if (value === "") {

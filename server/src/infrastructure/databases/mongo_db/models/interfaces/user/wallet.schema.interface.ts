@@ -7,6 +7,7 @@ export interface IWalletSchema {
     userId: Types.ObjectId;
     currency: CurrencyTypes;
     balance: number;
+    lockedBalance: number;
     status: WalletStatus;
     createdAt?: Date;
     updatedAt?: Date;

@@ -16,6 +16,8 @@ import {
   BadgeCheck,
   ChevronDown,
   User,
+  AlignHorizontalDistributeCenter,
+  Cpu
 } from 'lucide-react';
 import adminApi from '@lib/axiosAdmin';
 import { LOGOUT } from '@shared/constants/adminConstants';
@@ -27,13 +29,14 @@ const navItems = [
   { to: ROUTES.ADMIN.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
   { to: ROUTES.ADMIN.SIP_MANAGEMENT.ROOT, label: 'SIP Management', icon: DollarSign },
   // { to: ROUTES.ADMIN.INSTALLMENTS, label: 'Installments', icon: Receipt },
-  // { to: ROUTES.ADMIN.NAV_MONITORING, label: 'NAV Monitoring', icon: BarChart3 },
   { to: ROUTES.ADMIN.USERS_MANAGEMENT, label: 'Users', icon: Users },
   { to: ROUTES.ADMIN.KYC_MANAGEMENT.ROOT, label: 'KYC Verification', icon: BadgeCheck },
   { to: ROUTES.ADMIN.MUTUAL_FUNDS_MANAGEMENT.ROOT, label: 'Mutual Funds', icon: TrendingUp },
+  { to: ROUTES.ADMIN.STOCK_MANAGEMENT, label: 'Stocks Management', icon: AlignHorizontalDistributeCenter },
   { to: ROUTES.ADMIN.TRANSACTIONS_MANAGEMENT, label: 'Transactions', icon: Receipt },
   { to: ROUTES.ADMIN.NOTIFICATIONS, label: 'Notifications', icon: Bell },
   { to: ROUTES.ADMIN.BOT_MANAGEMENT, label: 'Bot Management', icon: Bot },
+  { to: ROUTES.ADMIN.ALGO_TRADING, label: 'Algo Trading', icon: Cpu },
   { to: ROUTES.ADMIN.SETTINGS, label: 'Settings', icon: Settings },
 ];
 

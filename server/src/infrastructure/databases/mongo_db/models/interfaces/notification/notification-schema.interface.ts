@@ -9,4 +9,5 @@ export interface NotificationDocument extends Document {
     message: string;
     read: boolean;
     createdAt: Date;
+    expiresAt: Date;
 }

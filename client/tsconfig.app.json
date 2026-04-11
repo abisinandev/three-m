@@ -6,23 +6,24 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "types": ["vite/client"],
-    "baseUrl": "src",
     "skipLibCheck": true,
       "paths": {
-      "@components/*": ["components/*"],
-      "@modules/*": ["modules/*"],
-      "@apis/*":["apis/*"],
-      "@routes/*":["routes/*"],
-      "@services/*":["services/*"],
-      "@stores/*":["stores/*"],
-      "@customTypes/*":["customTypes/*"],
-      "@utils/*":["utils/*"],
-      "@hooks/*":["hooks/*"],
-      "@shared/*":["shared/*"],
-      "@configs/*":["configs/*"],
-      "@lib/*":["lib/*"],
-      "@socket": ["socket/index"],
-      "@socket/*": ["socket/*"],
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
+      "@modules": ["./src/modules"],
+      "@modules/*": ["./src/modules/*"],
+      "@apis/*":["./src/apis/*"],
+      "@routes/*":["./src/routes/*"],
+      "@services/*":["./src/services/*"],
+      "@stores/*":["./src/stores/*"],
+      "@customTypes/*":["./src/customTypes/*"],
+      "@utils/*":["./src/utils/*"],
+      "@hooks/*":["./src/hooks/*"],
+      "@shared/*":["./src/shared/*"],
+      "@configs/*":["./src/configs/*"],
+      "@lib/*":["./src/lib/*"],
+      "@socket": ["./src/socket/index"],
+      "@socket/*": ["./src/socket/*"],
     },
 
     /* Bundler mode */
@@ -41,5 +42,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "src/routes/user/profile.tsx"]
+  "include": ["src/**/*"]
 }

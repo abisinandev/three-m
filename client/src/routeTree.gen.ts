@@ -22,6 +22,7 @@ import { Route as UserExpenseTrackerRouteImport } from './routes/user/expense-tr
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AdminUsersManagementRouteImport } from './routes/admin/users-management'
 import { Route as AdminTransactionsManagementRouteImport } from './routes/admin/transactions-management'
+import { Route as AdminStockManagementRouteImport } from './routes/admin/stock-management'
 import { Route as AdminSipManagementRouteImport } from './routes/admin/sip-management'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminNotificationsRouteImport } from './routes/admin/notifications'
@@ -30,7 +31,9 @@ import { Route as AdminKycManagementRouteImport } from './routes/admin/kyc-manag
 import { Route as AdminInstallmentsRouteImport } from './routes/admin/installments'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminBotManagementRouteImport } from './routes/admin/bot-management'
+import { Route as AdminAlgoTradingRouteImport } from './routes/admin/algo-trading'
 import { Route as UserWalletIndexRouteImport } from './routes/user/wallet/index'
+import { Route as UserTradingIndexRouteImport } from './routes/user/trading/index'
 import { Route as UserPortfolioIndexRouteImport } from './routes/user/portfolio/index'
 import { Route as UserMutualFundsIndexRouteImport } from './routes/user/mutual-funds/index'
 import { Route as AuthSignupIndexRouteImport } from './routes/auth/signup/index'
@@ -38,6 +41,7 @@ import { Route as AuthResetPasswordIndexRouteImport } from './routes/auth/reset-
 import { Route as AuthForgotPasswordIndexRouteImport } from './routes/auth/forgot-password/index'
 import { Route as UserWalletWithdrawRouteImport } from './routes/user/wallet/withdraw'
 import { Route as UserWalletAddToWalletRouteImport } from './routes/user/wallet/add-to-wallet'
+import { Route as UserTradingSymbolRouteImport } from './routes/user/trading/$symbol'
 import { Route as UserPortfolioRedeemProfitRouteImport } from './routes/user/portfolio/redeem-profit'
 import { Route as UserMutualFundsSchemeCodeRouteImport } from './routes/user/mutual-funds/$schemeCode'
 import { Route as UserPaymentPaymentSuccessRouteImport } from './routes/user/_payment/payment-success'
@@ -116,6 +120,11 @@ const AdminTransactionsManagementRoute =
     path: '/transactions-management',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminStockManagementRoute = AdminStockManagementRouteImport.update({
+  id: '/stock-management',
+  path: '/stock-management',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSipManagementRoute = AdminSipManagementRouteImport.update({
   id: '/sip-management',
   path: '/sip-management',
@@ -156,9 +165,19 @@ const AdminBotManagementRoute = AdminBotManagementRouteImport.update({
   path: '/bot-management',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAlgoTradingRoute = AdminAlgoTradingRouteImport.update({
+  id: '/algo-trading',
+  path: '/algo-trading',
+  getParentRoute: () => AdminRoute,
+} as any)
 const UserWalletIndexRoute = UserWalletIndexRouteImport.update({
   id: '/wallet/',
   path: '/wallet/',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserTradingIndexRoute = UserTradingIndexRouteImport.update({
+  id: '/trading/',
+  path: '/trading/',
   getParentRoute: () => UserRoute,
 } as any)
 const UserPortfolioIndexRoute = UserPortfolioIndexRouteImport.update({
@@ -194,6 +213,11 @@ const UserWalletWithdrawRoute = UserWalletWithdrawRouteImport.update({
 const UserWalletAddToWalletRoute = UserWalletAddToWalletRouteImport.update({
   id: '/wallet/add-to-wallet',
   path: '/wallet/add-to-wallet',
+  getParentRoute: () => UserRoute,
+} as any)
+const UserTradingSymbolRoute = UserTradingSymbolRouteImport.update({
+  id: '/trading/$symbol',
+  path: '/trading/$symbol',
   getParentRoute: () => UserRoute,
 } as any)
 const UserPortfolioRedeemProfitRoute =
@@ -271,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/user': typeof UserRouteWithChildren
+  '/admin/algo-trading': typeof AdminAlgoTradingRoute
   '/admin/bot-management': typeof AdminBotManagementRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/installments': typeof AdminInstallmentsRoute
@@ -279,6 +304,7 @@ export interface FileRoutesByFullPath {
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
+  '/admin/stock-management': typeof AdminStockManagementRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
@@ -297,6 +323,7 @@ export interface FileRoutesByFullPath {
   '/user/payment-success': typeof UserPaymentPaymentSuccessRoute
   '/user/mutual-funds/$schemeCode': typeof UserMutualFundsSchemeCodeRoute
   '/user/portfolio/redeem-profit': typeof UserPortfolioRedeemProfitRoute
+  '/user/trading/$symbol': typeof UserTradingSymbolRoute
   '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
   '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
@@ -304,6 +331,7 @@ export interface FileRoutesByFullPath {
   '/auth/signup': typeof AuthSignupIndexRoute
   '/user/mutual-funds': typeof UserMutualFundsIndexRoute
   '/user/portfolio': typeof UserPortfolioIndexRoute
+  '/user/trading': typeof UserTradingIndexRoute
   '/user/wallet': typeof UserWalletIndexRoute
   '/admin/authentication/verify-otp': typeof AdminAuthAdminAuthenticationVerifyOtpRoute
   '/admin/authentication': typeof AdminAuthAdminAuthenticationIndexRoute
@@ -313,6 +341,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/user': typeof UserRouteWithChildren
+  '/admin/algo-trading': typeof AdminAlgoTradingRoute
   '/admin/bot-management': typeof AdminBotManagementRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/installments': typeof AdminInstallmentsRoute
@@ -321,6 +350,7 @@ export interface FileRoutesByTo {
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
+  '/admin/stock-management': typeof AdminStockManagementRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
@@ -339,6 +369,7 @@ export interface FileRoutesByTo {
   '/user/payment-success': typeof UserPaymentPaymentSuccessRoute
   '/user/mutual-funds/$schemeCode': typeof UserMutualFundsSchemeCodeRoute
   '/user/portfolio/redeem-profit': typeof UserPortfolioRedeemProfitRoute
+  '/user/trading/$symbol': typeof UserTradingSymbolRoute
   '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
   '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password': typeof AuthForgotPasswordIndexRoute
@@ -346,6 +377,7 @@ export interface FileRoutesByTo {
   '/auth/signup': typeof AuthSignupIndexRoute
   '/user/mutual-funds': typeof UserMutualFundsIndexRoute
   '/user/portfolio': typeof UserPortfolioIndexRoute
+  '/user/trading': typeof UserTradingIndexRoute
   '/user/wallet': typeof UserWalletIndexRoute
   '/admin/authentication/verify-otp': typeof AdminAuthAdminAuthenticationVerifyOtpRoute
   '/admin/authentication': typeof AdminAuthAdminAuthenticationIndexRoute
@@ -357,6 +389,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/user': typeof UserRouteWithChildren
+  '/admin/algo-trading': typeof AdminAlgoTradingRoute
   '/admin/bot-management': typeof AdminBotManagementRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/installments': typeof AdminInstallmentsRoute
@@ -365,6 +398,7 @@ export interface FileRoutesById {
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
+  '/admin/stock-management': typeof AdminStockManagementRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
@@ -383,6 +417,7 @@ export interface FileRoutesById {
   '/user/_payment/payment-success': typeof UserPaymentPaymentSuccessRoute
   '/user/mutual-funds/$schemeCode': typeof UserMutualFundsSchemeCodeRoute
   '/user/portfolio/redeem-profit': typeof UserPortfolioRedeemProfitRoute
+  '/user/trading/$symbol': typeof UserTradingSymbolRoute
   '/user/wallet/add-to-wallet': typeof UserWalletAddToWalletRoute
   '/user/wallet/withdraw': typeof UserWalletWithdrawRoute
   '/auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
@@ -390,6 +425,7 @@ export interface FileRoutesById {
   '/auth/signup/': typeof AuthSignupIndexRoute
   '/user/mutual-funds/': typeof UserMutualFundsIndexRoute
   '/user/portfolio/': typeof UserPortfolioIndexRoute
+  '/user/trading/': typeof UserTradingIndexRoute
   '/user/wallet/': typeof UserWalletIndexRoute
   '/_admin-auth/admin/authentication/verify-otp': typeof AdminAuthAdminAuthenticationVerifyOtpRoute
   '/_admin-auth/admin/authentication/': typeof AdminAuthAdminAuthenticationIndexRoute
@@ -401,6 +437,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/user'
+    | '/admin/algo-trading'
     | '/admin/bot-management'
     | '/admin/dashboard'
     | '/admin/installments'
@@ -409,6 +446,7 @@ export interface FileRouteTypes {
     | '/admin/notifications'
     | '/admin/settings'
     | '/admin/sip-management'
+    | '/admin/stock-management'
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
@@ -427,6 +465,7 @@ export interface FileRouteTypes {
     | '/user/payment-success'
     | '/user/mutual-funds/$schemeCode'
     | '/user/portfolio/redeem-profit'
+    | '/user/trading/$symbol'
     | '/user/wallet/add-to-wallet'
     | '/user/wallet/withdraw'
     | '/auth/forgot-password'
@@ -434,6 +473,7 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/user/mutual-funds'
     | '/user/portfolio'
+    | '/user/trading'
     | '/user/wallet'
     | '/admin/authentication/verify-otp'
     | '/admin/authentication'
@@ -443,6 +483,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/user'
+    | '/admin/algo-trading'
     | '/admin/bot-management'
     | '/admin/dashboard'
     | '/admin/installments'
@@ -451,6 +492,7 @@ export interface FileRouteTypes {
     | '/admin/notifications'
     | '/admin/settings'
     | '/admin/sip-management'
+    | '/admin/stock-management'
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
@@ -469,6 +511,7 @@ export interface FileRouteTypes {
     | '/user/payment-success'
     | '/user/mutual-funds/$schemeCode'
     | '/user/portfolio/redeem-profit'
+    | '/user/trading/$symbol'
     | '/user/wallet/add-to-wallet'
     | '/user/wallet/withdraw'
     | '/auth/forgot-password'
@@ -476,6 +519,7 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/user/mutual-funds'
     | '/user/portfolio'
+    | '/user/trading'
     | '/user/wallet'
     | '/admin/authentication/verify-otp'
     | '/admin/authentication'
@@ -486,6 +530,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/user'
+    | '/admin/algo-trading'
     | '/admin/bot-management'
     | '/admin/dashboard'
     | '/admin/installments'
@@ -494,6 +539,7 @@ export interface FileRouteTypes {
     | '/admin/notifications'
     | '/admin/settings'
     | '/admin/sip-management'
+    | '/admin/stock-management'
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
@@ -512,6 +558,7 @@ export interface FileRouteTypes {
     | '/user/_payment/payment-success'
     | '/user/mutual-funds/$schemeCode'
     | '/user/portfolio/redeem-profit'
+    | '/user/trading/$symbol'
     | '/user/wallet/add-to-wallet'
     | '/user/wallet/withdraw'
     | '/auth/forgot-password/'
@@ -519,6 +566,7 @@ export interface FileRouteTypes {
     | '/auth/signup/'
     | '/user/mutual-funds/'
     | '/user/portfolio/'
+    | '/user/trading/'
     | '/user/wallet/'
     | '/_admin-auth/admin/authentication/verify-otp'
     | '/_admin-auth/admin/authentication/'
@@ -625,6 +673,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTransactionsManagementRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/stock-management': {
+      id: '/admin/stock-management'
+      path: '/stock-management'
+      fullPath: '/admin/stock-management'
+      preLoaderRoute: typeof AdminStockManagementRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/sip-management': {
       id: '/admin/sip-management'
       path: '/sip-management'
@@ -681,11 +736,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBotManagementRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/algo-trading': {
+      id: '/admin/algo-trading'
+      path: '/algo-trading'
+      fullPath: '/admin/algo-trading'
+      preLoaderRoute: typeof AdminAlgoTradingRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/user/wallet/': {
       id: '/user/wallet/'
       path: '/wallet'
       fullPath: '/user/wallet'
       preLoaderRoute: typeof UserWalletIndexRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/trading/': {
+      id: '/user/trading/'
+      path: '/trading'
+      fullPath: '/user/trading'
+      preLoaderRoute: typeof UserTradingIndexRouteImport
       parentRoute: typeof UserRoute
     }
     '/user/portfolio/': {
@@ -735,6 +804,13 @@ declare module '@tanstack/react-router' {
       path: '/wallet/add-to-wallet'
       fullPath: '/user/wallet/add-to-wallet'
       preLoaderRoute: typeof UserWalletAddToWalletRouteImport
+      parentRoute: typeof UserRoute
+    }
+    '/user/trading/$symbol': {
+      id: '/user/trading/$symbol'
+      path: '/trading/$symbol'
+      fullPath: '/user/trading/$symbol'
+      preLoaderRoute: typeof UserTradingSymbolRouteImport
       parentRoute: typeof UserRoute
     }
     '/user/portfolio/redeem-profit': {
@@ -841,6 +917,7 @@ const AdminAuthRouteRouteWithChildren = AdminAuthRouteRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
+  AdminAlgoTradingRoute: typeof AdminAlgoTradingRoute
   AdminBotManagementRoute: typeof AdminBotManagementRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminInstallmentsRoute: typeof AdminInstallmentsRoute
@@ -849,6 +926,7 @@ interface AdminRouteChildren {
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSipManagementRoute: typeof AdminSipManagementRoute
+  AdminStockManagementRoute: typeof AdminStockManagementRoute
   AdminTransactionsManagementRoute: typeof AdminTransactionsManagementRoute
   AdminUsersManagementRoute: typeof AdminUsersManagementRoute
   AdminMutualFundAddNewFundRoute: typeof AdminMutualFundAddNewFundRoute
@@ -858,6 +936,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAlgoTradingRoute: AdminAlgoTradingRoute,
   AdminBotManagementRoute: AdminBotManagementRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminInstallmentsRoute: AdminInstallmentsRoute,
@@ -866,6 +945,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSipManagementRoute: AdminSipManagementRoute,
+  AdminStockManagementRoute: AdminStockManagementRoute,
   AdminTransactionsManagementRoute: AdminTransactionsManagementRoute,
   AdminUsersManagementRoute: AdminUsersManagementRoute,
   AdminMutualFundAddNewFundRoute: AdminMutualFundAddNewFundRoute,
@@ -907,10 +987,12 @@ interface UserRouteChildren {
   UserPaymentPaymentSuccessRoute: typeof UserPaymentPaymentSuccessRoute
   UserMutualFundsSchemeCodeRoute: typeof UserMutualFundsSchemeCodeRoute
   UserPortfolioRedeemProfitRoute: typeof UserPortfolioRedeemProfitRoute
+  UserTradingSymbolRoute: typeof UserTradingSymbolRoute
   UserWalletAddToWalletRoute: typeof UserWalletAddToWalletRoute
   UserWalletWithdrawRoute: typeof UserWalletWithdrawRoute
   UserMutualFundsIndexRoute: typeof UserMutualFundsIndexRoute
   UserPortfolioIndexRoute: typeof UserPortfolioIndexRoute
+  UserTradingIndexRoute: typeof UserTradingIndexRoute
   UserWalletIndexRoute: typeof UserWalletIndexRoute
 }
 
@@ -924,10 +1006,12 @@ const UserRouteChildren: UserRouteChildren = {
   UserPaymentPaymentSuccessRoute: UserPaymentPaymentSuccessRoute,
   UserMutualFundsSchemeCodeRoute: UserMutualFundsSchemeCodeRoute,
   UserPortfolioRedeemProfitRoute: UserPortfolioRedeemProfitRoute,
+  UserTradingSymbolRoute: UserTradingSymbolRoute,
   UserWalletAddToWalletRoute: UserWalletAddToWalletRoute,
   UserWalletWithdrawRoute: UserWalletWithdrawRoute,
   UserMutualFundsIndexRoute: UserMutualFundsIndexRoute,
   UserPortfolioIndexRoute: UserPortfolioIndexRoute,
+  UserTradingIndexRoute: UserTradingIndexRoute,
   UserWalletIndexRoute: UserWalletIndexRoute,
 }
 

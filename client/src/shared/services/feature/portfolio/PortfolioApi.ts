@@ -31,6 +31,8 @@ export const getPortfolioDatas = async (): Promise<IPortfolioDatasResponse> => {
         totalCount: responseData?.totalCount ?? 0,
         totalInvestment: responseData?.totalInvestment ?? 0,
         totalProfit: responseData?.totalProfit ?? 0,
+        realizedProfit: responseData?.realizedProfit ?? 0,
+        totalReturns: responseData?.totalReturns ?? 0,
         currentValue: responseData?.currentValue ?? 0,
         profitPercentage: responseData?.profitPercentage ?? 0,
     };
@@ -52,5 +54,33 @@ export const confirmRedeemInvestment = async (payload: {
 
 export const getPortfolioProjection = async (): Promise<IPortfolioProjectionResponse> => {
     const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.PROJECTION);
+    return data?.data;
+};
+
+export const getTradeHistory = async (page = 1, limit = 10) => {
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.TRADE_HISTORY, {
+        params: { page, limit }
+    });
+    return data?.data; // data.data contains { data, totalCount, page, limit } based on controller response
+};
+
+export const getMFHoldings = async (page = 1, limit = 10, search?: string) => {
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.INVESTMENTS, {
+        params: { page, limit, search }
+    });
+    return data?.data;
+};
+
+export const getStockHoldings = async (page = 1, limit = 10, search?: string) => {
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.TRADES, {
+        params: { page, limit, search }
+    });
+    return data?.data;
+};
+
+export const getHistories = async (page = 1, limit = 10) => {
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.HISTORIES, {
+        params: { page, limit }
+    });
     return data?.data;
 };

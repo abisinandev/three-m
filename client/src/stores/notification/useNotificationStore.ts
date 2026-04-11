@@ -2,11 +2,12 @@ import { create } from "zustand";
 
 export interface Notification {
     id: string;
-    type: "EXPENSE" | "WALLET" | "SIP";
+    type: "EXPENSE" | "WALLET" | "SIP" | "ALGO_SIGNAL" | "MUTUAL_FUND" | "INFO" | "WARNING";
     title: string;
     message: string;
     read: boolean;
     createdAt: string;
+    signalId?: string; // only present on ALGO_SIGNAL notifications
 }
 
 interface NotificationStore {

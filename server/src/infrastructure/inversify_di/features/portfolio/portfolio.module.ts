@@ -12,8 +12,19 @@ import { IXirrCalculationUseCase } from "@application/use_cases/portfolio/interf
 import { XirrCalculationUseCase } from "@application/use_cases/portfolio/xirr-calculation.usecase";
 import { PortfolioProjectionUseCase } from "@application/use_cases/portfolio/portfolio-projection.usecase";
 import { IPortfolioProjectionUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-projection-usecase.interface";
+import { IFetchTradeHistoryUseCase } from "@application/use_cases/portfolio/interfaces/fetch-trade-history-usecase.interface";
+import { FetchTradeHistoryUseCase } from "@application/use_cases/portfolio/fetch-trade-history.usecase";
+import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
+import { PortfolioRepository } from "@infrastructure/databases/repository/portfolio/portfolio.repository";
+import { IFetchStockHoldingsUseCase } from "@application/use_cases/portfolio/interfaces/fetch-stock-holdings-usecase.interface";
+import { FetchStockHoldingsUseCase } from "@application/use_cases/portfolio/fetch-stock-holdings.usecase";
+import { IFetchMutualFundHoldingsUseCase } from "@application/use_cases/portfolio/interfaces/fetch-mf-holdings-usecase.interface";
+import { FetchMutualFundHoldingsUseCase } from "@application/use_cases/portfolio/fetch-mf-holdings.usecase";
 
 export const PortfolioModule = new ContainerModule(({ bind }) => {
+    // Repositories
+    bind<IPortfolioRepository>(PORTFOLIO_TYPES.PortfolioRepository).to(PortfolioRepository);
+
     // UseCases
     bind<IPortfolioDetailsUseCase>(PORTFOLIO_TYPES.PortfolioDetailsUseCase).to(PortfolioDetailsUseCase);
     bind<IRadeemInvestmentUseCase>(PORTFOLIO_TYPES.RadeemInvestmentUseCase).to(RadeemInvestmentUseCase);
@@ -21,6 +32,9 @@ export const PortfolioModule = new ContainerModule(({ bind }) => {
     bind<PortfolioCalculationsUseCase>(PORTFOLIO_TYPES.PortfolioCalculationsUseCase).to(PortfolioCalculationsUseCase);
     bind<IXirrCalculationUseCase>(PORTFOLIO_TYPES.XirrCalculationUseCase).to(XirrCalculationUseCase);
     bind<IPortfolioProjectionUseCase>(PORTFOLIO_TYPES.PortfolioProjectionUseCase).to(PortfolioProjectionUseCase)
+    bind<IFetchTradeHistoryUseCase>(PORTFOLIO_TYPES.FetchTradeHistoryUseCase).to(FetchTradeHistoryUseCase);
+    bind<IFetchStockHoldingsUseCase>(PORTFOLIO_TYPES.FetchStockHoldingsUseCase).to(FetchStockHoldingsUseCase);
+    bind<IFetchMutualFundHoldingsUseCase>(PORTFOLIO_TYPES.FetchMutualFundHoldingsUseCase).to(FetchMutualFundHoldingsUseCase);
 
     // Controllers
     bind<PortFolioController>(PORTFOLIO_TYPES.PortFolioController).to(PortFolioController);
