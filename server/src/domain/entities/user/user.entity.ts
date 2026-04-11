@@ -1,8 +1,6 @@
 import { AuthProvider } from "@domain/enum/users/auth-provider.enum";
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
-import { SubscripionPlan } from "@domain/enum/users/subscription-plan.enum";
-import { SubscriptionStatus } from "@domain/enum/users/subscription-status.enum";
 import { Role } from "@domain/enum/users/user-role.enum";
 import { Email } from "@domain/entities/user/user-value-objects/email.vo";
 import { Password } from "@domain/entities/user/user-value-objects/password.vo";
@@ -10,6 +8,8 @@ import { Phone } from "@domain/entities/user/user-value-objects/phone.vo";
 import { UserCode } from "@domain/entities/user/user-value-objects/user-code.vo";
 import { WalletSummary } from "@domain/types/wallet-summery";
 import { KycSummary } from "@domain/types/kyc-summery";
+import { SubscriptionPlans } from "../subscription/enums/plans.enum";
+import { SubscriptionStatus } from "../subscription/enums/subscription-status.enums";
 
 export class UserEntity {
   private readonly _id: string | null;
@@ -27,7 +27,7 @@ export class UserEntity {
   private _isBlocked: boolean;
 
   private _subscriptionStatus: SubscriptionStatus;
-  private _subscriptionPlan: SubscripionPlan;
+  private _subscriptionPlan: SubscriptionPlans; 
   private _currency: CurrencyTypes;
 
   private _kycId: string | null;
@@ -63,7 +63,7 @@ export class UserEntity {
     isVerified: boolean;
     isBlocked: boolean;
     subscriptionStatus: SubscriptionStatus;
-    subscriptionPlan: SubscripionPlan;
+    subscriptionPlan: SubscriptionPlans;
     currency: CurrencyTypes;
     kycId?: string | null;
     kycStatus: KycStatusType;
@@ -139,7 +139,7 @@ export class UserEntity {
       isVerified: false,
       isBlocked: false,
       subscriptionStatus: SubscriptionStatus.INACTIVE,
-      subscriptionPlan: SubscripionPlan.FREE,
+      subscriptionPlan: SubscriptionPlans.FREE,
       currency: data.currency ?? CurrencyTypes.INR,
       kycStatus: KycStatusType.NULL,
       isTwoFactorEnabled: false,
@@ -166,7 +166,7 @@ export class UserEntity {
       isVerified: false,
       isBlocked: false,
       subscriptionStatus: SubscriptionStatus.INACTIVE,
-      subscriptionPlan: SubscripionPlan.FREE,
+      subscriptionPlan: SubscriptionPlans.FREE,
       currency: CurrencyTypes.INR,
       kycStatus: KycStatusType.NULL,
       isTwoFactorEnabled: false,
@@ -189,7 +189,7 @@ export class UserEntity {
     isVerified: boolean;
     isBlocked: boolean;
     subscriptionStatus: SubscriptionStatus;
-    subscriptionPlan: SubscripionPlan;
+    subscriptionPlan: SubscriptionPlans;
     currency: CurrencyTypes;
     kycId?: string | null;
     kyc?: KycSummary | null;

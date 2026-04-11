@@ -1,7 +1,7 @@
+import { SubscriptionStatus } from "@domain/entities/subscription/enums/subscription-status.enums";
 import { UserEntity } from "@domain/entities/user/user.entity";
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
-import { SubscriptionStatus } from "@domain/enum/users/subscription-status.enum";
 import { KycSummary } from "@domain/types/kyc-summery";
 import { WalletSummary } from "@domain/types/wallet-summery";
 import type { UserDocument } from "@infrastructure/databases/mongo_db/models/schemas/user/user.schema";
@@ -64,7 +64,7 @@ export const toDomain = (userDoc: UserDocument): UserEntity => {
     isEmailVerified: userDoc.isEmailVerified,
     isVerified: userDoc.isVerified,
     isBlocked: userDoc.isBlocked,
-    subscriptionStatus: userDoc.subscriptionStatus ?? SubscriptionStatus.INACTIVE,
+    subscriptionStatus: userDoc.subscriptionStatus ?? SubscriptionStatus.ACTIVE,
     subscriptionPlan: userDoc.subscriptionPlan,
     currency: userDoc.currency ?? CurrencyTypes.INR,
     kycId,

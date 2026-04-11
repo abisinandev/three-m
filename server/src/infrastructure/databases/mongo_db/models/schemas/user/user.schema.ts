@@ -1,11 +1,11 @@
 import { AuthProvider } from "@domain/enum/users/auth-provider.enum";
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
-import { SubscripionPlan } from "@domain/enum/users/subscription-plan.enum";
-import { SubscriptionStatus } from "@domain/enum/users/subscription-status.enum";
-import { Role } from "@domain/enum/users/user-role.enum";
 import { Schema, model, type Document } from "mongoose";
 import { IUserSchema } from "../../interfaces/user/user.schema.interface";
+import { Role } from "@domain/enum/users/user-role.enum";
+import { SubscriptionStatus } from "@domain/entities/subscription/enums/subscription-status.enums";
+import { SubscriptionPlans } from "@domain/entities/subscription/enums/plans.enum";
  
 export type UserDocument = Document & IUserSchema;
 
@@ -83,15 +83,14 @@ const UserSchema = new Schema<UserDocument>(
 
     subscriptionPlan: {
       type: String,
-      enum: Object.values(SubscripionPlan),
-      default: SubscripionPlan.FREE,
+      enum: Object.values(SubscriptionPlans),
+      default: SubscriptionPlans.FREE,
     },
 
     isTwoFactorEnabled: { type: Boolean, default: false },
 
     twoFactorSecret: {
       type: String,
-      // select: false,
       default: null,
     },
 
