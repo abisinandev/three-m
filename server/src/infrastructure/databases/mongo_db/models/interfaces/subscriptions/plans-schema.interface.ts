@@ -1,8 +1,8 @@
-import { SubscriptionStatus } from "@domain/entities/subscription/enums/subscription-status.enums";
+import { SubscriptionPlans } from "@domain/entities/subscription/enums/plans.enum";
 
 export interface IPlans {
     id?: string;
-    code: SubscriptionStatus;
+    code: SubscriptionPlans;
     price: number;
     durationInDays: number;
     features: string[];

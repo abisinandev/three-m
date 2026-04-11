@@ -1,7 +1,7 @@
 import { SubscriptionPlans } from "./enums/plans.enum";
 
 export class PlanEntity {
-    private readonly _id?: string | null;
+    private readonly _id?: string;
     private readonly _code: SubscriptionPlans;
     private _price: number;
     private _durationInDays: number;
@@ -11,7 +11,7 @@ export class PlanEntity {
     private _updatedAt?: Date;
 
     private constructor(props: {
-        id?: string | null;
+        id?: string;
         code: SubscriptionPlans;
         price: number;
         durationInDays: number;
@@ -20,7 +20,7 @@ export class PlanEntity {
         createdAt?: Date;
         updatedAt?: Date;
     }) {
-        this._id = props.id ?? null;
+        this._id = props.id;
         this._code = props.code;
         this._price = props.price;
         this._durationInDays = props.durationInDays;

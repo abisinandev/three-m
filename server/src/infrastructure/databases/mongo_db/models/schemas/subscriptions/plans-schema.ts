@@ -1,3 +1,4 @@
+import { SubscriptionPlans } from "@domain/entities/subscription/enums/plans.enum";
 import { Document, model, Schema } from "mongoose";
 import { IPlans } from "../../interfaces/subscriptions/plans-schema.interface";
 
@@ -7,9 +8,10 @@ const planSchema = new Schema<PlanDocument>(
     {
         code: {
             type: String,
-            enum: ["FREE", "PREMIUM"],
+            enum: Object.values(SubscriptionPlans),
             required: true,
             unique: true,
+            default: SubscriptionPlans.FREE,
         },
         price: {
             type: Number,
