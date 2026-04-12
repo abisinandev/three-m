@@ -17,7 +17,8 @@ import {
   ChevronDown,
   User,
   AlignHorizontalDistributeCenter,
-  Cpu
+  Cpu,
+  CreditCard
 } from 'lucide-react';
 import adminApi from '@lib/axiosAdmin';
 import { LOGOUT } from '@shared/constants/adminConstants';
@@ -37,6 +38,7 @@ const navItems = [
   { to: ROUTES.ADMIN.NOTIFICATIONS, label: 'Notifications', icon: Bell },
   { to: ROUTES.ADMIN.BOT_MANAGEMENT, label: 'Bot Management', icon: Bot },
   { to: ROUTES.ADMIN.ALGO_TRADING, label: 'Algo Trading', icon: Cpu },
+  { to: ROUTES.ADMIN.SUBSCRIPTIONS, label: 'Subscriptions', icon: CreditCard },
   { to: ROUTES.ADMIN.SETTINGS, label: 'Settings', icon: Settings },
 ];
 
