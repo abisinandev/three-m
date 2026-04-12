@@ -8,11 +8,14 @@ import { HttpStatus } from "@domain/enum/express/status-code";
 import { IFetchSubscriptionsUseCase } from "@application/use_cases/admin/subscription-management/interfaces/fetch-subscriptions-usecase.interface";
 import { ISubscriptionPlansUseCase } from "@application/use_cases/admin/subscription-management/interfaces/subscription-plans-usecase.interface";
 import { ISubscriptionStatsUseCase } from "@application/use_cases/admin/subscription-management/interfaces/subscription-stats-usecase.interface";
+import { IUpdateAdminPlanUseCase } from "@application/use_cases/admin/subscription-management/interfaces/update-admin-plan-usecase.interface";
+import { SubscriptionPlans } from "@domain/entities/subscription/enums/plans.enum";
 
 @injectable()
 export class AdminSubscriptionManagementController {
     constructor(
         @inject(SUBSCRIPTION_TYPES.SubscriptionPlansUseCase) private readonly getPlansUseCase: ISubscriptionPlansUseCase,
+        @inject(SUBSCRIPTION_TYPES.UpdateAdminPlanUseCase) private readonly updatePlanUseCase: IUpdateAdminPlanUseCase,
         @inject(SUBSCRIPTION_TYPES.FetchSubscriptionsUseCase) private readonly getSubscriptionsUseCase: IFetchSubscriptionsUseCase,
         @inject(SUBSCRIPTION_TYPES.SubscriptionStatsUseCase) private readonly getStatsUseCase: ISubscriptionStatsUseCase,
     ) { }
@@ -87,6 +90,30 @@ export class AdminSubscriptionManagementController {
             )
         } catch (error) {
             next(error)
+        }
+    }
+
+    async updatePlan(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { code } = req.params;
+            const { price, durationInDays, features, isActive } = req.body;
+
+            await this.updatePlanUseCase.execute({
+                code: code as SubscriptionPlans,
+                price,
+                durationInDays,
+                features,
+                isActive
+            });
+
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.UPDATED,
+                null,
+                HttpStatus.OK
+            );
+        } catch (error) {
+            next(error);
         }
     }
 }

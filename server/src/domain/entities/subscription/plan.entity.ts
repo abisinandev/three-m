@@ -1,3 +1,4 @@
+import { FREE_PLAN, PREMIUM_PLAN } from "./enums/features.enum";
 import { SubscriptionPlans } from "./enums/plans.enum";
 
 export class PlanEntity {
@@ -125,7 +126,46 @@ export class PlanEntity {
         this._updatedAt = new Date();
     }
 
+    update(props: {
+        price?: number;
+        durationInDays?: number;
+        features?: string[];
+        isActive?: boolean;
+    }) {
+        if (this._code === SubscriptionPlans.FREE) {
+            throw new Error("Base FREE plan cannot be modified.");
+        }
+
+        if (props.price !== undefined) {
+            if (props.price < 0) throw new Error("Price cannot be negative.");
+            this._price = props.price;
+        }
+
+        if (props.durationInDays !== undefined) {
+            if (props.durationInDays <= 0) throw new Error("Duration must be greater than zero.");
+            this._durationInDays = props.durationInDays;
+        }
+
+        if (props.features !== undefined) {
+            // Validate features against tier-specific enum
+            const validFeatures = this._code === SubscriptionPlans.PREMIUM 
+                ? (Object.values(PREMIUM_PLAN) as string[])
+                : (Object.values(FREE_PLAN) as string[]);
+                
+            const filteredFeatures = props.features.filter(f => validFeatures.includes(f));
+            // Remove duplicates
+            this._features = Array.from(new Set(filteredFeatures));
+        }
+
+        if (props.isActive !== undefined) {
+            this._isActive = props.isActive;
+        }
+
+        this._updatedAt = new Date();
+    }
+
     toPersistence() {
+
         return {
             id: this._id,
             code: this._code,

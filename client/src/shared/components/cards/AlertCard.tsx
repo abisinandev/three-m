@@ -46,7 +46,7 @@ export function VerificationAlertCard() {
   );
 }
 
-export function PremiumUpgradeCard() {
+export function PremiumUpgradeCard({ onUpgrade }: { onUpgrade?: () => void }) {
   return (
     <div className="w-full mb-6">
       <div className="relative overflow-hidden rounded-xl border border-emerald-500/25 bg-emerald-900/10 p-5 backdrop-blur-sm">
@@ -72,12 +72,12 @@ export function PremiumUpgradeCard() {
             </p>
 
             <div className="mt-4 flex flex-wrap items-center gap-4">
-              <Link
-                to={ROUTES.USER.HOME}
+              <button
+                onClick={onUpgrade}
                 className="rounded-lg bg-emerald-500 px-5 py-2 text-xs font-bold text-black transition-all hover:bg-emerald-400 hover:shadow-emerald-400/20 active:scale-98"
               >
                 Go Premium — ₹499/mo
-              </Link>
+              </button>
               <span className="text-[11px] text-emerald-600 font-medium">
                 Cancel anytime • 7-day free trial
               </span>

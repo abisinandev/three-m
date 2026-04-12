@@ -8,11 +8,9 @@ const controller = container.get<AdminSubscriptionManagementController>(
     SUBSCRIPTION_TYPES.AdminSubscriptionManagementController
 )
 
-
 router.get("/", controller.getPlans.bind(controller));
 router.get("/stats", controller.getStats.bind(controller));
 router.get("/all-subscriptions", controller.getSubscriptions.bind(controller));
-
-
+router.patch("/:code", controller.updatePlan.bind(controller));
 
 export default router;

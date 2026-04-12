@@ -1,14 +1,17 @@
 import { PremiumUpgradeCard, VerificationAlertCard } from '@shared/components/cards/AlertCard';
 import { useUserStore } from '@stores/user/UserStore';
 import { Wallet, TrendingDown, ArrowUpRight, ArrowDownRight, Bot, BarChart3 } from 'lucide-react';
+import { useState } from 'react';
+import PremiumPaymentModal from '@shared/components/modals/PremiumPaymentModal';
 
 const DashboardPage = () => {
   const { user } = useUserStore.getState();
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
 
   return (
     <div className="space-y-5 pb-10">
       {!user?.isVerified && <VerificationAlertCard />}
-      {user?.isVerified && <PremiumUpgradeCard />}
+      {user?.isVerified && <PremiumUpgradeCard onUpgrade={() => setIsPremiumModalOpen(true)} />}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
@@ -92,7 +95,6 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="bg-[#0f0f0f] rounded-lg border border-[#1f1f1f] p-5">
           <h3 className="text-sm font-semibold text-white mb-3">Active SIPs</h3>
@@ -129,11 +131,19 @@ const DashboardPage = () => {
           <p className="text-xs text-gray-400 mb-5">
             Auto-trade, smart insights, zero ads — just ₹499/month
           </p>
-          <button className="bg-[#22C55E] hover:bg-[#1ea853] text-black font-semibold text-sm px-8 py-2.5 rounded-lg transition">
+          <button
+            onClick={() => setIsPremiumModalOpen(true)}
+            className="bg-[#22C55E] hover:bg-[#1ea853] text-black font-semibold text-sm px-8 py-2.5 rounded-lg transition"
+          >
             Go Premium Now
           </button>
         </div>
       </div>
+
+      <PremiumPaymentModal
+        isOpen={isPremiumModalOpen}
+        onClose={() => setIsPremiumModalOpen(false)}
+      />
     </div>
   );
 };

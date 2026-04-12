@@ -9,16 +9,24 @@ import { ISubscriptionPlansUseCase } from "@application/use_cases/admin/subscrip
 import { SubscriptionPlansUseCase } from "@application/use_cases/admin/subscription-management/subscription-plans.usecase";
 import { IFetchSubscriptionsUseCase } from "@application/use_cases/admin/subscription-management/interfaces/fetch-subscriptions-usecase.interface";
 import { FetchSubscriptionsUseCase } from "@application/use_cases/admin/subscription-management/fetch-subscriptions.usecase";
+import { IUpdateAdminPlanUseCase } from "@application/use_cases/admin/subscription-management/interfaces/update-admin-plan-usecase.interface";
+import { UpdateAdminPlanUseCase } from "@application/use_cases/admin/subscription-management/update-admin-plan.usecase";
 import { ISubscriptionStatsUseCase } from "@application/use_cases/admin/subscription-management/interfaces/subscription-stats-usecase.interface";
 import { SubscriptionStatsUseCase } from "@application/use_cases/admin/subscription-management/subscription-stats.usecase";
+import { IFetchPremiumPlanUseCase } from "@application/use_cases/user/subscription/interfaces/fetch-premium-plan.usecase.interface";
+import { FetchPremiumPlanUseCase } from "@application/use_cases/user/subscription/fetch-premium-plan.usecase";
+import { UserSubscriptionController } from "@presentation/http/controllers/user/user-subscription.controller";
 
 export const SubscriptionModule = new ContainerModule(({ bind }) => {
     bind<ISubscriptionRepository>(SUBSCRIPTION_TYPES.SubscriptionRepository).to(SubscriptionRepository);
     bind<IPlanRepository>(SUBSCRIPTION_TYPES.PlanRepository).to(PlanRepository);
 
     bind<ISubscriptionPlansUseCase>(SUBSCRIPTION_TYPES.SubscriptionPlansUseCase).to(SubscriptionPlansUseCase);
+    bind<IUpdateAdminPlanUseCase>(SUBSCRIPTION_TYPES.UpdateAdminPlanUseCase).to(UpdateAdminPlanUseCase);
     bind<IFetchSubscriptionsUseCase>(SUBSCRIPTION_TYPES.FetchSubscriptionsUseCase).to(FetchSubscriptionsUseCase);
     bind<ISubscriptionStatsUseCase>(SUBSCRIPTION_TYPES.SubscriptionStatsUseCase).to(SubscriptionStatsUseCase);
+    bind<IFetchPremiumPlanUseCase>(SUBSCRIPTION_TYPES.FetchPremiumPlanUseCase).to(FetchPremiumPlanUseCase);
 
     bind<AdminSubscriptionManagementController>(SUBSCRIPTION_TYPES.AdminSubscriptionManagementController).to(AdminSubscriptionManagementController);
+    bind<UserSubscriptionController>(SUBSCRIPTION_TYPES.UserSubscriptionController).to(UserSubscriptionController);
 });

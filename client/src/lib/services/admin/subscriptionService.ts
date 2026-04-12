@@ -82,10 +82,16 @@ export const getUserSubscriptions = async (params: {
     return data.data as PaginatedSubscriptions;
 };
 
+export const updatePlan = async (code: string, data: Partial<Plan>) => {
+    const { data: response } = await adminApi.patch(`/subscriptions/${code}`, data);
+    return response.data;
+};
+
 const subscriptionService = {
     getPlans,
     getOverviewStats,
-    getUserSubscriptions
+    getUserSubscriptions,
+    updatePlan
 };
 
 export default subscriptionService;
