@@ -1,5 +1,6 @@
 import { PlanEntity } from "@domain/entities/subscription/plan.entity";
 import { PlanDocument } from "@infrastructure/databases/mongo_db/models/schemas/subscriptions/plans-schema";
+import { PlanDTO } from "@application/dto/admin/subscription/subscription-management.dto";
 
 const toDomain = (doc: PlanDocument): PlanEntity => {
     return PlanEntity.fromPersistence({
@@ -26,7 +27,21 @@ const toPersistance = (entity: PlanEntity): Partial<PlanDocument> => {
     };
 };
 
+const toDTO = (entity: PlanEntity): PlanDTO => {
+    return {
+        id: entity.id as string,
+        code: entity.code,
+        price: entity.price,
+        durationInDays: entity.durationInDays,
+        features: entity.features,
+        isActive: entity.isActive,
+        createdAt: entity.createdAt,
+        updatedAt: entity.updatedAt,
+    };
+};
+
 export const PlanMapper = {
     toDomain,
     toPersistance,
+    toDTO,
 };
