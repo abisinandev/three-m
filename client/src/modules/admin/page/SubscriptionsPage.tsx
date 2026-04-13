@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
     Search, Activity, User,
     Lock, Info, AlertTriangle, Save, RefreshCw, CheckCircle2,
@@ -103,10 +104,10 @@ const PlansTab = () => {
     const freePlan = data?.plans.find(p => p.code === "FREE");
     const premiumPlan = data?.plans.find(p => p.code === "PREMIUM");
 
-    if (isLoading) return <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{[1, 2].map(i => <div key={i} className="h-[400px] bg-neutral-900/50 rounded-2xl animate-pulse border border-neutral-800" />)}</div>;
+    if (isLoading) return <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">{[1, 2].map(i => <div key={i} className="h-[400px] bg-neutral-900/50 rounded-xl animate-pulse border border-neutral-800" />)}</div>;
 
     return (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <FreePlanCard plan={freePlan} />
             <PremiumPlanCard plan={premiumPlan} />
         </div>
@@ -115,41 +116,40 @@ const PlansTab = () => {
 
 const FreePlanCard = ({ plan }: { plan?: Plan }) => {
     return (
-        <div className="bg-[#111111] border border-neutral-800/50 rounded-2xl p-6 relative overflow-hidden group/card shadow-lg opacity-80">
-            <div className="absolute top-4 right-4 flex items-center gap-2 px-2 py-1 bg-neutral-800/50 border border-neutral-700/50 rounded-md">
-                <Lock className="w-3 h-3 text-neutral-500" />
-                <span className="text-[9px] font-medium text-neutral-500 uppercase tracking-widest">Default Plan</span>
-            </div>
-
-            <div className="mb-8">
-                <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-xl bg-neutral-800 flex items-center justify-center text-neutral-500">
-                        <Zap className="w-5 h-5" />
+        <div className="bg-[#111] border border-neutral-800/60 rounded-xl p-5 flex flex-col h-full shadow-sm">
+            <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-neutral-800 flex items-center justify-center text-neutral-400">
+                        <Zap className="w-4 h-4" />
                     </div>
-                    <h2 className="text-xl font-bold text-white tracking-tight">FREE</h2>
+                    <div>
+                        <h2 className="text-sm font-bold text-white tracking-wide">FREE</h2>
+                        <span className="text-[10px] text-neutral-500 uppercase tracking-widest font-medium">Default Tier</span>
+                    </div>
                 </div>
-                <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold text-white">₹0</span>
-                    <span className="text-[11px] text-neutral-500 font-medium">/ lifetime</span>
-                </div>
+                <Lock className="w-3.5 h-3.5 text-neutral-600" />
             </div>
 
-            <div className="space-y-6 pointer-events-none opacity-50 grayscale">
+            <div className="flex items-baseline gap-1 mb-6">
+                <span className="text-2xl font-bold text-white">₹0</span>
+                <span className="text-[10px] text-neutral-500 font-medium">/ lifetime</span>
+            </div>
+
+            <div className="space-y-4 flex-1">
                 {FEATURE_SECTIONS.map((section) => {
                     const tierFeatures = section.features.filter(f => f.tier === "FREE");
                     if (tierFeatures.length === 0) return null;
-
                     return (
-                        <div key={section.id} className="space-y-3">
-                            <div className="flex items-center gap-2">
-                                <section.icon className="w-3.5 h-3.5 text-neutral-500" />
-                                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{section.label}</span>
-                            </div>
-                            <div className="grid grid-cols-1 gap-2">
+                        <div key={section.id}>
+                            <h4 className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                                <section.icon className="w-3 h-3" />
+                                {section.label}
+                            </h4>
+                            <div className="space-y-1.5 pl-1">
                                 {tierFeatures.map(f => (
-                                    <div key={f.id} className="flex items-center justify-between p-2 bg-neutral-900/30 rounded-lg border border-neutral-800/50">
-                                        <span className="text-[11px] text-neutral-400">{f.label}</span>
-                                        <div className="w-7 h-4 bg-neutral-800 rounded-full" />
+                                    <div key={f.id} className="flex items-center justify-between text-[11px] text-neutral-400">
+                                        <span>{f.label}</span>
+                                        <CheckCircle2 className="w-3 h-3 text-neutral-700" />
                                     </div>
                                 ))}
                             </div>
@@ -158,10 +158,10 @@ const FreePlanCard = ({ plan }: { plan?: Plan }) => {
                 })}
             </div>
 
-            <div className="mt-10 p-4 bg-neutral-900/50 rounded-xl border border-neutral-800/80 flex items-start gap-3">
-                <Info className="w-4 h-4 text-neutral-600 mt-0.5" />
-                <p className="text-[10px] text-neutral-500 leading-relaxed font-medium">
-                    The FREE plan is the base tier for all new users. It cannot be edited or deactivated.
+            <div className="mt-6 pt-4 border-t border-neutral-800/50 flex gap-2 items-start">
+                <Info className="w-3.5 h-3.5 text-neutral-600 mt-0.5 shrink-0" />
+                <p className="text-[10px] text-neutral-500 leading-tight">
+                    Free plan features are hardcoded and cannot be deactivated from the admin panel.
                 </p>
             </div>
         </div>
@@ -178,7 +178,7 @@ const PremiumPlanCard = ({ plan }: { plan?: Plan }) => {
             setDraft({
                 price: plan.price,
                 durationInDays: plan.durationInDays,
-                features: [...plan.features],
+                features: [...(plan.features || [])],
                 isActive: plan.isActive
             });
         }
@@ -186,13 +186,14 @@ const PremiumPlanCard = ({ plan }: { plan?: Plan }) => {
 
     const mutation = useMutation({
         mutationFn: (data: Partial<Plan>) => subscriptionService.updatePlan("PREMIUM", data),
-        onSuccess: () => {
+        onSuccess: (response) => {
             queryClient.invalidateQueries({ queryKey: ["admin-plans"] });
             setSavedSuccessfully(true);
+            toast.success(response?.message || "Plan updated successfully");
             setTimeout(() => setSavedSuccessfully(false), 3000);
         },
         onError: (error: any) => {
-            alert(error?.response?.data?.message || "Failed to update plan");
+            toast.error(error?.response?.data?.message || "Failed to update plan");
         }
     });
 
@@ -212,116 +213,76 @@ const PremiumPlanCard = ({ plan }: { plan?: Plan }) => {
         }
     };
 
-    const handleReset = () => {
-        if (plan) {
-            setDraft({
-                price: plan.price,
-                durationInDays: plan.durationInDays,
-                features: [...plan.features],
-                isActive: plan.isActive
-            });
-        }
-    };
-
-    const handleSave = () => {
-        mutation.mutate(draft);
-    };
+    const handleSave = () => mutation.mutate(draft);
 
     return (
-        <div className="bg-[#111111] border-2 border-emerald-500/20 rounded-2xl p-6 relative shadow-2xl shadow-emerald-500/5 group/card transition-all hover:border-emerald-500/40">
-            <div className="absolute top-4 right-4 flex items-center gap-3">
-                {hasChanges && (
-                    <div className="flex items-center gap-1.5 px-2 py-1 bg-amber-500/10 border border-amber-500/20 rounded-md animate-pulse">
-                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
-                        <span className="text-[9px] font-bold text-amber-500 uppercase tracking-widest">Unsaved Changes</span>
-                    </div>
-                )}
-                <div className="flex items-center gap-2 px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-md">
-                    <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                    <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Premium Tier</span>
+        <div className="bg-[#111] border border-emerald-500/30 rounded-xl p-5 flex flex-col h-full shadow-lg relative group/card transition-colors hover:border-emerald-500/50">
+            {hasChanges && (
+                <div className="absolute -top-2.5 -right-2.5 flex items-center gap-1.5 px-2 py-0.5 bg-amber-500 border border-amber-400 rounded text-black shadow-sm animate-pulse">
+                    <span className="text-[9px] font-bold uppercase tracking-widest">Unsaved</span>
                 </div>
-            </div>
+            )}
 
-            <div className="mb-8">
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                        <Zap className="w-5 h-5 fill-emerald-500" />
+            <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                        <Zap className="w-4 h-4 fill-emerald-500/50" />
                     </div>
-                    <h2 className="text-xl font-bold text-white tracking-tight">PREMIUM</h2>
+                    <div>
+                        <h2 className="text-sm font-bold text-white tracking-wide">PREMIUM</h2>
+                        <span className="text-[10px] text-emerald-500 uppercase tracking-widest font-medium">Pro Features</span>
+                    </div>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Monthly Price</label>
-                        <div className="relative group">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 font-bold group-focus-within:text-emerald-500 transition-colors">₹</span>
-                            <input
-                                type="number"
-                                value={draft.price ?? 0}
-                                onChange={(e) => setDraft({ ...draft, price: Number(e.target.value) })}
-                                className="w-full bg-[#1A1A1A] border border-neutral-800 rounded-xl py-2 pl-7 pr-3 text-sm font-bold text-white focus:outline-none focus:border-emerald-500/50 transition-all font-mono"
-                            />
-                        </div>
-                    </div>
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Duration (Days)</label>
-                        <input
-                            type="number"
-                            value={draft.durationInDays ?? 0}
-                            onChange={(e) => setDraft({ ...draft, durationInDays: Number(e.target.value) })}
-                            className="w-full bg-[#1A1A1A] border border-neutral-800 rounded-xl py-2 px-3 text-sm font-bold text-white focus:outline-none focus:border-emerald-500/50 transition-all font-mono"
-                        />
+                <div className="flex items-center justify-center cursor-pointer" onClick={() => setDraft({ ...draft, isActive: !draft.isActive })}>
+                    <div className={`w-8 h-4 rounded-full relative transition-colors duration-200 ${draft.isActive ? "bg-emerald-500" : "bg-neutral-700"}`}>
+                        <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all duration-200 ${draft.isActive ? "right-0.5" : "left-0.5"}`} />
                     </div>
                 </div>
             </div>
 
-            <div className="space-y-6">
-                <div className="flex items-center justify-between p-3 bg-neutral-900/50 rounded-xl border border-neutral-800/80 mb-6 group cursor-pointer" onClick={() => setDraft({ ...draft, isActive: !draft.isActive })}>
-                    <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${draft.isActive ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"}`}>
-                            <Activity className="w-4 h-4" />
-                        </div>
-                        <div>
-                            <div className="text-[11px] font-bold text-white uppercase tracking-tight">Allow New Subscriptions</div>
-                            <div className="text-[9px] text-neutral-500">Toggle public availability of this plan</div>
-                        </div>
-                    </div>
-                    <button className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${draft.isActive ? "bg-emerald-500" : "bg-neutral-800"}`}>
-                        <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all duration-300 ${draft.isActive ? "right-1" : "left-1"}`} />
-                    </button>
+            <div className="grid grid-cols-2 gap-3 mb-6 bg-[#161616] border border-neutral-800/60 p-3 rounded-lg">
+                <div>
+                    <label className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest mb-1 block">Price (₹)</label>
+                    <input
+                        type="number"
+                        value={draft.price ?? 0}
+                        onChange={(e) => setDraft({ ...draft, price: Number(e.target.value) })}
+                        className="w-full bg-[#1A1A1A] border border-neutral-800 rounded py-1 px-2 text-xs font-bold text-white focus:outline-none focus:border-emerald-500/50"
+                    />
                 </div>
+                <div>
+                    <label className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest mb-1 block">Days</label>
+                    <input
+                        type="number"
+                        value={draft.durationInDays ?? 0}
+                        onChange={(e) => setDraft({ ...draft, durationInDays: Number(e.target.value) })}
+                        className="w-full bg-[#1A1A1A] border border-neutral-800 rounded py-1 px-2 text-xs font-bold text-white focus:outline-none focus:border-emerald-500/50"
+                    />
+                </div>
+            </div>
 
+            <div className="space-y-4 flex-1">
                 {FEATURE_SECTIONS.map((section) => {
                     const tierFeatures = section.features.filter(f => f.tier === "PREMIUM");
                     if (tierFeatures.length === 0) return null;
-
                     return (
-                        <div key={section.id} className="space-y-3">
-                            <div className="flex items-center gap-2 px-1">
-                                <section.icon className="w-3.5 h-3.5 text-neutral-400" />
-                                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">{section.label}</span>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div key={section.id}>
+                            <h4 className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                                <section.icon className="w-3 h-3" />
+                                {section.label}
+                            </h4>
+                            <div className="space-y-1 pl-1">
                                 {tierFeatures.map(f => {
                                     const isEnabled = draft.features?.includes(f.id);
                                     return (
-                                        <div
-                                            key={f.id}
-                                            onClick={() => toggleFeature(f.id)}
-                                            className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer group/item hover:scale-[1.01] active:scale-[0.99] ${isEnabled ? "bg-neutral-800/50 border-neutral-700 shadow-sm" : "bg-transparent border-neutral-800/40 opacity-60"
-                                                }`}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                <span className={`text-[11px] font-medium transition-colors ${isEnabled ? "text-neutral-200" : "text-neutral-500"}`}>{f.label}</span>
-                                                {f.critical && (
-                                                    <span title="Disabling this affects core trading operations">
-                                                        <Info className="w-3 h-3 text-neutral-600 group-hover/item:text-amber-500 transition-colors" />
-                                                    </span>
-                                                )}
+                                        <div key={f.id} onClick={() => toggleFeature(f.id)} className="flex items-center justify-between text-[11px] py-1 cursor-pointer group/feat">
+                                            <div className="flex items-center gap-1.5">
+                                                <span className={isEnabled ? "text-neutral-200" : "text-neutral-600"}>{f.label}</span>
+                                                {f.critical && <AlertTriangle className={`w-3 h-3 ${isEnabled ? "text-amber-500/60" : "text-neutral-700"}`} />}
                                             </div>
-                                            <button className={`w-8 h-4 rounded-full relative transition-colors duration-300 ${isEnabled ? "bg-emerald-500/80" : "bg-neutral-800"}`}>
-                                                <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all duration-300 ${isEnabled ? "right-0.5" : "left-0.5"}`} />
-                                            </button>
+                                            <div className={`w-6 h-3 rounded-full relative transition-colors duration-200 ${isEnabled ? "bg-emerald-500/80" : "bg-neutral-800"}`}>
+                                                <div className={`absolute top-0.5 w-2 h-2 bg-white rounded-full transition-all duration-200 ${isEnabled ? "right-0.5" : "left-0.5"}`} />
+                                            </div>
                                         </div>
                                     );
                                 })}
@@ -331,46 +292,20 @@ const PremiumPlanCard = ({ plan }: { plan?: Plan }) => {
                 })}
             </div>
 
-            {draft.features?.includes("ALGO_TRADING") === false && plan?.features.includes("ALGO_TRADING") && (
-                <div className="mt-8 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-start gap-3 animate-in slide-in-from-top-2 duration-300">
-                    <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-                    <p className="text-[10px] text-amber-500 leading-relaxed font-medium">
-                        <span className="font-bold uppercase tracking-wider block mb-0.5">Critical Warning</span>
-                        Disabling "Algo Trading" will prevent premium users from executing automated strategies instantly.
-                    </p>
-                </div>
-            )}
-
-            <div className="mt-10 flex items-center justify-between gap-4 pt-6 border-t border-neutral-800/50">
-                <div className="flex items-center gap-2 group cursor-help">
-                    <Info className="w-3.5 h-3.5 text-neutral-600" />
-                    <span className="text-[9px] text-neutral-500 font-medium italic group-hover:text-neutral-400 transition-colors underline decoration-neutral-800 underline-offset-4">Changes affect all premium users instantly</span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                    {hasChanges && (
-                        <button
-                            onClick={handleReset}
-                            className="px-4 py-2 text-[11px] font-bold text-neutral-500 hover:text-white transition-colors flex items-center gap-2"
-                        >
-                            <RefreshCw className="w-3 h-3" />
-                            Reset
-                        </button>
-                    )}
-                    <button
-                        disabled={!hasChanges || mutation.isPending}
-                        onClick={handleSave}
-                        className={`px-6 py-2 rounded-xl text-[11px] font-bold flex items-center gap-2 transition-all shadow-lg ${!hasChanges
-                            ? "bg-neutral-800 text-neutral-600 grayscale cursor-not-allowed opacity-50"
-                            : savedSuccessfully
-                                ? "bg-emerald-500 text-white"
-                                : "bg-white text-black hover:bg-neutral-100 active:scale-95 shadow-white/5"
-                            }`}
-                    >
-                        {mutation.isPending ? <RefreshCw className="w-3 h-3 animate-spin" /> : savedSuccessfully ? <CheckCircle2 className="w-3 h-3" /> : <Save className="w-3 h-3" />}
-                        {savedSuccessfully ? "Changes Saved" : mutation.isPending ? "Saving..." : "Save Changes"}
-                    </button>
-                </div>
+            <div className="mt-6 pt-4 border-t border-neutral-800/50 flex justify-end">
+                <button
+                    disabled={!hasChanges || mutation.isPending}
+                    onClick={handleSave}
+                    className={`px-4 py-1.5 rounded text-[11px] font-bold flex items-center gap-1.5 transition-all ${!hasChanges
+                        ? "bg-neutral-800 text-neutral-500 cursor-not-allowed"
+                        : savedSuccessfully
+                            ? "bg-emerald-500 text-white"
+                            : "bg-white text-black hover:bg-neutral-200 active:scale-95"
+                        }`}
+                >
+                    {mutation.isPending ? <RefreshCw className="w-3 h-3 animate-spin" /> : savedSuccessfully ? <CheckCircle2 className="w-3 h-3" /> : <Save className="w-3 h-3" />}
+                    {savedSuccessfully ? "Saved" : "Save Changes"}
+                </button>
             </div>
         </div>
     );

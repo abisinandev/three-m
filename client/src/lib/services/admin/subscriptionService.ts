@@ -87,9 +87,9 @@ export const getUserSubscriptions = async (params: {
     return data.data as PaginatedSubscriptions;
 };
 
-export const updatePlan = async (code: string, data: Partial<Plan>) => {
-    const { data: response } = await adminApi.patch(`/subscriptions/${code}`, data);
-    return response.data;
+export const updatePlan = async (code: string, payload: Partial<Plan>) => {
+    const { data: response } = await adminApi.patch(`/subscriptions/${code}`, { ...payload, code });
+    return response;
 };
 
 const subscriptionService = {
