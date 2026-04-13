@@ -108,7 +108,7 @@ export class AdminSubscriptionManagementController {
 
             return ResponseHelper.success(
                 res,
-                SuccessMessages.DATA.UPDATED,
+                SuccessMessages.SUBSCRIPTION.PLAN_UPDATED,
                 null,
                 HttpStatus.OK
             );

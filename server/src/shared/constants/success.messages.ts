@@ -67,5 +67,9 @@ export const SuccessMessages = {
         STRATEGY_FETCHED: "Strategies fetched successfully",
         ACTIVE_STRATEGY_FETCHED: "Active strategy fetched successfully",
         SIGNAL_CONFIRMED: "Signal confirmed and order placed successfully",
+    },
+
+    SUBSCRIPTION: {
+        PLAN_UPDATED:"Plan updated successfully"
     }
 } as const;
