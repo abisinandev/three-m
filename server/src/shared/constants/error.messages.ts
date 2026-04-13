@@ -90,6 +90,7 @@ export const ErrorMessages = {
         INSUFFICIENT_SHARES: "Insufficient stock holding or there are pending sell orders for this stock. Check the orderbook. Order quantity",
     },
     SUBSCRIPTION: {
-        PLAN_NOT_FOUND:"Plan not found"
+        PLAN_NOT_FOUND: "Plan not found",
+        PLAN_UNAVAILABLE: "Premium plan currently unavailable.",
     },
 } as const;

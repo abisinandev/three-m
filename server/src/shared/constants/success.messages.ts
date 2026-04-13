@@ -70,6 +70,11 @@ export const SuccessMessages = {
     },
 
     SUBSCRIPTION: {
-        PLAN_UPDATED:"Plan updated successfully"
+        PLAN_UPDATED: "Plan updated successfully",
+    },
+
+    AI_CHATBOT: {
+        DATA: "Responded successfully",
+        UPGRADE_PLAN : "Upgrade to Premium to unlock full AI capabilities.",
     }
 } as const;

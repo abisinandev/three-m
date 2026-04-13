@@ -1,4 +1,4 @@
-import { FREE_PLAN, PREMIUM_PLAN } from "./enums/features.enum";
+import { Features } from "./enums/features.enum";
 import { SubscriptionPlans } from "./enums/plans.enum";
 
 export class PlanEntity {
@@ -147,13 +147,13 @@ export class PlanEntity {
         }
 
         if (props.features !== undefined) {
-            // Validate features against tier-specific enum
-            const validFeatures = this._code === SubscriptionPlans.PREMIUM 
-                ? (Object.values(PREMIUM_PLAN) as string[])
-                : (Object.values(FREE_PLAN) as string[]);
-                
+
+            const validFeatures = this._code === SubscriptionPlans.PREMIUM
+                ? (Object.values(Features) as string[])
+                : (Object.values(Features) as string[]);
+
             const filteredFeatures = props.features.filter(f => validFeatures.includes(f));
-            // Remove duplicates
+        
             this._features = Array.from(new Set(filteredFeatures));
         }
 
@@ -165,7 +165,6 @@ export class PlanEntity {
     }
 
     toPersistence() {
-
         return {
             id: this._id,
             code: this._code,

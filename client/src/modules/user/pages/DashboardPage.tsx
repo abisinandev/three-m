@@ -1,6 +1,6 @@
 import { PremiumUpgradeCard, VerificationAlertCard } from '@shared/components/cards/AlertCard';
 import { useUserStore } from '@stores/user/UserStore';
-import { Wallet, TrendingDown, ArrowUpRight, ArrowDownRight, Bot, BarChart3 } from 'lucide-react';
+import { Wallet, TrendingDown, ArrowUpRight, ArrowDownRight, BarChart3, Activity } from 'lucide-react';
 import { useState } from 'react';
 import PremiumPaymentModal from '@shared/components/modals/PremiumPaymentModal';
 
@@ -18,7 +18,7 @@ const DashboardPage = () => {
           { icon: Wallet, label: 'Wallet Balance', value: '₹1,24,500', change: '+12.5%', positive: true },
           { icon: TrendingDown, label: 'Monthly Spend', value: '₹45,200', change: '-8.2%', positive: false },
           { icon: BarChart3, label: 'Investments', value: '₹2,85,750', change: '+15.3%', positive: true },
-          { icon: Bot, label: 'Algo Active', value: '5 strategies', change: 'Running', positive: true },
+          { icon: Activity, label: 'Algo Active', value: '5 strategies', change: 'Running', positive: true },
         ].map((stat, i) => (
           <div
             key={i}
@@ -118,25 +118,6 @@ const DashboardPage = () => {
               </div>
             ))}
           </div>
-        </div>
-      </div>
-
-      <div className="mt-8 bg-gradient-to-r from-[#0f0f0f] via-[#111111] to-[#0f0f0f] rounded-xl border border-[#22C55E]/20 p-6 text-center">
-        <div className="max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-[#22C55E]/10 px-3 py-1 rounded-full text-[#22C55E] text-xs font-medium mb-3">
-            <Bot className="w-3.5 h-3.5" />
-            Upgrade to Premium
-          </div>
-          <h2 className="text-xl font-bold text-white mb-2">Unlock AI-Powered Trading</h2>
-          <p className="text-xs text-gray-400 mb-5">
-            Auto-trade, smart insights, zero ads — just ₹499/month
-          </p>
-          <button
-            onClick={() => setIsPremiumModalOpen(true)}
-            className="bg-[#22C55E] hover:bg-[#1ea853] text-black font-semibold text-sm px-8 py-2.5 rounded-lg transition"
-          >
-            Go Premium Now
-          </button>
         </div>
       </div>
 

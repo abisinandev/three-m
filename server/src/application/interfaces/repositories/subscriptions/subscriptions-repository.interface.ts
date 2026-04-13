@@ -10,4 +10,5 @@ export interface ISubscriptionRepository extends IBaseRepository<SubscriptionEnt
     recentSubscribers(): Promise<SubscriptionEntity[] | null>;
     activeSubs(): Promise<SubscriptionEntity[]>;
     monthlyGrowth(): Promise<{ month: string, revenue: number, subscriptions: number }[]>;
+    findByUserId(userId: string): Promise<SubscriptionEntity | null>
 }

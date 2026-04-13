@@ -3,7 +3,7 @@ import { BaseRepository } from "../base.repository";
 import { SubscriptionDocument, SubscriptionModel } from "@infrastructure/databases/mongo_db/models/schemas/subscriptions/subscription.schema";
 import { ISubscriptionRepository } from "@application/interfaces/repositories/subscriptions/subscriptions-repository.interface";
 import { SubscriptionMapper } from "@infrastructure/mappers/subscription/subscription.mapper";
-import { FilterQuery, QueryOptions } from "mongoose";
+import { FilterQuery, QueryOptions, Types } from "mongoose";
 import { injectable } from "inversify";
 import { SubscriptionStatus } from "@domain/entities/subscription/enums/subscription-status.enums";
 
@@ -82,7 +82,7 @@ export class SubscriptionRepository extends
                 }
             }
         ]);
-        
+
         return { totalRevenue: result[0]?.total || 0 };
     }
 
@@ -130,9 +130,9 @@ export class SubscriptionRepository extends
             { $unwind: "$planData" },
             {
                 $group: {
-                    _id: { 
-                        year: { $year: "$createdAt" }, 
-                        month: { $month: "$createdAt" } 
+                    _id: {
+                        year: { $year: "$createdAt" },
+                        month: { $month: "$createdAt" }
                     },
                     revenue: { $sum: "$planData.price" },
                     subscriptions: { $sum: 1 }
@@ -144,14 +144,14 @@ export class SubscriptionRepository extends
         const aggregated = await this.model.aggregate(pipeline);
 
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        
+
         const result = [];
         for (let i = 11; i >= 0; i--) {
             const d = new Date();
             d.setMonth(d.getMonth() - i);
             const y = d.getFullYear();
             const m = d.getMonth() + 1;
-            
+
             const found = aggregated.find(a => a._id.year === y && a._id.month === m);
             result.push({
                 month: monthNames[m - 1],
@@ -162,4 +162,15 @@ export class SubscriptionRepository extends
 
         return result;
     }
+
+
+    async findByUserId(userId: string): Promise<SubscriptionEntity | null> {
+
+        const doc = await this.model.findOne({ userId });
+        if (!doc) return null
+        return this.mapper.toDomain(doc);
+    }
+
+
+    
 }

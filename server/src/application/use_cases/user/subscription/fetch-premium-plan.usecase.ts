@@ -5,7 +5,8 @@ import { PlanDTO } from "@application/dto/admin/subscription/subscription-manage
 import { PlanMapper } from "@infrastructure/mappers/subscription/plan.mapper";
 import { SubscriptionPlans } from "@domain/entities/subscription/enums/plans.enum";
 import { IFetchPremiumPlanUseCase } from "./interfaces/fetch-premium-plan.usecase.interface";
-import { ValidationError } from "@presentation/express/utils/error-handling";
+import { NotFoundError} from "@presentation/express/utils/error-handling";
+import { ErrorMessages } from "@shared/constants/error.messages";
 
 @injectable()
 export class FetchPremiumPlanUseCase implements IFetchPremiumPlanUseCase {
@@ -16,9 +17,7 @@ export class FetchPremiumPlanUseCase implements IFetchPremiumPlanUseCase {
     async execute(): Promise<PlanDTO> {
         const plan = await this.planRepo.findOne({ code: SubscriptionPlans.PREMIUM } as any);
         
-        if (!plan) {
-            throw new ValidationError("Premium plan currently unavailable.");
-        }
+        if (!plan) throw new NotFoundError(ErrorMessages.SUBSCRIPTION.PLAN_UNAVAILABLE)
 
         return PlanMapper.toDTO(plan);
     }

@@ -32,7 +32,7 @@ export class FetchSubscriptionsUseCase implements IFetchSubscriptionsUseCase {
                     status: sub.status,
                     createdAt: sub.createdAt
                 };
-            })
+            })  
         );
 
         const page = options.page || 1;

@@ -11,4 +11,6 @@ export const SUBSCRIPTION_TYPES = {
     AdminSubscriptionManagementController: Symbol.for("AdminSubscriptionManagementController"),
     UserSubscriptionController: Symbol.for("UserSubscriptionController"),
 
+    FeatureAccessService: Symbol.for("FeatureAccessService"),
+
 } as const

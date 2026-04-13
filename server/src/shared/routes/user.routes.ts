@@ -34,3 +34,8 @@ export enum UserPaymentRoutes {
 export enum UserWebhookRoutes {
     STRIPE = '/stripe'
 }
+
+export enum UserSubscriptionRoutes {
+    GET_PREMIUM_PLAN = '/premium'
+}
+

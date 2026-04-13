@@ -60,4 +60,10 @@ export class PlanRepository extends BaseRepository<PlanEntity, PlanDocument>
         if (!docs) return null;
         return docs.map(doc => this.mapper.toDomain(doc));
     }
+
+    async findByCode(code: string): Promise<PlanEntity | null> {
+        const doc = await this.model.findOne({ code });
+        if (!doc) return null;
+        return this.mapper.toDomain(doc);
+    }
 }

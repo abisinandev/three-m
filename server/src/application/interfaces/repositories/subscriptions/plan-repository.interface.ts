@@ -6,4 +6,5 @@ export interface IPlanRepository extends IBaseRepository<PlanEntity> {
     findWithFilters(options: QueryOptions): Promise<PlanEntity[]>;
     count(filter?: FilterQuery<unknown>): Promise<{ totalCount: number }>;
     findPlans(): Promise<PlanEntity[] | null>;
+    findByCode(code: string): Promise<PlanEntity | null>;
 }
