@@ -1,4 +1,4 @@
-import { Document, model, Schema } from "mongoose";
+import { Document, model, Schema, SchemaType } from "mongoose";
 import { ISubscription } from "../../interfaces/subscriptions/subscription-schema.interface";
 import { SubscriptionStatus } from "@domain/entities/subscription/enums/subscription-status.enums";
 
@@ -7,11 +7,11 @@ export type SubscriptionDocument = ISubscription & Document;
 const subscriptionSchema = new Schema<SubscriptionDocument>(
     {
         userId: {
-            type: String,
+            type: Schema.Types.ObjectId,
             required: true,
             index: true,
         },
-        plans: {
+        planCode: {
             type: String,
             enum: ["FREE", "PREMIUM"],
             required: true,

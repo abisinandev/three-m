@@ -10,23 +10,23 @@ import { IFetchSubscriptionsUseCase } from "./interfaces/fetch-subscriptions-use
 @injectable()
 export class FetchSubscriptionsUseCase implements IFetchSubscriptionsUseCase {
     constructor(
-        @inject(SUBSCRIPTION_TYPES.SubscriptionRepository) private readonly subscriptionRepo: ISubscriptionRepository,
-        @inject(USER_TYPES.UserRepository) private readonly userRepo: IUserRepository,
+        @inject(SUBSCRIPTION_TYPES.SubscriptionRepository) private readonly _subscriptionRepo: ISubscriptionRepository,
+        @inject(USER_TYPES.UserRepository) private readonly _userRepo: IUserRepository,
     ) { }
 
     async execute(options: QueryOptions): Promise<PaginatedSubscriptionsDTO> {
-        const subscriptions = await this.subscriptionRepo.findWithFilters(options);
-        const { totalCount } = await this.subscriptionRepo.count(options.filter);
+        const subscriptions = await this._subscriptionRepo.findWithFilters(options);
+        const { totalCount } = await this._subscriptionRepo.count(options.filter);
 
         const subscriptionDTOs: UserSubscriptionDTO[] = await Promise.all(
             subscriptions.map(async (sub) => {
-                const user = await this.userRepo.findById(sub.userId);
+                const user = await this._userRepo.findById(sub.userId);
                 return {
                     id: sub.id as string,
                     userId: sub.userId,
-                    userName: user?.fullName || "Unknown",
-                    userEmail: user?.email || "N/A",
-                    planCode: sub.plans,
+                    fullName: user?.fullName || "Unknown",
+                    email: user?.email || "N/A",
+                    planCode: sub.planCode,
                     startDate: sub.startDate,
                     endDate: sub.endDate,
                     status: sub.status,

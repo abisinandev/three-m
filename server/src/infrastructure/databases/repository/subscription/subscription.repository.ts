@@ -21,7 +21,7 @@ export class SubscriptionRepository extends
             limit = 10,
             filter = {},
             search = "",
-            searchField = ["userId", "plans"],
+            searchField = ["userId", "planCode"],
             sortBy = "createdAt",
             sortOrder = "desc",
         } = options;
@@ -63,13 +63,13 @@ export class SubscriptionRepository extends
             {
                 $match: {
                     status: SubscriptionStatus.ACTIVE,
-                    endDate: { $gt: now }
+                    // endDate: { $gt: now }
                 }
             },
             {
                 $lookup: {
                     from: "plans",
-                    localField: "plans",
+                    localField: "planCode",
                     foreignField: "code",
                     as: "planData"
                 }
@@ -82,7 +82,7 @@ export class SubscriptionRepository extends
                 }
             }
         ]);
-
+        
         return { totalRevenue: result[0]?.total || 0 };
     }
 
@@ -106,5 +106,60 @@ export class SubscriptionRepository extends
         }).exec();
 
         return Promise.all(docs.map(doc => this.mapper.toDomain(doc)));
+    }
+
+    async monthlyGrowth(): Promise<{ month: string, revenue: number, subscriptions: number }[]> {
+        const twelveMonthsAgo = new Date();
+        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
+        twelveMonthsAgo.setDate(1);
+
+        const pipeline = [
+            {
+                $match: {
+                    createdAt: { $gte: twelveMonthsAgo }
+                }
+            },
+            {
+                $lookup: {
+                    from: "plans",
+                    localField: "planCode",
+                    foreignField: "code",
+                    as: "planData"
+                }
+            },
+            { $unwind: "$planData" },
+            {
+                $group: {
+                    _id: { 
+                        year: { $year: "$createdAt" }, 
+                        month: { $month: "$createdAt" } 
+                    },
+                    revenue: { $sum: "$planData.price" },
+                    subscriptions: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1 } as any }
+        ];
+
+        const aggregated = await this.model.aggregate(pipeline);
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        
+        const result = [];
+        for (let i = 11; i >= 0; i--) {
+            const d = new Date();
+            d.setMonth(d.getMonth() - i);
+            const y = d.getFullYear();
+            const m = d.getMonth() + 1;
+            
+            const found = aggregated.find(a => a._id.year === y && a._id.month === m);
+            result.push({
+                month: monthNames[m - 1],
+                revenue: found ? found.revenue : 0,
+                subscriptions: found ? found.subscriptions : 0
+            });
+        }
+
+        return result;
     }
 }

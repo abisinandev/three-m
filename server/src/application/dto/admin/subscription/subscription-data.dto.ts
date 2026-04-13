@@ -11,19 +11,24 @@ export interface SubscriptionStatsDTO {
         percentage: number;
     }[];
     recentSubscribers: {
-        userName: string;
-        userEmail: string;
+        fullName: string;
+        email: string;
         planCode: string;
         amount: number;
         createdAt: Date;
+    }[];
+    monthlyGrowth: {
+        month: string;
+        revenue: number;
+        subscriptions: number;
     }[];
 }
 
 export interface UserSubscriptionDTO {
     id: string;
     userId: string;
-    userName: string;
-    userEmail: string;
+    fullName: string;
+    email: string;
     planCode: SubscriptionPlans;
     startDate: Date;
     endDate: Date;

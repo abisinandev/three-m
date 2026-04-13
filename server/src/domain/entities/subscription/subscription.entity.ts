@@ -4,7 +4,7 @@ import { SubscriptionStatus } from "./enums/subscription-status.enums";
 export class SubscriptionEntity {
     private readonly _id?: string | null;
     private readonly _userId: string;
-    private readonly _plans: SubscriptionPlans;
+    private readonly _planCode: SubscriptionPlans;
     private readonly _startDate: Date;
     private _endDate: Date;
     private _status: SubscriptionStatus;
@@ -14,7 +14,7 @@ export class SubscriptionEntity {
     private constructor(props: {
         id?: string | null;
         userId: string;
-        plans: SubscriptionPlans;
+        planCode: SubscriptionPlans;
         startDate: Date;
         endDate: Date;
         status?: SubscriptionStatus;
@@ -23,7 +23,7 @@ export class SubscriptionEntity {
     }) {
         this._id = props.id ?? null;
         this._userId = props.userId;
-        this._plans = props.plans;
+        this._planCode = props.planCode;
         this._startDate = props.startDate;
         this._endDate = props.endDate;
         this._status = props.status ?? SubscriptionStatus.ACTIVE;
@@ -33,7 +33,7 @@ export class SubscriptionEntity {
 
     static create(data: {
         userId: string;
-        plans: SubscriptionPlans;
+        planCode: SubscriptionPlans;
         durationInDays: number;
     }): SubscriptionEntity {
         const start = new Date();
@@ -42,7 +42,7 @@ export class SubscriptionEntity {
 
         return new SubscriptionEntity({
             userId: data.userId,
-            plans: data.plans,
+            planCode: data.planCode,
             startDate: start,
             endDate: end,
             status: SubscriptionStatus.ACTIVE,
@@ -52,7 +52,7 @@ export class SubscriptionEntity {
     static fromPersistence(data: {
         id: string;
         userId: string;
-        plans: SubscriptionPlans;
+        planCode: SubscriptionPlans;
         startDate: Date;
         endDate: Date;
         status: SubscriptionStatus;
@@ -62,7 +62,7 @@ export class SubscriptionEntity {
         return new SubscriptionEntity({
             id: data.id,
             userId: data.userId,
-            plans: data.plans,
+            planCode: data.planCode,
             startDate: data.startDate,
             endDate: data.endDate,
             status: data.status,
@@ -79,8 +79,8 @@ export class SubscriptionEntity {
         return this._userId;
     }
 
-    get plans() {
-        return this._plans;
+    get planCode() {
+        return this._planCode;
     }
 
     get startDate() {
@@ -130,7 +130,7 @@ export class SubscriptionEntity {
         return {
             id: this._id,
             userId: this._userId,
-            planCode: this._plans,
+            planCode: this._planCode,
             startDate: this._startDate,
             endDate: this._endDate,
             status: this._status,
