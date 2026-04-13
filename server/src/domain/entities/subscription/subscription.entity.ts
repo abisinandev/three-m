@@ -4,8 +4,8 @@ import { SubscriptionStatus } from "./enums/subscription-status.enums";
 export class SubscriptionEntity {
     private readonly _id?: string | null;
     private readonly _userId: string;
-    private readonly _planCode: SubscriptionPlans;
-    private readonly _startDate: Date;
+    private _planCode: SubscriptionPlans;
+    private _startDate: Date;
     private _endDate: Date;
     private _status: SubscriptionStatus;
     private readonly _createdAt: Date;
@@ -107,6 +107,22 @@ export class SubscriptionEntity {
         return this._status === SubscriptionStatus.ACTIVE && this._endDate > new Date();
     }
 
+    renew(planCode: SubscriptionPlans, durationInDays: number) {
+        const now = new Date();
+        this._planCode = planCode;
+        if (this.isActive()) {
+       
+            this._endDate.setDate(this._endDate.getDate() + durationInDays);
+        } else {
+ 
+            this._startDate = now;
+            this._endDate = new Date(now);
+            this._endDate.setDate(now.getDate() + durationInDays);
+        }
+        this._status = SubscriptionStatus.ACTIVE;
+        this._updatedAt = now;
+    }
+
     expire() {
         if (this._status !== SubscriptionStatus.ACTIVE) return;
         this._status = SubscriptionStatus.EXPIRED;
@@ -120,7 +136,7 @@ export class SubscriptionEntity {
 
 
     validateStatus() {
-        if (this._endDate < new Date() && this._status === SubscriptionStatus.EXPIRED) {
+        if (this._endDate < new Date() && this._status === SubscriptionStatus.ACTIVE) {
             this._status = SubscriptionStatus.EXPIRED;
             this._updatedAt = new Date();
         }

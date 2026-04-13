@@ -6,4 +6,5 @@ export enum TransactionTypes {
     SELL = 'SELL',
     SIP_INSTALLMENT = 'SIP_INSTALLMENT',
     REDEMPTION = "REDEMPTION",
+    SUBSCRIPTION = "SUBSCRIPTION",
 }

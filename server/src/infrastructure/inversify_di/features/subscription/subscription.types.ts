@@ -13,4 +13,6 @@ export const SUBSCRIPTION_TYPES = {
 
     FeatureAccessService: Symbol.for("FeatureAccessService"),
 
+    UpgradePremiumUseCase: Symbol.for("UpgradePremiumUseCase"),
+
 } as const
