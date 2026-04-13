@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import { X, Loader2, Check, Crown } from 'lucide-react';
 import { usePremiumPlan } from '@/shared/services/admin/subscription/SubscriptionApi';
 import { toast } from 'sonner';
+import api from "@lib/axiosUser";
+import { API_ROUTES } from "@shared/constants/apiRoutes";
 
 interface PremiumPaymentModalProps {
     isOpen: boolean;
@@ -30,7 +33,8 @@ const FREE_FEATURES = [
 ];
 
 const PremiumPaymentModal = ({ isOpen, onClose }: PremiumPaymentModalProps) => {
-    const { data: plan, isLoading } = usePremiumPlan();
+    const { data: plan, isLoading: isPlanLoading } = usePremiumPlan();
+    const [loading, setLoading] = useState(false);
 
     if (!isOpen) return null;
 
@@ -43,13 +47,29 @@ const PremiumPaymentModal = ({ isOpen, onClose }: PremiumPaymentModalProps) => {
         plan?.durationInDays === 365 ? 'year' :
         `${plan?.durationInDays} days`;
 
-    const handleUpgrade = () => {
-        toast.promise(new Promise(resolve => setTimeout(resolve, 2000)), {
-            loading: 'Initiating secure payment...',
-            success: 'Upgrade successful! (Demo)',
-            error: 'Payment failed.',
-        });
-        setTimeout(onClose, 2500);
+    const handleUpgrade = async () => {
+        if (!plan?.price || loading) return;
+
+        setLoading(true);
+        const toastId = toast.loading('Initiating secure payment...');
+
+        try {
+            localStorage.setItem('paymentPurpose', 'SUBSCRIPTION');
+            const res = await api.post(API_ROUTES.USER.PAYMENT.CHECKOUT_SESSION, {
+                amount: Number(plan.price),
+                purpose: "SUBSCRIPTION",
+            });
+
+            if (res.data.checkoutUrl) {
+                window.location.href = res.data.checkoutUrl;
+            } else {
+                throw new Error("Checkout URL not found");
+            }
+        } catch (err: any) {
+            console.error("Payment error", err);
+            toast.error(err.response?.data?.message || "Failed to initiate payment", { id: toastId });
+            setLoading(false);
+        }
     };
 
     return (
@@ -81,7 +101,7 @@ const PremiumPaymentModal = ({ isOpen, onClose }: PremiumPaymentModalProps) => {
 
                 {/* Body */}
                 <div className="p-5">
-                    {isLoading ? (
+                    {isPlanLoading ? (
                         <div className="py-12 flex flex-col items-center gap-3">
                             <Loader2 className="w-6 h-6 text-amber-500 animate-spin" />
                             <p className="text-xs text-[#5a5f6e]">Loading plan details…</p>
@@ -144,9 +164,11 @@ const PremiumPaymentModal = ({ isOpen, onClose }: PremiumPaymentModalProps) => {
 
                                 <button
                                     onClick={handleUpgrade}
-                                    className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 active:scale-[0.99] transition-all text-black text-xs font-black uppercase tracking-widest rounded-md"
+                                    disabled={loading || !plan?.price}
+                                    className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 active:scale-[0.99] transition-all text-black text-xs font-black uppercase tracking-widest rounded-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    Upgrade to Premium
+                                    {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                                    {loading ? "Processing..." : "Upgrade to Premium"}
                                 </button>
 
                                 <p className="text-[10px] text-[#3a3d45] text-center">

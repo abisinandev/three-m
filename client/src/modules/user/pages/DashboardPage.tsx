@@ -11,7 +11,25 @@ const DashboardPage = () => {
   return (
     <div className="space-y-5 pb-10">
       {!user?.isVerified && <VerificationAlertCard />}
-      {user?.isVerified && <PremiumUpgradeCard onUpgrade={() => setIsPremiumModalOpen(true)} />}
+      {user?.isVerified && !user?.isSubscribed && (
+        <PremiumUpgradeCard onUpgrade={() => setIsPremiumModalOpen(true)} />
+      )}
+      {user?.isSubscribed && (
+        <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-3 flex items-center justify-between">
+           <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-md bg-amber-500/10 flex items-center justify-center">
+                <span className="text-amber-500 text-[10px] font-black italic">P</span>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-[#e8eaed]">Premium Intelligence Active</p>
+                <p className="text-[9px] text-[#5a5f6e] uppercase tracking-wider font-medium">Full access to advanced trading & analytics</p>
+              </div>
+           </div>
+           <div className="px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-[8px] font-black text-amber-500 uppercase tracking-tighter">
+             Verified
+           </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[

@@ -62,6 +62,7 @@ const AddToWallet = () => {
 
         setLoading(true);
         try {
+            localStorage.setItem('paymentPurpose', 'TOPUP');
             const res = await api.post(PAYMENT_ROUTE, {
                 amount: Number(amount),
                 purpose: "TOPUP",
