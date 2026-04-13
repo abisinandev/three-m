@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, Sparkles, Check, Zap, ShieldCheck, Cpu, TrendingUp, LineChart, BarChart3, Loader2 } from 'lucide-react';
-import { usePremiumPlan } from '@shared/services/user/SubscriptionApi';
+import { usePremiumPlan } from '@/shared/services/admin/subscription/SubscriptionApi';
 import { toast } from 'sonner';
 
 interface PremiumPaymentModalProps {
