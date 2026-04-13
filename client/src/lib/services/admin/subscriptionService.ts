@@ -22,8 +22,8 @@ export type PaginatedPlans = {
 export type UserSubscription = {
     id: string;
     userId: string;
-    userName: string;
-    userEmail: string;
+    fullName: string;
+    email: string;
     planCode: string;
     startDate: string;
     endDate: string;
@@ -49,11 +49,16 @@ export type SubscriptionStats = {
         percentage: number;
     }[];
     recentSubscribers: {
-        userName: string;
-        userEmail: string;
+        fullName: string;
+        email: string;
         planCode: string;
         amount: number;
         createdAt: string;
+    }[];
+    monthlyGrowth: {
+        month: string;
+        revenue: number;
+        subscriptions: number;
     }[];
 };
 

@@ -8,7 +8,7 @@ interface KycActionModalProps {
     onApprove: () => void;
     onReject: (reason: string) => void;
     isLoading?: boolean;
-    userName: string;
+    fullName: string;
 }
 
 export default function KycActionModal({
@@ -17,7 +17,7 @@ export default function KycActionModal({
     onApprove,
     onReject,
     isLoading = false,
-    userName,
+    fullName,
 }: KycActionModalProps) {
     const [activeTab, setActiveTab] = useState<"approve" | "reject">("approve");
     const [reason, setReason] = useState("");
@@ -87,7 +87,7 @@ export default function KycActionModal({
                             </div>
                             <h3 className="text-xl font-bold text-white">Approve KYC?</h3>
                             <p className="text-gray-400 mt-2 text-sm">
-                                This will verify <span className="text-emerald-400 font-medium">{userName}</span>
+                                This will verify <span className="text-emerald-400 font-medium">{fullName}</span>
                                 <br />
                                 and grant full access to the platform.
                             </p>

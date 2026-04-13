@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-    Search, LayoutGrid, Activity, CreditCard, Users, User,
+    Search, Activity, User,
     Lock, Info, AlertTriangle, Save, RefreshCw, CheckCircle2,
     TrendingUp, LineChart, Cpu, BarChart3, ShieldCheck, Zap
 } from "lucide-react";
+
 import subscriptionService, { type Plan } from "@lib/services/admin/subscriptionService";
 import { Pagination } from "@/shared/components/pagination/Pagination";
+import OverviewTab from "../components/subscription/OverviewTab";
 
 const FEATURE_SECTIONS = [
     {
@@ -91,79 +93,6 @@ const SubscriptionsPage = () => {
 };
 
 // --- SUBSIDIARY COMPONENTS ---
-
-const OverviewTab = () => {
-    const { data: stats, isLoading } = useQuery({
-        queryKey: ["admin-subscription-stats"],
-        queryFn: subscriptionService.getOverviewStats,
-    });
-
-    if (isLoading) return <div className="grid grid-cols-4 gap-4">{[1, 2, 3, 4].map(i => <div key={i} className="h-24 bg-neutral-900/50 rounded-xl animate-pulse" />)}</div>;
-
-    return (
-        <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                    { label: "Active Revenue", value: `₹${stats?.totalRevenue.toLocaleString() || "0"}`, sub: "Value of active commitments", icon: CreditCard, color: "text-emerald-400" },
-                    { label: "Total Subs", value: stats?.totalSubscriptions.toLocaleString() || "0", sub: "Lifetime count", icon: Users, color: "text-blue-400" },
-                    { label: "Active Now", value: stats?.activeSubscriptions.toLocaleString() || "0", sub: "Currently subscribed", icon: Activity, color: "text-amber-400" },
-                    { label: "Plan Tiers", value: `${stats?.subscriptionPlans.length || 0}`, sub: "Available options", icon: LayoutGrid, color: "text-purple-400" },
-                ].map((stat, i) => (
-                    <div key={i} className="bg-[#111111] border border-neutral-800/50 p-4 rounded-xl hover:border-neutral-700/50 transition-colors group shadow-sm">
-                        <div className="flex items-center justify-between mb-3">
-                            <span className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider font-sans">{stat.label}</span>
-                            <stat.icon className={`w-4 h-4 ${stat.color} opacity-80 group-hover:opacity-100 transition-opacity`} />
-                        </div>
-                        <div className="text-xl font-bold text-white mb-1">{stat.value}</div>
-                        <div className="text-[9px] text-neutral-500 font-medium">{stat.sub}</div>
-                    </div>
-                ))}
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 bg-[#111111] border border-neutral-800/50 rounded-xl p-5 shadow-sm">
-                    <h3 className="text-[12px] font-semibold text-white mb-5">Recent Memberships</h3>
-                    <div className="space-y-4">
-                        {stats?.recentSubscribers.map((sub, i) => (
-                            <div key={i} className="flex items-center justify-between py-2 border-b border-neutral-800 last:border-0 group cursor-pointer transition-colors hover:bg-neutral-800/10 px-2 -mx-2 rounded-lg">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-[10px] font-bold text-neutral-400 group-hover:border-emerald-500/30 transition-all">
-                                        {sub.userName[0]}
-                                    </div>
-                                    <div>
-                                        <div className="text-[11px] font-medium text-white">{sub.userName}</div>
-                                        <div className="text-[9px] text-neutral-500">{sub.planCode} • {new Date(sub.createdAt).toLocaleDateString()}</div>
-                                    </div>
-                                </div>
-                                <div className="text-right">
-                                    <div className="text-[11px] font-medium text-emerald-400">₹{sub.amount}</div>
-                                    <div className="text-[9px] text-neutral-600">{sub.userEmail}</div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="bg-[#111111] border border-neutral-800/50 rounded-xl p-5 shadow-sm">
-                    <h3 className="text-[12px] font-semibold text-white mb-5">Plan Adoption</h3>
-                    <div className="space-y-5">
-                        {stats?.subscriptionPlans.map((plan, i) => (
-                            <div key={i} className="space-y-2">
-                                <div className="flex items-center justify-between text-[10px]">
-                                    <span className="font-medium text-neutral-300 uppercase tracking-wide">{plan.code}</span>
-                                    <span className="text-neutral-500 font-mono">{plan.count} ({plan.percentage.toFixed(1)}%)</span>
-                                </div>
-                                <div className="h-1.5 w-full bg-neutral-800/50 rounded-full overflow-hidden">
-                                    <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000" style={{ width: `${plan.percentage}%` }} />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
 
 const PlansTab = () => {
     const { data, isLoading } = useQuery({
@@ -507,8 +436,8 @@ const SubscriptionsTab = () => {
                                         <div className="flex items-center gap-2">
                                             <div className="w-6 h-6 rounded-full bg-neutral-800 flex items-center justify-center border border-neutral-700 shadow-sm"><User className="w-3 h-3 text-neutral-500" /></div>
                                             <div>
-                                                <div className="text-white font-medium">{sub.userName}</div>
-                                                <div className="text-[9px] text-neutral-500">{sub.userEmail}</div>
+                                                <div className="text-white font-medium">{sub.fullName}</div>
+                                                <div className="text-[9px] text-neutral-500">{sub.email}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -541,5 +470,7 @@ const SubscriptionsTab = () => {
         </div>
     );
 };
+
+
 
 export default SubscriptionsPage;
