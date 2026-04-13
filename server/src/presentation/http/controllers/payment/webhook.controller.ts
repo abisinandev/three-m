@@ -19,8 +19,7 @@ import { inject, injectable } from "inversify";
 @injectable()
 export class WebhookController {
     constructor(
-        @inject(USER_TYPES.StripePaymentHandler)
-        private readonly stripePaymentHandler: StripePaymentHandler,
+        @inject(USER_TYPES.StripePaymentHandler) private readonly stripePaymentHandler: StripePaymentHandler,
     ) { }
 
     async stripeWebhookHandler(req: Request, res: Response, next: NextFunction) {
@@ -40,7 +39,7 @@ export class WebhookController {
             const paymentDTO = mapIntentToDTO(intent);
             await this.stripePaymentHandler.handleSuccess(paymentDTO);
             return res.status(200).json({ received: true });
-            
+
         } catch (error) {
             next(error);
         }

@@ -41,7 +41,7 @@ export class PaymentController {
                     {
                         price_data: {
                             currency: "inr",
-                            unit_amount: amount * 100,
+                            unit_amount: amount * 100,// converting to paisa
                             product_data: {
                                 name: purpose,
                             },
@@ -61,7 +61,7 @@ export class PaymentController {
                     },
                 },
             });
-
+            
             return res.status(200).json({
                 checkoutUrl: session.url,
             });

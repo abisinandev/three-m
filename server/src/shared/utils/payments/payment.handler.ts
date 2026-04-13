@@ -1,4 +1,5 @@
 import { StripePaymentDTO } from "@application/dto/user/stripe-payment-dto";
+import { IPaymentHandler } from "@application/interfaces/services/payment/payment-handler.interface";
 import { IAddToWalletUseCase } from "@application/use_cases/user/interfaces/add-to-wallet-usecase.interface";
 import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
@@ -13,10 +14,9 @@ import { inject, injectable } from "inversify";
  */
 
 @injectable()
-export class StripePaymentHandler {
+export class StripePaymentHandler implements IPaymentHandler {
     constructor(
-        @inject(USER_TYPES.AddToWalletUseCase)
-        private addToWallet: IAddToWalletUseCase,
+        @inject(USER_TYPES.AddToWalletUseCase) private addToWallet: IAddToWalletUseCase,
     ) { }
 
     async handleSuccess(payment: StripePaymentDTO) {
@@ -33,7 +33,7 @@ export class StripePaymentHandler {
                     referenceType: ReferenceType.STRIPE,
                     status: TransactionStatus.PENDING,
                     paymentStatus,
-                    type:TransactionTypes.ADD_TO_WALLET,
+                    type: TransactionTypes.ADD_TO_WALLET,
                 });
                 break;
 
