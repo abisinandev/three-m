@@ -1,21 +1,42 @@
 import { PremiumUpgradeCard, VerificationAlertCard } from '@shared/components/cards/AlertCard';
 import { useUserStore } from '@stores/user/UserStore';
-import { Wallet, TrendingDown, ArrowUpRight, ArrowDownRight, Bot, BarChart3 } from 'lucide-react';
+import { Wallet, TrendingDown, ArrowUpRight, ArrowDownRight, BarChart3, Activity } from 'lucide-react';
+import { useState } from 'react';
+import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
 
 const DashboardPage = () => {
-  const { user } = useUserStore.getState();
+  const user = useUserStore((state) => state.user);
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
 
   return (
     <div className="space-y-5 pb-10">
       {!user?.isVerified && <VerificationAlertCard />}
-      {user?.isVerified && <PremiumUpgradeCard />}
+      {user?.isVerified && !user?.isSubscribed && (
+        <PremiumUpgradeCard onUpgrade={() => setIsPremiumModalOpen(true)} />
+      )}
+      {user?.isSubscribed && (
+        <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-3 flex items-center justify-between">
+           <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-md bg-amber-500/10 flex items-center justify-center">
+                <span className="text-amber-500 text-[10px] font-black italic">P</span>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-[#e8eaed]">Premium Intelligence Active</p>
+                <p className="text-[9px] text-[#5a5f6e] uppercase tracking-wider font-medium">Full access to advanced trading & analytics</p>
+              </div>
+           </div>
+           <div className="px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-[8px] font-black text-amber-500 uppercase tracking-tighter">
+             Verified
+           </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { icon: Wallet, label: 'Wallet Balance', value: '₹1,24,500', change: '+12.5%', positive: true },
           { icon: TrendingDown, label: 'Monthly Spend', value: '₹45,200', change: '-8.2%', positive: false },
           { icon: BarChart3, label: 'Investments', value: '₹2,85,750', change: '+15.3%', positive: true },
-          { icon: Bot, label: 'Algo Active', value: '5 strategies', change: 'Running', positive: true },
+          { icon: Activity, label: 'Algo Active', value: '5 strategies', change: 'Running', positive: true },
         ].map((stat, i) => (
           <div
             key={i}
@@ -92,7 +113,6 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="bg-[#0f0f0f] rounded-lg border border-[#1f1f1f] p-5">
           <h3 className="text-sm font-semibold text-white mb-3">Active SIPs</h3>
@@ -119,21 +139,10 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      <div className="mt-8 bg-gradient-to-r from-[#0f0f0f] via-[#111111] to-[#0f0f0f] rounded-xl border border-[#22C55E]/20 p-6 text-center">
-        <div className="max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-[#22C55E]/10 px-3 py-1 rounded-full text-[#22C55E] text-xs font-medium mb-3">
-            <Bot className="w-3.5 h-3.5" />
-            Upgrade to Premium
-          </div>
-          <h2 className="text-xl font-bold text-white mb-2">Unlock AI-Powered Trading</h2>
-          <p className="text-xs text-gray-400 mb-5">
-            Auto-trade, smart insights, zero ads — just ₹499/month
-          </p>
-          <button className="bg-[#22C55E] hover:bg-[#1ea853] text-black font-semibold text-sm px-8 py-2.5 rounded-lg transition">
-            Go Premium Now
-          </button>
-        </div>
-      </div>
+      <PremiumPaymentModal
+        isOpen={isPremiumModalOpen}
+        onClose={() => setIsPremiumModalOpen(false)}
+      />
     </div>
   );
 };

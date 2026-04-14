@@ -1,7 +1,8 @@
 // src/shared/components/ai-chatbot/AiChatbot.tsx
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, Loader2, Sparkles, MessageSquare, ShieldCheck, Zap } from 'lucide-react';
+import { X, Send, Bot, Loader2, Sparkles, MessageSquare, ShieldCheck, Zap, Crown } from 'lucide-react';
 import { sendChatMessage, getChatHistory } from '@shared/services/chatbot/chatbotApi';
+import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
 
 interface Message {
     id: string;
@@ -9,10 +10,12 @@ interface Message {
     content: string;
     timestamp: Date;
     type?: 'text' | 'confirmation';
+    upgradeRequired?: boolean;
 }
 
 export default function AiAssistantPanel() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
@@ -70,8 +73,9 @@ export default function AiAssistantPanel() {
             const aiMsg: Message = {
                 id: (Date.now() + 1).toString(),
                 role: 'assistant',
-                content: reply,
+                content: reply.message,
                 timestamp: new Date(),
+                upgradeRequired: reply.upgradeRequired,
             };
             setMessages(prev => [...prev, aiMsg]);
         } catch {
@@ -182,12 +186,29 @@ export default function AiAssistantPanel() {
                                     max-w-[85%] px-4 py-3.5 rounded-2xl text-[13px] leading-[1.6]
                                     ${msg.role === 'user'
                                         ? 'bg-[#1a1a1a] text-white rounded-tr-none border border-[#ffffff0a]'
-                                        : 'bg-[#111] border border-[#ffffff08] text-gray-200 rounded-tl-none'
+                                        : msg.upgradeRequired
+                                            ? 'bg-[#111] border border-amber-500/20 text-gray-200 rounded-tl-none'
+                                            : 'bg-[#111] border border-[#ffffff08] text-gray-200 rounded-tl-none'
                                     }
                                     shadow-sm
                                 `}
                             >
                                 {msg.content}
+
+                                {msg.upgradeRequired && (
+                                    <div className="mt-3 flex items-center justify-between gap-3 bg-amber-500/5 border border-amber-500/20 rounded-xl px-3 py-2.5">
+                                        <div className="flex items-center gap-2">
+                                            <Crown className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                                            <span className="text-[11px] text-amber-400 font-medium">Premium feature</span>
+                                        </div>
+                                        <button
+                                            onClick={() => setIsPremiumModalOpen(true)}
+                                            className="text-[10px] font-bold px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-black rounded-md transition-all whitespace-nowrap"
+                                        >
+                                            Upgrade
+                                        </button>
+                                    </div>
+                                )}
 
                                 {msg.type === 'confirmation' && (
                                     <div className="mt-5 bg-black/40 border border-[#ffffff0a] rounded-xl overflow-hidden backdrop-blur-md">
@@ -297,6 +318,10 @@ export default function AiAssistantPanel() {
                     scrollbar-width: none;
                 }
             `}</style>
+            <PremiumPaymentModal
+                isOpen={isPremiumModalOpen}
+                onClose={() => setIsPremiumModalOpen(false)}
+            />
         </>
     );
 }

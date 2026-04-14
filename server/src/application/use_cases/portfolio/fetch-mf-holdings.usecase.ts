@@ -29,7 +29,7 @@ export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsU
         if (status) {
             filter.status = status;
         } else {
-            filter.status = InvestmentStatus.ALLOTTED; // Only show holdings by default
+            filter.status = InvestmentStatus.ALLOTTED; 
         }
 
         const investments = await this._investmentRepository.getUserInvestments(userId, { ...options, filter }) ?? [];
@@ -55,7 +55,7 @@ export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsU
         return {
             data,
             page: Number(page),
-            limit: Number(limit),
+            limit: Number(limit), 
             totalCount,
         };
     }

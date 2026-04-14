@@ -27,6 +27,8 @@ import { formatDateTime } from '@utils/date-converter/DateConverter';
 import { useNavigate } from '@tanstack/react-router';
 import api from '@lib/axiosUser';
 import { ROUTES } from '@shared/constants/routes';
+import { useUserStore } from '@stores/user/UserStore';
+import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
 
 const fmt = (v: any, digits = 2) => {
     if (v === undefined || v === null || isNaN(Number(v))) return '0.00';
@@ -164,6 +166,8 @@ const StatCol = ({
 
 
 const PortfolioDashboard = () => {
+    const user = useUserStore((state) => state.user);
+    const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState<string | null>(null);
@@ -320,6 +324,54 @@ const PortfolioDashboard = () => {
                         ))}
                     </div>
                 </div>
+
+                {/* ── Premium Inform Bar ── */}
+                {!user?.isSubscribed && (
+                    <div style={{
+                        background: 'rgba(245, 158, 11, 0.05)',
+                        border: '1px solid rgba(245, 158, 11, 0.2)',
+                        borderRadius: 8,
+                        padding: '12px 16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 16
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <div style={{ 
+                                width: 28, 
+                                height: 28, 
+                                borderRadius: 6, 
+                                background: 'rgba(245, 158, 11, 0.1)', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center' 
+                            }}>
+                                <span style={{ color: '#f59e0b', fontSize: 10, fontWeight: 900, fontStyle: 'italic' }}>P</span>
+                            </div>
+                            <div>
+                                <p style={{ fontSize: 12, fontWeight: 700, color: '#e8eaed', padding: 0, margin: 0 }}>Unlock Enhanced Intelligence</p>
+                                <p style={{ fontSize: 10, color: '#5a5f6e', padding: 0, margin: 0 }}>Upgrade to Premium for advanced portfolio analytics, AI projections, and more.</p>
+                            </div>
+                        </div>
+                        <button 
+                            onClick={() => setIsPremiumModalOpen(true)}
+                            style={{
+                                padding: '6px 14px',
+                                borderRadius: 6,
+                                background: 'rgba(245, 158, 11, 0.1)',
+                                border: '1px solid rgba(245, 158, 11, 0.2)',
+                                color: '#f59e0b',
+                                fontSize: 10,
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap'
+                            }}
+                        >
+                            LEARN MORE
+                        </button>
+                    </div>
+                )}
 
                 {/* ── Summary banner ── */}
                 <SummaryBar
@@ -927,6 +979,11 @@ const PortfolioDashboard = () => {
                     </div>
                 </div>
             </div>
+
+            <PremiumPaymentModal
+                isOpen={isPremiumModalOpen}
+                onClose={() => setIsPremiumModalOpen(false)}
+            />
         </div>
     );
 };

@@ -22,6 +22,7 @@ import { Route as UserExpenseTrackerRouteImport } from './routes/user/expense-tr
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AdminUsersManagementRouteImport } from './routes/admin/users-management'
 import { Route as AdminTransactionsManagementRouteImport } from './routes/admin/transactions-management'
+import { Route as AdminSubscriptionsRouteImport } from './routes/admin/subscriptions'
 import { Route as AdminStockManagementRouteImport } from './routes/admin/stock-management'
 import { Route as AdminSipManagementRouteImport } from './routes/admin/sip-management'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
@@ -120,6 +121,11 @@ const AdminTransactionsManagementRoute =
     path: '/transactions-management',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminSubscriptionsRoute = AdminSubscriptionsRouteImport.update({
+  id: '/subscriptions',
+  path: '/subscriptions',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminStockManagementRoute = AdminStockManagementRouteImport.update({
   id: '/stock-management',
   path: '/stock-management',
@@ -305,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
   '/admin/stock-management': typeof AdminStockManagementRoute
+  '/admin/subscriptions': typeof AdminSubscriptionsRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
@@ -351,6 +358,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
   '/admin/stock-management': typeof AdminStockManagementRoute
+  '/admin/subscriptions': typeof AdminSubscriptionsRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
@@ -399,6 +407,7 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sip-management': typeof AdminSipManagementRoute
   '/admin/stock-management': typeof AdminStockManagementRoute
+  '/admin/subscriptions': typeof AdminSubscriptionsRoute
   '/admin/transactions-management': typeof AdminTransactionsManagementRoute
   '/admin/users-management': typeof AdminUsersManagementRoute
   '/auth/login': typeof AuthLoginRoute
@@ -447,6 +456,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/sip-management'
     | '/admin/stock-management'
+    | '/admin/subscriptions'
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
@@ -493,6 +503,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/sip-management'
     | '/admin/stock-management'
+    | '/admin/subscriptions'
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
@@ -540,6 +551,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/sip-management'
     | '/admin/stock-management'
+    | '/admin/subscriptions'
     | '/admin/transactions-management'
     | '/admin/users-management'
     | '/auth/login'
@@ -671,6 +683,13 @@ declare module '@tanstack/react-router' {
       path: '/transactions-management'
       fullPath: '/admin/transactions-management'
       preLoaderRoute: typeof AdminTransactionsManagementRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/subscriptions': {
+      id: '/admin/subscriptions'
+      path: '/subscriptions'
+      fullPath: '/admin/subscriptions'
+      preLoaderRoute: typeof AdminSubscriptionsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/stock-management': {
@@ -927,6 +946,7 @@ interface AdminRouteChildren {
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSipManagementRoute: typeof AdminSipManagementRoute
   AdminStockManagementRoute: typeof AdminStockManagementRoute
+  AdminSubscriptionsRoute: typeof AdminSubscriptionsRoute
   AdminTransactionsManagementRoute: typeof AdminTransactionsManagementRoute
   AdminUsersManagementRoute: typeof AdminUsersManagementRoute
   AdminMutualFundAddNewFundRoute: typeof AdminMutualFundAddNewFundRoute
@@ -946,6 +966,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSipManagementRoute: AdminSipManagementRoute,
   AdminStockManagementRoute: AdminStockManagementRoute,
+  AdminSubscriptionsRoute: AdminSubscriptionsRoute,
   AdminTransactionsManagementRoute: AdminTransactionsManagementRoute,
   AdminUsersManagementRoute: AdminUsersManagementRoute,
   AdminMutualFundAddNewFundRoute: AdminMutualFundAddNewFundRoute,

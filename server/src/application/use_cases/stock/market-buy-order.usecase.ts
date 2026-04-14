@@ -20,6 +20,10 @@ import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import mongoose from "mongoose";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
+import { Features } from "@domain/entities/subscription/enums/features.enum";
+import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
+import { IFeatureAccessService } from "@application/interfaces/services/subscription/feature-access-service.interface";
+import { SuccessMessages } from "@shared/constants/success.messages";
 
 @injectable()
 export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
@@ -32,10 +36,25 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
+        @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
     ) { }
 
-    async execute(data: BuyOrderDTO, userId: string): Promise<void> {
+    async execute(data: BuyOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
+        
+        const hasAccess = await this._featureAccess.hasAccess(
+            userId,
+            Features.STOCK_TRADING
+        );
+
+        if (!hasAccess) {
+            return {
+                message: SuccessMessages.SUBSCRIPTION.UPGRADE_PREMIUM,
+                upgrade: true
+            };
+        }
+
         const session = await mongoose.startSession()
+
 
         try {
             session.startTransaction();

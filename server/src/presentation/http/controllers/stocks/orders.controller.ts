@@ -21,12 +21,12 @@ export class OrdersController {
             const buyOrderDto: BuyOrderDTO = req.body;
             const userId = req.user?.id as string
 
-            await this._buyOrderUseCase.execute(buyOrderDto, userId);
+            const result = await this._buyOrderUseCase.execute(buyOrderDto, userId);
 
             return ResponseHelper.success(
                 res,
                 SuccessMessages.STOCK.BUY_ORDER,
-                null,
+                result,
                 HttpStatus.OK,
             )
         } catch (error) {
@@ -39,12 +39,12 @@ export class OrdersController {
             const sellOrderDto: SellOrderDTO = req.body;
             const userId = req.user?.id as string;
 
-            await this._sellOrderUseCase.execute(sellOrderDto, userId);
+            const result = await this._sellOrderUseCase.execute(sellOrderDto, userId);
 
             return ResponseHelper.success(
                 res,
                 SuccessMessages.STOCK.SELL_ORDER,
-                null,
+                result,
                 HttpStatus.OK,
             )
         } catch (error) {

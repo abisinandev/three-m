@@ -32,8 +32,9 @@ const bootstrap = async () => {
     //vector-db 
     // IngestDocuments() 
     // SyncStocks()
-    const engine = createEngineRunner();
-    engine.start(); 
+    
+    // const engine = createEngineRunner();
+    // engine.start(); 
  
     const server = http.createServer(app);
     InitSocketConfigs(server);
