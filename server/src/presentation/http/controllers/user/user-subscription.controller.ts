@@ -12,7 +12,7 @@ export class UserSubscriptionController {
         @inject(SUBSCRIPTION_TYPES.FetchPremiumPlanUseCase) private readonly fetchPremiumPlanUseCase: IFetchPremiumPlanUseCase,
     ) { }
 
-    async getPremiumPlan(req: Request, res: Response, next: NextFunction) {
+    async getPremiumPlan(_req: Request, res: Response, next: NextFunction) {
         try {
             const result = await this.fetchPremiumPlanUseCase.execute();
 

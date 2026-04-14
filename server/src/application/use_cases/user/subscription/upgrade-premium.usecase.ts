@@ -70,7 +70,8 @@ export class UpgradePremiumUseCase implements IUpgradePremiumUseCase {
 
             await this._transactionRepository.createTransaction(transaction, session);
 
-            user.subscribePlan();
+            let subId = await this._subscriptionRepository.findByUserId(data.userId);
+            user.subscribePlan(subId?.id as string);
             await this._userRepository.update(user.id as string, user, session);
 
             await session.commitTransaction();
@@ -82,3 +83,4 @@ export class UpgradePremiumUseCase implements IUpgradePremiumUseCase {
         }
     }
 }
+ 

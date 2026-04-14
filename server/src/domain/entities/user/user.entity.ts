@@ -28,6 +28,7 @@ export class UserEntity {
 
   private _subscriptionStatus: SubscriptionStatus;
   private _subscriptionPlan: SubscriptionPlans;
+  private _subscriptionId?: string;
   private _currency: CurrencyTypes;
 
   private _kycId: string | null;
@@ -64,6 +65,7 @@ export class UserEntity {
     isBlocked: boolean;
     subscriptionStatus: SubscriptionStatus;
     subscriptionPlan: SubscriptionPlans;
+    subscriptionId?: string;
     currency: CurrencyTypes;
     kycId?: string | null;
     kycStatus: KycStatusType;
@@ -99,6 +101,8 @@ export class UserEntity {
 
     this._subscriptionStatus = props.subscriptionStatus;
     this._subscriptionPlan = props.subscriptionPlan;
+    this._subscriptionId = props.subscriptionId;
+
     this._currency = props.currency;
 
     this._kycId = props.kycId ?? null;
@@ -190,6 +194,7 @@ export class UserEntity {
     isBlocked: boolean;
     subscriptionStatus: SubscriptionStatus;
     subscriptionPlan: SubscriptionPlans;
+    subscriptionId?: string;
     currency: CurrencyTypes;
     kycId?: string | null;
     kyc?: KycSummary | null;
@@ -263,6 +268,9 @@ export class UserEntity {
   get subscriptionPlan() {
     return this._subscriptionPlan;
   }
+  get subscriptionId() {
+    return this._subscriptionId;
+  }
   get isSubscribed() {
     return this._subscriptionStatus === SubscriptionStatus.ACTIVE;
   }
@@ -325,9 +333,10 @@ export class UserEntity {
     this._isBlocked = false;
   }
 
-  subscribePlan(): void {
+  subscribePlan(subId: string): void {
     this._subscriptionPlan = SubscriptionPlans.PREMIUM;
     this._subscriptionStatus = SubscriptionStatus.ACTIVE;
+    this._subscriptionId = subId;
   }
 
   enable2FA(secret: string): void {
