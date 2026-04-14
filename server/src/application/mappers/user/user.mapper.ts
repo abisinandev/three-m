@@ -30,11 +30,15 @@ export function toUserResponse(user: UserEntity): UserDTO {
     isVerified: user.isVerified,
     isBlocked: user.isBlocked,
 
+    isSubscribed: user.isSubscribed,
+    isTwoFactorEnabled: user.isTwoFactorEnabled,
+    isAlgoEnabled: user.isAlgoEnabled,
+
     subscription: {
       status: user.subscriptionStatus,
       plan: user.subscriptionPlan,
     },
-    
+
     walletId: user.walletId as string,
     wallet: user.wallet
       ? {
@@ -66,6 +70,7 @@ export function toUserResponse(user: UserEntity): UserDTO {
 
     kycStatus: user.kycStatus,
     kycId: user.kycId as string,
+    currency: user.currency,
     avatar: user.avatar ?? null,
     googleId: user.googleId ?? null,
 

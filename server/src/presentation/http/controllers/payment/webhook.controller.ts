@@ -1,5 +1,5 @@
 import { IPaymentHandler } from "@application/interfaces/services/payment/payment-handler.interface";
-import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
+import { PAYMENT_TYPES } from "@infrastructure/inversify_di/features/payment/payment.types";
 import stripe from "@infrastructure/providers/stripe/stripe.client";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import AppError from "@presentation/express/utils/error-handling/app.error";
@@ -19,7 +19,7 @@ import { inject, injectable } from "inversify";
 @injectable()
 export class WebhookController {
     constructor(
-        @inject(USER_TYPES.StripePaymentHandler) private readonly stripePaymentHandler: IPaymentHandler,
+        @inject(PAYMENT_TYPES.StripePaymentHandler) private readonly stripePaymentHandler: IPaymentHandler,
     ) { }
 
     async stripeWebhookHandler(req: Request, res: Response, next: NextFunction) {

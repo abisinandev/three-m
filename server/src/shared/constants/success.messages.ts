@@ -46,6 +46,7 @@ export const SuccessMessages = {
         PAUSED: "SIP paused",
         RESUMED: "SIP resumed",
         CANCELLED: "SIP cancelled",
+        UPGRADE_PREMIUM: "Upgrade to Premium to use SIP investment feature",
     },
     MUTUAL_FUND: {
         // Add specific mutual fund success messages here if any in future
@@ -57,7 +58,7 @@ export const SuccessMessages = {
     STOCK: {
         STOCK_FETCHED: "Stocks fetched successfully",
         SELL_ORDER: "Sell order done successfully",
-        BUY_ORDER:"Buy order received successfully",
+        BUY_ORDER: "Buy order received successfully",
     },
 
     ALGO: {
@@ -70,11 +71,12 @@ export const SuccessMessages = {
     },
 
     SUBSCRIPTION: {
+        UPGRADE_PREMIUM: "Upgrade to Premium to use this feature",
         PLAN_UPDATED: "Plan updated successfully",
     },
 
     AI_CHATBOT: {
         DATA: "Responded successfully",
-        UPGRADE_PLAN : "Upgrade to Premium to unlock full AI capabilities.",
+        UPGRADE_PLAN: "Upgrade to Premium to unlock full AI capabilities.",
     }
 } as const;

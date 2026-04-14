@@ -16,6 +16,10 @@ export type UserDTO = {
   isVerified: boolean;
   isBlocked: boolean;
 
+  isSubscribed: boolean;
+  isTwoFactorEnabled: boolean;
+  isAlgoEnabled: boolean;
+
   subscription: {
     status: string;
     plan: string;
@@ -25,6 +29,8 @@ export type UserDTO = {
   kycStatus?: KycStatusType;
   wallet?: WalletSummary;
   walletId: string;
+
+  currency: string;
 
   avatar: string | null;
   googleId: string | null;

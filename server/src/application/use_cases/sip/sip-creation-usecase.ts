@@ -16,6 +16,10 @@ import { SipInstallmentEntity } from "@domain/entities/mutual-fund/sip-intallmen
 import AppError from "@presentation/express/utils/error-handling/app.error";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
+import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
+import { IFeatureAccessService } from "@application/interfaces/services/subscription/feature-access-service.interface";
+import { Features } from "@domain/entities/subscription/enums/features.enum";
+import { SuccessMessages } from "@shared/constants/success.messages";
 
 @injectable()
 export class SipCreationUseCase implements ISipCreationUseCase {
@@ -25,9 +29,23 @@ export class SipCreationUseCase implements ISipCreationUseCase {
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
         @inject(SIP_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
-        @inject(SIP_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository
+        @inject(SIP_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
+        @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
     ) { }
-    async execute(data: SipCreationDTO, userId: string): Promise<void> {
+    async execute(data: SipCreationDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
+
+        const hasAccess = await this._featureAccess.hasAccess(
+            userId,
+            Features.SIP_AUTOMATION
+        );
+
+        if (!hasAccess) {
+            return {
+                message: SuccessMessages.SIP.UPGRADE_PREMIUM,
+                upgrade: true
+            };
+        }
+
         const session = await mongoose.startSession();
 
         try {
@@ -64,7 +82,6 @@ export class SipCreationUseCase implements ISipCreationUseCase {
                 const createdSip = await this._sipRepository.createSip(sipEntity, session);
                 if (!createdSip) throw new AppError("Sip creation failed");
 
-                console.log(createdSip, 'CREATED+AIP')
                 const installment = SipInstallmentEntity.create({
                     sipId: createdSip.id as string,
                     userId: createdSip.userId,

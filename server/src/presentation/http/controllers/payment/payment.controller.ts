@@ -3,7 +3,9 @@ import stripe from "@infrastructure/providers/stripe/stripe.client";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import { UnauthorizedError, ValidationError } from "@presentation/express/utils/error-handling";
 import { NextFunction, Request, Response } from "express";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { PAYMENT_TYPES } from "@infrastructure/inversify_di/features/payment/payment.types";
+import { IProcessStripePaymentUseCase } from "@application/use_cases/payment/interfaces/process-payment-usecase.interface";
 
 
 /**
@@ -16,6 +18,10 @@ import { injectable } from "inversify";
 
 @injectable()
 export class PaymentController {
+
+    constructor(
+        @inject(PAYMENT_TYPES.ProcessStripePaymentUseCase) private readonly _processPayment: IProcessStripePaymentUseCase
+    ) { }
 
     async createCheckoutSession(req: Request, res: Response, next: NextFunction) {
         try {
@@ -61,12 +67,33 @@ export class PaymentController {
                     },
                 },
             });
-            
+
             return res.status(200).json({
                 checkoutUrl: session.url,
             });
         } catch (error) {
-            next(error);
+            next(error); 
+        }
+    }
+
+
+    async verifyPayment(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { sessionId } = req.body;
+
+            if (!sessionId) throw new ValidationError("Session ID expired");
+
+            const session = await stripe.checkout.sessions.retrieve(sessionId);
+            if (session.payment_status !== "paid") {
+                throw new ValidationError("Payment not completed");
+            }
+
+            await this._processPayment.execute(session);
+
+            return res.json({ success: true });
+
+        } catch (error) {
+            next(error)
         }
     }
 }

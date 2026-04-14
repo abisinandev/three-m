@@ -26,7 +26,4 @@ export const USER_TYPES = {
   //Controller
   UserController: Symbol.for("UserController"),
   WalletController: Symbol.for('WalletController'),
-  PaymentController: Symbol.for("PaymentController"),
-  WebhookController: Symbol.for("WebhookController"),
-  StripePaymentHandler: Symbol.for('StripePaymentHandler'),
 };

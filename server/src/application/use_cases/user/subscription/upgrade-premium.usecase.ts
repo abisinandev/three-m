@@ -70,6 +70,9 @@ export class UpgradePremiumUseCase implements IUpgradePremiumUseCase {
 
             await this._transactionRepository.createTransaction(transaction, session);
 
+            user.subscribePlan();
+            await this._userRepository.update(user.id as string, user, session);
+
             await session.commitTransaction();
         } catch (error) {
             await session.abortTransaction();

@@ -27,7 +27,7 @@ export class UserEntity {
   private _isBlocked: boolean;
 
   private _subscriptionStatus: SubscriptionStatus;
-  private _subscriptionPlan: SubscriptionPlans; 
+  private _subscriptionPlan: SubscriptionPlans;
   private _currency: CurrencyTypes;
 
   private _kycId: string | null;
@@ -91,7 +91,7 @@ export class UserEntity {
     this._email = props.email;
     this._phone = props.phone ?? null;
     this._password = props.password ?? null;
- 
+
     this._role = props.role;
     this._isEmailVerified = props.isEmailVerified;
     this._isVerified = props.isVerified;
@@ -207,7 +207,7 @@ export class UserEntity {
     authProvider: AuthProvider;
     avatar?: string | null;
     googleId?: string | null;
-    
+
   }): UserEntity {
     return new UserEntity({
       ...props,
@@ -263,6 +263,9 @@ export class UserEntity {
   get subscriptionPlan() {
     return this._subscriptionPlan;
   }
+  get isSubscribed() {
+    return this._subscriptionStatus === SubscriptionStatus.ACTIVE;
+  }
   get kycId() {
     return this._kycId ?? null;
   }
@@ -301,7 +304,7 @@ export class UserEntity {
   get googleId() {
     return this._googleId ?? null;
   }
-  
+
   get updatedAt() {
     return this._updatedAt ?? null;
   }
@@ -320,6 +323,11 @@ export class UserEntity {
 
   unblock(): void {
     this._isBlocked = false;
+  }
+
+  subscribePlan(): void {
+    this._subscriptionPlan = SubscriptionPlans.PREMIUM;
+    this._subscriptionStatus = SubscriptionStatus.ACTIVE;
   }
 
   enable2FA(secret: string): void {
