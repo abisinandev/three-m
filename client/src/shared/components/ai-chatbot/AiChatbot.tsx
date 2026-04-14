@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Send, Bot, Loader2, Sparkles, MessageSquare, ShieldCheck, Zap, Crown } from 'lucide-react';
 import { sendChatMessage, getChatHistory } from '@shared/services/chatbot/chatbotApi';
-import PremiumPaymentModal from '@shared/components/modals/PremiumPaymentModal';
+import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
 
 interface Message {
     id: string;

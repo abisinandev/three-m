@@ -2,10 +2,10 @@ import { PremiumUpgradeCard, VerificationAlertCard } from '@shared/components/ca
 import { useUserStore } from '@stores/user/UserStore';
 import { Wallet, TrendingDown, ArrowUpRight, ArrowDownRight, BarChart3, Activity } from 'lucide-react';
 import { useState } from 'react';
-import PremiumPaymentModal from '@shared/components/modals/PremiumPaymentModal';
+import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
 
 const DashboardPage = () => {
-  const { user } = useUserStore.getState();
+  const user = useUserStore((state) => state.user);
   const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
 
   return (

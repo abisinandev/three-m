@@ -7,13 +7,21 @@ import { ROUTES } from "@shared/constants/routes";
 const PaymentFailurePage = () => {
     const navigate = useNavigate();
     const [animated, setAnimated] = useState(false);
+    const [attemptedAmount, setAttemptedAmount] = useState<number>(0);
+    const [paymentPurpose, setPaymentPurpose] = useState<string | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => setAnimated(true), 100);
+
+        const storedAmount = localStorage.getItem('paymentAmount');
+        const storedPurpose = localStorage.getItem('paymentPurpose');
+
+        if (storedAmount) setAttemptedAmount(Number(storedAmount));
+        if (storedPurpose) setPaymentPurpose(storedPurpose);
+
         return () => clearTimeout(timer);
     }, []);
 
-    const attemptedAmount = 5000; 
     const errorMessage = "Your payment could not be processed at this time";
 
     const format = (v: number) =>
@@ -68,7 +76,13 @@ const PaymentFailurePage = () => {
                 {/* Primary Actions */}
                 <div className="flex flex-col gap-2.5">
                     <button
-                        onClick={() => navigate({ to: ROUTES.USER.WALLET.ADD })}
+                        onClick={() => {
+                            if (paymentPurpose === 'SUBSCRIPTION') {
+                                navigate({ to: ROUTES.USER.HOME });
+                            } else {
+                                navigate({ to: ROUTES.USER.WALLET.ADD });
+                            }
+                        }}
                         className="w-full py-3 bg-red-500 hover:bg-red-400 active:scale-[0.99] transition-all text-white text-[11px] font-black uppercase tracking-widest rounded-md flex items-center justify-center gap-2"
                     >
                         <RefreshCw className="w-3.5 h-3.5 text-white" />

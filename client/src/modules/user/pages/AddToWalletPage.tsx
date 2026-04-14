@@ -22,10 +22,6 @@ const AddToWallet = () => {
     const currentBalance = user?.wallet?.balance ?? 0;
     const newBalance = amount ? currentBalance + Number(amount) : currentBalance;
 
-    localStorage.setItem('previousBalance', currentBalance);
-    localStorage.setItem('addedAmount', amount as string);
-    localStorage.setItem('newBalance', newBalance);
-
     const validateAmount = (value: number | ""): boolean => {
         if (value === "") {
             setError("Amount is required");
@@ -63,6 +59,7 @@ const AddToWallet = () => {
         setLoading(true);
         try {
             localStorage.setItem('paymentPurpose', 'TOPUP');
+            localStorage.setItem('paymentAmount', String(amount));
             const res = await api.post(PAYMENT_ROUTE, {
                 amount: Number(amount),
                 purpose: "TOPUP",
