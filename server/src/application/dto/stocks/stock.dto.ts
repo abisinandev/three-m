@@ -3,6 +3,8 @@ export interface StockDTO {
     symbol: string;
     name: string;
     exchange: string;
+    change?: number;
+    changePercent?: number;
     logo: string | null;
     sector?: string;
     isTradable: boolean;

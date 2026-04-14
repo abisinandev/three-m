@@ -68,6 +68,13 @@ export class YahooProvider implements IMarketDataProvider {
                 timestamp: result.regularMarketTime
                     ? Math.floor(new Date(result.regularMarketTime).getTime() / 1000)
                     : Math.floor(Date.now() / 1000),
+                change: result.regularMarketChange,
+                changePercent: result.regularMarketChangePercent,
+                open: result.regularMarketOpen,
+                high: result.regularMarketDayHigh,
+                low: result.regularMarketDayLow,
+                previousClose: result.regularMarketPreviousClose,
+                volume: result.regularMarketVolume,
             };
         } catch {
             return null;
