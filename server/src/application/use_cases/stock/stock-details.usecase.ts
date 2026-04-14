@@ -16,7 +16,17 @@ export class StockDetailsUseCase implements IStockDetailsUseCase {
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
     ) { }
 
-    async execute(symbol: string): Promise<{ data: StockDTO; latestPrice: number | null }> {
+    async execute(symbol: string): Promise<{
+        data: StockDTO;
+        latestPrice: number | null,
+        change: number | null,
+        changePercent: number | null,
+        open: number | null,
+        high: number | null,
+        low: number | null,
+        previousClose: number | null,
+        volume: number | null,
+    }> {
         const stock = await this._stockRepository.findBySymbol(symbol);
 
         if (!stock || !stock.isVisible) {
@@ -31,6 +41,13 @@ export class StockDetailsUseCase implements IStockDetailsUseCase {
         return {
             data: StockMapper.toDTO(stock),
             latestPrice: quote?.price ?? null,
+            change: quote?.change ?? null,
+            changePercent: quote?.changePercent ?? null,
+            open: quote?.open ?? null,
+            high: quote?.high ?? null,
+            low: quote?.low ?? null,
+            previousClose: quote?.previousClose ?? null,
+            volume: quote?.volume ?? null,
         };
     }
 }

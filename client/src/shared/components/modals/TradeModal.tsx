@@ -86,7 +86,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/80"
         onClick={onClose}
       />
 

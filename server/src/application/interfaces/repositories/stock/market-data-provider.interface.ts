@@ -12,6 +12,13 @@ export interface IHistoricalDataParams {
 export interface IQuote {
     price: number;
     timestamp: number;
+    change?: number;
+    changePercent?: number;
+    open?: number;
+    high?: number;
+    low?: number;
+    previousClose?: number;
+    volume?: number;
 }
 export interface IMarketDataProvider {
     getHistoricalData(params: IHistoricalDataParams): Promise<ICandle[]>;
