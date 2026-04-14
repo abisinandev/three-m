@@ -39,7 +39,6 @@ const TradeModal: React.FC<TradeModalProps> = ({
   const [stopLoss, setStopLoss] = useState<string>('');
   const [takeProfit, setTakeProfit] = useState<string>('');
   
-  // Debug Hardcoded Balance
   const balance = 100000;
 
   useEffect(() => {
@@ -84,16 +83,13 @@ const TradeModal: React.FC<TradeModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-      {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black/80"
         onClick={onClose}
       />
 
-      {/* Modal Container */}
       <div className="relative bg-[#0f0f0f] text-gray-100 rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden font-inter border border-[#1f1f1f]">
         
-        {/* Header Section */}
         <div className={`${themeBg} px-5 py-3 flex items-center justify-between`}>
           <div className="flex items-center gap-2">
             <span className="text-white font-bold text-sm tracking-wide">
@@ -108,10 +104,8 @@ const TradeModal: React.FC<TradeModalProps> = ({
           </button>
         </div>
 
-        {/* Content Section */}
         <form onSubmit={handleSubmit}>
           
-          {/* Order Info Bar */}
           <div className="px-5 py-3 border-b border-[#1f1f1f] bg-[#161616] flex justify-between items-center text-[11px] font-medium text-gray-400">
             <div className="flex gap-4">
               <span>EXCHANGE: <span className="text-gray-100 uppercase">NSE</span></span>
@@ -125,7 +119,6 @@ const TradeModal: React.FC<TradeModalProps> = ({
 
           <div className="p-5 space-y-6">
             
-            {/* Main Tabs (Product/Order Type) */}
             <div className="flex items-center gap-6">
               <div className="flex-1">
                 <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-2">Order Type</label>
@@ -151,7 +144,6 @@ const TradeModal: React.FC<TradeModalProps> = ({
               </div>
             </div>
 
-            {/* Price & Quantity Grid */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-2">Qty</label>
@@ -177,7 +169,6 @@ const TradeModal: React.FC<TradeModalProps> = ({
               </div>
             </div>
 
-            {/* Advanced Trigger Price Fields (Stop Loss / Take Profit) */}
             <div className="pt-2 border-t border-[#1f1f1f]">
                  <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-3">Risk Management (Optional)</label>
                  <div className="grid grid-cols-2 gap-4">
@@ -205,7 +196,6 @@ const TradeModal: React.FC<TradeModalProps> = ({
             </div>
           </div>
 
-          {/* Footer Integration - Action Bar */}
           <div className="px-5 py-4 bg-[#161616] flex items-center justify-between border-t border-[#1f1f1f]">
             <div className="space-y-0.5">
               <p className="text-[10px] text-gray-500 font-medium uppercase tracking-tight">Margin required:</p>

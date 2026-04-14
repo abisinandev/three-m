@@ -270,9 +270,8 @@ const StockDetailPage = () => {
             </div>
           </div>
 
-          {/* Right Sidebar */}
           <div className="col-span-12 lg:col-span-3 space-y-6">
-            {/* Algo Console */}
+            
             <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 flex flex-col relative overflow-hidden">
               <div className={`absolute top-0 right-0 w-24 h-24 blur-[60px] opacity-20 ${algoStep === 'active' ? 'bg-[#00C853]' : 'bg-[#2962ff]'}`}></div>
 
@@ -377,7 +376,6 @@ const StockDetailPage = () => {
               </div>
             </div>
 
-            {/* Asset Performance Summary */}
             <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 space-y-4">
               <p className="text-[11px] font-bold text-[#5a5f6e] uppercase tracking-widest">Market Depth</p>
               <div className="space-y-3">
@@ -388,7 +386,6 @@ const StockDetailPage = () => {
               </div>
             </div>
 
-            {/* Sector/Exch Info */}
             <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 space-y-4">
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
