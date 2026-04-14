@@ -1,12 +1,15 @@
 import { useParams, Link } from '@tanstack/react-router'
-import { TrendingUp, TrendingDown, ArrowLeft, Bot, Cpu, ChevronRight, Zap } from 'lucide-react'
+import { ArrowLeft, Bot, ChevronRight, Zap } from 'lucide-react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
+import { useUserStore } from '@stores/user/UserStore'
 import { finnhubService } from '@shared/services/finnhub.service'
 import stockCurrencyService from '@shared/services/stockCurrency.service'
 import { StockChart } from '@modules/user/components/StockChart'
 import { socketService } from '@shared/services/socket'
 import TradeModal from '@shared/components/modals/TradeModal'
+import PremiumPaymentModal from '@shared/components/modals/PremiumPaymentModal'
 import type { TradeData } from '@shared/components/modals/TradeModal'
 import { useTradeMutation } from '@shared/hooks/useTradeMutation'
 import { getPortfolioInvestments } from '@shared/services/feature/portfolio/PortfolioApi';
@@ -18,6 +21,7 @@ const StockDetailPage = () => {
 
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
 
   const [algoStep, setAlgoStep] = useState<'idle' | 'selecting' | 'active'>('idle');
   const [selectedStrategy, setSelectedStrategy] = useState('');
@@ -31,10 +35,11 @@ const StockDetailPage = () => {
     mutationFn: saveAlgoStrategy,
     onSuccess: () => {
       setAlgoStep('active');
+      toast.success("Algo trading started successfully.");
     },
     onError: (error) => {
       console.error("Failed to save algo strategy:", error);
-      alert("Failed to start algo trading. Please try again.");
+      toast.error("Failed to start algo trading. Please try again.");
     }
   });
 
@@ -66,9 +71,11 @@ const StockDetailPage = () => {
     onSuccess: () => {
       refetchActiveStrategy();
       setAlgoStep('idle');
+      toast.info("Algo strategy stopped.");
     },
     onError: (error) => {
       console.error("Failed to toggle strategy status:", error);
+      toast.error("An error occurred while stopping the strategy.");
     }
   });
 
@@ -128,13 +135,21 @@ const StockDetailPage = () => {
   const stockInfo = responseData?.data;
   const apiPrice = responseData?.latestPrice;
   const currentPrice = realtimePrice ?? apiPrice;
+  const change = responseData?.change ?? 0;
+  const changePercent = responseData?.changePercent ?? 0;
+  const isPositive = change >= 0;
 
-  const isPositive = true;
+  const fmt = (v: any, digits = 2) => {
+    if (v === undefined || v === null || isNaN(Number(v))) return '0.00';
+    return Number(v).toLocaleString('en-IN', {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    });
+  };
 
   const { buy, sell, isTrading } = useTradeMutation();
 
   const handleTradeClick = (type: 'buy' | 'sell') => {
-    console.log(`[DetailPage] Opening Trade Modal for: ${symbol} as ${type}`);
     setTradeType(type);
     setIsTradeModalOpen(true);
   };
@@ -162,249 +177,232 @@ const StockDetailPage = () => {
       }
       setIsTradeModalOpen(false);
     } catch (error) {
+      console.error("Trade execution failed:", error);
     }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center font-inter pb-10">
-        <p className="text-gray-400">Loading realtime stock data...</p>
+      <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] flex items-center justify-center font-sans tracking-tight">
+        <p className="text-[#5a5f6e] text-xs uppercase tracking-widest animate-pulse">Syncing market data...</p>
       </div>
     );
   }
 
   if (isError || !stockInfo) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center font-inter pb-10">
-        <p className="text-red-400">Error loading data for {symbol}.</p>
+      <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] flex items-center justify-center font-sans tracking-tight">
+        <p className="text-[#FF1744] text-xs uppercase tracking-widest">Error loading data for {symbol}.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white font-inter pb-10 p-6">
-      <div className="mb-6">
-        <Link
-          to="/user/trading"
-          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Trading
-        </Link>
-      </div>
-
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center font-bold text-lg overflow-hidden">
-            {stockInfo.logo ? (
-              <img src={stockInfo.logo} alt={stockInfo.symbol} className="object-cover w-full h-full" />
-            ) : (
-              (stockInfo.symbol || symbol).charAt(0)
-            )}
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{stockInfo.name || symbol}</h1>
-            <p className="text-sm text-gray-400 mt-0.5">{stockInfo.exchange || 'NSE'} · {stockInfo.sector || 'Equity'}</p>
-          </div>
-        </div>
-
-        {/* Algo Trading Top Status Indicator */}
-        {algoStep === 'active' && (
-          <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-[#22C55E]/10 border border-[#22C55E]/30 animate-pulse">
-            <div className="w-2 h-2 rounded-full bg-[#22C55E]"></div>
-            <span className="text-[10px] font-bold text-[#22C55E] tracking-widest uppercase">Algo Active: {strategies.find(s => s.name === selectedStrategy)?.displayName}</span>
-          </div>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-9 flex flex-col gap-6">
-          <div className="flex items-end justify-between bg-[#0f0f0f] p-6 rounded-xl border border-[#1f1f1f]">
-            <div>
-              <p className="text-xs text-gray-500 uppercase tracking-widest mb-2">Current Price</p>
-              <div className="flex items-baseline gap-3">
-                <p className="text-4xl font-bold tracking-tight text-white">
-                  {stockCurrencyService.formatCurrency(currentPrice, 'INR')}
-                </p>
-                <div className={`flex items-center gap-1 text-sm font-semibold ml-2 ${isPositive ? 'text-[#22C55E]' : 'text-red-500'}`}>
-                  {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                  <span>—% today</span>
+    <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] font-sans selection:bg-[#2962ff]/30">
+      {/* Top Navigation Bar */}
+      <div className="border-b border-[#1e2025] bg-[#0b0c0e] sticky top-0 z-30">
+        <div className="max-w-[1600px] mx-auto px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <Link to="/user/trading" className="text-[#5a5f6e] hover:text-[#e8eaed] transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+            </Link>
+            <div className="h-6 w-[1px] bg-[#1e2025] mx-1"></div>
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded bg-[#111214] border border-[#1e2025] flex items-center justify-center overflow-hidden shrink-0">
+                {stockInfo.logo ? (
+                  <img src={stockInfo.logo} alt="" className="w-5 h-5 object-contain" />
+                ) : (
+                  <span className="text-[10px] font-bold text-[#5a5f6e]">{(stockInfo.symbol || symbol).slice(0, 2).toUpperCase()}</span>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold tracking-tight text-[#e8eaed]">{stockInfo.symbol || symbol}</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#1e2025] text-[#5a5f6e] font-bold uppercase tracking-wider">{stockInfo.exchange || 'NSE'}</span>
                 </div>
+                <span className="text-[10px] text-[#5a5f6e] font-medium leading-none">{stockInfo.name || symbol}</span>
               </div>
             </div>
           </div>
 
-          <div className="w-full h-[550px] bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-1 flex flex-col">
-            <StockChart symbol={symbol} position={position} />
+          <div className="flex items-center gap-6">
+            <div className="text-right">
+              <div className="text-sm font-bold tracking-tight">
+                {stockCurrencyService.formatCurrency(currentPrice, 'INR')}
+              </div>
+              <div className={`text-[10px] font-bold flex items-center justify-end gap-1 ${isPositive ? 'text-[#00C853]' : 'text-[#FF1744]'}`}>
+                <span>{isPositive ? '+' : ''}{fmt(change)} ({isPositive ? '+' : ''}{changePercent.toFixed(2)}%)</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => handleTradeClick('buy')}
+                className="px-5 py-1.5 bg-[#00C853] text-[#0b0c0e] text-[11px] font-bold rounded hover:bg-[#00e676] transition-all active:scale-95 uppercase tracking-wider"
+              >
+                Buy
+              </button>
+              <button 
+                onClick={() => handleTradeClick('sell')}
+                className="px-5 py-1.5 bg-[#FF1744] text-[#e8eaed] text-[11px] font-bold rounded hover:bg-[#ff5252] transition-all active:scale-95 uppercase tracking-wider"
+              >
+                Sell
+              </button>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className="lg:col-span-3 flex flex-col gap-6">
-          {/* Algo Console Section */}
-          <div className="bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-6 relative overflow-hidden group">
-            {/* Background Glow Effect */}
-            <div className={`absolute -top-10 -right-10 w-32 h-32 blur-[60px] rounded-full transition-all duration-700 ${algoStep === 'active' ? 'bg-[#22C55E]/20' : algoStep === 'selecting' ? 'bg-blue-500/10' : 'bg-gray-800/10'}`}></div>
-
-            <div className="flex items-center justify-between gap-2 mb-6 relative z-10">
-              <div className="flex items-center gap-2">
-                <div className={`p-2 rounded-lg ${algoStep === 'active' ? 'bg-[#22C55E]/10 text-[#22C55E]' : 'bg-white/5 text-gray-400'}`}>
-                  <Bot className="w-5 h-5" />
-                </div>
-                <h3 className="text-sm font-bold text-gray-100 tracking-tight">Algo Console</h3>
-              </div>
-              {algoStep === 'active' && (
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#22C55E]/10 border border-[#22C55E]/30">
-                  <span className="w-1 h-1 rounded-full bg-[#22C55E] animate-ping"></span>
-                  <span className="text-[8px] font-bold text-[#22C55E] tracking-tighter uppercase">LIVE</span>
-                </div>
-              )}
+      <div className="max-w-[1600px] mx-auto px-6 py-6">
+        <div className="grid grid-cols-12 gap-6">
+          {/* Main Chart Area */}
+          <div className="col-span-12 lg:col-span-9 space-y-6">
+            {/* Chart Container */}
+            <div className="bg-[#111214] border border-[#1e2025] rounded-lg overflow-hidden flex flex-col h-[650px]">
+              <StockChart symbol={symbol} position={position} />
             </div>
 
-            <div className="space-y-6 relative z-10">
-              {/* State Machine UI */}
-              {algoStep === 'idle' && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div>
-                    <p className="text-xs font-semibold text-gray-100">AI-Powered Trading</p>
-                    <p className="text-[10px] text-gray-500 mt-1 leading-relaxed">Automate your execution strategy for {symbol} using advanced algorithms.</p>
+            {/* Detailed Market Info */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <MarketStatCard label="Open" value={`₹${fmt(responseData?.open)}`} />
+              <MarketStatCard label="High" value={`₹${fmt(responseData?.high)}`} />
+              <MarketStatCard label="Low" value={`₹${fmt(responseData?.low)}`} />
+              <MarketStatCard label="Prev Close" value={`₹${fmt(responseData?.previousClose)}`} />
+            </div>
+          </div>
+
+          {/* Right Sidebar */}
+          <div className="col-span-12 lg:col-span-3 space-y-6">
+            {/* Algo Console */}
+            <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 flex flex-col relative overflow-hidden">
+               <div className={`absolute top-0 right-0 w-24 h-24 blur-[60px] opacity-20 ${algoStep === 'active' ? 'bg-[#00C853]' : 'bg-[#2962ff]'}`}></div>
+               
+               <div className="flex items-center justify-between mb-5 relative z-10">
+                  <div className="flex items-center gap-2">
+                    <Bot className="w-4 h-4 text-[#5a5f6e]" />
+                    <span className="text-[11px] font-bold text-[#5a5f6e] uppercase tracking-[0.08em]">Algo Console</span>
                   </div>
-                  <button
-                    onClick={() => setAlgoStep('selecting')}
-                    className="w-full py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs font-bold hover:bg-white/10 transition-all flex items-center justify-center gap-2 group/btn"
-                  >
-                    Setup Algo Trading
-                    <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
-                </div>
-              )}
-
-              {algoStep === 'selecting' && (
-                <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <p className="text-[10px] font-bold text-[#22C55E] uppercase tracking-widest">Choose Strategy</p>
-                      <button onClick={() => setAlgoStep('idle')} className="text-[10px] text-gray-500 hover:text-white transition-colors">Cancel</button>
+                  {algoStep === 'active' && (
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#00C853]/10 border border-[#00C853]/20">
+                      <span className="w-1 h-1 rounded-full bg-[#00C853] animate-pulse"></span>
+                      <span className="text-[9px] font-bold text-[#00C853] uppercase tracking-tighter">Live</span>
                     </div>
+                  )}
+               </div>
 
-                    <div className="relative">
-                      <select
-                        value={selectedStrategy}
-                        onChange={(e) => setSelectedStrategy(e.target.value)}
-                        className="w-full bg-[#151515] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#22C55E]/50 focus:ring-1 focus:ring-[#22C55E]/20 transition-all appearance-none cursor-pointer"
-                        disabled={isLoadingStrategies}
+               <div className="relative z-10 space-y-5">
+                  {algoStep === 'idle' && (
+                    <div className="space-y-4">
+                      <p className="text-[11px] text-[#5a5f6e] leading-relaxed">Deploy automated strategies for {symbol}. Our engine scans live data to execute trades based on your selected parameters.</p>
+                      <button
+                        onClick={() => {
+                          const { user } = useUserStore.getState();
+                          if (!user?.isSubscribed) {
+                            toast.warning("Upgrade to Premium to unlock algorithmic trading.");
+                            setIsPremiumModalOpen(true);
+                          } else {
+                            setAlgoStep('selecting');
+                          }
+                        }}
+                        className="w-full py-2 bg-[#1e2025] hover:bg-[#272b33] text-[#e8eaed] text-[11px] font-bold rounded transition-colors uppercase tracking-widest border border-[#272b33] flex items-center justify-center gap-2 group"
                       >
-                        {isLoadingStrategies ? (
-                          <option value="" disabled>Loading strategies...</option>
-                        ) : strategies.length > 0 ? (
-                          strategies.map(strategy => (
-                            <option key={strategy.name} value={strategy.name} className="bg-[#0f0f0f]">
-                              {strategy.displayName}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="" disabled>No strategies available</option>
-                        )}
-                      </select>
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                        <ChevronRight className="w-3.5 h-3.5 text-gray-500 rotate-90" />
+                        Setup Algo
+                        <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                      </button>
+                    </div>
+                  )}
+
+                  {algoStep === 'selecting' && (
+                    <div className="space-y-4">
+                      <div className="space-y-3">
+                        <div className="relative">
+                          <select
+                            value={selectedStrategy}
+                            onChange={(e) => setSelectedStrategy(e.target.value)}
+                            className="w-full bg-[#0b0c0e] border border-[#1e2025] rounded px-3 py-2 text-[11px] text-[#e8eaed] focus:outline-none focus:border-[#00C853]/50 appearance-none cursor-pointer font-bold uppercase tracking-tight"
+                          >
+                            {isLoadingStrategies ? (
+                              <option>Loading...</option>
+                            ) : strategies.map(s => (
+                              <option key={s.name} value={s.name}>{s.displayName}</option>
+                            ))}
+                          </select>
+                          <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-[#5a5f6e] rotate-90 pointer-events-none" />
+                        </div>
+                        <div className="p-3 bg-[#0b0c0e] border border-[#1e2025] rounded">
+                          <p className="text-[10px] text-[#5a5f6e] leading-relaxed italic">
+                            {strategies.find(s => s.name === selectedStrategy)?.displayName || 'Select a strategy'} - Ready to monitor ticks.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => setAlgoStep('idle')} className="flex-1 py-2 text-[11px] font-bold text-[#5a5f6e] hover:text-[#e8eaed] transition-colors">Cancel</button>
+                        <button
+                          onClick={handleAlgoStart}
+                          disabled={saveAlgoMutation.isPending}
+                          className="flex-[2] py-2 bg-[#00C853] text-[#0b0c0e] text-[11px] font-bold rounded hover:bg-[#00e676] active:scale-[0.98] transition-all uppercase tracking-wider"
+                        >
+                          {saveAlgoMutation.isPending ? 'Starting...' : 'Confirm'}
+                        </button>
                       </div>
                     </div>
+                  )}
 
-                    <div className="p-3 rounded-lg bg-blue-500/5 border border-blue-500/10 backdrop-blur-sm">
-                      <p className="text-[10px] text-gray-300 leading-relaxed italic">
-                        "{strategies.find(s => s.name === selectedStrategy)?.displayName || 'Select a strategy...'} - Configure algorithmic parameters upon execution."
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={handleAlgoStart}
-                    disabled={saveAlgoMutation.isPending}
-                    className="w-full py-3 rounded-lg bg-[#22C55E] text-black text-xs font-bold hover:bg-[#16a34a] transition-all shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {saveAlgoMutation.isPending ? 'Starting Engine...' : 'Confirm & Start Trading'}
-                  </button>
-                </div>
-              )}
-
-              {algoStep === 'active' && (
-                <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <div className="p-4 rounded-xl bg-[#22C55E]/5 border border-[#22C55E]/20">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Zap className="w-4 h-4 text-[#22C55E] fill-[#22C55E]/20" />
-                      <p className="text-xs font-bold text-white uppercase tracking-tight">Strategy: {strategies.find(s => s.name === selectedStrategy)?.displayName}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-black/40 rounded p-2 border border-white/5">
-                        <p className="text-[8px] text-gray-500 uppercase font-bold tracking-widest mb-1">Status</p>
-                        <p className="text-[10px] text-white font-medium">Scanning Markets</p>
+                  {algoStep === 'active' && (
+                    <div className="space-y-4">
+                      <div className="p-4 bg-[#0b0c0e] border border-[#00C853]/20 rounded-lg space-y-3">
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-3 h-3 text-[#00C853]" />
+                          <span className="text-[11px] font-bold text-[#e8eaed] uppercase tracking-wide">{strategies.find(s => s.name === selectedStrategy)?.displayName}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <span className="text-[9px] text-[#5a5f6e] uppercase tracking-widest font-bold">Status</span>
+                            <p className="text-[10px] font-bold text-[#00C853]">RUNNING</p>
+                          </div>
+                          <div className="space-y-1 text-right">
+                            <span className="text-[9px] text-[#5a5f6e] uppercase tracking-widest font-bold">Runtime</span>
+                            <p className="text-[10px] font-bold text-[#e8eaed]">Direct Hook</p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="bg-black/40 rounded p-2 border border-white/5">
-                        <p className="text-[8px] text-gray-500 uppercase font-bold tracking-widest mb-1">Signal Mode</p>
-                        <p className="text-[10px] text-white font-medium">Live Tick</p>
-                      </div>
+                      <button
+                        onClick={handleAlgoStop}
+                        disabled={toggleStatusMutation.isPending}
+                        className="w-full py-2 bg-[#FF1744]/10 text-[#FF1744] border border-[#FF1744]/20 hover:bg-[#FF1744]/20 text-[11px] font-bold rounded transition-colors uppercase tracking-widest"
+                      >
+                        {toggleStatusMutation.isPending ? 'Stopping...' : 'Terminate Strategy'}
+                      </button>
                     </div>
-                  </div>
-
-                  <button
-                    onClick={handleAlgoStop}
-                    disabled={toggleStatusMutation.isPending}
-                    className="w-full py-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-500 text-xs font-bold hover:bg-red-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    <Zap className={`w-3.5 h-3.5 rotate-180 ${toggleStatusMutation.isPending ? 'animate-pulse' : ''}`} />
-                    {toggleStatusMutation.isPending ? 'Stopping...' : 'Stop Algo Trading'}
-                  </button>
-                </div>
-              )}
-
-              {/* Engine Bar */}
-              <div className="pt-2">
-                <div className="flex items-center gap-2 px-3 py-2 rounded bg-black/40 border border-[#1f1f1f]">
-                  <Cpu className={`w-3 h-3 ${algoStep === 'active' ? 'text-[#22C55E]' : 'text-gray-600'}`} />
-                  <span className="text-[10px] text-gray-400 font-medium tracking-tight">Execution Engine: <span className={algoStep === 'active' ? 'text-white' : 'text-gray-600'}>v1.0.4 r2</span></span>
-                </div>
-              </div>
+                  )}
+               </div>
             </div>
-          </div>
 
-          <div className="bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-6 flex flex-col gap-3">
-            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Trade {symbol}</h3>
-            <button
-              onClick={() => handleTradeClick('buy')}
-              className={`w-full py-3 rounded-lg font-bold text-sm transition-all shadow-[0_4px_14px_rgba(34,197,94,0.15)] ${stockInfo.isTradable ? 'bg-[#22C55E] text-black hover:bg-[#16a34a] hover:-translate-y-0.5' : 'bg-gray-800 text-gray-500 cursor-not-allowed shadow-none'
-                }`}
-              disabled={!stockInfo.isTradable}
-            >
-              Buy
-            </button>
-            <button
-              onClick={() => handleTradeClick('sell')}
-              className={`w-full py-3 rounded-lg font-bold text-sm transition-all ${stockInfo.isTradable ? 'bg-[#0f0f0f] border border-red-500/40 text-red-400 hover:bg-red-500/10 hover:-translate-y-0.5' : 'bg-gray-800 border-gray-700 text-gray-500 cursor-not-allowed'
-                }`}
-              disabled={!stockInfo.isTradable}
-            >
-              Sell
-            </button>
-            {!stockInfo.isTradable && (
-              <p className="text-xs text-red-500 text-center mt-2">Trading halted for this symbol.</p>
-            )}
-          </div>
+            {/* Asset Performance Summary */}
+            <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 space-y-4">
+               <p className="text-[11px] font-bold text-[#5a5f6e] uppercase tracking-widest">Market Depth</p>
+               <div className="space-y-3">
+                  <StatRow label="Avg Volume" value={fmt(responseData?.volume / 1000000, 2) + 'M'} />
+                  <StatRow label="Previous Close" value={`₹${fmt(responseData?.previousClose)}`} />
+                  <StatRow label="Session High" value={`₹${fmt(responseData?.high)}`} />
+                  <StatRow label="Session Low" value={`₹${fmt(responseData?.low)}`} />
+               </div>
+            </div>
 
-          <div className="bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-6 flex flex-col gap-4">
-            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Market Stats</h3>
-            {[
-              { label: 'Open', value: '—' },
-              { label: 'Prev. Close', value: '—' },
-              { label: '52W High', value: '—' },
-              { label: '52W Low', value: '—' },
-              { label: 'Volume', value: '—' },
-            ].map(stat => (
-              <div key={stat.label} className="flex justify-between items-center border-b border-[#1f1f1f] pb-3 last:border-0 last:pb-0">
-                <span className="text-xs text-gray-400">{stat.label}</span>
-                <span className="text-sm font-medium text-white">{stat.value}</span>
-              </div>
-            ))}
+            {/* Sector/Exch Info */}
+            <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 space-y-4">
+               <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-[#5a5f6e] font-bold uppercase tracking-widest">Sector</span>
+                    <span className="text-[10px] font-bold text-[#e8eaed]">{stockInfo.sector || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-[#5a5f6e] font-bold uppercase tracking-widest">Tradable</span>
+                    <span className={`text-[10px] font-bold ${stockInfo.isTradable ? 'text-[#00C853]' : 'text-[#FF1744]'}`}>
+                      {stockInfo.isTradable ? 'YES' : 'STRICTED'}
+                    </span>
+                  </div>
+               </div>
+            </div>
           </div>
         </div>
       </div>
@@ -419,9 +417,27 @@ const StockDetailPage = () => {
         isLoading={isTrading}
         onConfirm={handleTradeConfirm}
       />
+
+      <PremiumPaymentModal
+        isOpen={isPremiumModalOpen}
+        onClose={() => setIsPremiumModalOpen(false)}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default StockDetailPage
+const MarketStatCard = ({ label, value }: { label: string, value: string }) => (
+  <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-4">
+    <p className="text-[10px] text-[#5a5f6e] font-bold uppercase tracking-widest mb-1">{label}</p>
+    <p className="text-lg font-bold text-[#e8eaed] tracking-tight">{value}</p>
+  </div>
+);
 
+const StatRow = ({ label, value }: { label: string, value: string }) => (
+  <div className="flex justify-between items-center border-b border-[#1e2025] pb-2 last:border-0 last:pb-0">
+    <span className="text-[10px] text-[#5a5f6e] font-bold uppercase tracking-tight">{label}</span>
+    <span className="text-[11px] font-bold text-[#e8eaed]">{value}</span>
+  </div>
+);
+
+export default StockDetailPage;
