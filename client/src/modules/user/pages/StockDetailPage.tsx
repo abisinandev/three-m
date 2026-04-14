@@ -11,6 +11,9 @@ import type { TradeData } from '@shared/components/modals/TradeModal'
 import { useTradeMutation } from '@shared/hooks/useTradeMutation'
 import { getPortfolioInvestments } from '@shared/services/feature/portfolio/PortfolioApi';
 import { getAlgoStrategies, saveAlgoStrategy, getActiveStrategyBySymbol, toggleAlgoStrategyStatus } from '@shared/services/feature/algo-trading/AlgoTradingApi';
+import { useUserStore } from '@stores/user/UserStore';
+import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
+import { toast } from 'sonner';
 
 const StockDetailPage = () => {
   const { symbol } = useParams({ strict: false }) as { symbol: string }
@@ -18,6 +21,7 @@ const StockDetailPage = () => {
 
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
 
   const [algoStep, setAlgoStep] = useState<'idle' | 'selecting' | 'active'>('idle');
   const [selectedStrategy, setSelectedStrategy] = useState('');
@@ -63,7 +67,12 @@ const StockDetailPage = () => {
   const toggleStatusMutation = useMutation({
     mutationFn: ({ strategyId, isActive }: { strategyId: string, isActive: boolean }) =>
       toggleAlgoStrategyStatus(strategyId, isActive),
-    onSuccess: () => {
+    onSuccess: (response: any) => {
+      if (response.data?.upgrade) {
+        toast.warning(response.data.message || "Upgrade to Premium to unlock advanced algorithmic trading features.");
+        setIsPremiumModalOpen(true);
+        return;
+      }
       refetchActiveStrategy();
       setAlgoStep('idle');
     },
@@ -142,7 +151,7 @@ const StockDetailPage = () => {
   const handleTradeConfirm = async (tradeData: TradeData) => {
     try {
       if (tradeData.type === 'buy') {
-        await buy({
+        const response = await buy({
           symbol: tradeData.symbol,
           quantity: tradeData.quantity,
           orderType: tradeData.orderType as any,
@@ -150,8 +159,15 @@ const StockDetailPage = () => {
           stopLoss: tradeData.stopLoss,
           takeProfit: tradeData.takeProfit,
         });
+
+        if (response.data?.upgrade) {
+          toast.warning(response.data.message || "Upgrade to Premium to unlock stock trading features.");
+          setIsPremiumModalOpen(true);
+          setIsTradeModalOpen(false);
+          return;
+        }
       } else {
-        await sell({
+        const response = await sell({
           symbol: tradeData.symbol,
           quantity: tradeData.quantity,
           orderType: tradeData.orderType as any,
@@ -159,6 +175,13 @@ const StockDetailPage = () => {
           stopLoss: tradeData.stopLoss,
           takeProfit: tradeData.takeProfit,
         });
+
+        if (response.data?.upgrade) {
+          toast.warning(response.data.message || "Upgrade to Premium to unlock stock trading features.");
+          setIsPremiumModalOpen(true);
+          setIsTradeModalOpen(false);
+          return;
+        }
       }
       setIsTradeModalOpen(false);
     } catch (error) {
@@ -269,7 +292,15 @@ const StockDetailPage = () => {
                     <p className="text-[10px] text-gray-500 mt-1 leading-relaxed">Automate your execution strategy for {symbol} using advanced algorithms.</p>
                   </div>
                   <button
-                    onClick={() => setAlgoStep('selecting')}
+                    onClick={() => {
+                      const { user } = useUserStore.getState();
+                      if (!user?.isSubscribed) {
+                        toast.warning("Upgrade to Premium to unlock advanced algorithmic trading features.");
+                        setIsPremiumModalOpen(true);
+                      } else {
+                        setAlgoStep('selecting');
+                      }
+                    }}
                     className="w-full py-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-xs font-bold hover:bg-white/10 transition-all flex items-center justify-center gap-2 group/btn"
                   >
                     Setup Algo Trading
@@ -371,7 +402,15 @@ const StockDetailPage = () => {
           <div className="bg-[#0f0f0f] rounded-xl border border-[#1f1f1f] p-6 flex flex-col gap-3">
             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">Trade {symbol}</h3>
             <button
-              onClick={() => handleTradeClick('buy')}
+              onClick={() => {
+                const { user } = useUserStore.getState();
+                if (!user?.isSubscribed) {
+                  toast.warning("Upgrade to Premium to unlock stock trading features.");
+                  setIsPremiumModalOpen(true);
+                } else {
+                  handleTradeClick('buy');
+                }
+              }}
               className={`w-full py-3 rounded-lg font-bold text-sm transition-all shadow-[0_4px_14px_rgba(34,197,94,0.15)] ${stockInfo.isTradable ? 'bg-[#22C55E] text-black hover:bg-[#16a34a] hover:-translate-y-0.5' : 'bg-gray-800 text-gray-500 cursor-not-allowed shadow-none'
                 }`}
               disabled={!stockInfo.isTradable}
@@ -379,7 +418,15 @@ const StockDetailPage = () => {
               Buy
             </button>
             <button
-              onClick={() => handleTradeClick('sell')}
+              onClick={() => {
+                const { user } = useUserStore.getState();
+                if (!user?.isSubscribed) {
+                  toast.warning("Upgrade to Premium to unlock stock trading features.");
+                  setIsPremiumModalOpen(true);
+                } else {
+                  handleTradeClick('sell');
+                }
+              }}
               className={`w-full py-3 rounded-lg font-bold text-sm transition-all ${stockInfo.isTradable ? 'bg-[#0f0f0f] border border-red-500/40 text-red-400 hover:bg-red-500/10 hover:-translate-y-0.5' : 'bg-gray-800 border-gray-700 text-gray-500 cursor-not-allowed'
                 }`}
               disabled={!stockInfo.isTradable}
@@ -418,6 +465,11 @@ const StockDetailPage = () => {
         initialType={tradeType}
         isLoading={isTrading}
         onConfirm={handleTradeConfirm}
+      />
+
+      <PremiumPaymentModal
+        isOpen={isPremiumModalOpen}
+        onClose={() => setIsPremiumModalOpen(false)}
       />
     </div>
   )

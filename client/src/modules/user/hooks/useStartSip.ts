@@ -10,7 +10,7 @@ interface SipPayload {
     paymentMethod: 'WALLET';
 }
 
-export const useStartSip = (onSuccess: () => void, onError: (msg: string) => void) => {
+export const useStartSip = (onSuccess: (data: any) => void, onError: (msg: string) => void) => {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -18,10 +18,10 @@ export const useStartSip = (onSuccess: () => void, onError: (msg: string) => voi
             const res = await startSip(payload);
             return res.data;
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['portfolio'] });
             queryClient.invalidateQueries({ queryKey: ['sip-investments'] }); // Assuming there might be a sip list query
-            onSuccess();
+            onSuccess(data);
         },
         onError: (error: any) => {
             const msg = error?.response?.data?.message || 'SIP creation failed. Please try again.';

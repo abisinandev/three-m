@@ -14,6 +14,9 @@ import { InvestModal } from '../components/mutual-fund/InvestModal';
 import { ConfirmModal } from '../components/mutual-fund/ConfirmModal';
 import { SuccessModal } from '../components/mutual-fund/SuccessModal';
 import { useInvestMutualFund } from '../hooks/useInvestMutualFund';
+import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
+import { toast } from 'sonner';
+import { useUserStore } from '@stores/user/UserStore';
 
 const PAYMENT_METHOD = 'WALLET' as const;
 const INVESTMENT_TYPE = 'ONE_TIME' as const;
@@ -24,6 +27,7 @@ const MutualFundDetailsPage = () => {
   const [showInvestModal, setShowInvestModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
   const [investment, setInvestment] = useState<number>(0);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
@@ -54,10 +58,17 @@ const MutualFundDetailsPage = () => {
   );
 
   const { mutate: startSipMutate, isPending: isSipSubmitting } = useStartSip(
-    () => {
-      setShowSipModal(false);
-      setShowSuccessModal(true);
-      setErrorMsg('');
+    (result) => {
+      const data = result?.data;
+      if (data?.upgrade) {
+        toast.warning(data.message || "Upgrade to Premium to use this feature");
+        setIsPremiumModalOpen(true);
+        setShowSipModal(false);
+      } else {
+        setShowSipModal(false);
+        setShowSuccessModal(true);
+        setErrorMsg('');
+      }
     },
     (msg) => {
       alert(msg);
@@ -305,7 +316,15 @@ const MutualFundDetailsPage = () => {
               One-time Investment
             </button>
             <button
-              onClick={() => setShowSipModal(true)}
+              onClick={() => {
+                const { user } = useUserStore.getState();
+                if (!user?.isSubscribed) {
+                  toast.warning("Upgrade to Premium to use SIP investment feature");
+                  setIsPremiumModalOpen(true);
+                } else {
+                  setShowSipModal(true);
+                }
+              }}
               className="flex-1 bg-transparent border border-green-600 text-green-400 hover:bg-green-950/50 font-medium py-3.5 rounded-xl transition-all"
             >
               Start SIP
@@ -360,6 +379,11 @@ const MutualFundDetailsPage = () => {
           onClose={() => setShowSuccessModal(false)}
         />
       )}
+
+      <PremiumPaymentModal
+        isOpen={isPremiumModalOpen}
+        onClose={() => setIsPremiumModalOpen(false)}
+      />
     </div>
   );
 };

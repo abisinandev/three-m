@@ -1,8 +1,6 @@
 import { AuthProvider } from "@domain/enum/users/auth-provider.enum";
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
-import { SubscripionPlan } from "@domain/enum/users/subscription-plan.enum";
-import { SubscriptionStatus } from "@domain/enum/users/subscription-status.enum";
 import { Role } from "@domain/enum/users/user-role.enum";
 import { Email } from "@domain/entities/user/user-value-objects/email.vo";
 import { Password } from "@domain/entities/user/user-value-objects/password.vo";
@@ -10,6 +8,8 @@ import { Phone } from "@domain/entities/user/user-value-objects/phone.vo";
 import { UserCode } from "@domain/entities/user/user-value-objects/user-code.vo";
 import { WalletSummary } from "@domain/types/wallet-summery";
 import { KycSummary } from "@domain/types/kyc-summery";
+import { SubscriptionPlans } from "../subscription/enums/plans.enum";
+import { SubscriptionStatus } from "../subscription/enums/subscription-status.enums";
 
 export class UserEntity {
   private readonly _id: string | null;
@@ -27,7 +27,8 @@ export class UserEntity {
   private _isBlocked: boolean;
 
   private _subscriptionStatus: SubscriptionStatus;
-  private _subscriptionPlan: SubscripionPlan;
+  private _subscriptionPlan: SubscriptionPlans;
+  private _subscriptionId?: string;
   private _currency: CurrencyTypes;
 
   private _kycId: string | null;
@@ -63,7 +64,8 @@ export class UserEntity {
     isVerified: boolean;
     isBlocked: boolean;
     subscriptionStatus: SubscriptionStatus;
-    subscriptionPlan: SubscripionPlan;
+    subscriptionPlan: SubscriptionPlans;
+    subscriptionId?: string;
     currency: CurrencyTypes;
     kycId?: string | null;
     kycStatus: KycStatusType;
@@ -91,7 +93,7 @@ export class UserEntity {
     this._email = props.email;
     this._phone = props.phone ?? null;
     this._password = props.password ?? null;
- 
+
     this._role = props.role;
     this._isEmailVerified = props.isEmailVerified;
     this._isVerified = props.isVerified;
@@ -99,6 +101,8 @@ export class UserEntity {
 
     this._subscriptionStatus = props.subscriptionStatus;
     this._subscriptionPlan = props.subscriptionPlan;
+    this._subscriptionId = props.subscriptionId;
+
     this._currency = props.currency;
 
     this._kycId = props.kycId ?? null;
@@ -139,7 +143,7 @@ export class UserEntity {
       isVerified: false,
       isBlocked: false,
       subscriptionStatus: SubscriptionStatus.INACTIVE,
-      subscriptionPlan: SubscripionPlan.FREE,
+      subscriptionPlan: SubscriptionPlans.FREE,
       currency: data.currency ?? CurrencyTypes.INR,
       kycStatus: KycStatusType.NULL,
       isTwoFactorEnabled: false,
@@ -166,7 +170,7 @@ export class UserEntity {
       isVerified: false,
       isBlocked: false,
       subscriptionStatus: SubscriptionStatus.INACTIVE,
-      subscriptionPlan: SubscripionPlan.FREE,
+      subscriptionPlan: SubscriptionPlans.FREE,
       currency: CurrencyTypes.INR,
       kycStatus: KycStatusType.NULL,
       isTwoFactorEnabled: false,
@@ -189,7 +193,8 @@ export class UserEntity {
     isVerified: boolean;
     isBlocked: boolean;
     subscriptionStatus: SubscriptionStatus;
-    subscriptionPlan: SubscripionPlan;
+    subscriptionPlan: SubscriptionPlans;
+    subscriptionId?: string;
     currency: CurrencyTypes;
     kycId?: string | null;
     kyc?: KycSummary | null;
@@ -207,7 +212,7 @@ export class UserEntity {
     authProvider: AuthProvider;
     avatar?: string | null;
     googleId?: string | null;
-    
+
   }): UserEntity {
     return new UserEntity({
       ...props,
@@ -263,6 +268,12 @@ export class UserEntity {
   get subscriptionPlan() {
     return this._subscriptionPlan;
   }
+  get subscriptionId() {
+    return this._subscriptionId;
+  }
+  get isSubscribed() {
+    return this._subscriptionStatus === SubscriptionStatus.ACTIVE;
+  }
   get kycId() {
     return this._kycId ?? null;
   }
@@ -301,7 +312,7 @@ export class UserEntity {
   get googleId() {
     return this._googleId ?? null;
   }
-  
+
   get updatedAt() {
     return this._updatedAt ?? null;
   }
@@ -320,6 +331,12 @@ export class UserEntity {
 
   unblock(): void {
     this._isBlocked = false;
+  }
+
+  subscribePlan(subId: string): void {
+    this._subscriptionPlan = SubscriptionPlans.PREMIUM;
+    this._subscriptionStatus = SubscriptionStatus.ACTIVE;
+    this._subscriptionId = subId;
   }
 
   enable2FA(secret: string): void {

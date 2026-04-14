@@ -1,24 +1,35 @@
 export type UserType = {
     id: string;
-    userCode: string;       
+    userCode: string;
 
     fullName: string;
     email: string;
-    phone: string;
-    
+    phone: string | null;
+
     role: string;
-    isVerified: boolean;   
-    isEmailVerified: boolean;  
+    authProvider: string;
+    isVerified: boolean;
+    isEmailVerified: boolean;
     kycId: string;
     isSubscribed: boolean;
     isBlocked: boolean;
+    isTwoFactorEnabled: boolean;
+    isAlgoEnabled: boolean;
+
+    subscription: {
+        status: string;
+        plan: string;
+    };
+
     wallet: any;
     kyc: any;
     walletId: string;
     kycStatus: string;
+
+    currency: string;
+
     panNumber?: string;
-    aadhaarNumber?: string; 
-    // dob?: string; 
+    aadhaarNumber?: string;
     address?: {
         fullAddress?: string;
         city: string;
@@ -27,6 +38,7 @@ export type UserType = {
     };
 
     // Profile
-    avatar?: string;
+    avatar: string | null;
+    googleId: string | null;
     createdAt: string;
 };

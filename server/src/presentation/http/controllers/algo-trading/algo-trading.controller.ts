@@ -69,13 +69,13 @@ export class AlgoTradingController {
             const { strategyId } = req.params as { strategyId: string };
             const { isActive } = req.body;
 
-            await this._turnAlgoTradingUseCase.execute(userId, strategyId, isActive);
+            const result = await this._turnAlgoTradingUseCase.execute(userId, strategyId, isActive);
 
             const message = isActive
                 ? SuccessMessages.ALGO.STRATEGY_ACTIVATED
                 : SuccessMessages.ALGO.STRATEGY_DEACTIVATED;
 
-            return ResponseHelper.success(res, message);
+            return ResponseHelper.success(res, message, result);
         } catch (error) {
             next(error)
         }

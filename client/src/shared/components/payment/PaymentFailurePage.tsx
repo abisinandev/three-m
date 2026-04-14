@@ -1,19 +1,27 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { XCircle, AlertCircle, ArrowLeft, RefreshCw } from "lucide-react";
+import { XCircle, ArrowLeft, RefreshCw, AlertTriangle } from "lucide-react";
 import { ROUTES } from "@shared/constants/routes";
 
 const PaymentFailurePage = () => {
     const navigate = useNavigate();
-
     const [animated, setAnimated] = useState(false);
+    const [attemptedAmount, setAttemptedAmount] = useState<number>(0);
+    const [paymentPurpose, setPaymentPurpose] = useState<string | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => setAnimated(true), 100);
+
+        const storedAmount = localStorage.getItem('paymentAmount');
+        const storedPurpose = localStorage.getItem('paymentPurpose');
+
+        if (storedAmount) setAttemptedAmount(Number(storedAmount));
+        if (storedPurpose) setPaymentPurpose(storedPurpose);
+
         return () => clearTimeout(timer);
     }, []);
 
-    const attemptedAmount = 5000;
     const errorMessage = "Your payment could not be processed at this time";
 
     const format = (v: number) =>
@@ -25,108 +33,90 @@ const PaymentFailurePage = () => {
         }).format(v);
 
     return (
-        <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-5">
-            <div className="max-w-md w-full space-y-8">
-                {/* Failure Animation Circle */}
-                <div className="flex justify-center">
-                    <div
-                        className={`relative transition-all duration-1000 ease-out ${animated ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                            }`}
-                    >
-                        {/* Outer red glow */}
-                        <div className="absolute inset-0 rounded-full bg-red-500 blur-xl opacity-40 animate-ping" />
-                        <div className="absolute inset-0 rounded-full bg-red-600 blur-lg opacity-30 animate-pulse" />
+        <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] flex flex-col items-center justify-center px-6">
+            <div className={`w-full max-w-[380px] space-y-6 transition-all duration-700 ${animated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+                
+                {/* Status Card */}
+                <div className="bg-[#111214] border border-[#1e2025] rounded-xl overflow-hidden shadow-2xl">
+                    <div className="flex items-center justify-between px-5 py-4 border-b border-[#1e2025]">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                                <XCircle className="w-4 h-4 text-red-500" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold leading-tight">Payment Failed</p>
+                                <p className="text-[10px] text-[#5a5f6e] uppercase tracking-widest mt-0.5">Transaction ID: FAILED_REF_01</p>
+                            </div>
+                        </div>
+                    </div>
 
-                        {/* X icon container */}
-                        <div className="relative p-8 rounded-full bg-gradient-to-br from-red-600 to-red-700 shadow-2xl shadow-red-500/30">
-                            <XCircle size={96} className="text-white" strokeWidth={2.5} />
-                            <AlertCircle
-                                size={32}
-                                className="absolute -bottom-3 -right-3 text-orange-400 animate-pulse"
-                            />
+                    <div className="p-6 text-center border-b border-[#1e2025]">
+                        <p className="text-[10px] text-[#5a5f6e] uppercase tracking-widest mb-1.5 font-medium">Attempted Amount</p>
+                        <h1 className="text-3xl font-extrabold tracking-tight text-[#e8eaed]">
+                            {format(attemptedAmount)}
+                        </h1>
+                        <p className="text-[11px] text-red-500 mt-2 font-medium">{errorMessage}</p>
+                    </div>
+
+                    <div className="p-5 bg-[#0b0c0e]/50">
+                        <div className="flex items-start gap-3 text-orange-400/80">
+                            <AlertTriangle size={14} className="mt-0.5 flex-shrink-0" />
+                            <div className="text-[11px] text-[#5a5f6e] leading-relaxed">
+                                <p className="font-bold text-[#c8cacd] mb-1">Common reasons:</p>
+                                <ul className="space-y-1 list-disc list-inside">
+                                    <li>Insufficient balance</li>
+                                    <li>Bank server downtime</li>
+                                    <li>Invalid credentials</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Failure Message */}
-                <div className="text-center space-y-4">
-                    <h1
-                        className={`text-3xl font-bold transition-all duration-700 delay-300 ${animated ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-                            }`}
-                    >
-                        Payment Failed
-                    </h1>
-                    <p
-                        className={`text-gray-400 max-w-sm mx-auto transition-all duration-700 delay-500 ${animated ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-                            }`}
-                    >
-                        {errorMessage}
-                    </p>
-                    {attemptedAmount > 0 && (
-                        <p
-                            className={`text-sm text-gray-500 transition-all duration-700 delay-700 ${animated ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-                                }`}
-                        >
-                            Attempted amount: {format(attemptedAmount)}
-                        </p>
-                    )}
-                </div>
-
-                {/* Info Card */}
-                <div
-                    className={`bg-[#0f0f0f] rounded-2xl border border-[#1f1f1f] p-6 space-y-4 transition-all duration-700 delay-700 ${animated ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-                        }`}
-                >
-                    <div className="flex items-start gap-3 text-orange-400">
-                        <AlertCircle size={20} className="mt-0.5 flex-shrink-0" />
-                        <div className="text-sm text-gray-300">
-                            <p className="font-medium mb-1">Common reasons:</p>
-                            <ul className="text-xs text-gray-400 space-y-1">
-                                <li>• Insufficient balance or daily limit exceeded</li>
-                                <li>• Incorrect card/UPI details</li>
-                                <li>• Bank declined the transaction</li>
-                                <li>• Temporary network issue</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div
-                    className={`space-y-3 transition-all duration-700 delay-1000 ${animated ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-                        }`}
-                >
+                {/* Primary Actions */}
+                <div className="flex flex-col gap-2.5">
                     <button
-                        onClick={() => navigate({ to: ROUTES.USER.WALLET.ADD })} // Change to your add money route
-                        className="w-full py-3.5 rounded-xl font-medium text-sm transition shadow-lg flex items-center justify-center gap-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 shadow-orange-500/20"
+                        onClick={() => {
+                            if (paymentPurpose === 'SUBSCRIPTION') {
+                                navigate({ to: ROUTES.USER.HOME });
+                            } else {
+                                navigate({ to: ROUTES.USER.WALLET.ADD });
+                            }
+                        }}
+                        className="w-full py-3 bg-red-500 hover:bg-red-400 active:scale-[0.99] transition-all text-white text-[11px] font-black uppercase tracking-widest rounded-md flex items-center justify-center gap-2"
                     >
-                        <RefreshCw size={18} />
-                        Try Again
+                        <RefreshCw className="w-3.5 h-3.5 text-white" />
+                        Retry Transaction
                     </button>
 
+                    <div className="grid grid-cols-2 gap-2.5">
+                        <button
+                            onClick={() => navigate({ to: ROUTES.USER.WALLET.ROOT })}
+                            className="py-2.5 bg-[#111214] border border-[#1e2025] hover:bg-[#1e2025] text-[#c8cacd] text-[10px] font-bold uppercase tracking-widest rounded-md transition-all"
+                        >
+                            Wallet
+                        </button>
+                        <button
+                            onClick={() => navigate({ to: ROUTES.HOME })}
+                            className="py-2.5 bg-[#111214] border border-[#1e2025] hover:bg-[#1e2025] text-[#c8cacd] text-[10px] font-bold uppercase tracking-widest rounded-md transition-all"
+                        >
+                            Help Desk
+                        </button>
+                    </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-4 pt-4">
+                    <p className="text-[10px] text-[#3a3d45] text-center px-8 leading-relaxed">
+                        If funds were debited, they will be refunded within 3-5 working days.
+                    </p>
                     <button
                         onClick={() => navigate({ to: ROUTES.USER.WALLET.ROOT })}
-                        className="w-full py-3 rounded-xl font-medium text-sm border border-[#333] hover:bg-[#111] transition"
+                        className="flex items-center gap-2 text-[10px] text-[#5a5f6e] hover:text-[#c8cacd] transition-colors"
                     >
-                        Go to Wallet
-                    </button>
-
-                    <button
-                        onClick={() => navigate({ to: ROUTES.HOME })}
-                        className="w-full py-3 rounded-xl font-medium text-sm border border-[#333] hover:bg-[#111] transition"
-                    >
-                        Back to Home
+                        <ArrowLeft className="w-3 h-3" />
+                        Go Back
                     </button>
                 </div>
-
-                {/* Subtle back link */}
-                <button
-                    onClick={() => navigate({ to: ROUTES.USER.WALLET.ROOT })}
-                    className="text-xs text-gray-500 hover:text-gray-300 transition flex items-center gap-1.5 mx-auto mt-8"
-                >
-                    <ArrowLeft size={14} />
-                    Go back
-                </button>
             </div>
         </div>
     );

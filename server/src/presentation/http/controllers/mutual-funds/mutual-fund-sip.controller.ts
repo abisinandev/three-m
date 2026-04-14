@@ -3,12 +3,12 @@ import { IPauseSipUseCase } from "@application/use_cases/sip/interfaces/pause-si
 import { IResumeSipUseCase } from "@application/use_cases/sip/interfaces/resume-sip-usecase.interface";
 import { ISipCreationUseCase } from "@application/use_cases/sip/interfaces/sip-creation-usecase.interface";
 import { IUserSipDetailsUseCase } from "@application/use_cases/sip/interfaces/user-sip-details-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
+import { SuccessMessages } from "@shared/constants/success.messages";
 
 @injectable()
 export class MutualFundSipController {
@@ -24,10 +24,11 @@ export class MutualFundSipController {
         try {
             const dto = { ...req.body };
             const userId = req?.user?.id
-            await this._sipCreationUseCase.execute(dto, userId as string);
+            const result = await this._sipCreationUseCase.execute(dto, userId as string);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
+                result,
                 HttpStatus.OK
             )
         } catch (error) {
@@ -41,7 +42,7 @@ export class MutualFundSipController {
             const result = await this._sipDetailsUseCase.execute(req.query, userId as string);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK,
             );
@@ -55,10 +56,10 @@ export class MutualFundSipController {
             const sipId = req.params?.sipId;
             const userId = req.user?.id;
 
-            await this._pauseSipUseCase.execute(userId as string, sipId as string );
+            await this._pauseSipUseCase.execute(userId as string, sipId as string);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.SIP_PAUSED,
+                SuccessMessages.SIP.PAUSED,
                 HttpStatus.OK,
             )
 
@@ -75,7 +76,7 @@ export class MutualFundSipController {
             await this._resumeSipUseCase.execute(userId as string, sipId as string);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.SIP_RESUME,
+                SuccessMessages.SIP.RESUMED,
                 HttpStatus.OK,
             )
         } catch (error) {
@@ -91,7 +92,7 @@ export class MutualFundSipController {
             await this._cancelSipUseCase.execute(userId as string, sipId as string);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.SIP_CANCELLED,
+                SuccessMessages.SIP.CANCELLED,
                 HttpStatus.OK,
             )
         } catch (error) {

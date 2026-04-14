@@ -38,3 +38,10 @@ export enum AdminMutualFundRoutes {
     LIST_FUNDS = "/list",
     UPDATE_STATUS = "/:fundId/status"
 }
+
+export enum AdminSubscriptionRoutes {
+    FETCH_PLANS = "/",
+    FETCH_STATS = "/stats",
+    FETCH_SUBSCRIPTIONS = "/all-subscriptions",
+    UPDATE_PLAN = "/:code"
+}

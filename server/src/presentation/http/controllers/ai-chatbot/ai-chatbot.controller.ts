@@ -1,8 +1,8 @@
 import { IChatbotUseCase } from "@application/use_cases/ai-chatbot/interface/chatbot-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { AI_SYSTEM_TYPES } from "@infrastructure/inversify_di/features/ai-system/ai-system.type";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
@@ -19,7 +19,21 @@ export class AiChatbotController {
 
             const result = await this._chatbotUseCase.execute(userId, message);
 
-            return ResponseHelper.success(res, SuccessMessage.DATA_FETCHED, result, HttpStatus.OK);
+            if (result?.upgradeRequired) {
+                return ResponseHelper.success(
+                    res,
+                    SuccessMessages.AI_CHATBOT.UPGRADE_PLAN,
+                    result,
+                    HttpStatus.OK
+                );
+            }
+
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.AI_CHATBOT.DATA,
+                result,
+                HttpStatus.OK
+            );
         } catch (error) {
             next(error);
         }
@@ -31,7 +45,12 @@ export class AiChatbotController {
 
             const history = await this._chatbotUseCase.getHistory(userId);
 
-            return ResponseHelper.success(res, SuccessMessage.DATA_FETCHED, history, HttpStatus.OK);
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.FETCHED,
+                history,
+                HttpStatus.OK
+            );
         } catch (error) {
             next(error);
         }
