@@ -60,7 +60,7 @@ export class YahooProvider implements IMarketDataProvider {
 
     async getLatestQuote(symbol: string): Promise<IQuote | null> {
         try {
-            const result: any = await yahooFinance.quote(symbol);
+            const result = await yahooFinance.quote(symbol);
             if (!result?.regularMarketPrice) return null;
 
             return {

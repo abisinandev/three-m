@@ -2,13 +2,26 @@ import { injectable, inject } from "inversify";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { Trade } from "@application/dto/stocks/stock.dto";
 import { IStockWebsocketProvider } from "@application/interfaces/repositories/stock/stock-websocket.interface";
-import { WsGateway } from "@presentation/express/websocket/ws.gateway";
 import { CandleMapper } from "@application/mappers/stock/candle.mapper";
 import { ICandle } from "@infrastructure/databases/mongo_db/models/interfaces/stocks/stock-candle-schema.interface";
 import { ICandleEngineService } from "@application/interfaces/services/stocks/candle-engine-service.interface";
 import { ITimeframeAggregatorService } from "@application/interfaces/services/stocks/timeframe-aggragator.interface";
 import { IPollingService } from "@application/interfaces/services/stocks/polling-service.interface";
 import { IMarketDataService } from "@application/interfaces/services/stocks/market-data-service.usecase";
+import { IWsGateway } from "@application/interfaces/services/stocks/ws-gateway.interface";
+
+/**
+ * Manages the end-to-end flow of market data.
+ *
+ * - Receives trades and builds 1-minute candles
+ * - Aggregates them into higher timeframes
+ * - Broadcasts all candle updates to subscribed clients
+ *
+ * - Handles symbol subscriptions to start/stop data flow
+ *
+ * In short:
+ * Acts as the central pipeline between data source, processing, and delivery.
+ */
 
 @injectable()
 export class MarketDataService implements IMarketDataService {
@@ -19,9 +32,9 @@ export class MarketDataService implements IMarketDataService {
         @inject(STOCK_TYPES.PollingService) private readonly pollingService: IPollingService,
     ) { }
 
-    private wsGateway!: WsGateway;
+    private wsGateway!: IWsGateway;
 
-    public setWsGateway(wsGateway: WsGateway) {
+    public setWsGateway(wsGateway: IWsGateway) {
         this.wsGateway = wsGateway;
     }
 

@@ -24,6 +24,7 @@ import { Features } from "@domain/entities/subscription/enums/features.enum";
 import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
 import { IFeatureAccessService } from "@application/interfaces/services/subscription/feature-access-service.interface";
 import { SuccessMessages } from "@shared/constants/success.messages";
+import { isIndianMarketOpen } from "@shared/utils/market/market-time";
 
 @injectable()
 export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
@@ -71,8 +72,8 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
             if (!stock.isTradable)
                 throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
 
-            // if (!isIndianMarketOpen())
-            //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+            if (!isIndianMarketOpen())
+                throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
             if (!data.quantity || data.quantity <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);
@@ -115,12 +116,15 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
                     newTotalInvested
                 );
 
+                if (data.stopLoss || data.takeProfit) {
+                    portfolio.updateRiskLevels(data.stopLoss, data.takeProfit);
+                }
+
                 await this._portfolioRepository.update(
                     portfolio.id as string,
                     portfolio,
                     session
                 );
-
             } else {
                 portfolio = PortfolioEntity.create({
                     userId,
@@ -129,16 +133,12 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
                     avgPrice: execution.avgPrice,
                     investedAmount: execution.totalValue,
                 });
-                await this._portfolioRepository.create(portfolio, session);
-            }
 
-            if (data.stopLoss || data.takeProfit) {
-                portfolio.updateRiskLevels(data.stopLoss, data.takeProfit);
-                await this._portfolioRepository.update(
-                    portfolio.id as string,
-                    portfolio,
-                    session
-                );
+                if (data.stopLoss || data.takeProfit) {
+                    portfolio.updateRiskLevels(data.stopLoss, data.takeProfit);
+                }
+
+                await this._portfolioRepository.create(portfolio, session);
             }
 
 
