@@ -194,7 +194,7 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
               <button
                 onClick={handleAlgoStart}
                 disabled={saveAlgoMutation.isPending}
-                className="flex-[2] py-2 bg-[#00C853] text-[#0b0c0e] text-[11px] font-bold rounded hover:bg-[#00e676] active:scale-[0.98] transition-all uppercase tracking-wider"
+                className="flex-[2] py-2 bg-[#00C853] text-white text-[11px] font-bold rounded hover:bg-[#00e676] active:scale-[0.98] transition-all uppercase tracking-wider"
               >
                 {saveAlgoMutation.isPending ? "Starting..." : "Confirm"}
               </button>

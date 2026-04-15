@@ -24,7 +24,6 @@ const StockDetailPage = () => {
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
   const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
 
-  // Queries
   const {
     data: queryData,
     isLoading,
@@ -204,6 +203,7 @@ const StockDetailPage = () => {
         initialType={tradeType}
         isLoading={isTrading}
         onConfirm={handleTradeConfirm}
+        availableQuantity={position?.units || position?.quantity}
       />
 
       <PremiumPaymentModal

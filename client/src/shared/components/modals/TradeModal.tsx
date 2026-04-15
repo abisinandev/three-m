@@ -10,6 +10,7 @@ interface TradeModalProps {
   initialType?: 'buy' | 'sell';
   onConfirm: (data: TradeData) => void;
   isLoading?: boolean;
+  availableQuantity?: number;
 }
 
 export interface TradeData {
@@ -31,6 +32,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
   initialType = 'buy',
   onConfirm,
   isLoading = false,
+  availableQuantity,
 }) => {
   const [type, setType] = useState<'buy' | 'sell'>(initialType);
   const [quantity, setQuantity] = useState<string>('');
@@ -58,7 +60,8 @@ const TradeModal: React.FC<TradeModalProps> = ({
   const executionPrice = orderType === 'MARKET_ORDER' ? currentPrice : (parseFloat(limitPrice) || 0);
   const total = qty * executionPrice;
   const isInsufficientFunds = type === 'buy' && total > balance;
-  const isValid = qty > 0 && (orderType === 'MARKET_ORDER' || parseFloat(limitPrice) > 0) && !isInsufficientFunds;
+  const isInsufficientShares = type === 'sell' && availableQuantity !== undefined && qty > availableQuantity;
+  const isValid = qty > 0 && (orderType === 'MARKET_ORDER' || parseFloat(limitPrice) > 0) && !isInsufficientFunds && !isInsufficientShares;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,9 +80,9 @@ const TradeModal: React.FC<TradeModalProps> = ({
   };
 
   const isBuy = type === 'buy';
-  const themeBg = isBuy ? 'bg-[#4184f3]' : 'bg-[#ff5722]';
-  const textColor = isBuy ? 'text-[#4184f3]' : 'text-[#ff5722]';
-  const borderColor = isBuy ? 'border-[#4184f3]' : 'border-[#ff5722]';
+  const themeBg = isBuy ? 'bg-[#00C853]' : 'bg-[#FF1744]';
+  const textColor = isBuy ? 'text-[#00C853]' : 'text-[#FF1744]';
+  const borderColor = isBuy ? 'border-[#00C853]' : 'border-[#FF1744]';
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
@@ -146,15 +149,28 @@ const TradeModal: React.FC<TradeModalProps> = ({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-2">Qty</label>
+                <div className="flex justify-between items-end mb-2">
+                  <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider">Qty</label>
+                  {type === 'sell' && availableQuantity !== undefined && (
+                    <span 
+                      className="text-[10px] text-gray-400 font-bold cursor-pointer hover:text-white transition-colors border-b border-gray-400 border-dashed"
+                      onClick={() => setQuantity(availableQuantity.toString())}
+                    >
+                      Max: {availableQuantity}
+                    </span>
+                  )}
+                </div>
                 <input
                   type="number"
                   placeholder="0"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-[4px] px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 font-medium placeholder:text-gray-600"
+                  className={`w-full bg-[#1a1a1a] border rounded-[4px] px-3 py-2 text-sm text-white focus:outline-none font-medium placeholder:text-gray-600 ${isInsufficientShares ? 'border-red-500 focus:border-red-500' : 'border-[#2a2a2a] focus:border-blue-500'}`}
                   required
                 />
+                {isInsufficientShares && (
+                  <p className="text-[9px] text-red-500 mt-1 font-medium">Qty exceeds available holding.</p>
+                )}
               </div>
               <div>
                 <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-2">Price</label>
@@ -198,10 +214,21 @@ const TradeModal: React.FC<TradeModalProps> = ({
 
           <div className="px-5 py-4 bg-[#161616] flex items-center justify-between border-t border-[#1f1f1f]">
             <div className="space-y-0.5">
-              <p className="text-[10px] text-gray-500 font-medium uppercase tracking-tight">Margin required:</p>
-              <p className={`text-sm font-bold ${isInsufficientFunds ? 'text-red-500' : 'text-gray-100'}`}>
-                ₹{total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-              </p>
+              {type === 'buy' ? (
+                <>
+                  <p className="text-[10px] text-gray-500 font-medium uppercase tracking-tight">Margin required:</p>
+                  <p className={`text-sm font-bold ${isInsufficientFunds ? 'text-red-500' : 'text-gray-100'}`}>
+                    ₹{total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-[10px] text-gray-500 font-medium uppercase tracking-tight">Available Qty:</p>
+                  <p className={`text-sm font-bold ${isInsufficientShares ? 'text-red-500' : 'text-gray-100'}`}>
+                    {availableQuantity ?? 0}
+                  </p>
+                </>
+              )}
             </div>
             
             <div className="flex gap-3">
