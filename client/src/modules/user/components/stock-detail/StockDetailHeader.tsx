@@ -90,7 +90,7 @@ export const StockDetailHeader = ({
           <div className="flex gap-2">
             <button
               onClick={() => onTradeClick("buy")}
-              className="px-5 py-1.5 bg-[#00C853] text-[#0b0c0e] text-[11px] font-bold rounded hover:bg-[#00e676] transition-all active:scale-95 uppercase tracking-wider"
+              className="px-5 py-1.5 bg-[#00C853] text-white text-[11px] font-bold rounded hover:bg-[#00e676] transition-all active:scale-95 uppercase tracking-wider"
             >
               Buy
             </button>

@@ -13,7 +13,7 @@ export const useTradeMutation = () => {
         toast.success(response.message || "Buy order executed successfully");
         // Invalidate relevant queries (e.g., wallet balance, portfolio)
         queryClient.invalidateQueries({ queryKey: ["userWallet"] });
-        queryClient.invalidateQueries({ queryKey: ["userStocks"] });
+        queryClient.invalidateQueries({ queryKey: ["portfolio"] });
       } else {
         toast.error(response.message || "Failed to execute buy order");
       }
@@ -31,7 +31,7 @@ export const useTradeMutation = () => {
         toast.success(response.message || "Sell order executed successfully");
         // Invalidate relevant queries (e.g., wallet balance, portfolio)
         queryClient.invalidateQueries({ queryKey: ["userWallet"] });
-        queryClient.invalidateQueries({ queryKey: ["userStocks"] });
+        queryClient.invalidateQueries({ queryKey: ["portfolio"] });
       } else {
         toast.error(response.message || "Failed to execute sell order");
       }

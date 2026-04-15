@@ -18,6 +18,22 @@ const timeframes = [
   { label: '1W', value: 'W' },
 ];
 
+const isIndianMarketOpen = (): boolean => {
+  const d = new Date();
+  const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+  const istDate = new Date(utc + (3600000 * 5.5));
+  
+  const day = istDate.getDay();
+  if (day === 0 || day === 6) return false;
+
+  const hours = istDate.getHours();
+  const minutes = istDate.getMinutes();
+  const time = hours + (minutes / 60);
+
+  // 9:15 AM = 9.25, 3:30 PM = 15.5
+  return time >= 9.25 && time < 15.5;
+};
+
 const useChartTimer = (timeframe: string) => {
   const [timeLeft, setTimeLeft] = useState<string | null>(null);
 
@@ -28,6 +44,11 @@ const useChartTimer = (timeframe: string) => {
     }
 
     const interval = setInterval(() => {
+      if (!isIndianMarketOpen()) {
+        setTimeLeft('Market Closed');
+        return;
+      }
+
       const now = Date.now();
       let bucketMs = 60000;
       switch (timeframe) {
@@ -103,9 +124,9 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol, position }) => {
             </button>
           )}
           {timeLeft && (
-            <div className="flex items-center gap-1.5 bg-[#1e1e1e] px-2 py-1 rounded">
-              <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span className="text-xs font-medium text-gray-300 font-mono tracking-wide">{timeLeft}</span>
+            <div className={`flex items-center gap-1.5 px-2 py-1 rounded ${timeLeft === 'Market Closed' ? 'bg-[#FF1744]/10 border border-[#FF1744]/20' : 'bg-[#1e1e1e]'}`}>
+              {timeLeft !== 'Market Closed' && <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+              <span className={`text-xs font-medium font-mono tracking-wide ${timeLeft === 'Market Closed' ? 'text-[#FF1744] font-bold text-[10px] uppercase' : 'text-gray-300'}`}>{timeLeft}</span>
             </div>
           )}
           {isLoading ? (
@@ -130,3 +151,4 @@ export const StockChart: React.FC<StockChartProps> = ({ symbol, position }) => {
     </div>
   );
 };
+
