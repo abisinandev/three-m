@@ -7,6 +7,7 @@ export interface StockDTO {
     changePercent?: number;
     logo: string | null;
     sector?: string;
+    price?: number | null;
     isTradable: boolean;
     isVisible: boolean;
     isTracked: boolean;

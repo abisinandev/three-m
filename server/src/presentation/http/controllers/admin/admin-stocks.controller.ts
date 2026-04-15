@@ -16,29 +16,42 @@ export class AdminStocksController {
 
     async getStocks(req: Request, res: Response, next: NextFunction) {
         try {
-            const { page = 1, limit = 20, search, exchange, isTradable, isTracked, isVisible } = req.query;
+            const { 
+                page = 1, 
+                limit = 20, 
+                search = "", 
+                sortBy = "symbol", 
+                sortOrder = "asc",
+                exchange, 
+                isTradable, 
+                isTracked, 
+                isVisible 
+            } = req.query;
 
-            const queryItems = {
+            const filter: any = {};
+            if (exchange) filter.exchange = exchange;
+            if (isTradable !== undefined && isTradable !== "") filter.isTradable = isTradable === 'true';
+            if (isTracked !== undefined && isTracked !== "") filter.isTracked = isTracked === 'true';
+            if (isVisible !== undefined && isVisible !== "") filter.isVisible = isVisible === 'true';
+
+            const result = await this.adminStocksUseCase.execute({
+                page: Number(page),
+                limit: Number(limit),
                 search: search as string,
-                exchange: exchange as string,
-                isTradable: isTradable as string,
-                isTracked: isTracked as string,
-                isVisible: isVisible as string,
-                page: Number(page) || 1,
-                limit: Number(limit) || 20
-            };
-
-            const result = await this.adminStocksUseCase.execute(queryItems);
+                sortBy: sortBy as string,
+                sortOrder: sortOrder as string,
+                filter
+            });
 
             return ResponseHelper.success(
                 res,
                 SuccessMessages.STOCK.STOCK_FETCHED,
                 {
                     data: result.data.map((stock: any) => stock.toPersistence ? stock.toPersistence() : stock),
-                    page: Number(page) || 1,
-                    limit: Number(limit) || 20,
+                    page: Number(page),
+                    limit: Number(limit),
                     total: result.total,
-                    totalPages: Math.ceil(result.total / (Number(limit) || 20))
+                    totalPages: Math.ceil(result.total / Number(limit))
                 },
                 HttpStatus.OK
             );

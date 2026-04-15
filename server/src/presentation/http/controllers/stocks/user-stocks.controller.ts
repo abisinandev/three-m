@@ -4,7 +4,11 @@ import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.t
 import { IFetchStocksUseCase } from "@application/use_cases/stock/interfaces/fetch-stocks.interface";
 import { IStockDetailsUseCase } from "@application/use_cases/stock/interfaces/stock-details-usecase.interface";
 import { IFetchStockCandlesUseCase } from "@application/use_cases/stock/interfaces/fetch-stock-candles.interface";
+import { IFetchWatchlistUseCase } from "@application/use_cases/stock/interfaces/fetch-watchlist-usecase.interface";
+import { IAddToWatchlistUseCase } from "@application/use_cases/stock/interfaces/add-to-watchlist-usecase.interface";
+import { IRemoveFromWatchlistUseCase } from "@application/use_cases/stock/interfaces/remove-from-watchlist-usecase.interface";
 import { StockQueryOptions } from "@application/dto/stocks/stock.dto";
+import { WatchlistDTO } from "@application/dto/stocks/watchlist.dto";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
@@ -15,6 +19,9 @@ export class UserStocksController {
         @inject(STOCK_TYPES.FetchStocksUseCase) private _fetchStocksUseCase: IFetchStocksUseCase,
         @inject(STOCK_TYPES.StockDetailsUseCase) private _stockDetailsUseCase: IStockDetailsUseCase,
         @inject(STOCK_TYPES.FetchStockCandlesUseCase) private _fetchStockCandlesUseCase: IFetchStockCandlesUseCase,
+        @inject(STOCK_TYPES.FetchWatchlistUseCase) private _fetchWatchlistUseCase: IFetchWatchlistUseCase,
+        @inject(STOCK_TYPES.AddToWatchlistUseCase) private _addToWatchlistUseCase: IAddToWatchlistUseCase,
+        @inject(STOCK_TYPES.RemoveFromWatchlistUseCase) private _removeFromWatchlistUseCase: IRemoveFromWatchlistUseCase,
     ) { }
 
     async getStocks(req: Request, res: Response, next: NextFunction) {
@@ -36,6 +43,7 @@ export class UserStocksController {
                 result,
                 HttpStatus.OK
             );
+
         } catch (error) {
             next(error);
         }
@@ -77,6 +85,62 @@ export class UserStocksController {
             );
         } catch (error) {
             return next(error);
+        }
+    }
+
+    async getWatchlist(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = (req as any).user.id;
+            const result = await this._fetchWatchlistUseCase.execute(userId);
+
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.FETCHED,
+                result,
+                HttpStatus.OK
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async addToWatchlist(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = (req as any).user.id;
+            const data: WatchlistDTO = req.body;
+
+            const result = await this._addToWatchlistUseCase.execute(data, userId);
+
+            if (result && result.upgrade) {
+                return ResponseHelper.success(res, result.message, { upgrade: true }, HttpStatus.OK);
+            }
+
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.SAVED,
+                null,
+                HttpStatus.CREATED
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async removeFromWatchlist(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = (req as any).user.id;
+            const data: WatchlistDTO = req.body;
+
+            await this._removeFromWatchlistUseCase.execute(data, userId);
+
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.DELETED,
+                null,
+                HttpStatus.OK
+            );
+        } catch (error) {
+            next(error);
         }
     }
 }

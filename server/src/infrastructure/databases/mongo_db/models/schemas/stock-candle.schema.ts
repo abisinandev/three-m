@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { ICandle } from "../interfaces/stocks/stock-candle-schema.interface";
 
-export interface CandleDocument extends ICandle, Document {}
+export interface CandleDocument extends ICandle, Document { }
 
 const CandleSchema: Schema = new Schema(
     {
@@ -17,7 +17,6 @@ const CandleSchema: Schema = new Schema(
     { timestamps: true }
 );
 
-// Compound index for fast querying and uniqueness
 CandleSchema.index({ symbol: 1, timeframe: 1, time: 1 }, { unique: true });
 
 export const CandleModel = mongoose.model<CandleDocument>("Candle", CandleSchema);

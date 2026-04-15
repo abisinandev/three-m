@@ -36,7 +36,7 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
         return document ? this.mapper.toDomain(document as unknown as StockDocument) : null;
     }
 
-    async finAllStocks(options: StockQueryOptions): Promise<{ data: StockEntity[], total: number }> {
+    async findAllStocks(options: StockQueryOptions): Promise<{ data: StockEntity[], total: number }> {
         const { page, limit, search, exchange, isTradable, isTracked, isVisible, sort } = options;
 
         const query: FilterQuery<StockDocument> = {};
@@ -67,9 +67,51 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
         };
     }
 
+    async findWithFiltersAdmin(options: any): Promise<{ data: StockEntity[], total: number }> {
+        const {
+            page = 1,
+            limit = 10,
+            filter = {},
+            search = "",
+            searchField = ["symbol", "name", "sector", "exchange"],
+            sortBy = "symbol",
+            sortOrder = "asc",
+        } = options;
+
+        const skip = (page - 1) * limit;
+
+        const finalFilter: any = { ...filter };
+
+        if (search.trim()) {
+            const searchRegex = { $regex: search.trim(), $options: "i" };
+            finalFilter.$or = searchField.map((field: string) => ({
+                [field]: searchRegex,
+            }));
+        }
+
+        const sort: any = {
+            [sortBy]: sortOrder === "asc" ? 1 : -1,
+        };
+
+        const [docs, total] = await Promise.all([
+            this.model
+                .find(finalFilter)
+                .sort(sort)
+                .skip(skip)
+                .limit(limit)
+                .exec(),
+            this.model.countDocuments(finalFilter)
+        ]);
+
+        return {
+            data: docs.map((doc) => this.mapper.toDomain(doc)),
+            total,
+        };
+    }
+
     async updateStatus(symbol: string, statusUpdate: Partial<{ isTradable: boolean; isTracked: boolean; isVisible: boolean }>): Promise<boolean> {
         const result = await StockModel.updateOne({ symbol }, { $set: statusUpdate });
         return result.modifiedCount > 0;
     }
 }
-
+

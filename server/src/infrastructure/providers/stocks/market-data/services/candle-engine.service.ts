@@ -3,19 +3,16 @@ import { Trade } from "@application/dto/stocks/stock.dto";
 import { inject, injectable } from 'inversify';
 import { ICandle } from '@infrastructure/databases/mongo_db/models/interfaces/stocks/stock-candle-schema.interface';
 import { ITick } from '@application/dto/stocks/candle-tick';
-import { RedisCacheProvider } from '@infrastructure/providers/redis/redis-cache.provider';
 import { EXTERNAL_TYPES } from '@infrastructure/inversify_di/features/external/external.types';
 import { ICacheProvider } from '@application/interfaces/services/externals/redis-cache.provider.interface';
+import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.types';
+import { IStockCandleRepository } from '@application/interfaces/repositories/stock/stock-candle-repository.interface';
 
 /**
  * Aggregates real-time trades/ticks into 1-minute OHLCV candles.
- *
- * - Groups data by symbol and minute
- * - Updates open, high, low, close, and volume in real time
- * - Emits updates for active candles
- * - Marks and emits candles when a minute completes
- * - Fills gaps with flat candles if no trades occur
+ * 
  */
+
 @injectable()
 export class CandleEngineService implements ICandleEngineService {
 
@@ -24,29 +21,25 @@ export class CandleEngineService implements ICandleEngineService {
     private completeSubscribers: CandleCallback[] = [];
 
     constructor(
-        // @inject(EXTERNAL_TYPES.RedisCacheProvider) private readonly _redisCacheProvider: ICacheProvider
+        @inject(EXTERNAL_TYPES.RedisCacheProvider) private readonly _redisCacheProvider: ICacheProvider,
+        @inject(STOCK_TYPES.StockCandleRepository) private readonly _candleRepository: IStockCandleRepository
     ) { }
-
 
     onCandleUpdate(callback: CandleCallback) {
         this.updateSubscribers.push(callback);
     }
 
-
     onCandleComplete(callback: CandleCallback) {
         this.completeSubscribers.push(callback);
     }
-
 
     processTrade(trade: Trade) {
         this.processUpdate(trade.symbol, trade.price, trade.timestamp, trade.volume || 0);
     }
 
-
     processTick(tick: ITick) {
         this.processUpdate(tick.symbol, tick.price, tick.timestamp, tick.volume || 0);
     }
-
 
     private async processUpdate(symbol: string, price: number, timestamp: number, volume: number) {
 
@@ -55,18 +48,32 @@ export class CandleEngineService implements ICandleEngineService {
 
         let candle = this.currentCandles.get(symbol);
 
-        // const cached = await this._redisCacheProvider.get(`candle:1m:${symbol}`);
+        if (!candle) {
+            const cached = await this._redisCacheProvider.get(`candle:1m:${symbol}`);
+            if (cached) {
+                try {
+                const parsed = JSON.parse(cached) as ICandle;
+
+                if (parsed.time === currentMinute) {
+                    candle = parsed;
+                    this.currentCandles.set(symbol, candle);
+                }
+                } catch (e) {
+                    console.error("Failed to parse cached candle", e);
+                }
+            }
+        }
 
         if (!candle) {
-
             candle = this.createNewCandle(symbol, price, currentMinute, volume);
             this.currentCandles.set(symbol, candle);
-
         } else if (candle.time < currentMinute) {
-
+       
             candle.isComplete = true;
             this.emitUpdate(candle);
             this.emitComplete(candle);
+            
+            await this._candleRepository.save(candle);
 
             let gapTime = candle.time + 60;
             while (gapTime < currentMinute) {
@@ -74,22 +81,27 @@ export class CandleEngineService implements ICandleEngineService {
                 flatCandle.isComplete = true;
                 this.emitComplete(flatCandle);
                 this.emitUpdate(flatCandle);
+                
+                await this._candleRepository.save(flatCandle);
                 gapTime += 60;
             }
 
             candle = this.createNewCandle(symbol, price, currentMinute, volume);
             this.currentCandles.set(symbol, candle);
         } else {
-
+    
             candle.high = Math.max(candle.high, price);
             candle.low = Math.min(candle.low, price);
             candle.close = price;
             candle.volume += volume;
         }
 
-        // await this._redisCacheProvider.set(`candle:1m:${symbol}`, candle,3600);
+       
+        const ttl = 3600; // 1 hour
 
-        // await this._redisCacheProvider.set(`price:${symbol}`, candle.close,3600);
+        await this._redisCacheProvider.set(`candle:1m:${symbol}`, JSON.stringify(candle), ttl);
+
+        await this._redisCacheProvider.set(`price:${symbol}`, price, ttl);
 
         this.emitUpdate(candle);
     }
