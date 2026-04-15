@@ -1,7 +1,7 @@
 export interface ICandle {
     symbol: string;
     timeframe: string;
-    time: number; // Unix timestamp in seconds
+    time: number;
     open: number;
     high: number;
     low: number;

@@ -16,6 +16,7 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
     }
 
     connect(): void {
+
         if (this.ws && (this.ws.readyState === WebSocket.CONNECTING || this.ws.readyState === WebSocket.OPEN)) {
             return;
         }
@@ -33,7 +34,9 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
 
         this.ws.on("message", (data) => {
             const parsed = JSON.parse(data.toString());
-
+        
+            console.log("Parsed: ", parsed);
+            
             if (parsed.type === "trade") {
                 parsed.data.forEach((t: any) => {
                     const trade: Trade = {
