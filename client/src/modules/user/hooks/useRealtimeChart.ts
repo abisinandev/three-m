@@ -4,8 +4,6 @@ import type { IChartApi, ISeriesApi, Time, DeepPartial, ChartOptions, IPriceLine
 import { socketService } from '@shared/services/socket';
 import api from '@lib/axiosUser';
 import { API_ROUTES } from '@shared/constants/apiRoutes';
-// [DISABLED] Finnhub is disconnected - Yahoo is used via backend now.
-// import { finnhubService } from '@shared/services/finnhub.service';
 
 export interface Candle {
   time: Time;
@@ -100,11 +98,9 @@ export const useRealtimeChart = (
     };
   }, [containerRef]);
 
-  // Fetch initial data & handle real-time synchronization
   useEffect(() => {
     let isMounted = true;
 
-    // --- Map timeframe to backend format (for WS room subscription) ---
     let backendTimeframe = '1m';
     switch (timeframe) {
       case '1':  backendTimeframe = '1m';  break;
@@ -117,7 +113,6 @@ export const useRealtimeChart = (
       default:   backendTimeframe = '1m';  break;
     }
 
-    // --- Step 1: Register candle-update listener IMMEDIATELY (before async fetch) ---
     const handleCandleUpdate = (candleUpdate: Candle & { symbol?: string; timeframe?: string }) => {
       if (!candlestickSeriesRef.current || !isMounted) return;
 
@@ -137,18 +132,15 @@ export const useRealtimeChart = (
 
     socketService.on('candle-update', handleCandleUpdate);
 
-    // --- Step 2: Connect socket and subscribe (re-subscribe on reconnect too) ---
     socketService.connect();
     socketService.subscribeToCandle(symbol, backendTimeframe);
 
-    // Re-subscribe after a reconnect so we don't miss updates when socket drops briefly
     const handleReconnect = () => {
       socketService.subscribeToCandle(symbol, backendTimeframe);
       console.log(`[Chart] Re-subscribed to ${symbol}:${backendTimeframe} after reconnect`);
     };
     socketService.on('connect', handleReconnect);
 
-    // --- Step 3: Fetch historical candles ---
     const fetchHistoricalData = async () => {
       if (!symbol || !candlestickSeriesRef.current) return;
       setIsLoading(true);
@@ -172,10 +164,6 @@ export const useRealtimeChart = (
           default:   from = now - 3   * 24 * 60 * 60;
         }
 
-        // [DISABLED] Old Finnhub quote prefetch:
-        // const quoteResponse = await finnhubService.getStockDetails(symbol);
-        // const quote = quoteResponse?.data?.latestPrice;
-
         const params = new URLSearchParams({
           resolution: timeframe,
           from: String(from),
@@ -183,7 +171,7 @@ export const useRealtimeChart = (
         });
         const rawResponse = await api.get(`${API_ROUTES.USER.STOCKS.GET_ALL}/${symbol}/candles?${params.toString()}`);
         const payload = rawResponse.data;
-        // Unwrap standard response envelope: { success, data: { s, t, o, h, l, c, v } }
+
         const candleData = payload?.data || payload;
 
         if (candleData && candleData.s === 'ok' && candleData.t && candleData.t.length > 0 && isMounted) {
@@ -202,7 +190,7 @@ export const useRealtimeChart = (
           setHasHistory(true);
           setStatus('live');
         } else {
-          // No history available — WebSocket updates will fill the chart
+  
           if (isMounted) setStatus('live');
         }
       } catch (error: any) {
@@ -215,7 +203,6 @@ export const useRealtimeChart = (
 
     fetchHistoricalData();
 
-    // --- Step 4: Auto-advance candle boundary (gap fill) ---
     const interval = setInterval(() => {
       if (!currentCandleRef.current || !candlestickSeriesRef.current) return;
 
@@ -260,7 +247,6 @@ export const useRealtimeChart = (
     };
   }, [symbol, timeframe]);
 
-  // Manage Price Line & ToolTip overlays for position
   useEffect(() => {
     if (!candlestickSeriesRef.current || !chartRef.current || !position || !showPosition || (!position.amount && !position.investedAmount) || (!position.units && !position.quantity)) {
       if (priceLineRef.current && candlestickSeriesRef.current) {
@@ -287,13 +273,12 @@ export const useRealtimeChart = (
     const isLoss = currentPrice !== null && currentPrice < avgPriceValue;
     const lineColor = isProfit ? '#22c55e' : (isLoss ? '#ef4444' : '#eab308');
 
-    // Main Position Price Line
     if (!priceLineRef.current) {
       priceLineRef.current = candlestickSeriesRef.current.createPriceLine({
         price: avgPriceValue,
         color: lineColor,
         lineWidth: 1,
-        lineStyle: 2, // LineStyle.Dashed
+        lineStyle: 2,
         axisLabelVisible: true,
         title: `Avg Buy ₹${avgPriceValue.toFixed(2)} (${qty} Qty)`,
       });
@@ -304,14 +289,13 @@ export const useRealtimeChart = (
       });
     }
 
-    // Stop Loss Line
     if (slValue && slValue > 0) {
         if (!stopLossLineRef.current) {
             stopLossLineRef.current = candlestickSeriesRef.current.createPriceLine({
                 price: slValue,
                 color: '#ef4444',
                 lineWidth: 1,
-                lineStyle: 1, // LineStyle.Dotted
+                lineStyle: 1, 
                 axisLabelVisible: true,
                 title: `SL ₹${slValue.toFixed(2)}`,
             });
@@ -323,14 +307,13 @@ export const useRealtimeChart = (
         stopLossLineRef.current = null;
     }
 
-    // Take Profit Line
     if (tpValue && tpValue > 0) {
         if (!takeProfitLineRef.current) {
             takeProfitLineRef.current = candlestickSeriesRef.current.createPriceLine({
                 price: tpValue,
                 color: '#2962ff',
                 lineWidth: 1,
-                lineStyle: 1, // LineStyle.Dotted
+                lineStyle: 1,
                 axisLabelVisible: true,
                 title: `TP ₹${tpValue.toFixed(2)}`,
             });
@@ -342,7 +325,6 @@ export const useRealtimeChart = (
         takeProfitLineRef.current = null;
     }
 
-    // Tooltip logic
     const container = containerRef.current;
     if (!container) return;
     
@@ -377,7 +359,6 @@ export const useRealtimeChart = (
 
         const priceY = candlestickSeriesRef.current?.priceToCoordinate(avgPriceValue);
         
-        // If mouse is near the price line Y coordinate (+- 20 pixels)
         if (priceY !== null && priceY !== undefined && Math.abs(param.point.y - priceY) < 20) {
             const currentClose = currentCandleRef.current?.close ?? currentPrice ?? avgPriceValue;
             const pnl = (currentClose - avgPriceValue) * qty;
