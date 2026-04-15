@@ -1,5 +1,6 @@
-import { ICandle } from "@infrastructure/providers/stocks/market-data/interfaces/candle.interface";
-import { ITick } from "@infrastructure/providers/stocks/market-data/interfaces/tick.interface";
+import { ITick } from "@application/dto/stocks/candle-tick";
+import { Trade } from "@application/dto/stocks/stock.dto";
+import { ICandle } from "@infrastructure/databases/mongo_db/models/interfaces/stocks/stock-candle-schema.interface";
 
 
 export type CandleCallback = (candle: ICandle) => void;
@@ -19,4 +20,6 @@ export interface ICandleEngineService {
      * Process an incoming market tick
      */
     processTick(tick: ITick): void;
+
+    processTrade(trade: Trade): void;
 }

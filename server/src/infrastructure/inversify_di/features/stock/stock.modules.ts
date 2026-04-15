@@ -47,6 +47,11 @@ import { YahooProvider } from "@infrastructure/providers/stocks/market-data/prov
 import { SignalManager } from "@infrastructure/providers/algos/signal-manager";
 import { ISignalManager } from "@application/interfaces/repositories/algo/signal-manager.interface";
 import { ITurnOnAlgoTradingUseCase } from "@application/use_cases/algo-trading/interfaces/turn-on-algo-trading.interface";
+import { ITimeframeAggregatorService } from "@application/interfaces/services/stocks/timeframe-aggragator.interface";
+import { ICandleEngineService } from "@application/interfaces/services/stocks/candle-engine-service.interface";
+import { IPollingService } from "@application/interfaces/services/stocks/polling-service.interface";
+import { IMarketDataService } from "@application/interfaces/services/stocks/market-data-service.usecase";
+import { IWsGateway } from "@application/interfaces/services/stocks/ws-gateway.interface";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
@@ -57,14 +62,14 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockDetailsUseCase>(STOCK_TYPES.StockDetailsUseCase).to(StockDetailsUseCase);
     bind<IFetchStockCandlesUseCase>(STOCK_TYPES.FetchStockCandlesUseCase).to(FetchStockCandlesUseCase);
 
-    bind<MarketDataService>(STOCK_TYPES.MarketDataService).to(MarketDataService);
-    bind<WsGateway>(STOCK_TYPES.WsGateway).to(WsGateway);
+    bind<IMarketDataService>(STOCK_TYPES.MarketDataService).to(MarketDataService);
+    bind<IWsGateway>(STOCK_TYPES.WsGateway).to(WsGateway);
 
     bind<IMarketDataProvider>(STOCK_TYPES.MarketDataProvider).to(YahooProvider);
-    bind<PollingService>(STOCK_TYPES.PollingService).to(PollingService);
+    bind<IPollingService>(STOCK_TYPES.PollingService).to(PollingService);
 
-    bind<CandleEngineService>(STOCK_TYPES.CandleEngineService).to(CandleEngineService);
-    bind<TimeframeAggregatorService>(STOCK_TYPES.TimeframeAggregatorService).to(TimeframeAggregatorService);
+    bind<ICandleEngineService>(STOCK_TYPES.CandleEngineService).to(CandleEngineService);
+    bind<ITimeframeAggregatorService>(STOCK_TYPES.TimeframeAggregatorService).to(TimeframeAggregatorService);
 
     bind<OrdersController>(STOCK_TYPES.OrdersController).to(OrdersController);
     bind<IMarketBuyOrderUseCase>(STOCK_TYPES.MarketBuyOrderUseCase).to(MarketBuyOrderUseCase);

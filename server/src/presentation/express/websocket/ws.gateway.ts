@@ -2,23 +2,22 @@ import { Server, Socket } from "socket.io";
 import { injectable } from "inversify";
 import { CandleEntity } from "@domain/entities/stock/candle.entity";
 import { MarketDataService } from "@infrastructure/providers/stocks/market-data.service";
+import { IWsGateway } from "@application/interfaces/services/stocks/ws-gateway.interface";
 
-// To make it injectable and easily integrated where io is actually created
 @injectable()
-export class WsGateway {
+export class WsGateway implements IWsGateway {
     private io!: Server;
     private marketDataService!: MarketDataService;
-    private subscriptions: Map<string, Set<string>> = new Map(); // "symbol:timeframe" -> Set<socketId>
+    private subscriptions: Map<string, Set<string>> = new Map();
 
     constructor(
-        // Assuming we lazy tie it to market data service, or we can just pass it later.
+
     ) { }
 
     public init(io: Server, marketDataService: MarketDataService) {
         this.io = io;
         this.marketDataService = marketDataService;
 
-        // Link this gateway to market data service
         marketDataService.setWsGateway(this);
         marketDataService.init();
 
@@ -30,7 +29,6 @@ export class WsGateway {
                 const room = `${data.symbol}:${data.timeframe}`;
                 socket.join(room);
 
-                // Start tracking this symbol if it's new
                 this.marketDataService.subscribeToSymbol(data.symbol);
 
                 if (!this.subscriptions.has(room)) {
@@ -49,13 +47,11 @@ export class WsGateway {
                 if (this.subscriptions.has(room)) {
                     const clients = this.subscriptions.get(room)!;
                     clients.delete(socket.id);
-                    
-                    // Cleanup room if empty
+
                     if (clients.size === 0) {
                         this.subscriptions.delete(room);
                     }
 
-                    // Check if anyone else is watching this symbol in OTHER timeframes
                     const isStillTracked = Array.from(this.subscriptions.keys()).some(k => k.startsWith(`${data.symbol}:`));
                     if (!isStillTracked) {
                         this.marketDataService.unsubscribeFromSymbol(data.symbol);
@@ -65,10 +61,10 @@ export class WsGateway {
             });
 
             socket.on("disconnect", () => {
-                // remove from all tracked sets
+
                 this.subscriptions.forEach((clients, room) => {
                     if (clients.delete(socket.id)) {
-                        // If the room becomes empty, cleanup and check if we should untrack the symbol
+
                         if (clients.size === 0) {
                             this.subscriptions.delete(room);
 
