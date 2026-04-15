@@ -6,8 +6,8 @@ import {
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
-import { FetchAdminStrategies, FetchAdminSignals, FetchAdminAlgoStats } from '../../../../shared/services/admin/algo-trading/AdminAlgoTradingApi';
 import dayjs from 'dayjs';
+import { FetchAdminAlgoStats, FetchAdminSignals, FetchAdminStrategies } from '@/shared/services/admin/algo-trading/AdminAlgoTradingApi';
 
 const AlgoTradingAdminPage = () => {
   const [activeTab, setActiveTab] = useState('Strategies');

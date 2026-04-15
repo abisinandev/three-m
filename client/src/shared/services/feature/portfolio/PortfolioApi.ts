@@ -61,7 +61,7 @@ export const getTradeHistory = async (page = 1, limit = 10) => {
     const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.TRADE_HISTORY, {
         params: { page, limit }
     });
-    return data?.data; // data.data contains { data, totalCount, page, limit } based on controller response
+    return data?.data;
 };
 
 export const getMFHoldings = async (page = 1, limit = 10, search?: string) => {
