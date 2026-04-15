@@ -65,6 +65,7 @@ export const API_ROUTES = {
         },
         STOCKS: {
             GET_ALL: "/user/stocks",
+            WATCHLIST: "/user/stocks/all/watchlist",
         }
     },
     ADMIN: {
