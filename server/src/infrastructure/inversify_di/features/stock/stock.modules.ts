@@ -3,6 +3,10 @@ import { ContainerModule } from "inversify";
 import { STOCK_TYPES } from "./stock.types";
 import { StockRepository } from "@infrastructure/databases/repository/stock/stock.repository";
 import { IStockWebsocketProvider } from "@application/interfaces/repositories/stock/stock-websocket.interface";
+import { IWatchlistRepository } from "@application/interfaces/repositories/stock/watchlist-repository.interface";
+import { WatchlistRepository } from "@infrastructure/databases/repository/stock/watchlist.repository";
+import { IStockCandleRepository } from "@application/interfaces/repositories/stock/stock-candle-repository.interface";
+import { StockCandleRepository } from "@infrastructure/databases/repository/stock/stock-candle.repository";
 import { StockWebSocketClient } from "@infrastructure/providers/stocks/stock-websocket.client";
 import { IFetchStocksUseCase } from "@application/use_cases/stock/interfaces/fetch-stocks.interface";
 import { FetchStocksUseCase } from "@application/use_cases/stock/fetch-stock.usecase";
@@ -11,6 +15,12 @@ import { IStockDetailsUseCase } from "@application/use_cases/stock/interfaces/st
 import { StockDetailsUseCase } from "@application/use_cases/stock/stock-details.usecase";
 import { IFetchStockCandlesUseCase } from "@application/use_cases/stock/interfaces/fetch-stock-candles.interface";
 import { FetchStockCandlesUseCase } from "@application/use_cases/stock/fetch-stock-candles.usecase";
+import { IAddToWatchlistUseCase } from "@application/use_cases/stock/interfaces/add-to-watchlist-usecase.interface";
+import { AddToWatchlistUseCase } from "@application/use_cases/stock/add-to-watchlist.usecase";
+import { IRemoveFromWatchlistUseCase } from "@application/use_cases/stock/interfaces/remove-from-watchlist-usecase.interface";
+import { RemoveFromWatchlistUseCase } from "@application/use_cases/stock/remove-from-watchlist.usecase";
+import { IFetchWatchlistUseCase } from "@application/use_cases/stock/interfaces/fetch-watchlist-usecase.interface";
+import { FetchWatchlistUseCase } from "@application/use_cases/stock/fetch-watchlist.usecase";
 import { MarketDataService } from "@infrastructure/providers/stocks/market-data.service";
 import { WsGateway } from "@presentation/express/websocket/ws.gateway";
 import { CandleEngineService } from "@infrastructure/providers/stocks/market-data/services/candle-engine.service";
@@ -90,4 +100,9 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<ISignalManager>(STOCK_TYPES.SignalManager).to(SignalManager);
 
     // bind<IEngineRunner>(STOCK_TYPES.EngineRunner).to(EngineRunner);
+    bind<IWatchlistRepository>(STOCK_TYPES.WatchlistRepository).to(WatchlistRepository);
+    bind<IStockCandleRepository>(STOCK_TYPES.StockCandleRepository).to(StockCandleRepository);
+    bind<IAddToWatchlistUseCase>(STOCK_TYPES.AddToWatchlistUseCase).to(AddToWatchlistUseCase);
+    bind<IRemoveFromWatchlistUseCase>(STOCK_TYPES.RemoveFromWatchlistUseCase).to(RemoveFromWatchlistUseCase);
+    bind<IFetchWatchlistUseCase>(STOCK_TYPES.FetchWatchlistUseCase).to(FetchWatchlistUseCase);
 });

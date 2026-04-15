@@ -41,5 +41,10 @@ export const STOCK_TYPES = {
     SignalManager: Symbol.for("SignalManager"),
 
     // EngineRunner:Symbol.for("EngineRunner")
+    WatchlistRepository: Symbol.for("WatchlistRepository"),
+    StockCandleRepository: Symbol.for("StockCandleRepository"),
+    AddToWatchlistUseCase: Symbol.for("AddToWatchlistUseCase"),
+    RemoveFromWatchlistUseCase: Symbol.for("RemoveFromWatchlistUseCase"),
+    FetchWatchlistUseCase: Symbol.for("FetchWatchlistUseCase"),
 
 }

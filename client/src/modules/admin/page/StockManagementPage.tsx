@@ -7,6 +7,7 @@ import type { StockFilters } from '@shared/services/admin/stock-management/Fetch
 import { UpdateStockStatusApi } from '@shared/services/admin/stock-management/UpdateStockStatusApi';
 import { StockTable } from '../components/StockTable';
 import type { Stock } from '@shared/components/interfaces/IStockTable';
+import { Search } from 'lucide-react';
 
 export default function StockManagementPage() {
     const queryClient = useQueryClient();
@@ -69,81 +70,144 @@ export default function StockManagementPage() {
     };
 
     return (
-        <div className="space-y-6">
-            <div>
-                <h1 className="text-xl font-semibold text-white">Stock Management</h1>
-                <p className="text-xs text-neutral-400">
-                    Manage the dataset of stocks, their visibility, and trading permissions ({total.toLocaleString()} total)
-                </p>
-            </div>
+        <div
+            style={{
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                minHeight: '100vh',
+                background: '#00000',
+                color: '#e8eaed',
+                paddingBottom: 40
+            }}
+        >
+            <div className="px-6 pt-6 max-w-[1600px] mx-auto space-y-6">
+                {/* Header */}
+                <div className="flex justify-between items-end">
+                    <div>
+                        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                            Stock Management
+                        </h1>
+                        <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+                            Configuration for {total.toLocaleString()} assets across markets.
+                        </p>
+                    </div>
 
-            <div className="flex flex-wrap items-center gap-4 bg-[#111] p-4 rounded-xl border border-neutral-800">
-                <input 
-                    type="text" 
-                    placeholder="Search Symbol or Name..." 
-                    onChange={(e) => debouncedSearch(e.target.value)}
-                    className="bg-transparent border border-neutral-700 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-64 p-2.5 outline-none"
-                />
+                    <div style={{ fontSize: 10, color: '#5a5f6e', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                        Admin Console / Stocks
+                    </div>
+                </div>
 
-                <select 
-                    onChange={(e) => updateFilters({ exchange: e.target.value })}
-                    className="bg-transparent border border-neutral-700 text-white text-sm rounded-lg block p-2.5 outline-none"
-                    defaultValue=""
+                {/* Filters Bar */}
+                <div
+                    style={{
+                        background: '#111214',
+                        border: '1px solid #1e2025',
+                        borderRadius: 8,
+                        padding: '12px 16px',
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignItems: 'center',
+                        gap: 12
+                    }}
                 >
-                    <option value="" className="bg-neutral-900">All Exchanges</option>
-                    <option value="US" className="bg-neutral-900">US</option>
-                </select>
-
-                <select 
-                    onChange={(e) => updateFilters({ isTradable: e.target.value })}
-                    className="bg-transparent border border-neutral-700 text-white text-sm rounded-lg block p-2.5 outline-none"
-                    defaultValue=""
-                >
-                    <option value="" className="bg-neutral-900">Tradable: All</option>
-                    <option value="true" className="bg-neutral-900">Tradable: Active</option>
-                    <option value="false" className="bg-neutral-900">Tradable: Disabled</option>
-                </select>
-
-                <select 
-                    onChange={(e) => updateFilters({ isTracked: e.target.value })}
-                    className="bg-transparent border border-neutral-700 text-white text-sm rounded-lg block p-2.5 outline-none"
-                    defaultValue=""
-                >
-                    <option value="" className="bg-neutral-900">Tracked: All</option>
-                    <option value="true" className="bg-neutral-900">Tracked: Active</option>
-                    <option value="false" className="bg-neutral-900">Tracked: Disabled</option>
-                </select>
-
-                <select 
-                    onChange={(e) => updateFilters({ isVisible: e.target.value })}
-                    className="bg-transparent border border-neutral-700 text-white text-sm rounded-lg block p-2.5 outline-none"
-                    defaultValue=""
-                >
-                    <option value="" className="bg-neutral-900">Visible: All</option>
-                    <option value="true" className="bg-neutral-900">Visible: Active</option>
-                    <option value="false" className="bg-neutral-900">Visible: Disabled</option>
-                </select>
-            </div>
-
-            <div className="bg-[#111] rounded-xl overflow-hidden shadow-sm">
-                <StockTable 
-                    stocks={stocks} 
-                    isLoading={isLoading} 
-                    isError={isError} 
-                    onStatusToggle={handleStatusToggle} 
-                />
-
-                {!isLoading && !isError && stocks.length > 0 && (
-                    <div className="p-4 border-t border-neutral-800">
-                        <Pagination
-                            page={filters.page as number}
-                            limit={filters.limit as number}
-                            total={total}
-                            onPageChange={(page) => updateFilters({ page })}
+                    <div className="relative flex-1 min-w-[240px]">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5f6e] w-3.5 h-3.5" />
+                        <input
+                            type="text"
+                            placeholder="Search by Symbol or Name..."
+                            onChange={(e) => debouncedSearch(e.target.value)}
+                            style={{
+                                width: '100%',
+                                background: '#0b0c0e',
+                                border: '1px solid #1e2025',
+                                borderRadius: 6,
+                                padding: '7px 10px 7px 32px',
+                                fontSize: 12,
+                                color: '#e8eaed',
+                                outline: 'none',
+                            }}
                         />
                     </div>
-                )}
+
+                    <FilterSelect
+                        label="Exchange"
+                        value={filters.exchange as string}
+                        onChange={(v) => updateFilters({ exchange: v })}
+                        options={[
+                            { label: 'All Exchanges', value: '' },
+                            { label: 'NSE', value: 'NSE' },
+                            { label: 'BSE', value: 'BSE' },
+                            { label: 'US Markets', value: 'US' },
+                        ]}
+                    />
+
+                    <FilterSelect
+                        label="Tradable"
+                        value={filters.isTradable as string}
+                        onChange={(v) => updateFilters({ isTradable: v })}
+                        options={[
+                            { label: 'All Status', value: '' },
+                            { label: 'Active Only', value: 'true' },
+                            { label: 'Disabled Only', value: 'false' },
+                        ]}
+                    />
+
+                    <FilterSelect
+                        label="Visibility"
+                        value={filters.isVisible as string}
+                        onChange={(v) => updateFilters({ isVisible: v })}
+                        options={[
+                            { label: 'All Items', value: '' },
+                            { label: 'Visible', value: 'true' },
+                            { label: 'Hidden', value: 'false' },
+                        ]}
+                    />
+                </div>
+
+                {/* Main Table Container */}
+                <div style={{ background: '#111214', borderRadius: 8, border: '1px solid #1e2025', overflow: 'hidden' }}>
+                    <StockTable
+                        stocks={stocks}
+                        isLoading={isLoading}
+                        isError={isError}
+                        onStatusToggle={handleStatusToggle}
+                    />
+
+                    {!isLoading && !isError && stocks.length > 0 && (
+                        <div className="p-4 border-t border-[#1e2025] bg-[#0b0c0e]">
+                            <Pagination
+                                page={filters.page as number}
+                                limit={filters.limit as number}
+                                total={total}
+                                onPageChange={(page) => updateFilters({ page })}
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
 }
+
+const FilterSelect = ({ label, value, onChange, options }: { label: string, value: string, onChange: (v: string) => void, options: { label: string, value: string }[] }) => (
+    <div className="flex items-center gap-2">
+        <span style={{ fontSize: 10, color: '#5a5f6e', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}:</span>
+        <select
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            style={{
+                background: '#0b0c0e',
+                border: '1px solid #1e2025',
+                borderRadius: 4,
+                padding: '4px 8px',
+                fontSize: 11,
+                color: '#e8eaed',
+                outline: 'none',
+                cursor: 'pointer'
+            }}
+        >
+            {options.map(opt => (
+                <option key={opt.value} value={opt.value} style={{ background: '#111214' }}>{opt.label}</option>
+            ))}
+        </select>
+    </div>
+);

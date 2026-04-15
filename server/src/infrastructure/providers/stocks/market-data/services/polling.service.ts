@@ -18,8 +18,6 @@ export class PollingService implements IPollingService {
     start() {
         if (this.intervalId) return;
 
-        console.log('[PollingService] Started Yahoo Finance Polling');
-
         this.intervalId = setInterval(async () => {
             if (this.activeSymbols.size === 0) return;
 

@@ -1,4 +1,4 @@
-import { ICandle } from "@infrastructure/providers/stocks/market-data/interfaces/candle.interface";
+import { ICandle } from "@infrastructure/databases/mongo_db/models/interfaces/stocks/stock-candle-schema.interface";
 
 
 export type Interval = '1m' | '5m' | '15m' | '1h' | '1d';
@@ -21,7 +21,10 @@ export interface IQuote {
     volume?: number;
 }
 export interface IMarketDataProvider {
+
     getHistoricalData(params: IHistoricalDataParams): Promise<ICandle[]>;
+
     getLatestQuote(symbol: string): Promise<IQuote | null>;
+    
     getPriceHistory(params: IHistoricalDataParams): Promise<number[]>;
 }
