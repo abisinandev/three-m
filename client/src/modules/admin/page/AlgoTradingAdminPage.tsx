@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   RefreshCw, Plus, Cpu, Activity, BarChart2, 
   AlertTriangle, Clock, Search, Edit2, ExternalLink, 
-  ChevronLeft, ChevronRight, Eye
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
