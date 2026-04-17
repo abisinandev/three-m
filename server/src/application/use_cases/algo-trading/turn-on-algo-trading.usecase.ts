@@ -12,7 +12,6 @@ export class TurnOnAlgoTradingUseCase implements ITurnOnAlgoTradingUseCase {
     constructor(
         @inject(STOCK_TYPES.AlgoStrategyRepository) private readonly _algoStrategyRepository: IAlgoStrategyRepository,
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
-
     ) { }
 
     async execute(userId: string, strategyId: string, isActive: boolean): Promise<void | { message: string, upgrade: boolean }> {

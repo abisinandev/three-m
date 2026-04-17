@@ -36,7 +36,7 @@ const AlgoTradingPage = () => {
             }}
         >
             <div className="px-6 pt-6 max-w-[1600px] mx-auto space-y-6">
-                {/* Header Section */}
+
                 <div className="flex justify-between items-end">
                     <div>
                         <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
