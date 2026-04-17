@@ -1,8 +1,5 @@
-
 import { IStrategyService } from "@application/interfaces/services/algo-trading/strategy-service.interface";
 import { container } from "@infrastructure/inversify_di/container";
-
-
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 
 export function createEngineRunner(intervalMs = 3000) {

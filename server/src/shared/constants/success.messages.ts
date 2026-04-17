@@ -68,6 +68,7 @@ export const SuccessMessages = {
         STRATEGY_FETCHED: "Strategies fetched successfully",
         ACTIVE_STRATEGY_FETCHED: "Active strategy fetched successfully",
         SIGNAL_CONFIRMED: "Signal confirmed and order placed successfully",
+        SIGNAL_NOT_FOUND: "Signal not found. It may have already been processed.",
     },
 
     SUBSCRIPTION: {

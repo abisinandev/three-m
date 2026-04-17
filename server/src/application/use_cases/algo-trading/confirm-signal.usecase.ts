@@ -6,8 +6,9 @@ import { IMarketBuyOrderUseCase } from "../stock/interfaces/buy-order-usecase.in
 import { ConfirmSignalDTO } from "@application/dto/algo-trading/confirm-signal.dto";
 import { OrderType } from "@domain/entities/stock/enum/order-type.enum";
 import AppError from "@presentation/express/utils/error-handling/app.error";
-import { IAlgoSignalRepository } from "@application/interfaces/repositories/algo/algo-signal-reposiotry.interface";
 import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
+import { IAlgoSignalRepository } from "@application/interfaces/repositories/algo/algo-signal-repository.interface";
+import { SuccessMessages } from "@shared/constants/success.messages";
 
 @injectable()
 export class ConfirmSignalUseCase implements IConfirmSignalUseCase {
@@ -21,10 +22,7 @@ export class ConfirmSignalUseCase implements IConfirmSignalUseCase {
         const { action } = data;
 
         const signal = await this._signalRepository.findById(data.signalId);
-
-        if (!signal) {
-            throw new NotFoundError("Signal not found. It may have already been processed.");
-        }
+        if (!signal) throw new NotFoundError(SuccessMessages.ALGO.SIGNAL_NOT_FOUND);
 
         const now = new Date();
         if (signal.expiresAt && new Date(signal.expiresAt) <= now) {
