@@ -37,6 +37,7 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
                 stopLoss: data.stopLoss,
                 takeProfit: data.takeProfit,
                 orderType: OrderType.MARKET_ORDER,
+                isAlgoTrade: true,
             },
             data.userId
         );

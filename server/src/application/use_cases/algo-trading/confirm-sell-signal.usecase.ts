@@ -32,6 +32,7 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
                 symbol: data.symbol,
                 quantity: data.quantity,
                 orderType: OrderType.MARKET_ORDER,
+                isAlgoTrade: true,
             },
             data.userId
         );

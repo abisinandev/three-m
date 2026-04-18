@@ -9,7 +9,7 @@ export class TradeEntity {
     private readonly _quantity: number;
     private readonly _price: number;
     private readonly _profit?: number;
-
+    private readonly _isAlgoTrade: boolean;
     private readonly _createdAt: Date;
     private readonly _updatedAt: Date;
 
@@ -22,6 +22,7 @@ export class TradeEntity {
         quantity: number;
         price: number;
         profit?: number;
+        isAlgoTrade?: boolean;
         createdAt?: Date;
         updatedAt?: Date;
     }) {
@@ -33,6 +34,7 @@ export class TradeEntity {
         this._quantity = props.quantity;
         this._price = props.price;
         this._profit = props.profit;
+        this._isAlgoTrade = props.isAlgoTrade ?? false;
         this._createdAt = props.createdAt ?? new Date();
         this._updatedAt = props.updatedAt ?? new Date();
     }
@@ -45,6 +47,7 @@ export class TradeEntity {
         quantity: number;
         price: number;
         profit?: number;
+        isAlgoTrade?: boolean;
     }): TradeEntity {
         return new TradeEntity({
             orderId: data.orderId,
@@ -54,6 +57,7 @@ export class TradeEntity {
             quantity: data.quantity,
             price: data.price,
             profit: data.profit,
+            isAlgoTrade: data.isAlgoTrade ?? false,
         });
     }
 
@@ -66,6 +70,7 @@ export class TradeEntity {
         quantity: number;
         price: number;
         profit?: number;
+        isAlgoTrade?: boolean;
         createdAt: Date;
         updatedAt: Date;
     }): TradeEntity {
@@ -78,12 +83,12 @@ export class TradeEntity {
             quantity: data.quantity,
             price: data.price,
             profit: data.profit,
+            isAlgoTrade: data.isAlgoTrade,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
         });
     }
 
-    // Getters
     get id() { return this._id; }
     get orderId() { return this._orderId; }
     get userId() { return this._userId; }
@@ -92,6 +97,7 @@ export class TradeEntity {
     get quantity() { return this._quantity; }
     get price() { return this._price; }
     get profit() { return this._profit; }
+    get isAlgoTrade() { return this._isAlgoTrade; }
     get createdAt() { return this._createdAt; }
     get updatedAt() { return this._updatedAt; }
 
@@ -105,6 +111,7 @@ export class TradeEntity {
             quantity: this._quantity,
             price: this._price,
             profit: this._profit,
+            isAlgoTrade: this._isAlgoTrade,
             createdAt: this._createdAt,
             updatedAt: this._updatedAt,
         };

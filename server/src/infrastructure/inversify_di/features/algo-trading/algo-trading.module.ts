@@ -7,12 +7,15 @@ import { AdminAlgoTradingController } from "@presentation/http/controllers/admin
 import { AdminGetSignalUseCase } from "@application/use_cases/admin/algo-trading/admin-get-signal.usecase";
 import { IAdminGetSignalUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-get-signals-usecase.interface";
 import { IAdminGetStrategiesUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-get-strategies-usecase.interface";
+import { AdminGetAlgoTradesUseCase } from "@application/use_cases/admin/algo-trading/admin-get-algo-trades.usecase";
+import { IAdminGetAlgoTradesUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-get-algo-trades-usecase.interface";
 
 export const AlogTradingModule = new ContainerModule(({ bind }) => {
 
     bind<IAdminAlgoTradingUseCase>(ALGO_TRADING_TYPES.AdminAlgoTradingUseCase).to(AdminAlgoTradingUseCase);
     bind<IAdminGetStrategiesUseCase>(ALGO_TRADING_TYPES.AdminGetStrategiesUseCase).to(AdminGetStrategiesUseCase);
     bind<IAdminGetSignalUseCase>(ALGO_TRADING_TYPES.AdminGetSignalUseCase).to(AdminGetSignalUseCase);
+    bind<IAdminGetAlgoTradesUseCase>(ALGO_TRADING_TYPES.AdminGetAlgoTradesUseCase).to(AdminGetAlgoTradesUseCase);
     bind<AdminAlgoTradingController>(ALGO_TRADING_TYPES.AdminAlgoTradingController).to(AdminAlgoTradingController);
 
 })

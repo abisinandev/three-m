@@ -171,6 +171,7 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
                 price: execution.avgPrice,
                 quantity: execution.filledQty,
                 side: OrderSide.BUY,
+                isAlgoTrade: data.isAlgoTrade ?? false,
             })
             await this._tradeRepository.create(trade, session);
 

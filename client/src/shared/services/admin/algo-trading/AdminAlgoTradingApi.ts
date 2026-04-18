@@ -37,3 +37,13 @@ export const FetchAdminSignals = async (filters: StrategyFilters) => {
 
     return response.data;
 };
+
+export const FetchAdminAlgoTrades = async (filters: StrategyFilters) => {
+    const response = await adminApi.get(API_ROUTES.ADMIN.ALGO_TRADING.GET_TRADES, {
+        withCredentials: true,
+        params: filters,
+        headers: { "Content-Type": "application/json" },
+    });
+
+    return response.data;
+};

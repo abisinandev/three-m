@@ -9,6 +9,7 @@ export interface ITrade {
     quantity: number;
     price: number;
     profit?: number;
+    isAlgoTrade?: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
