@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import {
   RefreshCw, Plus, Cpu, Activity, BarChart2,
   AlertTriangle, Clock, Search, Edit2, ExternalLink,
   ChevronLeft, ChevronRight, TrendingUp, TrendingDown
+=======
+import { 
+  RefreshCw, Plus, Cpu, Activity, BarChart2, 
+  AlertTriangle, Clock, Search, Edit2, ExternalLink, 
+  ChevronLeft, ChevronRight
+>>>>>>> 8d49cdd4b26558c6250c039ede81287f10c72c34
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 import dayjs from 'dayjs';
+<<<<<<< HEAD
 import {
   FetchAdminAlgoStats,
   FetchAdminSignals,
@@ -15,6 +23,9 @@ import {
 } from '@/shared/services/admin/algo-trading/AdminAlgoTradingApi';
 
 type TabName = 'Strategies' | 'Signals' | 'Trades' | 'Risk Settings' | 'System Logs';
+=======
+import { FetchAdminAlgoStats, FetchAdminSignals, FetchAdminStrategies } from '@/shared/services/admin/algo-trading/AdminAlgoTradingApi';
+>>>>>>> 8d49cdd4b26558c6250c039ede81287f10c72c34
 
 const AlgoTradingAdminPage = () => {
   const [activeTab, setActiveTab] = useState<TabName>('Strategies');

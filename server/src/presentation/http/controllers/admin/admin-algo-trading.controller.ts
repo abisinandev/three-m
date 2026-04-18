@@ -66,7 +66,7 @@ export class AdminAlgoTradingController {
                 SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
-            );
+            ); 
         } catch (error) {
             next(error);
         }
