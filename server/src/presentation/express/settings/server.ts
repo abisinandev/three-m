@@ -10,8 +10,10 @@ import { StartSipScheduler } from "@infrastructure/providers/cron-scheduler/sip/
 import { InitSocketConfigs } from "@infrastructure/providers/notification/socket.configs";
 import http from "http";
 import app from "./app";
-import { SyncStocks } from "@infrastructure/providers/stocks/finnhub/finnhub.client";
-import { createEngineRunner } from "@infrastructure/providers/algos/engin.runner";
+import { StrategyWorker } from "@infrastructure/providers/algos/queue/workers/strategy.worker";
+import { SignalWorker } from "@infrastructure/providers/algos/queue/workers/signal.worker";
+import { StrategyScheduler } from "@infrastructure/providers/algos/queue/strategy-scheduler";
+import { IStrategyScheduler } from "@application/interfaces/services/algo-trading/strategy-scheduler.interface";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { container } from "@infrastructure/inversify_di/container";
 // import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/RAG/ingest-docs";
@@ -32,10 +34,14 @@ const bootstrap = async () => {
     //vector-db 
     // IngestDocuments() 
     // SyncStocks()
-    
-    // const engine = createEngineRunner();
-    // engine.start(); 
- 
+
+
+    // Algo Trading BullMQ system
+    container.get<StrategyWorker>(STOCK_TYPES.StrategyWorker);
+    container.get<SignalWorker>(STOCK_TYPES.SignalWorker);
+    const algoScheduler = container.get<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler);
+    algoScheduler.start();
+
     const server = http.createServer(app);
     InitSocketConfigs(server);
 
@@ -50,4 +56,3 @@ const bootstrap = async () => {
 };
 
 bootstrap();
-  

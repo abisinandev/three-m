@@ -1,30 +1,40 @@
 import { ISignalManager, SignalState } from "@application/interfaces/repositories/algo/signal-manager.interface";
 import { SignalAction } from "@domain/entities/algo/enum/signal-enums";
 import { injectable } from "inversify";
+import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 
 @injectable()
 export class SignalManager implements ISignalManager {
-    private state = new Map<string, SignalState>();
+    private readonly PREFIX = "algo_signal_state:";
+    private readonly TTL = 24 * 60 * 60; // 24 hours expiry for state
 
-    public shouldEmitSignal(
+    public async shouldEmitSignal(
         algoId: string,
         symbol: string,
         action: SignalAction | null
-    ): boolean {
-        const key = `${algoId}_${symbol}`;
+    ): Promise<boolean> {
+        const key = `${this.PREFIX}${algoId}_${symbol}`;
 
         if (action === null) {
-            this.state.delete(key);
+            await redisClient.del(key);
             return false;
         }
 
-        const prev = this.state.get(key);
+        const prevRaw = await redisClient.get(key);
+        const prev: SignalState | null = prevRaw ? JSON.parse(prevRaw) : null;
 
         if (!prev || prev.lastAction !== action) {
-            this.state.set(key, {
+            const newState: SignalState = {
                 lastAction: action,
                 timestamp: Date.now()
-            });
+            };
+            
+            await redisClient.set(
+                key, 
+                JSON.stringify(newState), 
+                "EX", 
+                this.TTL
+            );
             return true;
         }
 

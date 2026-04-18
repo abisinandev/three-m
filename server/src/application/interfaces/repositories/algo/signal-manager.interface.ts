@@ -6,5 +6,5 @@ export interface SignalState {
 }
 
 export interface ISignalManager {
-    shouldEmitSignal(algoId: string, symbol: string, action: SignalAction | null): boolean;
+    shouldEmitSignal(algoId: string, symbol: string, action: SignalAction | null): Promise<boolean>;
 }
