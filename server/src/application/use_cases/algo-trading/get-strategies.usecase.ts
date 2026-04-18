@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { StrategyMetadata } from "@domain/entities/algo-trading/strategy-metadata";
+import { StrategyMetadata } from "@domain/entities/algo/strategy-metadata";
 
 @injectable()
 export class GetStrategiesUseCase {

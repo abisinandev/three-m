@@ -50,8 +50,10 @@ import { SignalService } from "@infrastructure/providers/algos/queue/signal.serv
 import { ISignalService } from "@application/interfaces/services/algo-trading/signal.service.interface";
 import { IStrategyService } from "@application/interfaces/services/algo-trading/strategy-service.interface";
 import { StrategyService } from "@infrastructure/providers/algos/queue/strategy.service";
-import { IConfirmSignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-signal-usecase.interface";
-import { ConfirmSignalUseCase } from "@application/use_cases/algo-trading/confirm-signal.usecase";
+import { IConfirmBuySignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-buy-signal.interface";
+import { ConfirmBuySignalUseCase } from "@application/use_cases/algo-trading/confirm-buy-signal.usecase";
+import { IConfirmSellSignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-sell-signal.interface";
+import { ConfirmSellSignalUseCase } from "@application/use_cases/algo-trading/confirm-sell-signal.usecase";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { YahooProvider } from "@infrastructure/providers/stocks/market-data/providers/yahoo.provider";
 import { SignalManager } from "@infrastructure/providers/algos/signal-manager";
@@ -105,7 +107,8 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IAlgoStrategyRepository>(STOCK_TYPES.AlgoStrategyRepository).to(AlgoStrategyRepository);
     bind<IAlgoSignalRepository>(STOCK_TYPES.AlgoSignalRepository).to(AlgoSignalRepository);
     bind<ISignalService>(STOCK_TYPES.SignalService).to(SignalService);
-    bind<IConfirmSignalUseCase>(STOCK_TYPES.ConfirmSignalUseCase).to(ConfirmSignalUseCase);
+    bind<IConfirmBuySignalUseCase>(STOCK_TYPES.ConfirmBuySignalUseCase).to(ConfirmBuySignalUseCase);
+    bind<IConfirmSellSignalUseCase>(STOCK_TYPES.ConfirmSellSignalUseCase).to(ConfirmSellSignalUseCase);
     bind<IStrategyService>(STOCK_TYPES.StrategyService).to(StrategyService);
     bind<ISignalManager>(STOCK_TYPES.SignalManager).to(SignalManager);
 

@@ -6,7 +6,7 @@ import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 @injectable()
 export class SignalManager implements ISignalManager {
     private readonly PREFIX = "algo_signal_state:";
-    private readonly TTL = 24 * 60 * 60; // 24 hours expiry for state
+    private readonly TTL = 24 * 60 * 60;
 
     public async shouldEmitSignal(
         algoId: string,

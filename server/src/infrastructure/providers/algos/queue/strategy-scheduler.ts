@@ -35,9 +35,8 @@ export class StrategyScheduler implements IStrategyScheduler {
     public async start(): Promise<void> {
         if (this.cronJob) return;
 
-        console.log("⏰ Algo Strategy Scheduler started (every minute)");
+        console.log("Algo Strategy Scheduler started (every minute)");
 
-        // Trigger every minute at the start of the minute (00 seconds)
         this.cronJob = cron.schedule('* * * * *', async () => {
             await this.execute();
         });

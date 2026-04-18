@@ -42,7 +42,7 @@ const bootstrap = async () => {
     const algoScheduler = container.get<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler);
     algoScheduler.start();
 
-    const server = http.createServer(app);
+    const server = http.createServer(app); 
     InitSocketConfigs(server);
 
     server.listen(env.PORT, () => {
