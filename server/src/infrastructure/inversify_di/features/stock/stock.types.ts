@@ -40,6 +40,13 @@ export const STOCK_TYPES = {
     StrategyService: Symbol.for("StrategyService"),
     SignalManager: Symbol.for("SignalManager"),
 
+    // Queue & BullMQ
+    StrategyQueue: Symbol.for("StrategyQueue"),
+    SignalQueue: Symbol.for("SignalQueue"),
+    StrategyWorker: Symbol.for("StrategyWorker"),
+    SignalWorker: Symbol.for("SignalWorker"),
+    StrategyScheduler: Symbol.for("StrategyScheduler"),
+
     // EngineRunner:Symbol.for("EngineRunner")
     WatchlistRepository: Symbol.for("WatchlistRepository"),
     StockCandleRepository: Symbol.for("StockCandleRepository"),

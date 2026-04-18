@@ -142,8 +142,8 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
         {algoStep === "idle" && (
           <div className="space-y-4">
             <p className="text-[11px] text-[#5a5f6e] leading-relaxed">
-              Deploy automated strategies for {symbol}. Our engine scans live
-              data to execute trades based on your selected parameters.
+              Deploy automated strategies for {symbol}. Our cloud engine scans live
+              data and executes jobs via a reliable queue system.
             </p>
             <button
               onClick={handleSetupClick}
@@ -226,7 +226,7 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
                     Runtime
                   </span>
                   <p className="text-[10px] font-bold text-[#e8eaed]">
-                    Direct Hook
+                    Cloud Engine
                   </p>
                 </div>
               </div>

@@ -1,3 +1,3 @@
 export interface IStrategyService {
-    run(): Promise<void>;
-} 
+    evaluateStrategy(strategyId: string): Promise<any>;
+}

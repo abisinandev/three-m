@@ -1,9 +1,10 @@
 export interface ISignalService {
-    createSignal(input: {
+    createSignal(input: any): Promise<void>;
+    processSignal(input: {
         userId: string;
         symbol: string;
         algoId: string;
-        action: "BUY" | "SELL";
+        action: any;
         strategyName: string;
         price: number;
         reason: string;
