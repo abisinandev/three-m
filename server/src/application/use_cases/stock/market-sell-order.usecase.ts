@@ -116,7 +116,7 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
                     session
                 );
             } else {
-                //Check this part📌📌📌
+
                 const costOfSharesSold = portfolio.avgPrice * execution.filledQty;
                 const newInvestedAmount = portfolio.investedAmount - costOfSharesSold;
 
@@ -164,6 +164,7 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
                 quantity: execution.filledQty,
                 side: OrderSide.SELL,
                 profit: execution.profit,
+                isAlgoTrade: data.isAlgoTrade ?? false,
             });
             await this._tradeRepository.create(trade, session);
 

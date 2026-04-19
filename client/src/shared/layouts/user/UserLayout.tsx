@@ -73,7 +73,7 @@ const UserLayout = () => {
                             { to: ROUTES.USER.EXPENSE_TRACKER, label: 'Expense tracker' },
                             { to: ROUTES.USER.WALLET.ROOT, label: 'Wallet' },
                             { to: ROUTES.USER.MUTUAL_FUNDS.ROOT, label: 'Mutual Funds' },
-                            { to: ROUTES.USER.TRADING, label: 'Trading' },
+                            { to: ROUTES.USER.TRADING, label: 'Stocks' },
                             { to: ROUTES.USER.PORTFOLIO.ROOT, label: 'Portfolio' },
                             { to: ROUTES.USER.MARKET_NEWS, label: "News" },
                             // { to: ROUTES.USER.AI_BOT, label: "AI bot" }

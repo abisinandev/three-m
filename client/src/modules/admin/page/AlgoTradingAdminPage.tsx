@@ -1,99 +1,117 @@
 import React, { useState } from 'react';
-import { 
-  RefreshCw, Plus, Cpu, Activity, BarChart2, 
-  AlertTriangle, Clock, Search, Edit2, ExternalLink, 
-  ChevronLeft, ChevronRight, Eye
+import {
+  RefreshCw, Plus, Cpu, Activity, BarChart2,
+  AlertTriangle, Clock, Search, Edit2, ExternalLink,
+  ChevronLeft, ChevronRight, TrendingUp, TrendingDown
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
-import { FetchAdminStrategies, FetchAdminSignals, FetchAdminAlgoStats } from '../../../../shared/services/admin/algo-trading/AdminAlgoTradingApi';
 import dayjs from 'dayjs';
+import {
+  FetchAdminAlgoStats,
+  FetchAdminSignals,
+  FetchAdminStrategies,
+  FetchAdminAlgoTrades
+} from '@/shared/services/admin/algo-trading/AdminAlgoTradingApi';
+
+type TabName = 'Strategies' | 'Signals' | 'Trades' | 'Risk Settings' | 'System Logs';
 
 const AlgoTradingAdminPage = () => {
-  const [activeTab, setActiveTab] = useState('Strategies');
+  const [activeTab, setActiveTab] = useState<TabName>('Strategies');
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebounce(search, 500);
 
-  const tabs = ['Strategies', 'Signals', 'Trades', 'User Access', 'Risk Settings', 'System Logs'];
+  const tabs: TabName[] = ['Strategies', 'Signals', 'Trades', 'Risk Settings', 'System Logs'];
 
-  // Fetch Overall Stats
   const { data: statsData, refetch: refetchStats } = useQuery({
     queryKey: ['admin-algo-stats'],
     queryFn: FetchAdminAlgoStats,
   });
 
-  // Fetch Strategies
-  const { 
-    data: strategiesData, 
-    isLoading: isLoadingStrategies, 
-    refetch: refetchStrategies, 
-    isFetching: isFetchingStrategies 
+  const {
+    data: strategiesData,
+    isLoading: isLoadingStrategies,
+    refetch: refetchStrategies,
+    isFetching: isFetchingStrategies
   } = useQuery({
     queryKey: ['admin-strategies', page, debouncedSearch],
     queryFn: () => FetchAdminStrategies({ page, limit: 10, search: debouncedSearch }),
     enabled: activeTab === 'Strategies',
   });
 
-  // Fetch Signals
-  const { 
-    data: signalsData, 
-    isLoading: isLoadingSignals, 
-    refetch: refetchSignals, 
-    isFetching: isFetchingSignals 
+  const {
+    data: signalsData,
+    isLoading: isLoadingSignals,
+    refetch: refetchSignals,
+    isFetching: isFetchingSignals
   } = useQuery({
     queryKey: ['admin-signals', page, debouncedSearch],
     queryFn: () => FetchAdminSignals({ page, limit: 10, search: debouncedSearch }),
     enabled: activeTab === 'Signals',
   });
 
+  const {
+    data: tradesData,
+    isLoading: isLoadingTrades,
+    refetch: refetchTrades,
+    isFetching: isFetchingTrades
+  } = useQuery({
+    queryKey: ['admin-algo-trades', page, debouncedSearch],
+    queryFn: () => FetchAdminAlgoTrades({ page, limit: 10, search: debouncedSearch }),
+    enabled: activeTab === 'Trades',
+  });
+
   const handleNextPage = () => {
-    const totalPages = activeTab === 'Strategies' 
-      ? (strategiesData?.data?.totalPages || 1) 
-      : (signalsData?.data?.totalPages || 1);
-    
-    if (page < totalPages) {
-      setPage(prev => prev + 1);
-    }
+    if (page < totalPages) setPage(prev => prev + 1);
   };
 
   const handlePrevPage = () => {
-    if (page > 1) {
-      setPage(prev => prev - 1);
-    }
+    if (page > 1) setPage(prev => prev - 1);
   };
 
-  const handleTabChange = (tab: string) => {
+  const handleTabChange = (tab: TabName) => {
     setActiveTab(tab);
     setPage(1);
     setSearch('');
   };
 
   const stats = statsData?.data || {};
-  const currentData = activeTab === 'Strategies' ? strategiesData?.data : signalsData?.data;
-  const isLoading = activeTab === 'Strategies' ? isLoadingStrategies : isLoadingSignals;
-  const isFetching = activeTab === 'Strategies' ? isFetchingStrategies : isFetchingSignals;
-  
+
+  const getCurrentData = () => {
+    if (activeTab === 'Strategies') return strategiesData?.data;
+    if (activeTab === 'Signals') return signalsData?.data;
+    if (activeTab === 'Trades') return tradesData?.data;
+    return null;
+  };
+
+  const currentData = getCurrentData();
+  const isLoading = activeTab === 'Strategies' ? isLoadingStrategies : activeTab === 'Signals' ? isLoadingSignals : activeTab === 'Trades' ? isLoadingTrades : false;
+  const isFetching = activeTab === 'Strategies' ? isFetchingStrategies : activeTab === 'Signals' ? isFetchingSignals : activeTab === 'Trades' ? isFetchingTrades : false;
+
   const refetchAll = () => {
     refetchStats();
     if (activeTab === 'Strategies') refetchStrategies();
     if (activeTab === 'Signals') refetchSignals();
+    if (activeTab === 'Trades') refetchTrades();
   };
 
   const totalPages = currentData?.totalPages || 1;
   const totalItems = currentData?.total || 0;
   const items = currentData?.data || [];
 
+  const colSpan = activeTab === 'Strategies' ? 5 : activeTab === 'Signals' ? 6 : activeTab === 'Trades' ? 7 : 1;
+
   return (
     <div className="bg-black min-h-full font-sans text-white">
-      {/* Header section */}
+      {/* Header */}
       <div className="mb-6 flex justify-between items-start">
         <div>
           <h1 className="text-2xl font-bold mb-1">Algo Trading Management</h1>
-          <p className="text-neutral-400 text-[13px]">Monitor signals, manage strategies, and control risk limits.</p>
+          <p className="text-neutral-400 text-[13px]">Monitor signals, manage strategies, and view algo trade history.</p>
         </div>
         <div className="flex gap-3">
-          <button 
+          <button
             onClick={refetchAll}
             className="flex items-center gap-2 px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-md border border-neutral-700 text-[13px] font-medium transition-colors disabled:opacity-50"
             disabled={isFetching}
@@ -110,48 +128,19 @@ const AlgoTradingAdminPage = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-        <StatCard 
-          title="ACTIVE STRATEGIES" 
-          value={stats.activeStrategiesCount?.toString() || "—"} 
-          subtitle="Live data" 
-          icon={<Cpu size={16} className="text-emerald-500" />} 
-          valueClass="text-white"
-        />
-        <StatCard 
-          title="TOTAL SIGNALS" 
-          value={stats.activeSignalsCount?.toString() || "—"} 
-          subtitle="All signals" 
-          icon={<Activity size={16} className="text-emerald-500" />} 
-          valueClass="text-white"
-        />
-        <StatCard 
-          title="TRADES EXECUTED TODAY" 
-          value={stats.tradesExecutedTodayCount?.toString() || "—"} 
-          subtitle="Live data" 
-          icon={<BarChart2 size={16} className="text-emerald-500" />} 
-          valueClass="text-white"
-        />
-        <StatCard 
-          title="FAILED TRADES" 
-          value={stats.failedTradesCount?.toString() || "—"} 
-          subtitle="Live data" 
-          icon={<AlertTriangle size={16} className="text-emerald-500" />} 
-          valueClass="text-red-500"
-          alertIcon
-        />
+        <StatCard title="ACTIVE STRATEGIES" value={stats.activeStrategiesCount?.toString() || "—"} subtitle="Live data" icon={<Cpu size={16} className="text-emerald-500" />} valueClass="text-white" />
+        <StatCard title="TOTAL SIGNALS" value={stats.activeSignalsCount?.toString() || "—"} subtitle="All signals" icon={<Activity size={16} className="text-emerald-500" />} valueClass="text-white" />
+        <StatCard title="TRADES EXECUTED TODAY" value={stats.tradesExecutedTodayCount?.toString() || "—"} subtitle="Live data" icon={<BarChart2 size={16} className="text-emerald-500" />} valueClass="text-white" />
+        <StatCard title="FAILED TRADES" value={stats.failedTradesCount?.toString() || "—"} subtitle="Live data" icon={<AlertTriangle size={16} className="text-emerald-500" />} valueClass="text-red-500" alertIcon />
         <div className="bg-[#18181B] rounded-lg p-4 flex flex-col justify-between border border-neutral-800 min-h-[110px]">
-           <div className="flex justify-between items-start mb-2">
-             <h3 className="text-[11px] font-medium text-neutral-500 tracking-wider">MARKET STATUS</h3>
-             <div className="p-1.5 bg-neutral-800/50 rounded-md">
-               <Clock size={16} className="text-emerald-500" />
-             </div>
-           </div>
-           <div>
-              <div className="text-xl font-bold text-emerald-500 mb-1 leading-none tracking-wide text-center uppercase">
-                {stats.marketStatus || "OPEN"}
-              </div>
-              <div className="text-[11px] text-neutral-500">NSE / BSE</div>
-           </div>
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="text-[11px] font-medium text-neutral-500 tracking-wider">MARKET STATUS</h3>
+            <div className="p-1.5 bg-neutral-800/50 rounded-md"><Clock size={16} className="text-emerald-500" /></div>
+          </div>
+          <div>
+            <div className="text-xl font-bold text-emerald-500 mb-1 leading-none tracking-wide text-center uppercase">{stats.marketStatus || "OPEN"}</div>
+            <div className="text-[11px] text-neutral-500">NSE / BSE</div>
+          </div>
         </div>
       </div>
 
@@ -161,11 +150,7 @@ const AlgoTradingAdminPage = () => {
           <button
             key={tab}
             onClick={() => handleTabChange(tab)}
-            className={`px-4 py-1.5 rounded-md text-[13px] font-medium transition-all duration-200 ${
-              activeTab === tab 
-                ? 'bg-emerald-500/10 text-emerald-500' 
-                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/50'
-            }`}
+            className={`px-4 py-1.5 rounded-md text-[13px] font-medium transition-all duration-200 ${activeTab === tab ? 'bg-emerald-500/10 text-emerald-500' : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/50'}`}
           >
             {tab}
           </button>
@@ -176,19 +161,18 @@ const AlgoTradingAdminPage = () => {
       <div className="bg-[#18181B] rounded-xl border border-neutral-800 overflow-hidden shadow-xl">
         <div className="p-4 border-b border-neutral-800 flex justify-between items-center bg-[#18181B]">
           <h2 className="text-[14px] font-semibold text-white uppercase tracking-wider">{activeTab}</h2>
-          <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
-            <input 
-              type="text" 
-              placeholder={`Search ${activeTab.toLowerCase()}...`} 
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="pl-9 pr-3 py-1.5 bg-neutral-800/80 border border-neutral-700/80 rounded-md text-[13px] text-white focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 w-[240px] placeholder-neutral-500 transition-all font-medium"
-            />
-          </div>
+          {(activeTab === 'Strategies' || activeTab === 'Signals' || activeTab === 'Trades') && (
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+              <input
+                type="text"
+                placeholder={`Search ${activeTab.toLowerCase()}...`}
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                className="pl-9 pr-3 py-1.5 bg-neutral-800/80 border border-neutral-700/80 rounded-md text-[13px] text-white focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 w-[240px] placeholder-neutral-500 transition-all font-medium"
+              />
+            </div>
+          )}
         </div>
 
         <div className="overflow-x-auto min-h-[400px]">
@@ -212,6 +196,16 @@ const AlgoTradingAdminPage = () => {
                     <th className="px-6 py-3 text-[11px] text-neutral-500 font-medium tracking-wider uppercase">Status</th>
                     <th className="px-6 py-3 text-[11px] text-neutral-500 font-medium tracking-wider uppercase">Created At</th>
                   </>
+                ) : activeTab === 'Trades' ? (
+                  <>
+                    <th className="px-6 py-3 text-[11px] text-neutral-500 font-medium tracking-wider uppercase">Trade ID</th>
+                    <th className="px-6 py-3 text-[11px] text-neutral-500 font-medium tracking-wider uppercase">Symbol</th>
+                    <th className="px-6 py-3 text-[11px] text-neutral-500 font-medium tracking-wider uppercase">Side</th>
+                    <th className="px-6 py-3 text-[11px] text-neutral-500 font-medium tracking-wider uppercase">Quantity</th>
+                    <th className="px-6 py-3 text-[11px] text-neutral-500 font-medium tracking-wider uppercase">Price</th>
+                    <th className="px-6 py-3 text-[11px] text-neutral-500 font-medium tracking-wider uppercase">P&L</th>
+                    <th className="px-6 py-3 text-[11px] text-neutral-500 font-medium tracking-wider uppercase">Executed At</th>
+                  </>
                 ) : (
                   <th className="px-6 py-10 text-center text-neutral-600 font-medium">This module is under development</th>
                 )}
@@ -220,16 +214,16 @@ const AlgoTradingAdminPage = () => {
             <tbody className="bg-[#18181B]">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-20 text-center text-neutral-400 text-[13px]">
+                  <td colSpan={colSpan} className="px-6 py-20 text-center text-neutral-400 text-[13px]">
                     <div className="flex flex-col items-center gap-3">
                       <RefreshCw size={24} className="animate-spin text-emerald-500/50" />
                       <span>Loading {activeTab.toLowerCase()}...</span>
                     </div>
                   </td>
                 </tr>
-              ) : items.length === 0 ? (
+              ) : items.length === 0 && (activeTab === 'Strategies' || activeTab === 'Signals' || activeTab === 'Trades') ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-20 text-center text-neutral-400 text-[13px]">
+                  <td colSpan={colSpan} className="px-6 py-20 text-center text-neutral-400 text-[13px]">
                     <div className="flex flex-col items-center gap-2">
                       <Search size={24} className="text-neutral-700" />
                       <span>No {activeTab.toLowerCase()} found matching your criteria.</span>
@@ -253,10 +247,7 @@ const AlgoTradingAdminPage = () => {
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3 w-40">
                             <div className="flex-1 h-1 bg-neutral-800 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-emerald-500 rounded-full" 
-                                style={{ width: `${Math.min((item.usersCount || 0) * 10, 100)}%` }} 
-                              />
+                              <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${Math.min((item.usersCount || 0) * 10, 100)}%` }} />
                             </div>
                             <span className="text-[13px] text-white font-medium w-4">{item.usersCount || 0}</span>
                           </div>
@@ -266,49 +257,55 @@ const AlgoTradingAdminPage = () => {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center justify-end gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                            <button className="p-1.5 bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-white rounded-md transition-colors border border-transparent hover:border-neutral-600">
-                              <Edit2 size={14} />
-                            </button>
-                            <button className="p-1.5 bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-white rounded-md transition-colors border border-transparent hover:border-neutral-600">
-                              <ExternalLink size={14} />
-                            </button>
+                            <button className="p-1.5 bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-white rounded-md transition-colors border border-transparent hover:border-neutral-600"><Edit2 size={14} /></button>
+                            <button className="p-1.5 bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-white rounded-md transition-colors border border-transparent hover:border-neutral-600"><ExternalLink size={14} /></button>
                           </div>
                         </td>
                       </>
-                    ) : (
+                    ) : activeTab === 'Signals' ? (
                       <>
                         <td className="px-6 py-4">
                           <div className="text-[13px] font-semibold text-white mb-0.5">{item.symbol}</div>
                           <div className="text-[11px] text-neutral-500 font-mono tracking-tight">{item.id}</div>
                         </td>
-                        <td className="px-6 py-4 text-[13px] text-neutral-300 font-medium">
-                          {item.strategyName}
-                        </td>
+                        <td className="px-6 py-4 text-[13px] text-neutral-300 font-medium">{item.strategyName}</td>
                         <td className="px-6 py-4">
-                          <span className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${
-                            item.action === 'BUY' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'
-                          }`}>
-                            {item.action}
-                          </span>
+                          <span className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${item.action === 'BUY' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>{item.action}</span>
                         </td>
-                        <td className="px-6 py-4 text-[13px] font-mono text-white">
-                          ₹{parseFloat(item.price).toLocaleString()}
-                        </td>
+                        <td className="px-6 py-4 text-[13px] font-mono text-white">₹{parseFloat(item.price).toLocaleString()}</td>
                         <td className="px-6 py-4">
-                          <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${
-                            item.status === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-500' : 
-                            item.status === 'REJECTED' ? 'bg-red-500/10 text-red-500' : 
-                            item.status === 'EXPIRED' ? 'bg-neutral-700 text-neutral-300' :
-                            'bg-amber-500/10 text-amber-500'
-                          }`}>
-                            {item.status}
-                          </span>
+                          <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${item.status === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-500' : item.status === 'REJECTED' ? 'bg-red-500/10 text-red-500' : item.status === 'EXPIRED' ? 'bg-neutral-700 text-neutral-300' : 'bg-amber-500/10 text-amber-500'}`}>{item.status}</span>
                         </td>
-                        <td className="px-6 py-4 text-[12px] text-neutral-400">
-                          {dayjs(item.createdAt).format('MMM DD, HH:mm')}
-                        </td>
+                        <td className="px-6 py-4 text-[12px] text-neutral-400">{dayjs(item.createdAt).format('MMM DD, HH:mm')}</td>
                       </>
-                    )}
+                    ) : activeTab === 'Trades' ? (
+                      <>
+                        <td className="px-6 py-4">
+                          <div className="text-[11px] text-neutral-500 font-mono tracking-tight">{item.id}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-[13px] font-bold text-white">{item.symbol}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${item.side === 'BUY' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
+                            {item.side === 'BUY' ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                            {item.side}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-[13px] text-neutral-300">{item.quantity}</td>
+                        <td className="px-6 py-4 text-[13px] font-mono text-white">₹{parseFloat(item.price).toLocaleString()}</td>
+                        <td className="px-6 py-4">
+                          {item.profit != null ? (
+                            <span className={`text-[13px] font-bold font-mono ${item.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                              {item.profit >= 0 ? '+' : ''}₹{parseFloat(item.profit).toLocaleString()}
+                            </span>
+                          ) : (
+                            <span className="text-[12px] text-neutral-600">—</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-[12px] text-neutral-400">{dayjs(item.createdAt).format('MMM DD, HH:mm')}</td>
+                      </>
+                    ) : null}
                   </tr>
                 ))
               )}
@@ -316,28 +313,22 @@ const AlgoTradingAdminPage = () => {
           </table>
         </div>
 
-        <div className="p-4 border-t border-neutral-800 flex justify-between items-center text-[12px] text-neutral-500 bg-[#18181B]">
-          <div className="font-medium bg-neutral-800/30 px-2 py-1 rounded">
-            Showing <span className="text-white">{items.length}</span> of <span className="text-white">{totalItems}</span> {activeTab.toLowerCase()}
+        {(activeTab === 'Strategies' || activeTab === 'Signals' || activeTab === 'Trades') && (
+          <div className="p-4 border-t border-neutral-800 flex justify-between items-center text-[12px] text-neutral-500 bg-[#18181B]">
+            <div className="font-medium bg-neutral-800/30 px-2 py-1 rounded">
+              Showing <span className="text-white">{items.length}</span> of <span className="text-white">{totalItems}</span> {activeTab.toLowerCase()}
+            </div>
+            <div className="flex gap-1.5 items-center">
+              <span className="mr-2">Page {page} of {totalPages}</span>
+              <button onClick={handlePrevPage} disabled={page === 1 || isLoading} className="p-1.5 bg-neutral-800 border border-neutral-700 text-neutral-400 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-400 rounded-md transition-all shadow-sm">
+                <ChevronLeft size={16} />
+              </button>
+              <button onClick={handleNextPage} disabled={page >= totalPages || isLoading} className="p-1.5 bg-neutral-800 border border-neutral-700 text-neutral-400 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-400 rounded-md transition-all shadow-sm">
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
-          <div className="flex gap-1.5 items-center">
-            <span className="mr-2">Page {page} of {totalPages}</span>
-            <button 
-              onClick={handlePrevPage}
-              disabled={page === 1 || isLoading}
-              className="p-1.5 bg-neutral-800 border border-neutral-700 text-neutral-400 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-400 rounded-md transition-all shadow-sm"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button 
-              onClick={handleNextPage}
-              disabled={page >= totalPages || isLoading}
-              className="p-1.5 bg-neutral-800 border border-neutral-700 text-neutral-400 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-400 rounded-md transition-all shadow-sm"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -356,9 +347,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, subtitle, icon, value
   <div className="bg-[#18181B] rounded-lg p-4 flex flex-col justify-between border border-neutral-800 min-h-[110px] shadow-sm">
     <div className="flex justify-between items-start mb-2">
       <h3 className="text-[11px] font-medium text-neutral-500 tracking-wider uppercase">{title}</h3>
-      <div className={`p-1.5 rounded-md ${alertIcon ? 'bg-red-500/10' : 'bg-neutral-800/50'}`}>
-        {icon}
-      </div>
+      <div className={`p-1.5 rounded-md ${alertIcon ? 'bg-red-500/10' : 'bg-neutral-800/50'}`}>{icon}</div>
     </div>
     <div className="flex items-end justify-between">
       <div>

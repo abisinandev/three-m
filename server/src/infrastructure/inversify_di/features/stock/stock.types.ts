@@ -36,10 +36,23 @@ export const STOCK_TYPES = {
     AlgoStrategyRepository: Symbol.for("AlgoStrategyRepository"),
     AlgoSignalRepository: Symbol.for("AlgoSignalRepository"),
     SignalService: Symbol.for("SignalService"),
-    ConfirmSignalUseCase: Symbol.for("ConfirmSignalUseCase"),
+    ConfirmBuySignalUseCase: Symbol.for("ConfirmBuySignalUseCase"),
+    ConfirmSellSignalUseCase: Symbol.for("ConfirmSellSignalUseCase"),
     StrategyService: Symbol.for("StrategyService"),
     SignalManager: Symbol.for("SignalManager"),
 
+    // Queue & BullMQ
+    StrategyQueue: Symbol.for("StrategyQueue"),
+    SignalQueue: Symbol.for("SignalQueue"),
+    StrategyWorker: Symbol.for("StrategyWorker"),
+    SignalWorker: Symbol.for("SignalWorker"),
+    StrategyScheduler: Symbol.for("StrategyScheduler"),
+
     // EngineRunner:Symbol.for("EngineRunner")
+    WatchlistRepository: Symbol.for("WatchlistRepository"),
+    StockCandleRepository: Symbol.for("StockCandleRepository"),
+    AddToWatchlistUseCase: Symbol.for("AddToWatchlistUseCase"),
+    RemoveFromWatchlistUseCase: Symbol.for("RemoveFromWatchlistUseCase"),
+    FetchWatchlistUseCase: Symbol.for("FetchWatchlistUseCase"),
 
 }

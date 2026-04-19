@@ -1,8 +1,7 @@
-import { ICandleEngineService } from '@application/interfaces/services/stocks/candle-chart-service.interface';
+import { ICandleEngineService } from '@application/interfaces/services/stocks/candle-engine-service.interface';
 import { IPollingService } from '@application/interfaces/services/stocks/polling-service.interface';
 import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.types';
 import { injectable, inject } from 'inversify';
-import { TimeframeAggregatorService } from './timeframe-aggregator.service';
 import { IMarketDataProvider } from '@application/interfaces/repositories/stock/market-data-provider.interface';
 
 
@@ -13,14 +12,11 @@ export class PollingService implements IPollingService {
 
     constructor(
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
-        @inject(STOCK_TYPES.CandleEngineService) private readonly candleEngine: ICandleEngineService,
-        @inject(STOCK_TYPES.TimeframeAggregatorService) private readonly timeframeAggregator: TimeframeAggregatorService
+        @inject(STOCK_TYPES.CandleEngineService) private readonly _candleEngine: ICandleEngineService,
     ) { }
 
     start() {
         if (this.intervalId) return;
-
-        console.log('[PollingService] Started Yahoo Finance Polling');
 
         this.intervalId = setInterval(async () => {
             if (this.activeSymbols.size === 0) return;
@@ -29,7 +25,7 @@ export class PollingService implements IPollingService {
                 try {
                     const quote = await this._marketDataProvider.getLatestQuote(symbol);
                     if (quote) {
-                        this.candleEngine.processTick({
+                        this._candleEngine.processTick({
                             symbol,
                             price: quote.price,
                             timestamp: quote.timestamp

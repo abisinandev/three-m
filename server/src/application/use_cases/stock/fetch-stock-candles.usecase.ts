@@ -57,14 +57,13 @@ export class FetchStockCandlesUseCase implements IFetchStockCandlesUseCase {
         if (!to || isNaN(to)) to = now;
         if (!from || isNaN(from)) from = to - 86400;
 
-        // Handle milliseconds if provided
         if (from > 1e12) from = Math.floor(from / 1000);
         if (to > 1e12) to = Math.floor(to / 1000);
 
         if (to > now) to = now;
 
         if (from >= to) {
-            from = to - 3600; // Default to last 1 hour if ranges are invalid
+            from = to - 3600;
         }
 
         return { from, to };

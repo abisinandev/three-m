@@ -4,9 +4,9 @@ import { logger } from "../logger/pino.logger";
 
 
 export const redisClient = new Redis({
-  host: "localhost",
-  port: Number(env.REDIS_PORT),
-  db: 0,
+    host: "localhost",
+    port: Number(env.REDIS_PORT),
+    db: 0,
 });
 
 redisClient.on("connect", () => logger.info("Redis connected"));

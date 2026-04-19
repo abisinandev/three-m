@@ -1,6 +1,7 @@
 import { IAdminGetStrategiesUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-get-strategies-usecase.interface";
 import { IAdminGetSignalUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-get-signals-usecase.interface";
 import { IAdminAlgoTradingUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-algo-trading-usecaes.interface";
+import { IAdminGetAlgoTradesUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-get-algo-trades-usecase.interface";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ALGO_TRADING_TYPES } from "@infrastructure/inversify_di/features/algo-trading/algo-trading.type";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
@@ -14,6 +15,7 @@ export class AdminAlgoTradingController {
         @inject(ALGO_TRADING_TYPES.AdminAlgoTradingUseCase) private readonly _getStats: IAdminAlgoTradingUseCase,
         @inject(ALGO_TRADING_TYPES.AdminGetStrategiesUseCase) private readonly _getStrategies: IAdminGetStrategiesUseCase,
         @inject(ALGO_TRADING_TYPES.AdminGetSignalUseCase) private readonly _getSignals: IAdminGetSignalUseCase,
+        @inject(ALGO_TRADING_TYPES.AdminGetAlgoTradesUseCase) private readonly _getAlgoTrades: IAdminGetAlgoTradesUseCase,
     ) { }
 
     async getAlgoTrading(req: Request, res: Response, next: NextFunction) {
@@ -24,9 +26,9 @@ export class AdminAlgoTradingController {
                 SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
-            )
+            );
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 
@@ -34,26 +36,19 @@ export class AdminAlgoTradingController {
         try {
             const page = parseInt(req.query.page as string, 10) || 1;
             const limit = parseInt(req.query.limit as string, 10) || 10;
-            const search = req.query.search as string || "";
-            const sortBy = req.query.sortBy as string || "createdAt";
-            const sortOrder = req.query.sortOrder as string || "desc";
+            const search = (req.query.search as string) || "";
+            const sortBy = (req.query.sortBy as string) || "createdAt";
+            const sortOrder = (req.query.sortOrder as string) || "desc";
 
-            const result = await this._getStrategies.execute({
-                page,
-                limit,
-                search,
-                sortBy,
-                sortOrder
-            });
-
+            const result = await this._getStrategies.execute({ page, limit, search, sortBy, sortOrder });
             return ResponseHelper.success(
                 res,
                 SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
-            )
+            );
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 
@@ -61,26 +56,39 @@ export class AdminAlgoTradingController {
         try {
             const page = parseInt(req.query.page as string, 10) || 1;
             const limit = parseInt(req.query.limit as string, 10) || 10;
-            const search = req.query.search as string || "";
-            const sortBy = req.query.sortBy as string || "createdAt";
-            const sortOrder = req.query.sortOrder as string || "desc";
+            const search = (req.query.search as string) || "";
+            const sortBy = (req.query.sortBy as string) || "createdAt";
+            const sortOrder = (req.query.sortOrder as string) || "desc";
 
-            const result = await this._getSignals.execute({
-                page,
-                limit,
-                search,
-                sortBy,
-                sortOrder
-            });
-
+            const result = await this._getSignals.execute({ page, limit, search, sortBy, sortOrder });
             return ResponseHelper.success(
                 res,
                 SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
-            )
+            ); 
         } catch (error) {
-            next(error)
+            next(error);
+        }
+    }
+
+    async getAlgoTrades(req: Request, res: Response, next: NextFunction) {
+        try {
+            const page = parseInt(req.query.page as string, 10) || 1;
+            const limit = parseInt(req.query.limit as string, 10) || 10;
+            const search = (req.query.search as string) || "";
+            const sortBy = (req.query.sortBy as string) || "createdAt";
+            const sortOrder = (req.query.sortOrder as string) || "desc";
+
+            const result = await this._getAlgoTrades.execute({ page, limit, search, sortBy, sortOrder });
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.FETCHED,
+                result,
+                HttpStatus.OK
+            );
+        } catch (error) {
+            next(error);
         }
     }
 }

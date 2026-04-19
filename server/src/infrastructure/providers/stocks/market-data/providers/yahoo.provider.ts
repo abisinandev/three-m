@@ -1,7 +1,7 @@
 import YahooFinance from 'yahoo-finance2';
-import { ICandle } from '../interfaces/candle.interface';
 import { injectable } from 'inversify';
 import { IHistoricalDataParams, IMarketDataProvider, IQuote } from '@application/interfaces/repositories/stock/market-data-provider.interface';
+import { ICandle } from '@infrastructure/databases/mongo_db/models/interfaces/stocks/stock-candle-schema.interface';
 
 const yahooFinance = new YahooFinance();
 const MAX_DAYS: Record<string, number> = {
@@ -60,7 +60,7 @@ export class YahooProvider implements IMarketDataProvider {
 
     async getLatestQuote(symbol: string): Promise<IQuote | null> {
         try {
-            const result: any = await yahooFinance.quote(symbol);
+            const result = await yahooFinance.quote(symbol);
             if (!result?.regularMarketPrice) return null;
 
             return {

@@ -1,6 +1,6 @@
 import { CandleEntity } from "@domain/entities/stock/candle.entity";
 import { CandleDTO, CandlesResponseDTO } from "@application/dto/stocks/candle.dto";
-import { ICandle } from "@infrastructure/providers/stocks/market-data/interfaces/candle.interface";
+import { ICandle } from "@infrastructure/databases/mongo_db/models/interfaces/stocks/stock-candle-schema.interface";
 
 export class CandleMapper {
     static toEntity(data: ICandle): CandleEntity {

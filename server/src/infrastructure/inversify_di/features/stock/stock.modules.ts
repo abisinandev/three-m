@@ -3,6 +3,10 @@ import { ContainerModule } from "inversify";
 import { STOCK_TYPES } from "./stock.types";
 import { StockRepository } from "@infrastructure/databases/repository/stock/stock.repository";
 import { IStockWebsocketProvider } from "@application/interfaces/repositories/stock/stock-websocket.interface";
+import { IWatchlistRepository } from "@application/interfaces/repositories/stock/watchlist-repository.interface";
+import { WatchlistRepository } from "@infrastructure/databases/repository/stock/watchlist.repository";
+import { IStockCandleRepository } from "@application/interfaces/repositories/stock/stock-candle-repository.interface";
+import { StockCandleRepository } from "@infrastructure/databases/repository/stock/stock-candle.repository";
 import { StockWebSocketClient } from "@infrastructure/providers/stocks/stock-websocket.client";
 import { IFetchStocksUseCase } from "@application/use_cases/stock/interfaces/fetch-stocks.interface";
 import { FetchStocksUseCase } from "@application/use_cases/stock/fetch-stock.usecase";
@@ -11,6 +15,12 @@ import { IStockDetailsUseCase } from "@application/use_cases/stock/interfaces/st
 import { StockDetailsUseCase } from "@application/use_cases/stock/stock-details.usecase";
 import { IFetchStockCandlesUseCase } from "@application/use_cases/stock/interfaces/fetch-stock-candles.interface";
 import { FetchStockCandlesUseCase } from "@application/use_cases/stock/fetch-stock-candles.usecase";
+import { IAddToWatchlistUseCase } from "@application/use_cases/stock/interfaces/add-to-watchlist-usecase.interface";
+import { AddToWatchlistUseCase } from "@application/use_cases/stock/add-to-watchlist.usecase";
+import { IRemoveFromWatchlistUseCase } from "@application/use_cases/stock/interfaces/remove-from-watchlist-usecase.interface";
+import { RemoveFromWatchlistUseCase } from "@application/use_cases/stock/remove-from-watchlist.usecase";
+import { IFetchWatchlistUseCase } from "@application/use_cases/stock/interfaces/fetch-watchlist-usecase.interface";
+import { FetchWatchlistUseCase } from "@application/use_cases/stock/fetch-watchlist.usecase";
 import { MarketDataService } from "@infrastructure/providers/stocks/market-data.service";
 import { WsGateway } from "@presentation/express/websocket/ws.gateway";
 import { CandleEngineService } from "@infrastructure/providers/stocks/market-data/services/candle-engine.service";
@@ -36,17 +46,34 @@ import { GetActiveStrategyUseCase } from "@application/use_cases/algo-trading/ge
 import { TurnOnAlgoTradingUseCase } from "@application/use_cases/algo-trading/turn-on-algo-trading.usecase";
 import { IAlgoSignalRepository } from "@application/interfaces/repositories/algo/algo-signal-repository.interface";
 import { AlgoSignalRepository } from "@infrastructure/databases/repository/algo-trading/algo-signal.repository";
-import { SignalService } from "@infrastructure/providers/algos/signal.service";
+import { SignalService } from "@infrastructure/providers/algos/queue/signal.service";
 import { ISignalService } from "@application/interfaces/services/algo-trading/signal.service.interface";
 import { IStrategyService } from "@application/interfaces/services/algo-trading/strategy-service.interface";
-import { StrategyService } from "@infrastructure/providers/algos/strategy.service";
-import { IConfirmSignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-signal-usecase.interface";
-import { ConfirmSignalUseCase } from "@application/use_cases/algo-trading/confirm-signal.usecase";
+import { StrategyService } from "@infrastructure/providers/algos/queue/strategy.service";
+import { IConfirmBuySignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-buy-signal.interface";
+import { ConfirmBuySignalUseCase } from "@application/use_cases/algo-trading/confirm-buy-signal.usecase";
+import { IConfirmSellSignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-sell-signal.interface";
+import { ConfirmSellSignalUseCase } from "@application/use_cases/algo-trading/confirm-sell-signal.usecase";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { YahooProvider } from "@infrastructure/providers/stocks/market-data/providers/yahoo.provider";
 import { SignalManager } from "@infrastructure/providers/algos/signal-manager";
 import { ISignalManager } from "@application/interfaces/repositories/algo/signal-manager.interface";
 import { ITurnOnAlgoTradingUseCase } from "@application/use_cases/algo-trading/interfaces/turn-on-algo-trading.interface";
+
+// BullMQ & Queues
+import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy.queue";
+import { SignalQueue } from "@infrastructure/providers/algos/queue/signal.queue";
+import { StrategyWorker } from "@infrastructure/providers/algos/queue/workers/strategy.worker";
+import { SignalWorker } from "@infrastructure/providers/algos/queue/workers/signal.worker";
+import { StrategyScheduler } from "@infrastructure/providers/algos/queue/strategy-scheduler";
+import { IStrategyQueue } from "@application/interfaces/services/algo-trading/strategy-queue.interface";
+import { ISignalQueue } from "@application/interfaces/services/algo-trading/signal-queue.interface";
+import { IStrategyScheduler } from "@application/interfaces/services/algo-trading/strategy-scheduler.interface";
+import { ITimeframeAggregatorService } from "@application/interfaces/services/stocks/timeframe-aggragator.interface";
+import { ICandleEngineService } from "@application/interfaces/services/stocks/candle-engine-service.interface";
+import { IPollingService } from "@application/interfaces/services/stocks/polling-service.interface";
+import { IMarketDataService } from "@application/interfaces/services/stocks/market-data-service.usecase";
+import { IWsGateway } from "@application/interfaces/services/stocks/ws-gateway.interface";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
@@ -57,14 +84,14 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockDetailsUseCase>(STOCK_TYPES.StockDetailsUseCase).to(StockDetailsUseCase);
     bind<IFetchStockCandlesUseCase>(STOCK_TYPES.FetchStockCandlesUseCase).to(FetchStockCandlesUseCase);
 
-    bind<MarketDataService>(STOCK_TYPES.MarketDataService).to(MarketDataService);
-    bind<WsGateway>(STOCK_TYPES.WsGateway).to(WsGateway);
+    bind<IMarketDataService>(STOCK_TYPES.MarketDataService).to(MarketDataService);
+    bind<IWsGateway>(STOCK_TYPES.WsGateway).to(WsGateway);
 
     bind<IMarketDataProvider>(STOCK_TYPES.MarketDataProvider).to(YahooProvider);
-    bind<PollingService>(STOCK_TYPES.PollingService).to(PollingService);
+    bind<IPollingService>(STOCK_TYPES.PollingService).to(PollingService);
 
-    bind<CandleEngineService>(STOCK_TYPES.CandleEngineService).to(CandleEngineService);
-    bind<TimeframeAggregatorService>(STOCK_TYPES.TimeframeAggregatorService).to(TimeframeAggregatorService);
+    bind<ICandleEngineService>(STOCK_TYPES.CandleEngineService).to(CandleEngineService);
+    bind<ITimeframeAggregatorService>(STOCK_TYPES.TimeframeAggregatorService).to(TimeframeAggregatorService);
 
     bind<OrdersController>(STOCK_TYPES.OrdersController).to(OrdersController);
     bind<IMarketBuyOrderUseCase>(STOCK_TYPES.MarketBuyOrderUseCase).to(MarketBuyOrderUseCase);
@@ -80,9 +107,22 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IAlgoStrategyRepository>(STOCK_TYPES.AlgoStrategyRepository).to(AlgoStrategyRepository);
     bind<IAlgoSignalRepository>(STOCK_TYPES.AlgoSignalRepository).to(AlgoSignalRepository);
     bind<ISignalService>(STOCK_TYPES.SignalService).to(SignalService);
-    bind<IConfirmSignalUseCase>(STOCK_TYPES.ConfirmSignalUseCase).to(ConfirmSignalUseCase);
+    bind<IConfirmBuySignalUseCase>(STOCK_TYPES.ConfirmBuySignalUseCase).to(ConfirmBuySignalUseCase);
+    bind<IConfirmSellSignalUseCase>(STOCK_TYPES.ConfirmSellSignalUseCase).to(ConfirmSellSignalUseCase);
     bind<IStrategyService>(STOCK_TYPES.StrategyService).to(StrategyService);
     bind<ISignalManager>(STOCK_TYPES.SignalManager).to(SignalManager);
 
+    // BullMQ & Queues
+    bind<IStrategyQueue>(STOCK_TYPES.StrategyQueue).to(StrategyQueue);
+    bind<ISignalQueue>(STOCK_TYPES.SignalQueue).to(SignalQueue);
+    bind<StrategyWorker>(STOCK_TYPES.StrategyWorker).to(StrategyWorker);
+    bind<SignalWorker>(STOCK_TYPES.SignalWorker).to(SignalWorker);
+    bind<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler).to(StrategyScheduler);
+
     // bind<IEngineRunner>(STOCK_TYPES.EngineRunner).to(EngineRunner);
+    bind<IWatchlistRepository>(STOCK_TYPES.WatchlistRepository).to(WatchlistRepository);
+    bind<IStockCandleRepository>(STOCK_TYPES.StockCandleRepository).to(StockCandleRepository);
+    bind<IAddToWatchlistUseCase>(STOCK_TYPES.AddToWatchlistUseCase).to(AddToWatchlistUseCase);
+    bind<IRemoveFromWatchlistUseCase>(STOCK_TYPES.RemoveFromWatchlistUseCase).to(RemoveFromWatchlistUseCase);
+    bind<IFetchWatchlistUseCase>(STOCK_TYPES.FetchWatchlistUseCase).to(FetchWatchlistUseCase);
 });

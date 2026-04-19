@@ -1,148 +1,78 @@
-import { useState, useMemo } from 'react';
-import { keepPreviousData, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useDebouncedCallback } from 'use-debounce';
 import { Pagination } from '@shared/components/pagination/Pagination';
-import { FetchStockDataApi } from '@shared/services/admin/stock-management/FetchStockDataApi';
-import type { StockFilters } from '@shared/services/admin/stock-management/FetchStockDataApi';
-import { UpdateStockStatusApi } from '@shared/services/admin/stock-management/UpdateStockStatusApi';
-import { StockTable } from '../components/StockTable';
-import type { Stock } from '@shared/components/interfaces/IStockTable';
+import { useStockManagement } from '../stock-management/hooks/useStockManagement';
+import { StockFilters } from '../stock-management/components/StockFilters';
+import { StockTable } from '../stock-management/components/StockTable';
 
 export default function StockManagementPage() {
-    const queryClient = useQueryClient();
-
-    const [filters, setFilters] = useState<StockFilters>({
-        page: 1,
-        limit: 20,
-        search: '',
-        exchange: '',
-        isTradable: '',
-        isTracked: '',
-        isVisible: '',
-    });
-
-    const { data, isLoading, isError } = useQuery({
-        queryKey: ['admin-stocks', filters],
-        queryFn: () => FetchStockDataApi(filters),
-        placeholderData: keepPreviousData,
-    });
-
-    const statusMutation = useMutation({
-        mutationFn: ({ symbol, updates }: { symbol: string, updates: any }) => UpdateStockStatusApi(symbol, updates),
-        onMutate: async ({ symbol, updates }) => {
-            await queryClient.cancelQueries({ queryKey: ['admin-stocks', filters] });
-            const previousData = queryClient.getQueryData(['admin-stocks', filters]);
-
-            queryClient.setQueryData(['admin-stocks', filters], (old: any) => {
-                if (!old) return old;
-                return {
-                    ...old,
-                    data: old.data.map((stock: Stock) => stock.symbol === symbol ? { ...stock, ...updates } : stock)
-                };
-            });
-
-            return { previousData };
-        },
-        onError: (_err, _variables, context) => {
-            queryClient.setQueryData(['admin-stocks', filters], context?.previousData);
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin-stocks'] });
-        }
-    });
-
-    const stocks = useMemo(() => data?.data ?? [], [data]);
-    const total = data?.total ?? 0;
-
-    const updateFilters = (updates: Partial<StockFilters>) => {
-        setFilters((prev) => ({
-            ...prev,
-            ...updates,
-            page: updates.page ?? 1,
-        }));
-    };
-
-    const debouncedSearch = useDebouncedCallback((search: string) => updateFilters({ search }), 400);
-
-    const handleStatusToggle = (symbol: string, statusKey: 'isTradable' | 'isTracked' | 'isVisible', newValue: boolean) => {
-        statusMutation.mutate({ symbol, updates: { [statusKey]: newValue } });
-    };
+    const {
+        filters,
+        stocks,
+        total,
+        isLoading,
+        isError,
+        updateFilters,
+        debouncedSearch,
+        handleStatusToggle
+    } = useStockManagement();
 
     return (
-        <div className="space-y-6">
-            <div>
-                <h1 className="text-xl font-semibold text-white">Stock Management</h1>
-                <p className="text-xs text-neutral-400">
-                    Manage the dataset of stocks, their visibility, and trading permissions ({total.toLocaleString()} total)
-                </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4 bg-[#111] p-4 rounded-xl border border-neutral-800">
-                <input 
-                    type="text" 
-                    placeholder="Search Symbol or Name..." 
-                    onChange={(e) => debouncedSearch(e.target.value)}
-                    className="bg-transparent border border-neutral-700 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-64 p-2.5 outline-none"
-                />
-
-                <select 
-                    onChange={(e) => updateFilters({ exchange: e.target.value })}
-                    className="bg-transparent border border-neutral-700 text-white text-sm rounded-lg block p-2.5 outline-none"
-                    defaultValue=""
-                >
-                    <option value="" className="bg-neutral-900">All Exchanges</option>
-                    <option value="US" className="bg-neutral-900">US</option>
-                </select>
-
-                <select 
-                    onChange={(e) => updateFilters({ isTradable: e.target.value })}
-                    className="bg-transparent border border-neutral-700 text-white text-sm rounded-lg block p-2.5 outline-none"
-                    defaultValue=""
-                >
-                    <option value="" className="bg-neutral-900">Tradable: All</option>
-                    <option value="true" className="bg-neutral-900">Tradable: Active</option>
-                    <option value="false" className="bg-neutral-900">Tradable: Disabled</option>
-                </select>
-
-                <select 
-                    onChange={(e) => updateFilters({ isTracked: e.target.value })}
-                    className="bg-transparent border border-neutral-700 text-white text-sm rounded-lg block p-2.5 outline-none"
-                    defaultValue=""
-                >
-                    <option value="" className="bg-neutral-900">Tracked: All</option>
-                    <option value="true" className="bg-neutral-900">Tracked: Active</option>
-                    <option value="false" className="bg-neutral-900">Tracked: Disabled</option>
-                </select>
-
-                <select 
-                    onChange={(e) => updateFilters({ isVisible: e.target.value })}
-                    className="bg-transparent border border-neutral-700 text-white text-sm rounded-lg block p-2.5 outline-none"
-                    defaultValue=""
-                >
-                    <option value="" className="bg-neutral-900">Visible: All</option>
-                    <option value="true" className="bg-neutral-900">Visible: Active</option>
-                    <option value="false" className="bg-neutral-900">Visible: Disabled</option>
-                </select>
-            </div>
-
-            <div className="bg-[#111] rounded-xl overflow-hidden shadow-sm">
-                <StockTable 
-                    stocks={stocks} 
-                    isLoading={isLoading} 
-                    isError={isError} 
-                    onStatusToggle={handleStatusToggle} 
-                />
-
-                {!isLoading && !isError && stocks.length > 0 && (
-                    <div className="p-4 border-t border-neutral-800">
-                        <Pagination
-                            page={filters.page as number}
-                            limit={filters.limit as number}
-                            total={total}
-                            onPageChange={(page) => updateFilters({ page })}
-                        />
+        <div 
+            style={{ 
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                minHeight: '100vh',
+                background: '#0b0c0e',
+                color: '#e8eaed',
+                paddingBottom: 40
+            }}
+        >
+            <div className="px-6 pt-6 max-w-[1600px] mx-auto space-y-6">
+                {/* Header */}
+                <div className="flex justify-between items-end">
+                    <div>
+                        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                            Stock Management
+                        </h1>
+                        <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+                            Configuration for {total.toLocaleString()} assets across markets.
+                        </p>
                     </div>
-                )}
+                    
+                    <div style={{ fontSize: 10, color: '#5a5f6e', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                        Admin Console / Stocks
+                    </div>
+                </div>
+
+                {/* Filters Bar */}
+                <StockFilters 
+                    onSearchChange={debouncedSearch}
+                    exchange={filters.exchange}
+                    onExchangeChange={(v) => updateFilters({ exchange: v })}
+                    tradable={filters.isTradable}
+                    onTradableChange={(v) => updateFilters({ isTradable: v })}
+                    visible={filters.isVisible}
+                    onVisibleChange={(v) => updateFilters({ isVisible: v })}
+                />
+
+                {/* Main Table Container */}
+                <div style={{ background: '#111214', borderRadius: 8, border: '1px solid #1e2025', overflow: 'hidden' }}>
+                    <StockTable 
+                        stocks={stocks} 
+                        isLoading={isLoading} 
+                        isError={isError} 
+                        onStatusToggle={handleStatusToggle} 
+                    />
+
+                    {!isLoading && !isError && stocks.length > 0 && (
+                        <div className="p-4 border-t border-[#1e2025] bg-[#0b0c0e]">
+                            <Pagination
+                                page={filters.page}
+                                limit={filters.limit}
+                                total={total}
+                                onPageChange={(page) => updateFilters({ page })}
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -13,6 +13,7 @@ export interface IInvestmentResponse {
     investmentType: string;
     createdAt: Date | string;
     updatedAt?: Date | string;
+    quantity: number;
     profit: number;
     xirr?: number;
     logo?: string;

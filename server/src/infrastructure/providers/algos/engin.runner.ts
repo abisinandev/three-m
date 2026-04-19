@@ -1,45 +1,46 @@
+// import { IStrategyService } from "@application/interfaces/services/algo-trading/strategy-service.interface";
+// import { container } from "@infrastructure/inversify_di/container";
+// import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 
-import { IStrategyService } from "@application/interfaces/services/algo-trading/strategy-service.interface";
-import { container } from "@infrastructure/inversify_di/container";
+// /**
+//  * @deprecated This engine runner used setInterval and has been replaced by BullMQ queues.
+//  * Use StrategyQueue and StrategyWorker instead.
+//  */
+// export function createEngineRunner(intervalMs = 3000) {
+//   const strategyService =
+//     container.get<IStrategyService>(STOCK_TYPES.StrategyService);
 
+//   let intervalId: NodeJS.Timeout | null = null;
+//   let isRunning = false;
 
-import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
+//   const execute = async () => {
+//     if (isRunning) return;
 
-export function createEngineRunner(intervalMs = 3000) {
-  const strategyService =
-    container.get<IStrategyService>(STOCK_TYPES.StrategyService);
+//     isRunning = true;
 
-  let intervalId: NodeJS.Timeout | null = null;
-  let isRunning = false;
+//     try {
+//       await strategyService.run();
+//     } catch (err) {
+//       console.error("❌ Engine error:", err);
+//     } finally {
+//       isRunning = false;
+//     }
+//   };
 
-  const execute = async () => {
-    if (isRunning) return;
+//   const start = () => {
+//     if (intervalId) return;
 
-    isRunning = true;
+//     console.log(`🚀 Engine started (interval: ${intervalMs}ms)`);
+//     intervalId = setInterval(execute, intervalMs);
+//   };
 
-    try {
-      await strategyService.run();
-    } catch (err) {
-      console.error("❌ Engine error:", err);
-    } finally {
-      isRunning = false;
-    }
-  };
+//   const stop = () => {
+//     if (!intervalId) return;
 
-  const start = () => {
-    if (intervalId) return;
+//     clearInterval(intervalId);
+//     intervalId = null;
+//     console.log("🛑 Engine stopped");
+//   };
 
-    console.log(`🚀 Engine started (interval: ${intervalMs}ms)`);
-    intervalId = setInterval(execute, intervalMs);
-  };
-
-  const stop = () => {
-    if (!intervalId) return;
-
-    clearInterval(intervalId);
-    intervalId = null;
-    console.log("🛑 Engine stopped");
-  };
-
-  return { start, stop };
-}
+//   return { start, stop };
+// }

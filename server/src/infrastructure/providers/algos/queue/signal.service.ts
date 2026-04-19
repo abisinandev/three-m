@@ -9,6 +9,7 @@ import { NotificationEntity } from "@domain/entities/notification/notification.e
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { inject, injectable } from "inversify";
+import { ISignalManager } from "@application/interfaces/repositories/algo/signal-manager.interface";
 
 @injectable()
 export class SignalService implements ISignalService {
@@ -16,9 +17,10 @@ export class SignalService implements ISignalService {
         @inject(STOCK_TYPES.AlgoSignalRepository) private readonly _signalRepository: IAlgoSignalRepository,
         @inject(NOTIFICATION_TYEPS.NotificationService) private readonly _notificationService: INotificationService,
         @inject(NOTIFICATION_TYEPS.NotificationRepository) private readonly _notificationRepository: INotificationRepository,
+        @inject(STOCK_TYPES.SignalManager) private readonly _signalManager: ISignalManager,
     ) { }
 
-    async createSignal(input: {
+    async processSignal(input: {
         userId: string;
         symbol: string;
         algoId: string;
@@ -27,6 +29,17 @@ export class SignalService implements ISignalService {
         price: number;
         reason: string;
     }): Promise<void> {
+        
+        const shouldEmit = await this._signalManager.shouldEmitSignal(
+            input.algoId,
+            input.symbol,
+            input.action
+        );
+
+        if (!shouldEmit) {
+            console.log(`[SignalService] Duplicate signal suppressed via SignalManager for ${input.symbol}`);
+            return;
+        }
 
         const exists = await this._signalRepository.existsRecentSignal(
             input.userId,
@@ -35,14 +48,12 @@ export class SignalService implements ISignalService {
             input.action
         );
 
-
         if (exists) {
-            console.log("Duplicate signal skipped");
+            console.log(`[SignalService] Duplicate signal skipped (DB cooldown check) for ${input.symbol}`);
             return;
         }
 
-        const expiresAt = new Date(Date.now() + 5 * 60 * 60 * 1000);
-
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
         const signal = AlgoSignalEntity.create({
             userId: input.userId,
             symbol: input.symbol,
@@ -51,12 +62,11 @@ export class SignalService implements ISignalService {
             reason: input.reason,
             action: input.action,
             expiresAt,
+        });
 
-        })
         const savedSignal = await this._signalRepository.create(signal);
 
         const message = `${input.action} signal for ${input.symbol}: ${input.reason}`;
-
         const notification = NotificationEntity.create({
             userId: input.userId,
             type: NotificationType.ALGO_SIGNAL,
@@ -64,18 +74,22 @@ export class SignalService implements ISignalService {
             message: message
         });
 
-        const notfify = await this._notificationRepository.save(notification);
+        const savedNotification = await this._notificationRepository.save(notification);
 
         this._notificationService.send(
             input.userId,
             {
-                id: notfify.id as string,
+                id: savedNotification.id as string,
                 type: NotificationType.ALGO_SIGNAL,
                 title: 'Algo signal',
                 message: message,
                 createdAt: new Date(notification.createdAt),
                 signalId: savedSignal.id as string,
             }
-        )
+        );
+    }
+
+    async createSignal(input: any): Promise<void> {
+        await this.processSignal(input);
     }
 }

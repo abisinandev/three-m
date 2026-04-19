@@ -1,83 +1,107 @@
-import { CandleCallback, ICandleEngineService } from '@application/interfaces/services/stocks/candle-chart-service.interface';
-import { ICandle } from '../interfaces/candle.interface';
-import { ITick } from '../interfaces/tick.interface';
+import { CandleCallback, ICandleEngineService } from '@application/interfaces/services/stocks/candle-engine-service.interface';
 import { Trade } from "@application/dto/stocks/stock.dto";
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
+import { ICandle } from '@infrastructure/databases/mongo_db/models/interfaces/stocks/stock-candle-schema.interface';
+import { ITick } from '@application/dto/stocks/candle-tick';
+import { EXTERNAL_TYPES } from '@infrastructure/inversify_di/features/external/external.types';
+import { ICacheProvider } from '@application/interfaces/services/externals/redis-cache.provider.interface';
+import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.types';
+import { IStockCandleRepository } from '@application/interfaces/repositories/stock/stock-candle-repository.interface';
+
+/**
+ * Aggregates real-time trades/ticks into 1-minute OHLCV candles.
+ * 
+ */
 
 @injectable()
 export class CandleEngineService implements ICandleEngineService {
+
     private currentCandles: Map<string, ICandle> = new Map();
     private updateSubscribers: CandleCallback[] = [];
     private completeSubscribers: CandleCallback[] = [];
 
-    /**
-     * Subscribe to every update of a candle (used for real-time charting)
-     */
+    constructor(
+        @inject(EXTERNAL_TYPES.RedisCacheProvider) private readonly _redisCacheProvider: ICacheProvider,
+        @inject(STOCK_TYPES.StockCandleRepository) private readonly _candleRepository: IStockCandleRepository
+    ) { }
+
     onCandleUpdate(callback: CandleCallback) {
         this.updateSubscribers.push(callback);
     }
 
-    /**
-     * Subscribe only when a 1m candle fully closes
-     */
     onCandleComplete(callback: CandleCallback) {
         this.completeSubscribers.push(callback);
     }
 
-    /**
-     * Process an incoming trade from WebSocket
-     */
     processTrade(trade: Trade) {
         this.processUpdate(trade.symbol, trade.price, trade.timestamp, trade.volume || 0);
     }
 
-    /**
-     * Process an incoming tick from polling service
-     */
     processTick(tick: ITick) {
         this.processUpdate(tick.symbol, tick.price, tick.timestamp, tick.volume || 0);
     }
 
-    /**
-     * Common logic for building 1-minute candles from raw data
-     */
-    private processUpdate(symbol: string, price: number, timestamp: number, volume: number) {
-        // Normalize timestamp to start of minute (Unix seconds)
-        // If timestamp is ms, convert to seconds first.
+    private async processUpdate(symbol: string, price: number, timestamp: number, volume: number) {
+
         const timestampSec = timestamp > 1e12 ? Math.floor(timestamp / 1000) : timestamp;
         const currentMinute = Math.floor(timestampSec / 60) * 60;
 
         let candle = this.currentCandles.get(symbol);
 
         if (!candle) {
+            const cached = await this._redisCacheProvider.get(`candle:1m:${symbol}`);
+            if (cached) {
+                try {
+                const parsed = JSON.parse(cached) as ICandle;
+
+                if (parsed.time === currentMinute) {
+                    candle = parsed;
+                    this.currentCandles.set(symbol, candle);
+                }
+                } catch (e) {
+                    console.error("Failed to parse cached candle", e);
+                }
+            }
+        }
+
+        if (!candle) {
             candle = this.createNewCandle(symbol, price, currentMinute, volume);
             this.currentCandles.set(symbol, candle);
         } else if (candle.time < currentMinute) {
-            // New minute started, seal and emit old candle
+       
             candle.isComplete = true;
             this.emitUpdate(candle);
             this.emitComplete(candle);
+            
+            await this._candleRepository.save(candle);
 
-            // Handle potential gaps by filling them with "no-trade" candles
             let gapTime = candle.time + 60;
             while (gapTime < currentMinute) {
                 const flatCandle = this.createNewCandle(symbol, candle.close, gapTime, 0);
                 flatCandle.isComplete = true;
                 this.emitComplete(flatCandle);
                 this.emitUpdate(flatCandle);
+                
+                await this._candleRepository.save(flatCandle);
                 gapTime += 60;
             }
 
-            // Create new active candle
             candle = this.createNewCandle(symbol, price, currentMinute, volume);
             this.currentCandles.set(symbol, candle);
         } else {
-            // Update existing candle for the same minute
+    
             candle.high = Math.max(candle.high, price);
             candle.low = Math.min(candle.low, price);
             candle.close = price;
             candle.volume += volume;
         }
+
+       
+        const ttl = 3600; // 1 hour
+
+        await this._redisCacheProvider.set(`candle:1m:${symbol}`, JSON.stringify(candle), ttl);
+
+        await this._redisCacheProvider.set(`price:${symbol}`, price, ttl);
 
         this.emitUpdate(candle);
     }

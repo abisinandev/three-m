@@ -27,4 +27,7 @@ export class BuyOrderDTO {
   @IsNumber()
   @Min(0.01)
   takeProfit?: number;
+
+  @IsOptional()
+  isAlgoTrade?: boolean;
 }

@@ -8,14 +8,10 @@ import { QueryOptions } from "mongoose";
 @injectable()
 export class AdminStocksUseCase implements IAdminStocksUseCase {
     constructor(
-        @inject(STOCK_TYPES.StockRepository)
-        private stockRepository: IStockRepository
+        @inject(STOCK_TYPES.StockRepository) private stockRepository: IStockRepository
     ) { }
 
-    async execute(query: QueryOptions): Promise<{ data: StockEntity[], total: number }> {
-        const { page, limit = 10 } = query;
-
-        const skip = (page - 1) * limit;
-        return await this.stockRepository.finAllStocks(query);
+    async execute(query: any): Promise<{ data: StockEntity[], total: number }> {
+        return await this.stockRepository.findWithFiltersAdmin(query);
     }
 }

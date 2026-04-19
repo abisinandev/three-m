@@ -65,6 +65,7 @@ export const API_ROUTES = {
         },
         STOCKS: {
             GET_ALL: "/user/stocks",
+            WATCHLIST: "/user/stocks/all/watchlist",
         }
     },
     ADMIN: {
@@ -107,6 +108,7 @@ export const API_ROUTES = {
             GET_STATS: "/algo-trading",
             GET_STRATEGIES: "/algo-trading/strategies",
             GET_SIGNALS: "/algo-trading/signals",
+            GET_TRADES: "/algo-trading/trades",
         }
     },
     CHATBOT: {

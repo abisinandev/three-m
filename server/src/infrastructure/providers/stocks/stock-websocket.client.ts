@@ -4,6 +4,21 @@ import { env } from "@presentation/express/utils/constants/env.constants";
 import { injectable } from "inversify";
 import WebSocket from "ws";
 
+/**
+ * Handles connection to external stock WebSocket API and streams trade data.
+ *
+ * - Connects to the WebSocket server using API key
+ * - Subscribes/unsubscribes to stock symbols
+ * - Receives real-time trade messages from the provider
+ * - Transforms raw data into Trade objects
+ * - Notifies all registered listeners with incoming trades
+ *
+ * - Automatically reconnects on disconnection
+ *
+ * In short:
+ * Acts as a bridge between external market data provider and internal system.
+ */
+
 @injectable()
 export class StockWebSocketClient implements IStockWebsocketProvider {
     private ws: WebSocket | null = null;
@@ -16,6 +31,7 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
     }
 
     connect(): void {
+
         if (this.ws && (this.ws.readyState === WebSocket.CONNECTING || this.ws.readyState === WebSocket.OPEN)) {
             return;
         }
@@ -33,6 +49,8 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
 
         this.ws.on("message", (data) => {
             const parsed = JSON.parse(data.toString());
+
+            console.log("Parsed: ", parsed);
 
             if (parsed.type === "trade") {
                 parsed.data.forEach((t: any) => {

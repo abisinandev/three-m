@@ -42,7 +42,12 @@ export const TradeSchema = new Schema<TradeDocument>(
         profit: {
             type: Number,
             required: false,
-        }
+        },
+        isAlgoTrade: {
+            type: Boolean,
+            default: false,
+            index: true,
+        },
     },
     {
         timestamps: true,
