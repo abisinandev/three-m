@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CalendarCheck, Pause, Play, Trash2, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import dayjs from 'dayjs';
-import type { SipDto } from '@modules/user/types/mutual-fund.types';
+import type { SipDto } from '@modules/user/types/mutual-fund/dashboard.types';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
 
 interface SipsTabProps {
@@ -63,7 +63,7 @@ const SipsTab: React.FC<SipsTabProps> = ({
     };
 
     return (
-        <div className="bg-[#111] border border-[#1f1f1f] rounded-xl p-4 space-y-4">
+        <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 space-y-4">
             <h3 className="text-base font-semibold flex items-center gap-2.5">
                 <CalendarCheck size={18} className="text-green-400" />
                 Your Active SIPs

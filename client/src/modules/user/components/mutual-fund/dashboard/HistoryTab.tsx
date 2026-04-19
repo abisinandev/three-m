@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { History, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { History, Search } from 'lucide-react';
 import dayjs from 'dayjs';
+import { Pagination } from '@shared/components/pagination/Pagination';
 
 interface HistoryTabProps {
     investmentsLoading: boolean;
@@ -38,7 +39,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
     };
 
     return (
-        <div className="bg-[#111] border border-[#1f1f1f] rounded-xl p-4">
+        <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <h3 className="text-base font-semibold flex items-center gap-2.5">
                     <History size={18} className="text-green-400" />
@@ -80,7 +81,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                     <div className="py-12 text-center text-gray-500 text-sm">No transactions found</div>
                 ) : (
                     <>
-                        <div className="divide-y divide-[#1f1f1f]">
+                        <div className="divide-y divide-[#1e2025]">
                             {paginatedData.map((tx: any) => (
                                 <div key={tx.id} className="py-3 flex justify-between items-center text-sm group hover:bg-[#1a1a1a]/50 px-2 rounded-lg transition-colors">
                                     <div className="flex items-center gap-3">
@@ -104,41 +105,12 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
 
                         {/* Pagination */}
                         {totalPages > 1 && (
-                            <div className="flex items-center justify-between pt-4 border-t border-[#1f1f1f]">
-                                <p className="text-xs text-gray-500">
-                                    Showing <span className="text-gray-300">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="text-gray-300">{Math.min(currentPage * itemsPerPage, filteredInvestments.length)}</span> of <span className="text-gray-300">{filteredInvestments.length}</span>
-                                </p>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => handlePageChange(currentPage - 1)}
-                                        disabled={currentPage === 1}
-                                        className="p-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                    >
-                                        <ChevronLeft size={14} />
-                                    </button>
-                                    <div className="flex items-center gap-1">
-                                        {[...Array(totalPages)].map((_, i) => (
-                                            <button
-                                                key={i}
-                                                onClick={() => handlePageChange(i + 1)}
-                                                className={`w-7 h-7 flex items-center justify-center rounded text-xs transition-colors ${currentPage === i + 1
-                                                    ? 'bg-green-600 text-white'
-                                                    : 'bg-[#1a1a1a] text-gray-400 hover:text-white'
-                                                    }`}
-                                            >
-                                                {i + 1}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <button
-                                        onClick={() => handlePageChange(currentPage + 1)}
-                                        disabled={currentPage === totalPages}
-                                        className="p-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                    >
-                                        <ChevronRight size={14} />
-                                    </button>
-                                </div>
-                            </div>
+                            <Pagination
+                                page={currentPage}
+                                limit={itemsPerPage}
+                                total={filteredInvestments.length}
+                                onPageChange={handlePageChange}
+                            />
                         )}
                     </>
                 )}

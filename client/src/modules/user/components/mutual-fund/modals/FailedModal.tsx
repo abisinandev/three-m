@@ -1,5 +1,5 @@
 
-import type { FundDetails } from '@modules/user/types/MutaulFundType';
+import type { FundDetails } from '@modules/user/types/mutual-fund/details.types';
 import { XCircle, X } from 'lucide-react';
 
 interface FailedModalProps {
