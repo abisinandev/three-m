@@ -15,5 +15,5 @@ export interface ITransactionRepository extends IBaseRepository<TransactionEntit
     findTotalAmount(): Promise<{ totalAmount: number }>;
     findUserVerifiedTransactions(userId: string): Promise<TransactionEntity[] | null>;
     latestUserTransaction(userId: string): Promise<TransactionEntity | null>;
-    createTransaction(entity: TransactionEntity, session: ClientSession): Promise<TransactionEntity | null>;
+    createTransaction(entity: TransactionEntity, session: ClientSession): Promise<TransactionEntity>;
 }

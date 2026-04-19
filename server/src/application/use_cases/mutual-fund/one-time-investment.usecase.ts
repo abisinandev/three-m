@@ -1,5 +1,5 @@
 import { InvestmentDTO } from "@application/dto/mutual-funds/investment-dto";
-import { IInvestmentUseCase } from "./interfaces/investment-usecase.interface";
+import { IOneTimeInvestmentUseCase } from "./interfaces/one-time-investment.usecase.interface";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { inject, injectable } from "inversify";
@@ -7,7 +7,6 @@ import { NotFoundError, ValidationError } from "@presentation/express/utils/erro
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
-// import { IMutualFundNavRepository } from "@application/interfaces/repositories/feature/mutual-fund-nav-repository.interface";
 import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
@@ -16,36 +15,28 @@ import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { FundStatus } from "@domain/enum/funds/fund-status.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
-// import { IInternalTransactionVerificationService } from "@application/interfaces/services/externals/internal-transaction-verify.interface";
 import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
-import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 import mongoose from "mongoose";
-
-/**
- * 
- */
 
 
 @injectable()
-export class InvestmentUseCase implements IInvestmentUseCase {
+export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
     constructor(
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
-        // @inject(MUTUAL_FUND_TYPES.MutualFundNavRepository) private readonly _navRepository: IMutualFundNavRepository,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
-        // @inject(EXTERNAL_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService,
     ) { }
 
     async execute(data: InvestmentDTO, userId: string): Promise<void> {
         const session = await mongoose.startSession();
 
-        try {  
+        try {
             await session.withTransaction(async () => {
                 const { amount, schemeCode, investmentType, paymentMethod } = data;
- 
+
                 const user = await this._userRepository.findById(userId, session);
                 if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
@@ -55,11 +46,28 @@ export class InvestmentUseCase implements IInvestmentUseCase {
                 const fund = await this._mutualFundRepository.findBySchemeCode(data.schemeCode);
                 if (!fund || fund.status === FundStatus.INACTIVE) throw new ValidationError(ErrorMessages.MUTUAL_FUND.FUND_INACTIVE);
 
-                if (wallet.balance < amount) {
+                const transaction = TransactionEntity.create({
+                    userId: user.id!,
+                    userCode: user.userCode!,
+                    amount,
+                    currency: CurrencyTypes.INR,
+                    status: TransactionStatus.PENDING,
+                    type: TransactionTypes.INVESTMENT,
+                    referenceType: TransactionReferenceType.SIP,
+                    // referenceId: inv?.id as string,
+                    // fundId: fund.id,//📌📌
+                    // paymentStatus: TransactionStatus.SUCCESSFUL,
+                })
+                const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
+
+                if (wallet.availableBalance < amount)
                     throw new ValidationError(ErrorMessages.PAYMENT.INSUFFICIENT_BALANCE);
-                }
- 
-                await this._walletRepository.debit(userId, amount, session);
+
+                wallet.lock(amount);
+                wallet.debit(amount);
+                wallet.unlock(amount);
+
+                await this._walletRepository.update(wallet.id as string, wallet, session);
 
                 const investment = InvestmentEntity.create({
                     userId,
@@ -69,25 +77,15 @@ export class InvestmentUseCase implements IInvestmentUseCase {
                     paymentMethod,
                 });
 
-                const inv = await this._investmentRepository.createInvestment(investment);
-                const transaction = TransactionEntity.create({
-                    userId: user.id!,
-                    userCode: user.userCode!,
-                    amount,
-                    currency: CurrencyTypes.INR,
-                    status: TransactionStatus.SUCCESSFUL,
-                    type: TransactionTypes.INVESTMENT,
-                    referenceType: TransactionReferenceType.SIP,
-                    referenceId: inv?.id as string,
-                    fundId: fund.id,
-                    paymentStatus: TransactionStatus.SUCCESSFUL,
-                    isVerified: true,
-                })
-                const _txns = await this._transactionRepository.createTransaction(transaction, session);
-                // await this._internalTransactionVerify.verify(txns?.id as string);
+                await this._investmentRepository.createInvestment(investment);
+
+                newTransaction.markSucess();
+                await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
+                
             });
 
             await session.commitTransaction();
+
         } finally {
             await session.endSession();
         }

@@ -44,16 +44,16 @@ const TransactionSchema = new Schema<TransactionDocument>(
             required: true,
         },
 
-        paymentStatus: {
-            type: String,
-            enum: Object.values(TransactionStatus),
-            required: true,
-        },
+        // paymentStatus: {
+        //     type: String,
+        //     enum: Object.values(TransactionStatus),
+        //     required: true,
+        // },
 
-        isVerified: {
-            type: Boolean,
-            default: false,
-        },
+        // isVerified: {
+        //     type: Boolean,
+        //     default: false,
+        // },
 
         fundId: {
             type: Schema.Types.ObjectId,
@@ -61,24 +61,25 @@ const TransactionSchema = new Schema<TransactionDocument>(
             default: null,
         },
 
-        units: {
-            type: Number,
-            default: null,
-        },
+        // units: {
+        //     type: Number,
+        //     default: null,
+        // },
 
-        txHash: {
-            type: String,
-            required: true,
-            unique: true,
-            index: true,
-        },
+        // txHash: {
+        //     type: String,
+        //     required: true,
+        //     unique: true,
+        //     index: true,
+        // },
 
-        signature: {
-            type: String,
-            required: true,
-            unique: true,
-            index: true,
-        },
+        // signature: {
+        //     type: String,
+        //     required: true,
+        //     unique: true,
+        //     index: true,
+        // },
+
         referenceType: {
             type: String,
             enum: Object.values(TransactionReferenceType),

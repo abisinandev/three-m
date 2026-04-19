@@ -43,7 +43,7 @@ export class WalletEntity {
     const balance = data.balance ?? 0;
 
     if (balance > this.MAX_BALANCE) {
-      throw new Error("Wallet balance cannot exceed ₹50,000.");
+      throw new Error("Wallet balance cannot exceed ₹100,000.");
     }
 
     return new WalletEntity({
@@ -118,7 +118,7 @@ export class WalletEntity {
     if (amount <= 0) throw new Error("Credit amount must be positive");
 
     if (this._balance + amount > WalletEntity.MAX_BALANCE) {
-      throw new Error("Wallet balance cannot exceed ₹50,000.");
+      throw new Error("Wallet balance cannot exceed ₹100,000.");
     }
 
     this._balance += amount;

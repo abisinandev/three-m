@@ -83,6 +83,7 @@ export const ErrorMessages = {
     WALLET: {
         NOT_FOUND: "Wallet not found",
         INSUFFICIENT_BALANCE: 'Inssufienct balance',
+        CONCURRENT_MODIFICATION: "Insufficient balance or concurrent modification",
     },
     PORTFOLIO: {
         NOT_FOUND: "Portfolio not found",

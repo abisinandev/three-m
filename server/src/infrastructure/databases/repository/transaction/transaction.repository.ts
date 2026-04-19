@@ -13,7 +13,7 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
         super(TransactionModel, TransactionMapper)
     }
 
-    async createTransaction(entity: TransactionEntity): Promise<TransactionEntity | null> {
+    async createTransaction(entity: TransactionEntity): Promise<TransactionEntity> {
         const persistenceData = this.mapper.toPersistance(entity);
         const createdDoc = await this.model.create(persistenceData);
         return this.mapper.toDomain(createdDoc);

@@ -1,4 +1,4 @@
-import { IInvestmentUseCase } from "@application/use_cases/mutual-fund/interfaces/investment-usecase.interface";
+import { IInvestmentUseCase } from "@application/use_cases/mutual-fund/interfaces/one-time-investment.usecase.interface";
 import { IListFundsUserSideUseCase } from "@application/use_cases/mutual-fund/interfaces/list-fund-usecase.interface";
 import { IMfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-investment-history-usecase.interface";
 import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-details-usecase.interface";

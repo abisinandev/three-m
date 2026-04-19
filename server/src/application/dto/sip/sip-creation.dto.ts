@@ -16,7 +16,7 @@ export class SipCreationDTO {
     schemeCode!: string;
 
     @IsInt({ message: "Amount must be an integer" })
-    @Min(100, { message: "Minimum SIP amount is 100" })
+    @Min(500, { message: "Minimum SIP amount is 500" })
     amount!: number;
 
     @IsEnum(SipFrequency, { message: "Invalid SIP frequency" })

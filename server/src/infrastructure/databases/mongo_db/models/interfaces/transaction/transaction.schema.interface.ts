@@ -12,11 +12,11 @@ export interface ITransactionSchema {
   type: TransactionTypes;
   status: TransactionStatus;
   paymentStatus: TransactionStatus;
-  isVerified: boolean;
+  // isVerified: boolean;
   fundId?: string | null;
-  units?: number | null;
-  txHash: string;
-  signature: string;
+  // units?: number | null;
+  // txHash: string;
+  // signature: string;
   referenceType: | TransactionReferenceType;
   referenceId: string;
   paymentIntentId: string;
