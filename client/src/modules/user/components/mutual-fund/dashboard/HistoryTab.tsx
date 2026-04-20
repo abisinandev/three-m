@@ -97,7 +97,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                                         <p className={`font-semibold ${tx.paymentMethod === 'Debit' ? 'text-red-400' : 'text-green-400'}`}>
                                             {tx.paymentMethod === 'Debit' ? '-' : '+'}₹{tx.amount.toLocaleString()}
                                         </p>
-                                        <p className="text-[10px] text-gray-500">{tx.paymentStatus || 'Completed'}</p>
+                                        <p className="text-[10px] text-gray-500">{tx.status || 'Completed'}</p>
                                     </div>
                                 </div>
                             ))}

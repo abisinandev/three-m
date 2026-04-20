@@ -25,7 +25,6 @@ export type WalletTransaction = {
     paymentIntentId: string;
     referenceType: 'STRIPE';
     status: 'SUCCESSFUL' | 'FAILED' | 'PENDING';
-    paymentStatus: 'SUCCESSFUL' | 'FAILED' | 'PENDING';
     type: 'TOPUP' | 'WITHDRAW';
     fundId?: string;
     receipt_url: string;
