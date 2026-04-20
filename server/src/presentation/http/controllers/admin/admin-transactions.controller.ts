@@ -26,28 +26,4 @@ export class AdminTransactionsController {
         }
     }
 
-    // async verifyTransaction(req: Request, res: Response, next: NextFunction) {
-    //     try {
-    //         const txId = req.params.txId;
-    //         const result = await this._verifyTransaction.execute(txId as string);
-    //         if (!result.isVerified) {
-    //             return ResponseHelper.failure(
-    //                 res,
-    //                 ErrorMessages.PAYMENT.TRANSACTION_FAILED,
-    //                 HttpStatus.BAD_REQUEST
-    //             )
-    //         };
-
-    //         return ResponseHelper.success(
-    //             res,
-    //             SuccessMessage.TRANSACTION_VERIFIED,
-    //             HttpStatus.OK
-    //         )
-    //     } catch (error) {
-    //         next(error)
-    //     }
-    // }
-
-
-
 }

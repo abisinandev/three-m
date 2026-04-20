@@ -33,9 +33,13 @@ export class WebhookController {
                 env.STRIPE_WEBHOOK_SECRET
             );
 
+            if (event.type !== "payment_intent.succeeded") {
+                return res.status(200).json({ received: true });
+            }
+
             const intent = await extractPaymentIntent(event);
             if (!intent) return res.json({ received: true });
-
+            
             const paymentDTO = mapIntentToDTO(intent);
             await this.stripePaymentHandler.handleSuccess(paymentDTO);
             return res.status(200).json({ received: true });

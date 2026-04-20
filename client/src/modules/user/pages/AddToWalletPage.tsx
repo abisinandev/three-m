@@ -113,7 +113,7 @@ const AddToWallet = () => {
 
                 <div className="px-1 flex items-center justify-between text-[11px]">
                     <div className="text-[#5a5f6e] font-medium uppercase tracking-wider">
-                        Current Margin
+                        Current Balance
                         <div className="text-[#e8eaed] font-bold text-[14px] font-mono mt-1 leading-none tracking-tight">
                             ₹{currentBalance.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                         </div>

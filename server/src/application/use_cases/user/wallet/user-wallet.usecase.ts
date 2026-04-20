@@ -48,7 +48,8 @@ export class UserWalletUseCase implements IUserWalletUseCase {
         const limit = query.limit ?? 10;
 
         const transactions = (await this._transactionRepository.findUserTransactions(wallet.userId)) ?? [];
-        const transactionResponses: TransactionResponseDTO[] = transactions.map(tx => toTransactionResponse(tx));
+        const walletTransactions = transactions.filter(tx => tx.type !== "SUBSCRIPTION");
+        const transactionResponses: TransactionResponseDTO[] = walletTransactions.map(tx => toTransactionResponse(tx));
 
         const walletResponse: WalletResponseDTO = {
             id: wallet.id as string,

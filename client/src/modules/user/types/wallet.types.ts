@@ -1,5 +1,5 @@
 export type TransactionStatus = 'SUCCESSFUL' | 'FAILED' | 'PENDING';
-export type TransactionType = 'TOPUP' | 'WITHDRAW';
+export type TransactionType = 'TOPUP' | 'WITHDRAW' | 'SUBSCRIPTION' | 'INVESTMENT' | 'REDEMPTION' | 'BUY' | 'SELL' | 'SIP_INSTALLMENT';
 
 export interface WalletTransaction {
     id: string;

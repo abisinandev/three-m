@@ -20,6 +20,8 @@ export class StripePaymentHandler implements IPaymentHandler {
     async handleSuccess(payment: StripePaymentDTO) {
 
         const mappedStatus = mapStripeStatusToTransactionStatus(payment.status);
+        
+
         switch (payment.purpose) {
             case "TOPUP":
                 await this._addToWallet.execute({

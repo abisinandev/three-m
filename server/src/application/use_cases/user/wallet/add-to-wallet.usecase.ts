@@ -11,6 +11,7 @@ import { ITransactionRepository } from "@application/interfaces/repositories/fea
 import { ErrorMessages } from "@shared/constants/error.messages";
 import mongoose from "mongoose";
 import AppError from "@presentation/express/utils/error-handling/app.error";
+import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 
 /**
  * Adds funds to a user's wallet after a successful payment.
@@ -65,9 +66,9 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
             }
 
             try {
-                
+
                 await this._transactionRepository.createTransaction(transaction, session);
-                
+
             } catch (error: unknown) {
                 if (
                     typeof error === "object" && error !== null && "code" in error &&

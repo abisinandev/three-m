@@ -63,7 +63,19 @@ export const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = (
                                     <td className="px-5 py-3.5">
                                         <div className="flex flex-col">
                                             <span className="text-[12px] font-bold text-[#e8eaed] uppercase tracking-tight">
-                                                {tx.type === 'TOPUP' ? 'Wallet Deposit' : 'Withdrawal Request'}
+                                                {(() => {
+                                                    switch (tx.type) {
+                                                        case 'TOPUP': return 'Wallet Deposit';
+                                                        case 'WITHDRAW': return 'Withdrawal Request';
+                                                        case 'SUBSCRIPTION': return 'Premium Upgrade';
+                                                        case 'INVESTMENT': return 'Asset Purchase';
+                                                        case 'REDEMPTION': return 'Profit Redemption';
+                                                        case 'BUY': return 'Stock Buy';
+                                                        case 'SELL': return 'Stock Sell';
+                                                        case 'SIP_INSTALLMENT': return 'SIP Installment';
+                                                        default: return tx.type || 'Transaction';
+                                                    }
+                                                })()}
                                             </span>
                                             <span className="text-[10px] text-[#5a5f6e] font-mono mt-0.5">
                                                 REF: {tx.transactionId || '---'}
@@ -80,8 +92,8 @@ export const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = (
                                         </span>
                                     </td>
                                     <td className="px-5 py-3.5 text-right">
-                                        <span className={`text-[13px] font-bold font-mono ${tx.type === 'TOPUP' ? 'text-emerald-400' : 'text-[#e8eaed]/60'}`}>
-                                            {tx.type === 'TOPUP' ? '+' : '-'} ₹{fmt(tx.amount)}
+                                        <span className={`text-[13px] font-bold font-mono ${tx.type === 'TOPUP' || tx.type === 'REDEMPTION' || tx.type === 'SELL' ? 'text-emerald-400' : 'text-[#e8eaed]/60'}`}>
+                                            {tx.type === 'TOPUP' || tx.type === 'REDEMPTION' || tx.type === 'SELL' ? '+' : '-'} ₹{fmt(tx.amount)}
                                         </span>
                                     </td>
                                 </tr>
