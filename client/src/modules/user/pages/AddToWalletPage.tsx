@@ -65,7 +65,12 @@ const AddToWallet = () => {
                 purpose: "TOPUP",
             });
 
-            window.location.href = res.data.checkoutUrl;
+            const checkoutUrl = res.data.data.checkoutUrl;
+            if (checkoutUrl) {
+                window.location.href = checkoutUrl;
+            } else {
+                throw new Error("Checkout URL not received");
+            }
         } catch (err) {
             console.error("Payment error", err);
             navigate({ to: ROUTES.USER.PAYMENT.FAILED, replace: true });
@@ -126,11 +131,11 @@ const AddToWallet = () => {
                         onClick={handlePayment}
                         disabled={isDisabled}
                         className="w-full py-3.5 rounded-lg font-bold text-[13px] uppercase tracking-[0.1em] transition-all
-                            bg-[#00C853] hover:bg-[#00b04a] text-black shadow-lg
+                            bg-[#00C853] hover:bg-[#00b04a] text-white shadow-lg
                             disabled:bg-[#1e2025] disabled:text-[#5a5f6e] disabled:cursor-not-allowed disabled:shadow-none
                         "
                     >
-                        {loading ? "Redirecting to Razorpay..." : "Continue to Payment"}
+                        {loading ? "Redirecting..." : "Continue to Payment"}
                     </button>
                     <p className="text-[10px] text-[#5a5f6e] text-center uppercase tracking-widest font-medium">
                         Secure 256-bit SSL encrypted transaction

@@ -37,7 +37,7 @@ export const WalletBalanceBar: React.FC<WalletBalanceBarProps> = ({ balance, can
                     disabled={!canTransact}
                     onClick={() => navigate({ to: ROUTES.USER.WALLET.ADD })}
                     className={`px-6 py-2.5 rounded-md text-[12px] font-bold uppercase tracking-wider transition-all flex items-center gap-2 shadow-lg ${canTransact
-                        ? 'bg-emerald-600 text-white hover:bg-emerald-500 active:scale-[0.98]'
+                        ? 'bg-green-600 text-white hover:bg-green-700 active:scale-[0.98]'
                         : 'bg-[#1e2025] text-[#5a5f6e] cursor-not-allowed border border-[#2a2d35]'
                         }`}
                 >

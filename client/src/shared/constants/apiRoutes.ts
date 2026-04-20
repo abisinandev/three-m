@@ -33,6 +33,7 @@ export const API_ROUTES = {
         },
         PAYMENT: {
             CHECKOUT_SESSION: "/payments/create-checkout-session",
+            VERIFY: "/payments/verify",
         },
         NOTIFICATIONS: {
             GET_ALL: "/notifications",
