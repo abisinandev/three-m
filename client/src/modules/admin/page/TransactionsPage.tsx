@@ -71,7 +71,7 @@ export default function TransactionManagementPage() {
                 totalAmount={meta.totalAmount}
             />
 
-            {/* Table  */}
+            {/* Table */}
             <div className="bg-[#121214] rounded-lg border border-neutral-800/80 overflow-hidden shadow-xl">
 
                 <div className="p-3 border-b border-neutral-800/80 flex justify-between items-center bg-[#121214]">
