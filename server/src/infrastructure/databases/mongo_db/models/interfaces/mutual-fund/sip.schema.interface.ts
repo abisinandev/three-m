@@ -2,7 +2,6 @@ import { Document } from "mongoose";
 import { SipFrequency, SipStatus } from "@domain/enum/funds/sip.enums";
 
 export interface SipDocument extends Document {
-    _id: string;
     userId: string;
     schemeCode: string;
 

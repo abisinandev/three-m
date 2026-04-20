@@ -91,8 +91,6 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 referenceType: TransactionReferenceType.SIP,
                 referenceId: installment.id,
                 fundId: fund.id,
-                paymentStatus: TransactionStatus.SUCCESSFUL, // THIS IS NOT NEEDED HERE MANAGE 📌
-                isVerified: true,
             });
             await this._transactionRepository.create(transaction, session);
 

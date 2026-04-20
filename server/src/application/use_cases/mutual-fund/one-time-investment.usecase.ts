@@ -56,7 +56,6 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                     referenceType: TransactionReferenceType.SIP,
                     // referenceId: inv?.id as string,
                     // fundId: fund.id,//📌📌
-                    // paymentStatus: TransactionStatus.SUCCESSFUL,
                 })
                 const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
 
@@ -71,8 +70,8 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
 
                 const investment = InvestmentEntity.create({
                     userId,
-                    schemeCode,
-                    amount,
+                    schemeCode, 
+                    amount, 
                     investmentType,
                     paymentMethod,
                 });
@@ -81,7 +80,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
 
                 newTransaction.markSucess();
                 await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
-                
+
             });
 
             await session.commitTransaction();

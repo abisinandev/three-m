@@ -29,7 +29,6 @@ export const WalletBalanceBar: React.FC<WalletBalanceBarProps> = ({ balance, can
                         {fmt(balance, 2)}
                     </span>
                 </div>
-                <p className="text-[10px] text-[#00C853] font-semibold mt-1">Ready for deployment</p>
             </div>
 
             <div className="flex items-center gap-3">

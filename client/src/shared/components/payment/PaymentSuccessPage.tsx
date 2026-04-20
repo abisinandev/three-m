@@ -127,9 +127,9 @@ const PaymentSuccessPage = () => {
                 <div className="flex flex-col gap-2.5">
                     <button
                         onClick={() => navigate({ to: isSubscription ? ROUTES.HOME : ROUTES.USER.WALLET.ROOT })}
-                        className={`w-full py-3 ${isSubscription ? 'bg-amber-500 hover:bg-amber-400 text-black' : 'bg-emerald-600 hover:bg-emerald-500 text-white'} active:scale-[0.99] transition-all text-[11px] font-black uppercase tracking-widest rounded-md flex items-center justify-center gap-2`}
+                        className={`w-full py-3 ${isSubscription ? 'bg-amber-500 hover:bg-amber-400 text-black' : 'bg-green-600 hover:bg-green-500 text-white'} active:scale-[0.99] transition-all text-[11px] font-black uppercase tracking-widest rounded-md flex items-center justify-center gap-2`}
                     >
-                        {isSubscription ? "Go to Terminal" : "Ledger Audit"}
+                        {isSubscription ? "Go to Dashboard" : "Go to wallet"}
                         <ExternalLink className="w-3 h-3" />
                     </button>
 

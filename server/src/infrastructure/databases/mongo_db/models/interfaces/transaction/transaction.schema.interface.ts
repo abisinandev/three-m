@@ -11,7 +11,6 @@ export interface ITransactionSchema {
   transactionId: string;
   type: TransactionTypes;
   status: TransactionStatus;
-  paymentStatus: TransactionStatus;
   // isVerified: boolean;
   fundId?: string | null;
   // units?: number | null;

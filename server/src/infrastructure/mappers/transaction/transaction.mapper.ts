@@ -17,7 +17,6 @@ export const toDomain = (doc: TransactionDocument): TransactionEntity => {
         // fundId: doc.fundId ?? undefined,
         // units: doc.units ?? undefined,
         status: doc.status,
-        // paymentStatus: doc.paymentStatus,
         referenceType: doc.referenceType,
         referenceId:
             typeof doc.referenceId === 'string' && doc.referenceId.length > 0
@@ -41,7 +40,6 @@ export const toPersistance = (data: TransactionEntity): Partial<TransactionDocum
         currency: data.currency,
         type: data.type,
         status: data.status,
-        // paymentStatus: data.paymentStatus,
         // isVerified: data.isVerified,
         // txHash: data.txHash,
         // signature: data.signature,

@@ -57,6 +57,9 @@ export const ErrorMessages = {
         LIMIT_EXCEEDED: "Transaction amount exceeds the allowed limit of ₹10,000",
         INVALID_AMOUNT: "Invalid amount",
     },
+    TRANSACTIONS: {
+        MAX_TRANSACTION:"At a time only can transfer 10_0000rs"
+    },
     MUTUAL_FUND: {
         FUND_INACTIVE: "Investments in this fund are temporarily disabled. Please try another fund",
         REDEMPTION_FAILED: "Redemption is not allowed for this fund at the moment",

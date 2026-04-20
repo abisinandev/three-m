@@ -9,6 +9,7 @@ import { IUpgradePremiumUseCase } from "../user/subscription/interfaces/upgrade-
 import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
+import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 
 @injectable()
 export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase {
@@ -45,9 +46,8 @@ export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase
             paymentIntentId: paymentIntent.id,
             currency: paymentIntent.currency,
             receipt_url: "",
-            referenceType: ReferenceType.STRIPE,
-            status: TransactionStatus.SUCCESSFUL,
-            paymentStatus: "SUCCESS",
+            referenceType: TransactionReferenceType.STRIPE,
+            status: TransactionStatus.PENDING,
         };
 
         switch (purpose) {
@@ -62,7 +62,6 @@ export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase
                 await this._upgradePremium.execute({
                     ...paymentData,
                     type: TransactionTypes.SUBSCRIPTION,
-                    paymentStatus: TransactionStatus.SUCCESSFUL,
                 });
                 break;
 

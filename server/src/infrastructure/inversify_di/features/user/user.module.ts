@@ -29,14 +29,12 @@ import { IUserWalletUseCase } from "@application/use_cases/user/interfaces/user-
 import { UserWalletUseCase } from "@application/use_cases/user/wallet/user-wallet.usecase";
 import { WalletController } from "@presentation/http/controllers/wallet/wallet.controller";
 import { TransactionRepository } from "@infrastructure/databases/repository/transaction/transaction.repository";
-import { BlockRepository } from "@infrastructure/databases/repository/transaction/block.repository";
 import { AddToWalletUseCase } from "@application/use_cases/user/wallet/add-to-wallet.usecase";
 import { IAddToWalletUseCase } from "@application/use_cases/user/interfaces/add-to-wallet-usecase.interface";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IKycRepository } from "@application/interfaces/repositories/user/kyc-repository.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
-// import { IBlockRepository } from "@application/interfaces/repositories/feature/block-repository.interface";
 import { EditProfileUseCase } from "@application/use_cases/user/profile/edit-profile.usecase";
 
 export const UserModule = new ContainerModule(({ bind }) => {
@@ -64,6 +62,5 @@ export const UserModule = new ContainerModule(({ bind }) => {
   bind<IProfileImageUploadUseCase>(USER_TYPES.ProfileImageUploadUseCase).to(ProfileImageUploadUseCase);
   bind<IUserWalletUseCase>(USER_TYPES.UserWalletUseCase).to(UserWalletUseCase);
   bind<ITransactionRepository>(USER_TYPES.TransactionRepository).to(TransactionRepository);
-  // bind<IBlockRepository>(USER_TYPES.BlockRepository).to(BlockRepository);
   bind<IAddToWalletUseCase>(USER_TYPES.AddToWalletUseCase).to(AddToWalletUseCase);
 });

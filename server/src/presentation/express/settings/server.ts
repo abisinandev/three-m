@@ -37,10 +37,10 @@ const bootstrap = async () => {
 
 
     // Algo Trading BullMQ system
-    container.get<StrategyWorker>(STOCK_TYPES.StrategyWorker);
-    container.get<SignalWorker>(STOCK_TYPES.SignalWorker);
-    const algoScheduler = container.get<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler);
-    algoScheduler.start();
+    // container.get<StrategyWorker>(STOCK_TYPES.StrategyWorker);
+    // container.get<SignalWorker>(STOCK_TYPES.SignalWorker);
+    // const algoScheduler = container.get<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler);
+    // algoScheduler.start();
 
     const server = http.createServer(app); 
     InitSocketConfigs(server);

@@ -14,7 +14,6 @@ export interface TransactionResponseDTO {
     referenceType: TransactionReferenceType;
     paymentIntentId: string;
     status: TransactionStatus;
-    // paymentStatus: TransactionStatus;
     referenceId?: string;
     fundId?: string;
     // units?: number;

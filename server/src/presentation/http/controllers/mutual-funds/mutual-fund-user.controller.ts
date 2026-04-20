@@ -1,4 +1,4 @@
-import { IInvestmentUseCase } from "@application/use_cases/mutual-fund/interfaces/one-time-investment.usecase.interface";
+import { IOneTimeInvestmentUseCase } from "@application/use_cases/mutual-fund/interfaces/one-time-investment.usecase.interface";
 import { IListFundsUserSideUseCase } from "@application/use_cases/mutual-fund/interfaces/list-fund-usecase.interface";
 import { IMfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-investment-history-usecase.interface";
 import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-details-usecase.interface";
@@ -15,7 +15,7 @@ export class MutualFundUserController {
     constructor(
         @inject(MUTUAL_FUND_TYPES.ListFundUserSideUseCase) private readonly _listFundUseCase: IListFundsUserSideUseCase,
         @inject(MUTUAL_FUND_TYPES.MutualFundDetailsUseCase) private readonly _mfDetailsUsecase: IMutualFundDetailsUseCase,
-        @inject(MUTUAL_FUND_TYPES.InvestmentUseCase) private readonly _investmentUseCase: IInvestmentUseCase,
+        @inject(MUTUAL_FUND_TYPES.InvestmentUseCase) private readonly _investmentUseCase: IOneTimeInvestmentUseCase,
         @inject(MUTUAL_FUND_TYPES.MfInvestmentHistoryUseCase) private readonly _mfInvestmentsHistory: IMfInvestmentHistoryUseCase,
     ) { }
 
@@ -101,5 +101,5 @@ export class MutualFundUserController {
         } catch (error) {
             next(error);
         }
-    } 
+    }
 }

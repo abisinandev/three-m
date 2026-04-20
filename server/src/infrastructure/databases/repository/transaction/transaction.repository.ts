@@ -48,8 +48,12 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
         );
     }
 
-    async findByPaymentId(paymentIntentId: string): Promise<TransactionEntity | null> {
-        const doc = await this.model.findOne({ paymentIntentId })
+    async findByPaymentId(paymentIntentId: string, session: ClientSession): Promise<TransactionEntity | null> {
+        const doc = await this.model.findOne(
+            { paymentIntentId },
+            null,
+            { session }
+        );
         if (!doc) return null;
         return this.mapper.toDomain(doc);
     }

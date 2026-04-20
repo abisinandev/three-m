@@ -63,8 +63,9 @@ const PremiumPaymentModal = ({ isOpen, onClose }: PremiumPaymentModalProps) => {
                 purpose: "SUBSCRIPTION",
             });
 
-            if (res.data.checkoutUrl) {
-                window.location.href = res.data.checkoutUrl;
+            const checkoutUrl = res.data.data.checkoutUrl;
+            if (checkoutUrl) {
+                window.location.href = checkoutUrl;
             } else {
                 throw new Error("Checkout URL not found");
             }

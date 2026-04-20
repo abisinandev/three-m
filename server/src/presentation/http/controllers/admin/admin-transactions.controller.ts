@@ -1,7 +1,4 @@
 import { IFetchTransactionsUseCase } from "@application/use_cases/admin/interfaces/fetch-transactions-usecase.interface";
-import { ISipDetailsUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-details-usecase.interface";
-import { IAdminVerifyTransactionUseCase } from "@application/use_cases/user/interfaces/admin-verify-transaction-usecase.interface";
-import { ErrorMessages } from "@shared/constants/error.messages";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
@@ -13,7 +10,6 @@ import { inject, injectable } from "inversify";
 export class AdminTransactionsController {
     constructor(
         @inject(ADMIN_TYPES.FetchTransactionsUseCase) private readonly _fetchTransactions: IFetchTransactionsUseCase,
-        @inject(ADMIN_TYPES.VerifyTransactionUseCase) private readonly _verifyTransaction: IAdminVerifyTransactionUseCase,
     ) { };
 
     async getTransactions(req: Request, res: Response, next: NextFunction) {
@@ -30,27 +26,27 @@ export class AdminTransactionsController {
         }
     }
 
-    async verifyTransaction(req: Request, res: Response, next: NextFunction) {
-        try {
-            const txId = req.params.txId;
-            const result = await this._verifyTransaction.execute(txId as string);
-            if (!result.isVerified) {
-                return ResponseHelper.failure(
-                    res,
-                    ErrorMessages.PAYMENT.TRANSACTION_FAILED,
-                    HttpStatus.BAD_REQUEST
-                )
-            };
+    // async verifyTransaction(req: Request, res: Response, next: NextFunction) {
+    //     try {
+    //         const txId = req.params.txId;
+    //         const result = await this._verifyTransaction.execute(txId as string);
+    //         if (!result.isVerified) {
+    //             return ResponseHelper.failure(
+    //                 res,
+    //                 ErrorMessages.PAYMENT.TRANSACTION_FAILED,
+    //                 HttpStatus.BAD_REQUEST
+    //             )
+    //         };
 
-            return ResponseHelper.success(
-                res,
-                SuccessMessage.TRANSACTION_VERIFIED,
-                HttpStatus.OK
-            )
-        } catch (error) {
-            next(error)
-        }
-    }
+    //         return ResponseHelper.success(
+    //             res,
+    //             SuccessMessage.TRANSACTION_VERIFIED,
+    //             HttpStatus.OK
+    //         )
+    //     } catch (error) {
+    //         next(error)
+    //     }
+    // }
 
 
 

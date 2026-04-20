@@ -29,6 +29,5 @@ router.patch(AdminProtectedRoutes.VERIFY_KYC, adminKycController.verifyKyc.bind(
 router.patch(AdminProtectedRoutes.REJECT_KYC, adminKycController.rejectKyc.bind(adminKycController));
 
 router.get(AdminProtectedRoutes.FETCH_TRANSACTIONS, adminTransactionsController.getTransactions.bind(adminTransactionsController));
-router.patch(AdminProtectedRoutes.VERIFY_TRANSACTIONS, adminTransactionsController.verifyTransaction.bind(adminTransactionsController));
 
 export default router;

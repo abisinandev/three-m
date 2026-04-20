@@ -98,7 +98,7 @@ const AddToWallet = () => {
                 </div>
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/5 border border-emerald-500/10 rounded">
                     <ShieldCheck size={12} className="text-[#00C853]" />
-                    <span className="text-[9px] font-bold text-[#00C853] uppercase tracking-widest">Secure Node</span>
+                    <span className="text-[9px] font-bold text-[#00C853] uppercase tracking-widest">Secure</span>
                 </div>
             </div>
 
