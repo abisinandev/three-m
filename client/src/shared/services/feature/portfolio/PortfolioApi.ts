@@ -16,9 +16,10 @@ export const getPortfolioInvestments = async (
 
     return {
         data: responseData?.data ?? [],
-        limit: responseData?.limit ?? limit,
-        page: responseData?.page ?? page,
-        totalCount: responseData?.totalCount ?? 0,
+        limit: Number(responseData?.limit ?? limit),
+        page: Number(responseData?.page ?? page),
+        total: Number(responseData?.total ?? 0),
+        totalPages: Number(responseData?.totalPages ?? 0),
     };
 };
 
@@ -57,30 +58,58 @@ export const getPortfolioProjection = async (): Promise<IPortfolioProjectionResp
     return data?.data;
 };
 
-export const getTradeHistory = async (page = 1, limit = 10) => {
+export const getTradeHistory = async (page = 1, limit = 10): Promise<IInvestmentBaseResponse> => {
     const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.TRADE_HISTORY, {
         params: { page, limit }
     });
-    return data?.data;
+    const responseData = data?.data;
+    return {
+        data: responseData?.data ?? [],
+        limit: Number(responseData?.limit ?? limit),
+        page: Number(responseData?.page ?? page),
+        total: Number(responseData?.total ?? 0),
+        totalPages: Number(responseData?.totalPages ?? 0),
+    };
 };
 
-export const getMFHoldings = async (page = 1, limit = 10, search?: string) => {
+export const getMFHoldings = async (page = 1, limit = 10, search?: string): Promise<IInvestmentBaseResponse> => {
     const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.INVESTMENTS, {
         params: { page, limit, search }
     });
-    return data?.data;
+    const responseData = data?.data;
+    return {
+        data: responseData?.data ?? [],
+        limit: Number(responseData?.limit ?? limit),
+        page: Number(responseData?.page ?? page),
+        total: Number(responseData?.total ?? 0),
+        totalPages: Number(responseData?.totalPages ?? 0),
+    };
 };
 
-export const getStockHoldings = async (page = 1, limit = 10, search?: string) => {
+export const getStockHoldings = async (page = 1, limit = 10, search?: string): Promise<IInvestmentBaseResponse> => {
     const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.TRADES, {
         params: { page, limit, search }
     });
-    return data?.data;
+    const responseData = data?.data;
+    return {
+        data: responseData?.data ?? [],
+        limit: Number(responseData?.limit ?? limit),
+        page: Number(responseData?.page ?? page),
+        total: Number(responseData?.total ?? 0),
+        totalPages: Number(responseData?.totalPages ?? 0),
+    };
 };
 
-export const getHistories = async (page = 1, limit = 10) => {
+export const getHistories = async (page = 1, limit = 10): Promise<IInvestmentBaseResponse> => {
     const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.HISTORIES, {
         params: { page, limit }
     });
-    return data?.data;
+    const responseData = data?.data;
+    return {
+        data: responseData?.data ?? [],
+        limit: Number(responseData?.limit ?? limit),
+        page: Number(responseData?.page ?? page),
+        total: Number(responseData?.total ?? 0),
+        totalPages: Number(responseData?.totalPages ?? 0),
+    };
 };

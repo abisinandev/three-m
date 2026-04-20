@@ -25,9 +25,10 @@ export interface IInvestmentResponse {
 
 export interface IInvestmentBaseResponse {
     data: IInvestmentResponse[];
-    page: number | string;
-    limit: number | string;
-    totalCount?: number;
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
 }
 
 export interface IPortfolioDatasResponse {
