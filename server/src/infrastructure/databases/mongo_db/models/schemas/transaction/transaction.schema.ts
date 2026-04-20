@@ -56,7 +56,7 @@ const TransactionSchema = new Schema<TransactionDocument>(
             required: true,
         },
 
-        referenceId: { trpe: String },
+        referenceId: { type: String },
 
         receipt_url: {
             type: String,
@@ -65,7 +65,10 @@ const TransactionSchema = new Schema<TransactionDocument>(
 
         paymentIntentId: {
             type: String,
-            unique: true,
+            index: {
+                unique: true,
+                partialFilterExpression: { paymentIntentId: { $type: "string" } },
+            },
         },
     },
     {

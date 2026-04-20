@@ -18,6 +18,10 @@ import { TransactionReferenceType } from "@domain/enum/wallet/transaction-refere
 import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import mongoose from "mongoose";
+import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
+import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
+import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
+import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 
 
 @injectable()
@@ -28,6 +32,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
+        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
     ) { }
 
     async execute(data: InvestmentDTO, userId: string): Promise<void> {
@@ -69,13 +74,38 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
 
                 const investment = InvestmentEntity.create({
                     userId,
-                    schemeCode, 
-                    amount, 
+                    schemeCode,
+                    amount,
                     investmentType,
                     paymentMethod,
                 });
-
                 await this._investmentRepository.createInvestment(investment);
+
+                let portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
+                    userId,
+                    fund.id as string,
+                    session
+                );
+
+                if (!portfolio) {
+                    portfolio = PortfolioEntity.create({
+                        userId,
+                        assetId: fund.id as string,
+                        assetType: AssetType.MUTUAL_FUND,
+                        units: data.units,
+                        avgPrice: amount / (data.units || 1),
+                        investedAmount: amount,
+                    });
+                    await this._portfolioRepository.create(portfolio, session);
+                } else {
+                    const newTotalInvested = portfolio.investedAmount + amount;
+                    const newQuantity = (portfolio.quantity ?? 0) + (data.units || 0);
+                    const newAvgPrice = newTotalInvested / (newQuantity || 1);
+
+                    portfolio.updateQuantityAndPrice(newQuantity, newAvgPrice, newTotalInvested);
+
+                    await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
+                }
 
                 newTransaction.markSucess();
                 await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);

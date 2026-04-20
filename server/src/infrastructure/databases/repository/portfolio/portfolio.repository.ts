@@ -4,7 +4,7 @@ import { IPortfolioRepository } from "@application/interfaces/repositories/featu
 import { PortfolioModel, PortfolioDocument } from "../../mongo_db/models/schemas/portfolio/portfolio.schema";
 import { injectable } from "inversify";
 import { PortfolioMapper } from "@infrastructure/mappers/portfolio/portfolio.mapper";
-import { ClientSession } from "mongoose";
+import { ClientSession, QueryOptions } from "mongoose";
 
 @injectable()
 export class PortfolioRepository extends BaseRepository<PortfolioEntity, PortfolioDocument> implements IPortfolioRepository {
@@ -12,8 +12,8 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         super(PortfolioModel, PortfolioMapper)
     }
 
-    async findByUserIdAndSymbol(userId: string, symbol: string, session?: ClientSession): Promise<PortfolioEntity | null> {
-        const result = await this.model.findOne({ userId, symbol }, null, { session });
+    async findByUserIdAndSymbol(userId: string, assetId: string, session?: ClientSession): Promise<PortfolioEntity | null> {
+        const result = await this.model.findOne({ userId, assetId }, null, { session });
         if (!result) return null;
         return this.mapper.toDomain(result);
     }
@@ -23,8 +23,56 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         return results.map((doc) => this.mapper.toDomain(doc))
     }
 
-    async deleteByUserIdAndSymbol(userId: string, symbol: string, session?: ClientSession): Promise<boolean> {
-        const result = await this.model.deleteOne({ userId, symbol }, { session });
+    async findWithFilters(userId: string, options: QueryOptions): Promise<PortfolioEntity[]> {
+        const {
+            page = 1,
+            limit = 10,
+            filter = {},
+            search = "",
+            sortBy = "createdAt",
+            sortOrder = "desc",
+        } = options;
+
+        const skip = (Number(page) - 1) * Number(limit);
+
+        const finalFilter: Record<string, unknown> = { 
+            ...filter, 
+            userId,
+        };
+
+        if (search.trim()) {
+            finalFilter.assetId = { $regex: search.trim(), $options: "i" };
+        }
+
+        const sort: Record<string, 1 | -1> = {
+            [sortBy]: sortOrder === "asc" ? 1 : -1,
+        } as any;
+
+        const docs = await this.model
+            .find(finalFilter)
+            .sort(sort)
+            .skip(skip)
+            .limit(Number(limit))
+            .exec();
+
+        return Promise.all(docs.map((doc) => this.mapper.toDomain(doc)));
+    }
+
+    async countWithFilters(userId: string, filter: Record<string, unknown>, search: string): Promise<number> {
+        const finalFilter: Record<string, unknown> = { 
+            ...filter, 
+            userId 
+        };
+
+        if (search.trim()) {
+            finalFilter.assetId = { $regex: search.trim(), $options: "i" };
+        }
+
+        return await this.model.countDocuments(finalFilter);
+    }
+
+    async deleteByUserIdAndSymbol(userId: string, assetId: string, session?: ClientSession): Promise<boolean> {
+        const result = await this.model.deleteOne({ userId, assetId }, { session });
         return result.deletedCount > 0;
     }
 }

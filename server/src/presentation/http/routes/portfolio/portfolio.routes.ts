@@ -8,17 +8,17 @@ const router = Router()
 
 const controller = container.get<PortFolioController>(PortFolioController);
 
-router.get(PortfolioRoutes.LIST_ALL, controller.listAllInvestments.bind(controller));
-router.get(PortfolioRoutes.DATAS, controller.portfolioCalculation.bind(controller));
+// router.get(PortfolioRoutes.LIST_ALL, controller.listAllInvestments.bind(controller));
+// router.get(PortfolioRoutes.DATAS, controller.portfolioCalculation.bind(controller));
 router.get(PortfolioRoutes.RETURN_XIRR, controller.xirrCalculation.bind(controller));
 
-router.get(PortfolioRoutes.REDEEM_INVESTMENT, controller.redeemInvestments.bind(controller));
-router.patch(PortfolioRoutes.CONFIRM_REDEEM, validateDTO(ConfirmRedeemDTO), controller.confirmRedeem.bind(controller));
-router.get(PortfolioRoutes.TRADE_HISTORY, controller.listTradeHistory.bind(controller));
+// router.get(PortfolioRoutes.REDEEM_INVESTMENT, controller.redeemInvestments.bind(controller));
+// router.patch(PortfolioRoutes.CONFIRM_REDEEM, validateDTO(ConfirmRedeemDTO), controller.confirmRedeem.bind(controller));
+// router.get(PortfolioRoutes.TRADE_HISTORY, controller.listTradeHistory.bind(controller));
 
 router.get(PortfolioRoutes.INVESTMENTS, controller.listMutualFundHoldings.bind(controller));
-router.get(PortfolioRoutes.TRADES, controller.listStockHoldings.bind(controller));
-router.get(PortfolioRoutes.HISTORIES, controller.listTradeHistory.bind(controller));
+// router.get(PortfolioRoutes.TRADES, controller.listStockHoldings.bind(controller));
+// router.get(PortfolioRoutes.HISTORIES, controller.listTradeHistory.bind(controller));
 
 router.get("/projection", controller.returnProjection.bind(controller));
 

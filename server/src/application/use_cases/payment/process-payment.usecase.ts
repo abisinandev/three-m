@@ -6,7 +6,6 @@ import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.type
 import { IAddToWalletUseCase } from "../user/interfaces/add-to-wallet-usecase.interface";
 import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
 import { IUpgradePremiumUseCase } from "../user/subscription/interfaces/upgrade-premium-usecase.interface";
-import { ReferenceType } from "@domain/enum/wallet/transaction-reference.enum";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";

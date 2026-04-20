@@ -15,6 +15,8 @@ export interface ITradeRepository extends IBaseRepository<TradeEntity> {
     findByUserId(userId: string, session?: ClientSession): Promise<TradeEntity[]>;
     findByOrderId(orderId: string, session?: ClientSession): Promise<TradeEntity[]>;
     countTodaysTrades(): Promise<number>;
+    findWithFilters(userId: string, options: TradeFilterOptions): Promise<TradeEntity[]>;
+    countWithFilters(userId: string, filter: Record<string, unknown>, search: string): Promise<number>;
     findAlgoTradesWithFilter(options: TradeFilterOptions): Promise<TradeEntity[]>;
     countAlgoTrades(search?: string): Promise<number>;
 }

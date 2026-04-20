@@ -33,6 +33,8 @@ export class PortFolioController {
             const userId = req?.user?.id
 
             const result = await this._listAllInvestments.execute(userId as string, req.query);
+            console.log(result, '-------')
+            
             return ResponseHelper.success(
                 res,
                 SuccessMessages.DATA.FETCHED,
@@ -49,7 +51,6 @@ export class PortFolioController {
         try {
             const userId = req?.user?.id
             const result = await this._portfolioCalcuationUseCase.execute(userId as string);
-            console.log("result: ", result);
             return ResponseHelper.success(
                 res,
                 SuccessMessages.DATA.FETCHED,

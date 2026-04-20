@@ -6,7 +6,7 @@ import { InvestmentMapper } from "@infrastructure/mappers/mutual-fund/investment
 import { InvestmentModel } from "@infrastructure/databases/mongo_db/models/schemas/mutual-fund/investment.schema";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
-import { ClientSession, QueryOptions, Types } from "mongoose";
+import { ClientSession, QueryOptions, Types, PipelineStage } from "mongoose";
 import { GroupedSchemeInvestments } from "@application/dto/portfolio/grouped-scheme-investments ";
 import { InvestmentRedeemResult } from "@domain/types/radeem-units.types";
 
@@ -95,21 +95,23 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             [sortBy]: sortOrder === "asc" ? 1 : -1,
         };
 
-        const pipeline: any[] = [{ $match: matchStage }];
-
-        pipeline.push({
-            $lookup: {
-                from: "mutualfunds",
-                localField: "schemeCode",
-                foreignField: "schemeCode",
-                as: "fund",
+        const pipeline: PipelineStage[] = [
+            { $match: matchStage },
+            {
+                $lookup: {
+                    from: "mutualfunds",
+                    localField: "schemeCode",
+                    foreignField: "schemeCode",
+                    as: "fund",
+                },
             },
-        }, {
-            $unwind: {
-                path: "$fund",
-                preserveNullAndEmptyArrays: true,
+            {
+                $unwind: {
+                    path: "$fund",
+                    preserveNullAndEmptyArrays: true,
+                },
             },
-        });
+        ];
 
         if (search) {
             pipeline.push({
@@ -143,7 +145,6 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
                     redeemedAmount: 1,
                     createdAt: 1,
                     updatedAt: 1,
-
                     fund: {
                         schemeName: 1,
                         category: 1,
@@ -331,17 +332,18 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         return docs.map(doc => this.mapper.toDomain(doc));
     }
 
-    async countInvestments(userId: string, filter: any = {}, search: string = ""): Promise<number> {
+    async countInvestments(userId: string, options: QueryOptions): Promise<number> {
+        const {
+            filter = {},
+            search = "",
+        } = options;
+
         const matchStage: Record<string, unknown> = {
             ...filter,
             userId: new Types.ObjectId(userId),
         };
 
-        if (!search) {
-            return await this.model.countDocuments(matchStage);
-        }
-
-        const result = await this.model.aggregate([
+        const pipeline: PipelineStage[] = [
             { $match: matchStage },
             {
                 $lookup: {
@@ -351,18 +353,28 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
                     as: "fund",
                 },
             },
-            { $unwind: "$fund" },
             {
+                $unwind: {
+                    path: "$fund",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+        ];
+
+        if (search) {
+            pipeline.push({
                 $match: {
                     $or: [
                         { schemeCode: { $regex: search, $options: "i" } },
                         { "fund.schemeName": { $regex: search, $options: "i" } },
                     ],
                 },
-            },
-            { $count: "count" },
-        ]);
+            });
+        }
 
-        return result.length > 0 ? result[0].count : 0;
+        pipeline.push({ $count: "total" });
+
+        const result = await this.model.aggregate(pipeline);
+        return result.length > 0 ? result[0].total : 0;
     }
 }  

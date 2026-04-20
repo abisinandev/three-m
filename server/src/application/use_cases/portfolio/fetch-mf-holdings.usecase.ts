@@ -8,6 +8,7 @@ import { toInvestmentResponse } from "@application/mappers/mutual-fund/investmen
 import { InvestmentResponseDTO } from "@application/dto/mutual-funds/investment-response.dto";
 import { QueryOptions } from "mongoose";
 import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
+import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
 
 @injectable()
 export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsUseCase {
@@ -19,57 +20,57 @@ export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsU
 
     async execute(userId: string, options: QueryOptions): Promise<{
         data: InvestmentResponseDTO[];
+        total: number;
         page: number;
         limit: number;
-        totalCount: number;
+        totalPages: number;
     }> {
-        const { page = 1, limit = 10, search = "", status } = options as any;
+        const { page = 1, limit = 10 } = options;
 
-        const filter: any = {};
-        if (status) {
-            filter.status = status;
-        } else {
-            filter.status = InvestmentStatus.ALLOTTED; 
-        }
-
-        const investments = await this._investmentRepository.getUserInvestments(userId, { ...options, filter }) ?? [];
-        const totalCount = await this._investmentRepository.countInvestments(userId, filter, search);
+        const [investments, total] = await Promise.all([
+            this._investmentRepository.getUserInvestments(userId, options),
+            this._investmentRepository.countInvestments(userId, options),
+        ]);
 
         const data: InvestmentResponseDTO[] = [];
         for (const inv of investments) {
-            const latestNav = await this._navUpdateProvider.fetchNavHistories(inv.schemeCode);
-            const fund = await this._mutualFundRepository.findBySchemeCode(inv.schemeCode);
+            const [latestNav, fund, schemeInvestments] = await Promise.all([
+                this._navUpdateProvider.fetchNavHistories(inv.schemeCode),
+                this._mutualFundRepository.findBySchemeCode(inv.schemeCode),
+                this._investmentRepository.getTotalUnitsByUserAndScheme(userId, inv.schemeCode)
+            ]);
+
             if (!fund) continue;
-            
+
+            const schemeInvests = schemeInvestments ?? [];
             let profit = 0;
             if (inv.status === InvestmentStatus.ALLOTTED && Number(inv.units) > 0 && latestNav?.length) {
                 profit = (Number(inv.units) * latestNav[0].nav) - inv.amount;
             }
 
-            const schemeInvestments = await this._investmentRepository.getTotalUnitsByUserAndScheme(userId, inv.schemeCode) ?? [];
-            const fundXirr = this.calculateFundXirr(schemeInvestments, latestNav?.length ? latestNav[0].nav : 0);
-
+            const fundXirr = this.calculateFundXirr(schemeInvests, latestNav?.length ? latestNav[0].nav : 0);
             data.push(toInvestmentResponse(inv, fund, profit, fundXirr ?? undefined));
         }
 
         return {
             data,
+            total,
             page: Number(page),
-            limit: Number(limit), 
-            totalCount,
+            limit: Number(limit),
+            totalPages: Math.ceil(total / (Number(limit) || 10)),
         };
     }
 
-    private calculateFundXirr(investments: any[], currentNav: number): number | null {
+    private calculateFundXirr(investments: InvestmentEntity[], currentNav: number): number | null {
         if (investments.length === 0) return null;
         const cashFlows: { date: Date; amount: number }[] = [];
         let totalRemainingUnits = 0;
- 
+
         for (const inv of investments) {
-            cashFlows.push({ date: inv.createdAt, amount: -inv.amount });
+            cashFlows.push({ date: new Date(inv.createdAt), amount: -inv.amount });
             if (inv.status === InvestmentStatus.REDEEMED) {
                 cashFlows.push({
-                    date: inv.redeemedAt ?? inv.updatedAt,
+                    date: new Date(inv.redeemedAt || inv.updatedAt || new Date()),
                     amount: inv.redeemedAmount as number,
                 });
             } else {

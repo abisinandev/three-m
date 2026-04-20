@@ -32,6 +32,7 @@ export class PortfolioCalculationsUseCase implements IPortfolioCalculationsUseCa
         currentValue: number;
     }> {
 
+
         const investments = await this._investmentRepository.getUserInvestmentsWithoutFilter(userId) ?? [];
         const stockPortfolios = await this._portfolioRepository.findByUserId(userId) ?? [];
 
@@ -79,15 +80,15 @@ export class PortfolioCalculationsUseCase implements IPortfolioCalculationsUseCa
             // Fetch real-time price if possible
             let stockPrice = stock.avgPrice; // Fallback
             try {
-                const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
+                const quote = await this._marketDataProvider.getLatestQuote(stock.assetId);
                 if (quote) {
                     stockPrice = quote.price;
                 }
             } catch (err) {
-                console.error(`Error fetching quote for ${stock.symbol}:`, err);
+                console.error(`Error fetching quote for ${stock.assetId}:`, err);
             }
 
-            currentValue += stock.quantity * stockPrice;
+            currentValue += (stock.quantity ?? 0) * stockPrice;
         }
 
         const totalProfit = currentValue - totalInvestment; 

@@ -1,5 +1,6 @@
 import { model, Schema, Document } from "mongoose";
 import { IPortfolio } from "../../interfaces/portfolio/portfolio.schema.interface";
+import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 
 export type PortfolioDocument = Document & IPortfolio;
 
@@ -11,15 +12,23 @@ export const PortfolioSchema = new Schema<PortfolioDocument>(
             required: true,
             index: true
         },
-        symbol: {
+        assetType: {
             type: String,
+            enum: Object.values(AssetType),
             required: true,
-            uppercase: true,
+            index: true
+        },
+        assetId: {
+            type: Schema.Types.ObjectId,
+            required: true,
             index: true
         },
         quantity: {
             type: Number,
-            required: true,
+            default: 0
+        },
+        units: {
+            type: Number,
             default: 0
         },
         avgPrice: {
@@ -52,7 +61,7 @@ export const PortfolioSchema = new Schema<PortfolioDocument>(
 );
 
 PortfolioSchema.index(
-    { userId: 1, symbol: 1 },
+    { userId: 1, assetId: 1, assetType: 1 },
     { unique: true }
 );
 

@@ -26,6 +26,60 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
         return docs.map(doc => TradeMapper.toDomain(doc));
     }
 
+    async findWithFilters(userId: string, options: TradeFilterOptions): Promise<TradeEntity[]> {
+        const {
+            page = 1,
+            limit = 10,
+            filter = {},
+            search = "",
+            sortBy = "createdAt",
+            sortOrder = "desc",
+        } = options;
+
+        const skip = (Number(page) - 1) * Number(limit);
+
+        const finalFilter: Record<string, unknown> = { 
+            ...filter, 
+            userId: userId as any 
+        };
+
+        if (search.trim()) {
+            finalFilter.$or = [
+                { symbol: { $regex: search.trim(), $options: "i" } },
+                { userId: { $regex: search.trim(), $options: "i" } }
+            ];
+        }
+
+        const sort: Record<string, 1 | -1> = {
+            [sortBy]: sortOrder === "asc" ? 1 : -1,
+        } as any;
+
+        const docs = await this.model
+            .find(finalFilter)
+            .sort(sort)
+            .skip(skip)
+            .limit(Number(limit))
+            .exec();
+
+        return docs.map(doc => TradeMapper.toDomain(doc));
+    }
+
+    async countWithFilters(userId: string, filter: Record<string, unknown>, search: string): Promise<number> {
+        const finalFilter: Record<string, unknown> = { 
+            ...filter, 
+            userId: userId as any 
+        };
+
+        if (search.trim()) {
+            finalFilter.$or = [
+                { symbol: { $regex: search.trim(), $options: "i" } },
+                { userId: { $regex: search.trim(), $options: "i" } }
+            ];
+        }
+
+        return await this.model.countDocuments(finalFilter);
+    }
+
     async countTodaysTrades(): Promise<number> {
         const startOfToday = new Date();
         startOfToday.setHours(0, 0, 0, 0);

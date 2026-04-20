@@ -8,6 +8,7 @@ import { InvestmentResponseDTO } from "@application/dto/mutual-funds/investment-
 import { QueryOptions } from "mongoose";
 import { InvestmentStatus, InvestmentType, PaymentMethod } from "@domain/enum/funds/investment.enums";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
+import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 
 @injectable()
 export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
@@ -17,56 +18,51 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
     ) { }
 
-    async execute(userId: string, options: QueryOptions = {}): Promise<{
+    async execute(userId: string, options: QueryOptions): Promise<{
         data: InvestmentResponseDTO[];
+        total: number;
         page: number;
         limit: number;
-        totalCount: number;
+        totalPages: number;
     }> {
-        const { page = 1, limit = 10, search = "" } = options as any;
+        const { page = 1, limit = 10, search = "" } = options;
+        
+        const filter = { assetType: AssetType.STOCK };
 
-        let stockPortfolios = await this._portfolioRepository.findByUserId(userId) ?? [];
-
-        if (search) {
-            stockPortfolios = stockPortfolios.filter(sp =>
-                sp.symbol.toLowerCase().includes(search.toLowerCase())
-            );
-        }
-
-        const totalCount = stockPortfolios.length;
-
-        const startIndex = (Number(page) - 1) * Number(limit);
-        const paginatedPortfolios = stockPortfolios.slice(startIndex, startIndex + Number(limit));
+        const [stockPortfolios, total] = await Promise.all([
+            this._portfolioRepository.findWithFilters(userId, { ...options, filter }),
+            this._portfolioRepository.countWithFilters(userId, filter, search as string)
+        ]);
 
         const data: InvestmentResponseDTO[] = [];
 
-        for (const stockPf of paginatedPortfolios) {
-            const stockDetails = await this._stockRepository.findBySymbol(stockPf.symbol);
+        for (const stockPf of stockPortfolios) {
+            const stockDetails = await this._stockRepository.findBySymbol(stockPf.assetId);
 
             let currentPrice = stockPf.avgPrice;
             try {
-                const quote = await this._marketDataProvider.getLatestQuote(stockPf.symbol);
+                const quote = await this._marketDataProvider.getLatestQuote(stockPf.assetId);
                 if (quote) {
                     currentPrice = quote.price;
                 }
             } catch (err) {
-                console.error(`Error fetching quote for ${stockPf.symbol}:`, err);
+                console.error(`Error fetching quote for ${stockPf.assetId}:`, err);
             }
 
-            const currentValue = stockPf.quantity * currentPrice;
+            const currentValue = (stockPf.quantity ?? 0) * currentPrice;
             const profit = currentValue - stockPf.investedAmount;
 
             data.push({
                 id: stockPf.id as string,
                 userId: stockPf.userId,
-                schemeCode: stockPf.symbol, // ticker
-                schemeName: stockDetails?.name || stockPf.symbol,
+                schemeCode: stockPf.assetId,
+                schemeName: stockDetails?.name || stockPf.assetId,
                 amount: stockPf.investedAmount,
-                units: stockPf.quantity,
-                nav: stockPf.avgPrice, // avg entry price
+                units: stockPf.quantity || 0,
+                nav: stockPf.avgPrice,
                 navDate: stockPf.updatedAt || stockPf.createdAt,
                 category: "Stock",
-                status: InvestmentStatus.HOLDING, // Specialized status for stocks
+                status: InvestmentStatus.HOLDING,
                 paymentMethod: PaymentMethod.WALLET,
                 investmentType: InvestmentType.STOCK,
                 logo: stockDetails?.logo || "",
@@ -78,9 +74,10 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
 
         return {
             data,
+            total,
             page: Number(page),
             limit: Number(limit),
-            totalCount,
+            totalPages: Math.ceil(total / (Number(limit) || 10)),
         };
     }
 }

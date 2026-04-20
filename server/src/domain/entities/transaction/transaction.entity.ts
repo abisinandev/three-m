@@ -1,8 +1,6 @@
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
-import { SignatureKey } from "@domain/entities/user/wallet-value-objects/signature-key.vo";
-import { TxHash } from "@domain/entities/user/wallet-value-objects/transaction.vo";
 import { TransactionId } from "@domain/entities/user/wallet-value-objects/transaction_id.vo";
 
 export class TransactionEntity {

@@ -7,6 +7,7 @@ import { IMutualFundRepository } from "@application/interfaces/repositories/feat
 import { QueryOptions } from "mongoose";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { InvestmentStatus, InvestmentType, PaymentMethod } from "@domain/enum/funds/investment.enums";
+import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
@@ -32,6 +33,8 @@ interface InvestmentData {
     remainingUnits?: number;
 }
 
+//NOT WORKING----------------------📌📌📌📌
+
 @injectable()
 export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
     constructor(
@@ -48,6 +51,7 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
         limit: number;
         totalCount: number;
     }> {
+
         const { page = 1, limit = 10 } = options;
         const portfolioOptions = options as PortfolioQueryOptions;
         const status = portfolioOptions.status;
@@ -57,8 +61,10 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
             filter.status = status;
         }
 
-        const investments = (await this._investmentRepository.getUserInvestments(userId, { ...options, filter })) ?? [];
-        const totalCount = await this._investmentRepository.countInvestments(userId, filter, portfolioOptions.search || "");
+        const [investments, totalCount] = await Promise.all([
+            this._investmentRepository.getUserInvestments(userId, options),
+            this._investmentRepository.countInvestments(userId, options)
+        ]);
 
         const data: InvestmentResponseDTO[] = [];
         for (const inv of investments) {
@@ -86,17 +92,17 @@ export class PortfolioDetailsUseCase implements IPortfolioDetailsUseCase {
             const stockPortfolios = await this._portfolioRepository.findByUserId(userId);
             for (const stockPf of stockPortfolios) {
                 // optional: search filtering on stocks
-                if (portfolioOptions.search && !stockPf.symbol.toLowerCase().includes(portfolioOptions.search.toLowerCase())) {
+                if (portfolioOptions.search && !stockPf.assetId.toLowerCase().includes(portfolioOptions.search.toLowerCase())) {
                     continue;
                 }
 
-                const stockDetails = await this._stockRepository.findBySymbol(stockPf.symbol);
+                const stockDetails = await this._stockRepository.findBySymbol(stockPf.assetId);
                 
                 data.push({
                     id: stockPf.id as string,
                     userId: stockPf.userId,
-                    schemeCode: stockPf.symbol, // ticker
-                    schemeName: stockDetails?.name || stockPf.symbol,
+                    schemeCode: stockPf.assetId, // ticker
+                    schemeName: stockDetails?.name || stockPf.assetId,
                     amount: stockPf.investedAmount,
                     units: stockPf.quantity,
                     nav: stockPf.avgPrice, // avg entry price

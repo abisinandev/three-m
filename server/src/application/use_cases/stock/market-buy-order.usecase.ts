@@ -25,6 +25,7 @@ import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscr
 import { IFeatureAccessService } from "@application/interfaces/services/subscription/feature-access-service.interface";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { isIndianMarketOpen } from "@shared/utils/market/market-time";
+import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 
 @injectable()
 export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
@@ -41,7 +42,7 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
     ) { }
 
     async execute(data: BuyOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
-        
+
         const hasAccess = await this._featureAccess.hasAccess(
             userId,
             Features.STOCK_TRADING
@@ -98,18 +99,18 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
 
 
             ///📌📌📌📌📌📌📌📌Transaction not managed
-            
+
             wallet.debit(execution.totalValue);
             await this._wallet.update(userId, wallet, session);
 
             let portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
                 userId,
-                data.symbol,
+                stock.id as string,
                 session
             );
 
             if (portfolio) {
-                const newTotalQuantity = portfolio.quantity + execution.filledQty;
+                const newTotalQuantity = (portfolio.quantity ?? 0) + execution.filledQty;
                 const newTotalInvested = portfolio.investedAmount + execution.totalValue;
                 const newAvgPrice = newTotalInvested / newTotalQuantity;
 
@@ -131,7 +132,8 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
             } else {
                 portfolio = PortfolioEntity.create({
                     userId,
-                    symbol: data.symbol,
+                    assetId: stock.id as string,
+                    assetType: AssetType.STOCK,
                     quantity: execution.filledQty,
                     avgPrice: execution.avgPrice,
                     investedAmount: execution.totalValue,

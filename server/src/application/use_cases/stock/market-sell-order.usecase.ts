@@ -88,7 +88,7 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
             );
             if (!portfolio) throw new ValidationError(ErrorMessages.PORTFOLIO.NOT_HOLDING);
 
-            const availableQty = portfolio.quantity;
+            const availableQty = portfolio.quantity ?? 0;
             if (availableQty < data.quantity) {
                 throw new ValidationError(
                     `${ErrorMessages.PORTFOLIO.INSUFFICIENT_SHARES}: ${data.quantity}, Holding quantity: ${availableQty}`
@@ -108,7 +108,7 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
             wallet.credit(execution.totalValue);
             await this._wallet.update(userId, wallet, session);
 
-            const newQuantity = portfolio.quantity - execution.filledQty;
+            const newQuantity = (portfolio.quantity ?? 0) - execution.filledQty;
 
             if (newQuantity <= 0) {
                 await this._portfolioRepository.deleteByUserIdAndSymbol(
