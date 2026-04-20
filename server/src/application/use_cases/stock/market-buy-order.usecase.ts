@@ -96,6 +96,9 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
             if (wallet.availableBalance < execution.totalValue)
                 throw new ValidationError(ErrorMessages.WALLET.INSUFFICIENT_BALANCE);
 
+
+            ///📌📌📌📌📌📌📌📌Transaction not managed
+            
             wallet.debit(execution.totalValue);
             await this._wallet.update(userId, wallet, session);
 

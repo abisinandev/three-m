@@ -68,7 +68,7 @@ export const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = (
                                                         case 'TOPUP': return 'Wallet Deposit';
                                                         case 'WITHDRAW': return 'Withdrawal Request';
                                                         case 'SUBSCRIPTION': return 'Premium Upgrade';
-                                                        case 'INVESTMENT': return 'Asset Purchase';
+                                                        case 'INVESTMENT': return 'Investement';
                                                         case 'REDEMPTION': return 'Profit Redemption';
                                                         case 'BUY': return 'Stock Buy';
                                                         case 'SELL': return 'Stock Sell';

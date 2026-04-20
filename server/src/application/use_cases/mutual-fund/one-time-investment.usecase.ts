@@ -54,8 +54,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                     status: TransactionStatus.PENDING,
                     type: TransactionTypes.INVESTMENT,
                     referenceType: TransactionReferenceType.SIP,
-                    // referenceId: inv?.id as string,
-                    // fundId: fund.id,//📌📌
+                    fundId: fund.id,
                 })
                 const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
 

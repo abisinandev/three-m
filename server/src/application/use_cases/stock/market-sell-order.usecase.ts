@@ -103,6 +103,7 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
             };
 
             const wallet = await this._wallet.findByUserId(userId, session);
+                        ///📌📌📌📌📌📌📌📌Transaction not managed
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
             wallet.credit(execution.totalValue);
             await this._wallet.update(userId, wallet, session);
