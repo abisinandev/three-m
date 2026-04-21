@@ -1,6 +1,6 @@
 import api from "@lib/axiosUser";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
-import type { IInvestmentBaseResponse, IPortfolioDatasResponse, IPortfolioProjectionResponse, IRedeemedInvestment } from "@shared/types/portfolio.types";
+import type { IInvestmentBaseResponse, IPortfolioProjectionResponse, IPortfolioSummaryResponse, IRedeemedInvestment } from "@shared/types/portfolio.types";
 
 export const getPortfolioInvestments = async (
     page = 1,
@@ -23,8 +23,8 @@ export const getPortfolioInvestments = async (
     };
 };
 
-export const getPortfolioDatas = async (): Promise<IPortfolioDatasResponse> => {
-    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.GET_DATAS);
+export const getPortfolioSummary = async (): Promise<IPortfolioSummaryResponse> => {
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.GET_SUMMARY);
 
     const responseData = data?.data;
 
@@ -32,10 +32,11 @@ export const getPortfolioDatas = async (): Promise<IPortfolioDatasResponse> => {
         totalCount: responseData?.totalCount ?? 0,
         totalInvestment: responseData?.totalInvestment ?? 0,
         totalProfit: responseData?.totalProfit ?? 0,
-        realizedProfit: responseData?.realizedProfit ?? 0,
+        profitAfterSell: responseData?.profitAfterSell ?? 0,
         totalReturns: responseData?.totalReturns ?? 0,
         currentValue: responseData?.currentValue ?? 0,
         profitPercentage: responseData?.profitPercentage ?? 0,
+        xirr: responseData?.xirr ?? null,
     };
 };
 

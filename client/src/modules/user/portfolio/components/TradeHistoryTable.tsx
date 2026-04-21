@@ -1,4 +1,3 @@
-import React from 'react';
 import { TABLE_HEADERS } from '../constants/portfolio.constants';
 import { formatCurrency } from '../utils/portfolio.utils';
 import { Pagination } from '@shared/components/pagination/Pagination';

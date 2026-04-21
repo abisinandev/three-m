@@ -119,7 +119,7 @@ const PortfolioDashboard = () => {
                 <SummaryStats
                     currentValue={summaryData?.currentValue ?? 0}
                     totalInvestment={summaryData?.totalInvestment ?? 0}
-                    realizedProfit={summaryData?.realizedProfit ?? 0}
+                    profitAfterSell={summaryData?.profitAfterSell ?? 0}
                     totalReturns={summaryData?.totalReturns ?? 0}
                     profitPercentage={summaryData?.profitPercentage ?? 0}
                     isLoading={isLoading}

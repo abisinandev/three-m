@@ -1,15 +1,15 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
-    getPortfolioDatas,
-    getPortfolioProjection,
-    getTradeHistory,
-    getMFHoldings,
-    getStockHoldings,
+    getPortfolioSummary,
+    // getPortfolioProjection,
+    // getTradeHistory,
+    // getMFHoldings,
+    // getStockHoldings,
 } from '@shared/services/feature/portfolio/PortfolioApi';
 import type {
-    IPortfolioDatasResponse,
-    IPortfolioProjectionResponse,
+    IPortfolioSummaryResponse,
+    // IPortfolioProjectionResponse,
 } from '@shared/types/portfolio.types';
 import api from '@lib/axiosUser';
 import { PORTFOLIO_LIMIT, type PortfolioTab } from '../constants/portfolio.constants';
@@ -23,7 +23,14 @@ export const usePortfolio = () => {
 
     const limit = PORTFOLIO_LIMIT;
 
-    /* queries */
+    // Commenting out detailed holdings/history/projection as per request to focus on Summary API
+    const mfData: any = null;
+    const stockData: any = null;
+    const projectionData: any = null;
+    const tradeHistory: any = null;
+    const xirrData: any = null;
+
+    /*
     const { data: mfData, isLoading: isMfLoading, isError: isMfError, error: mfError } =
         useQuery({
             queryKey: ['portfolio', 'mf', page, limit, search],
@@ -39,14 +46,16 @@ export const usePortfolio = () => {
             enabled: activeTab === 'all' || activeTab === 'stocks',
             staleTime: 5 * 60 * 1000,
         });
+    */
 
     const { data: summaryData, isLoading: isSummaryLoading } =
-        useQuery<IPortfolioDatasResponse>({
+        useQuery<IPortfolioSummaryResponse>({
             queryKey: ['portfolio', 'summary'],
-            queryFn: getPortfolioDatas,
+            queryFn: getPortfolioSummary,
             staleTime: 5 * 60 * 1000,
         });
 
+    /*
     const { data: xirrData } = useQuery({
         queryKey: ['portfolio-key'],
         queryFn: async () => await api.get('/user/portfolio/return-xirr'),
@@ -64,8 +73,8 @@ export const usePortfolio = () => {
         queryFn: () => getTradeHistory(page, limit),
         enabled: activeTab === 'history',
     });
+    */
 
-    /* derived */
     const investments = useMemo(() => {
         if (activeTab === 'mf') return mfData?.data || [];
         if (activeTab === 'stocks') return stockData?.data || [];
@@ -81,6 +90,15 @@ export const usePortfolio = () => {
         return (mfData?.total || 0) + (stockData?.total || 0);
     }, [activeTab, mfData, stockData, tradeHistory]);
 
+    const isMfLoading = false;
+    const isStockLoading = false;
+    const isHistoryLoading = false;
+    const isProjectionLoading = false;
+    const isStockError = false;
+    const isMfError = false;
+    const stockError = null;
+    const mfError = null;
+
     const isLoading = isMfLoading || isStockLoading || isSummaryLoading;
     const isError = activeTab === 'stocks' ? isStockError : activeTab === 'mf' ? isMfError : (isStockError || isMfError);
     const error = activeTab === 'stocks' ? stockError : mfError;
@@ -91,7 +109,6 @@ export const usePortfolio = () => {
     };
 
     return {
-        // State
         page,
         setPage,
         search,
@@ -114,14 +131,12 @@ export const usePortfolio = () => {
         investments,
         totalCount,
 
-        // Status
         isLoading,
         isHistoryLoading,
         isProjectionLoading,
         isError,
         error,
 
-        // Handlers
         handlePageChange,
     };
 };

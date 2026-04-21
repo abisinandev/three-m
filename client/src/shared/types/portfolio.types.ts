@@ -31,14 +31,15 @@ export interface IInvestmentBaseResponse {
     totalPages: number;
 }
 
-export interface IPortfolioDatasResponse {
+export interface IPortfolioSummaryResponse {
     totalCount: number;
     totalInvestment: number;
     totalProfit: number;
-    realizedProfit: number;
+    profitAfterSell: number;
     totalReturns: number;
     currentValue: number;
     profitPercentage: number;
+    xirr: number | null;
 }
 
 export interface IRedeemedInvestment {

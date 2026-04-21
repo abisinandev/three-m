@@ -52,7 +52,7 @@ const StatCol = ({
 interface SummaryStatsProps {
     currentValue: number;
     totalInvestment: number;
-    realizedProfit: number;
+    profitAfterSell: number;
     totalReturns: number;
     profitPercentage: number;
     isLoading: boolean;
@@ -61,7 +61,7 @@ interface SummaryStatsProps {
 export const SummaryStats = ({
     currentValue,
     totalInvestment,
-    realizedProfit,
+    profitAfterSell,
     totalReturns,
     profitPercentage,
     isLoading,
@@ -104,9 +104,9 @@ export const SummaryStats = ({
                 />
                 <StatCol
                     label="Realized P&L"
-                    value={`${realizedProfit >= 0 ? '+' : ''}₹${formatCurrency(realizedProfit, 2)}`}
+                    value={`${profitAfterSell >= 0 ? '+' : ''}₹${formatCurrency(profitAfterSell, 2)}`}
                     sub="Settled"
-                    positive={realizedProfit >= 0}
+                    positive={profitAfterSell >= 0}
                 />
             </div>
         </div>

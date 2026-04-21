@@ -45,7 +45,7 @@ export const API_ROUTES = {
         },
         PORTFOLIO: {
             GET_INVESTMENTS: "/user/portfolio",
-            GET_DATAS: "/user/portfolio/datas",
+            GET_SUMMARY: "/user/portfolio/summary",
             REDEEM_INVESTMENT: "/user/portfolio/redeem-investment",
             CONFIRM_REDEEM: "/user/portfolio/confirm-redeem",
             PROJECTION: "/user/portfolio/projection",
