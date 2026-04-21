@@ -13,6 +13,12 @@ import mongoose from "mongoose";
 import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
+import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
+import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
+import { CurrencyTypes } from "@domain/enum/users/currency-enum";
+import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
+import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
+import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 
 @injectable()
 export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
@@ -22,6 +28,7 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualfundRepository: IMutualFundRepository,
         @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navProvider: IMutualFundNavUpdateProvider,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
+        @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
     ) { }
 
     async execute(data: ConfirmRedeemDTO): Promise<void> {
@@ -109,7 +116,21 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
             if (remainingUnitsToRedeem !== 0) {
                 throw new ConflictError(ErrorMessages.MUTUAL_FUND.REDEMPTION_FAILED);
             }
+
             const redeemAmount = Number((unitsToRedeem * latestNav).toFixed(2));
+
+            const transaction = TransactionEntity.create({
+                userCode: user.userCode,
+                userId: user.id as string,
+                amount: redeemAmount,
+                currency: CurrencyTypes.INR,
+                type: TransactionTypes.REDEMPTION,
+                status: TransactionStatus.SUCCESSFUL,
+                referenceType: TransactionReferenceType.REDEMPTION,
+            })
+
+            await this._transactionRepository.create(transaction, session);
+
             await this._walletRepository.credit(
                 data.userId,
                 redeemAmount,

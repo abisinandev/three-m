@@ -7,7 +7,6 @@ import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
-import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
@@ -18,7 +17,6 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
     constructor(
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
-        @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
         @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
     ) { }
@@ -30,6 +28,7 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
         let totalCount = 0;
 
         if (assetType === "MF" || assetType === "ALL") {
+            
             const [investments, mfTotal] = await Promise.all([
                 this._investmentRepository.getUserInvestments(userId, { ...query, filter: { status: InvestmentStatus.ALLOTTED } }),
                 this._investmentRepository.countInvestments(userId, { ...query, filter: { status: InvestmentStatus.ALLOTTED } })
@@ -110,8 +109,6 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
             assets.push(...stockAssets);
             totalCount += stockTotal;
         }
-
-        console.log(assets)
 
         return {
             data: assets,

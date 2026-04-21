@@ -6,10 +6,13 @@ import { NotificationController } from "@presentation/http/controllers/notificat
 import { CreateNotificationUseCase } from "@application/use_cases/notification/create-notification.usecase";
 import { INotificationRepository } from "@application/interfaces/repositories/feature/notification-repository.interface";
 import { NotificationRepository } from "@infrastructure/databases/repository/notification/notification.repository";
+import { ISocketService } from "@application/interfaces/services/notification/socket-service.interface";
+import { SocketService } from "@infrastructure/providers/notification/socket.service";
 
 export const NotificationModules = new ContainerModule(({ bind }) => {
     bind<INotificationService>(NOTIFICATION_TYEPS.NotificationService).to(NotificationService);
     bind<INotificationRepository>(NOTIFICATION_TYEPS.NotificationRepository).to(NotificationRepository);
+    bind<ISocketService>(NOTIFICATION_TYEPS.SocketService).to(SocketService).inSingletonScope();
 
     bind<NotificationController>(NOTIFICATION_TYEPS.NotificationController).to(NotificationController);
     bind<CreateNotificationUseCase>(NOTIFICATION_TYEPS.CreateNotificationUseCase).to(CreateNotificationUseCase);

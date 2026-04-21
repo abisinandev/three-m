@@ -28,6 +28,11 @@ export class RadeemInvestmentUseCase implements IRadeemInvestmentUseCase {
             const nav = latestNav[0]?.nav ?? 0;
             const currentValue = fundGroup.totalUnits * nav;
             const profit = currentValue - fundGroup.totalInvestment;
+
+            //roi calculation
+            const roi = (profit / fundGroup.totalInvestment) * 100;
+            console.log('roi:', roi);
+
             data.push({
                 mfId: fund.id as string,
                 schemeName: fund.schemeName,
@@ -45,13 +50,10 @@ export class RadeemInvestmentUseCase implements IRadeemInvestmentUseCase {
                 status: fund.status,
                 createdAt: fund.createdAt as Date,
                 updatedAt: fund.updatedAt as Date,
-                roi:5,
+                roi,
             });
         }
 
         return data;
     }
-
-    
-
 }

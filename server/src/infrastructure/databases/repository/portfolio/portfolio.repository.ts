@@ -29,6 +29,10 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         return results.map((doc) => this.mapper.toDomain(doc))
     }
 
+    // async getInvestmentHoldings(userId: string, options: QueryOptions): Promise<PortfolioEntity[]>{
+        
+    // }
+
     async findWithFilters(userId: string, options: QueryOptions): Promise<PortfolioStockDTO[]> {
         const {
             page = 1,
