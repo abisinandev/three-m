@@ -9,7 +9,7 @@ import { HoldingsFilters } from '../portfolio/components/HoldingsFilters';
 import { HoldingsTable } from '../portfolio/components/HoldingsTable';
 import { TradeHistoryTable } from '../portfolio/components/TradeHistoryTable';
 import { AssetAllocationDonut } from '../portfolio/components/AssetAllocationDonut';
-import { PortfolioXirrCard, PortfolioForecastCard } from '../portfolio/components/StatsSidebar';
+import { PortfolioXirrCard } from '../portfolio/components/StatsSidebar';
 import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
 import { usePortfolio } from '../portfolio/hooks/usePortfolio';
 
@@ -21,12 +21,11 @@ const PortfolioDashboard = () => {
     const {
         page, setPage, search, setSearch, status, setStatus,
         activeTab, setActiveTab, returnType, setReturnType, limit,
-        summaryData, xirrData, projectionData, tradeHistory,
-        investments, totalCount, isLoading, isHistoryLoading,
-        isProjectionLoading, isError, error, handlePageChange
+        summaryData, investments, totalCount, tradeHistoryData,
+        isLoading, isHistoryLoading, isError, error, handlePageChange
     } = usePortfolio();
 
-    const xirrValue = Number(xirrData?.data?.data).toFixed(2) || '0.00';
+    const xirrValue = summaryData?.xirr ? Number(summaryData.xirr).toFixed(2) : '0.00';
 
     return (
         <div style={{
@@ -140,8 +139,8 @@ const PortfolioDashboard = () => {
 
                         {activeTab === 'history' ? (
                             <TradeHistoryTable 
-                                data={tradeHistory?.data || []}
-                                total={tradeHistory?.total || 0}
+                                data={tradeHistoryData?.data || []}
+                                total={tradeHistoryData?.total || 0}
                                 page={page}
                                 limit={limit}
                                 onPageChange={handlePageChange}
@@ -170,10 +169,6 @@ const PortfolioDashboard = () => {
                         
                         <AssetAllocationDonut investments={investments} />
 
-                        <PortfolioForecastCard 
-                            projectionData={projectionData}
-                            isLoading={isProjectionLoading}
-                        />
 
                         <button
                             onClick={() => navigate({ to: ROUTES.USER.PORTFOLIO.REDEEM_PROFIT })}

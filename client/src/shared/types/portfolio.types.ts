@@ -1,6 +1,12 @@
 export interface IInvestmentResponse {
     id?: string;
     userId: string;
+    assetId: string;
+    symbol?: string;
+    name?: string;
+    assetType?: "MF" | "STOCK";
+    
+    // Legacy mapping support for existing UI
     schemeCode: string;
     amount: number;
     units?: number;
@@ -11,16 +17,22 @@ export interface IInvestmentResponse {
     status: string;
     paymentMethod: string;
     investmentType: string;
-    createdAt: Date | string;
-    updatedAt?: Date | string;
+    
     quantity: number;
+    avgPrice?: number;
+    investedAmount?: number;
+    currentPrice?: number;
+    currentValue?: number;
     profit: number;
+    profitPercentage?: number;
     xirr?: number;
-    logo?: string;
+    logo: string;
     remainingUnits?: number;
     redeemedUnits?: number;
     redeemedAmount?: number;
     redeemedAt?: Date | string;
+    createdAt: Date | string;
+    updatedAt?: Date | string;
 }
 
 export interface IInvestmentBaseResponse {

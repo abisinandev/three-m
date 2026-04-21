@@ -1,17 +1,13 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
+    getPortfolioAssets,
     getPortfolioSummary,
-    // getPortfolioProjection,
-    // getTradeHistory,
-    // getMFHoldings,
-    // getStockHoldings,
+    getTradeHistory,
 } from '@shared/services/feature/portfolio/PortfolioApi';
 import type {
     IPortfolioSummaryResponse,
-    // IPortfolioProjectionResponse,
 } from '@shared/types/portfolio.types';
-import api from '@lib/axiosUser';
 import { PORTFOLIO_LIMIT, type PortfolioTab } from '../constants/portfolio.constants';
 
 export const usePortfolio = () => {
@@ -23,30 +19,23 @@ export const usePortfolio = () => {
 
     const limit = PORTFOLIO_LIMIT;
 
-    // Commenting out detailed holdings/history/projection as per request to focus on Summary API
-    const mfData: any = null;
-    const stockData: any = null;
-    const projectionData: any = null;
-    const tradeHistory: any = null;
-    const xirrData: any = null;
-
-    /*
-    const { data: mfData, isLoading: isMfLoading, isError: isMfError, error: mfError } =
+    const { data: assetsData, isLoading: isAssetsLoading, isError: isAssetsError, error: assetsError } =
         useQuery({
-            queryKey: ['portfolio', 'mf', page, limit, search],
-            queryFn: () => getMFHoldings(page, limit, search),
-            enabled: activeTab === 'all' || activeTab === 'mf',
+            queryKey: ['portfolio', 'assets', activeTab, page, limit, search],
+            queryFn: () => getPortfolioAssets(page, limit, search,
+                activeTab === 'all' ? 'ALL' : activeTab === 'mf' ? 'MF' : 'STOCK'
+            ),
+            enabled: activeTab !== 'history',
             staleTime: 5 * 60 * 1000,
         });
 
-    const { data: stockData, isLoading: isStockLoading, isError: isStockError, error: stockError } =
+    const { data: tradeHistoryData, isLoading: isHistoryLoading, isError: isHistoryError, error: historyError } =
         useQuery({
-            queryKey: ['portfolio', 'stocks', page, limit, search],
-            queryFn: () => getStockHoldings(page, limit, search),
-            enabled: activeTab === 'all' || activeTab === 'stocks',
+            queryKey: ['portfolio', 'history', page, limit],
+            queryFn: () => getTradeHistory(page, limit),
+            enabled: activeTab === 'history',
             staleTime: 5 * 60 * 1000,
         });
-    */
 
     const { data: summaryData, isLoading: isSummaryLoading } =
         useQuery<IPortfolioSummaryResponse>({
@@ -55,53 +44,15 @@ export const usePortfolio = () => {
             staleTime: 5 * 60 * 1000,
         });
 
-    /*
-    const { data: xirrData } = useQuery({
-        queryKey: ['portfolio-key'],
-        queryFn: async () => await api.get('/user/portfolio/return-xirr'),
-    });
-
-    const { data: projectionData, isLoading: isProjectionLoading } =
-        useQuery<IPortfolioProjectionResponse>({
-            queryKey: ['portfolio', 'projection'],
-            queryFn: getPortfolioProjection,
-            staleTime: 5 * 60 * 1000,
-        });
-
-    const { data: tradeHistory, isLoading: isHistoryLoading } = useQuery({
-        queryKey: ['portfolio', 'trades', page, limit],
-        queryFn: () => getTradeHistory(page, limit),
-        enabled: activeTab === 'history',
-    });
-    */
-
     const investments = useMemo(() => {
-        if (activeTab === 'mf') return mfData?.data || [];
-        if (activeTab === 'stocks') return stockData?.data || [];
-        if (activeTab === 'all') return [...(mfData?.data || []), ...(stockData?.data || [])];
-        if (activeTab === 'history') return tradeHistory?.data || [];
-        return [];
-    }, [activeTab, mfData, stockData, tradeHistory]);
+        return assetsData?.data || [];
+    }, [assetsData]);
 
     const totalCount = useMemo(() => {
-        if (activeTab === 'mf') return mfData?.total || 0;
-        if (activeTab === 'stocks') return stockData?.total || 0;
-        if (activeTab === 'history') return tradeHistory?.total || 0;
-        return (mfData?.total || 0) + (stockData?.total || 0);
-    }, [activeTab, mfData, stockData, tradeHistory]);
+        return assetsData?.total || 0;
+    }, [assetsData]);
 
-    const isMfLoading = false;
-    const isStockLoading = false;
-    const isHistoryLoading = false;
-    const isProjectionLoading = false;
-    const isStockError = false;
-    const isMfError = false;
-    const stockError = null;
-    const mfError = null;
-
-    const isLoading = isMfLoading || isStockLoading || isSummaryLoading;
-    const isError = activeTab === 'stocks' ? isStockError : activeTab === 'mf' ? isMfError : (isStockError || isMfError);
-    const error = activeTab === 'stocks' ? stockError : mfError;
+    const isLoading = isAssetsLoading || isSummaryLoading;
 
     const handlePageChange = (newPage: number) => {
         const maxPage = Math.ceil(totalCount / limit);
@@ -122,20 +73,15 @@ export const usePortfolio = () => {
         limit,
 
         // Data
-        mfData,
-        stockData,
         summaryData,
-        xirrData,
-        projectionData,
-        tradeHistory,
         investments,
         totalCount,
+        tradeHistoryData,
 
         isLoading,
         isHistoryLoading,
-        isProjectionLoading,
-        isError,
-        error,
+        isError: activeTab === 'history' ? isHistoryError : isAssetsError,
+        error: activeTab === 'history' ? historyError : assetsError,
 
         handlePageChange,
     };
