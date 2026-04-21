@@ -9,7 +9,6 @@ export class PortfolioMapper {
             assetId: entity.assetId,
             assetType: entity.assetType,
             quantity: entity.quantity,
-            units: entity.units,
             avgPrice: entity.avgPrice,
             investedAmount: entity.investedAmount,
             lockQty: entity.lockQty,

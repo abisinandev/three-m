@@ -9,6 +9,7 @@ import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 import { ClientSession, QueryOptions, Types, PipelineStage } from "mongoose";
 import { GroupedSchemeInvestments } from "@application/dto/portfolio/grouped-scheme-investments ";
 import { InvestmentRedeemResult } from "@domain/types/radeem-units.types";
+import { InvestmentFundDTO } from "@application/dto/portfolio/aggregated-asset.dto";
 
 @injectable()
 export class InvestmentRepository extends BaseRepository<InvestmentEntity, InvestmentDocument> implements IInvestmentRepository {
@@ -21,8 +22,6 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         const createdDoc = await this.model.create(persistenceData);
         return this.mapper.toDomain(createdDoc);
     }
-
-
 
     async findInitiatedFunds(): Promise<InvestmentEntity[] | null> {
         const docs = await this.model.find({ status: InvestmentStatus.INITIATED });
@@ -71,8 +70,7 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         return result.length > 0 ? result[0] : 0;
     };
 
-
-    async getUserInvestments(userId: string, options: QueryOptions): Promise<InvestmentEntity[]> {
+    async getUserInvestments(userId: string, options: QueryOptions): Promise<InvestmentFundDTO[]> {
         const {
             page = 1,
             limit = 10,
@@ -157,11 +155,28 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         );
 
         const docs = await this.model.aggregate(pipeline);
-        return docs.map(doc => this.mapper.toDomain(doc));
+        return docs.map(doc => ({
+            id: doc._id.toString(),
+            userId: doc.userId.toString(),
+            schemeCode: doc.schemeCode,
+            amount: doc.amount,
+            units: doc.units,
+            nav: doc.nav,
+            navDate: doc.navDate,
+            status: doc.status,
+            investmentType: doc.investmentType,
+            paymentMethod: doc.paymentMethod,
+            remainingUnits: doc.remainingUnits,
+            redeemedUnits: doc.redeemedUnits,
+            redeemedAmount: doc.redeemedAmount,
+            createdAt: doc.createdAt,
+            updatedAt: doc.updatedAt,
+            fund: doc.fund
+        }));
     }
     
 
-    async getUserInvestementSummary(userId: string): Promise<InvestmentEntity[]> {
+    async getUserInvestementSummary(userId: string): Promise<InvestmentFundDTO[]> {
 
         const docs = await this.model.aggregate([
             {
@@ -196,6 +211,9 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
                     status: 1,
                     investmentType: 1,
                     paymentMethod: 1,
+                    remainingUnits: 1,
+                    redeemedUnits: 1,
+                    redeemedAmount: 1,
                     createdAt: 1,
                     updatedAt: 1,
                     fund: {
@@ -209,7 +227,24 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             },
         ]);
 
-        return docs.map(doc => this.mapper.toDomain(doc));
+        return docs.map(doc => ({
+            id: doc._id.toString(),
+            userId: doc.userId.toString(),
+            schemeCode: doc.schemeCode,
+            amount: doc.amount,
+            units: doc.units,
+            nav: doc.nav,
+            navDate: doc.navDate,
+            status: doc.status,
+            investmentType: doc.investmentType,
+            paymentMethod: doc.paymentMethod,
+            remainingUnits: doc.remainingUnits,
+            redeemedUnits: doc.redeemedUnits,
+            redeemedAmount: doc.redeemedAmount,
+            createdAt: doc.createdAt,
+            updatedAt: doc.updatedAt,
+            fund: doc.fund
+        }));
     }
 
     async getTotalUnitsByUser(userId: string): Promise<number> {

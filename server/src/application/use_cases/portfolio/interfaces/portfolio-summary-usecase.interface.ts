@@ -1,12 +1,5 @@
+import { PortfolioSummaryDTO } from "@application/dto/portfolio/portfolio-summary.dto";
+
 export interface IPortfolioSummaryUseCase {
-    execute(userId: string): Promise<{
-        totalCount: number;
-        totalInvestment: number;
-        totalProfit: number;
-        profitAfterSell: number;
-        totalReturns: number;
-        profitPercentage: number;
-        currentValue: number;
-        xirr: number | null;
-    }>;
+    execute(userId: string): Promise<PortfolioSummaryDTO>;
 }

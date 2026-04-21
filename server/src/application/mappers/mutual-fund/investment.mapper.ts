@@ -1,5 +1,6 @@
 import { InvestmentDTO } from '@application/dto/mutual-funds/investment-dto';
 import { InvestmentResponseDTO } from '@application/dto/mutual-funds/investment-response.dto';
+import { InvestmentFundDTO } from '@application/dto/portfolio/aggregated-asset.dto';
 import { InvestmentEntity } from '@domain/entities/mutual-fund/investment.entity';
 import { MutualFundEntity } from '@domain/entities/mutual-fund/mutual-fund-entity';
 
@@ -23,7 +24,7 @@ export const toInvestmentEntity = (
  * Domain Entity → Response DTO
  */
 export const toInvestmentResponse = (
-    entity: InvestmentEntity,
+    entity: InvestmentEntity | InvestmentFundDTO,
     fund: MutualFundEntity,
     profit: number,
     xirr?: number,
@@ -53,3 +54,36 @@ export const toInvestmentResponse = (
         xirr,
     };
 };
+
+
+// export const toInvestmentResponse = (
+//     entity: InvestmentEntity | InvestmentFundDTO,
+//     fund: MutualFundEntity,
+//     profit: number,
+//     xirr?: number,
+// ): InvestmentResponseDTO => {
+
+//     return {
+//         schemeCode: entity.schemeCode,
+//         amount: entity.amount,
+//         units: entity.units as number,
+//         navDate: (entity as any).navDate || (entity as any).updatedAt,
+//         paymentMethod: entity.paymentMethod,
+//         investmentType: entity.investmentType,
+//         createdAt: entity.createdAt,
+//         status: entity.status,
+//         userId: entity.userId,
+//         id: entity.id,
+//         nav: entity.nav,
+//         updatedAt: (entity as any).navDate || (entity as any).updatedAt,
+//         schemeName: fund?.schemeName as string,
+//         category: fund?.category as string,
+//         logo: fund.logo,
+//         remainingUnits: entity.remainingUnits,
+//         redeemedUnits: entity.redeemedUnits,
+//         redeemedAmount: entity.redeemedAmount,
+//         redeemedAt: entity.redeemedAt,
+//         profit,
+//         xirr,
+//     };
+// };

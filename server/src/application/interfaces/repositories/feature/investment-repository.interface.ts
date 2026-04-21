@@ -3,6 +3,7 @@ import { IBaseRepository } from "../base-repository.interface";
 import { ClientSession, QueryOptions } from "mongoose";
 import { GroupedSchemeInvestments } from "@application/dto/portfolio/grouped-scheme-investments ";
 import { InvestmentRedeemResult } from "@domain/types/radeem-units.types";
+import { InvestmentFundDTO } from "@application/dto/portfolio/aggregated-asset.dto";
 
 export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity> {
     findInitiatedFunds(): Promise<InvestmentEntity[] | null>;
@@ -16,8 +17,8 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
     countByUser(userId: string): Promise<number>;
     findByUsertotalInvestments(userId: string): Promise<number>;
     findInvestmentsByUser(userId: string): Promise<InvestmentEntity[] | null>;
-    getUserInvestments(userId: string, options: QueryOptions): Promise<InvestmentEntity[]>;
-    getUserInvestementSummary(userId: string): Promise<InvestmentEntity[]>;
+    getUserInvestments(userId: string, options: QueryOptions): Promise<InvestmentFundDTO[]>;
+    getUserInvestementSummary(userId: string): Promise<InvestmentFundDTO[]>;
     getTotalUnitsByUser(userId: string): Promise<number>;
     getTotalUnitsByUserAndScheme(userId: string, schemeCode: string): Promise<InvestmentEntity[]>
     findGroupedInvestmentsByUser(userId: string): Promise<GroupedSchemeInvestments[] | null>;

@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IRadeemInvestmentUseCase } from "./interfaces/redeem-investments-usecase.interface";
+import { IRadeemInvestmentUseCase } from "../interfaces/redeem-investments-usecase.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";

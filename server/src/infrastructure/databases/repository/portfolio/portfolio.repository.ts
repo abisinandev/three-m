@@ -4,8 +4,9 @@ import { IPortfolioRepository } from "@application/interfaces/repositories/featu
 import { PortfolioModel, PortfolioDocument } from "../../mongo_db/models/schemas/portfolio/portfolio.schema";
 import { injectable } from "inversify";
 import { PortfolioMapper } from "@infrastructure/mappers/portfolio/portfolio.mapper";
-import { ClientSession, QueryOptions } from "mongoose";
+import { ClientSession, QueryOptions, Types, PipelineStage } from "mongoose";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
+import { PortfolioStockDTO } from "@application/dto/portfolio/aggregated-asset.dto";
 
 @injectable()
 export class PortfolioRepository extends BaseRepository<PortfolioEntity, PortfolioDocument> implements IPortfolioRepository {
@@ -28,7 +29,7 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         return results.map((doc) => this.mapper.toDomain(doc))
     }
 
-    async findWithFilters(userId: string, options: QueryOptions): Promise<PortfolioEntity[]> {
+    async findWithFilters(userId: string, options: QueryOptions): Promise<PortfolioStockDTO[]> {
         const {
             page = 1,
             limit = 10,
@@ -40,65 +41,108 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
 
         const skip = (Number(page) - 1) * Number(limit);
 
-        const finalFilter: Record<string, unknown> = {
+        const matchStage: Record<string, unknown> = {
             ...filter,
-            userId,
+            userId: new Types.ObjectId(userId),
         };
-
-        if (search.trim()) {
-            finalFilter.assetId = { $regex: search.trim(), $options: "i" };
-        }
 
         const sort: Record<string, 1 | -1> = {
             [sortBy]: sortOrder === "asc" ? 1 : -1,
-        } as any;
+        };
 
-        const docs = await this.model
-            .find(finalFilter)
-            .sort(sort)
-            .skip(skip)
-            .limit(Number(limit))
-            .exec();
+        const pipeline: PipelineStage[] = [
+            { $match: matchStage },
+            {
+                $lookup: {
+                    from: "stocks",
+                    localField: "assetId",
+                    foreignField: "_id",
+                    as: "stockDetails",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$stockDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+        ];
 
-        return Promise.all(docs.map((doc) => this.mapper.toDomain(doc)));
+        if (search.trim()) {
+            pipeline.push({
+                $match: {
+                    $or: [
+                        { "stockDetails.symbol": { $regex: search.trim(), $options: "i" } },
+                        { "stockDetails.name": { $regex: search.trim(), $options: "i" } },
+                    ],
+                },
+            });
+        }
+
+        pipeline.push(
+            { $sort: sort },
+            { $skip: skip },
+            { $limit: Number(limit) }
+        );
+
+        const docs = await this.model.aggregate(pipeline);
+        return docs.map(doc => ({
+            id: doc._id.toString(),
+            userId: doc.userId.toString(),
+            assetId: doc.assetId,
+            assetType: doc.assetType,
+            quantity: doc.quantity,
+            avgPrice: doc.avgPrice,
+            investedAmount: doc.investedAmount,
+            createdAt: doc.createdAt,
+            updatedAt: doc.updatedAt,
+            stockDetails: doc.stockDetails
+        }));
     }
 
     async countWithFilters(userId: string, filter: Record<string, unknown>, search: string): Promise<number> {
-        const finalFilter: Record<string, unknown> = {
+        const matchStage: Record<string, unknown> = {
             ...filter,
-            userId
+            userId: new Types.ObjectId(userId),
         };
 
+        const pipeline: PipelineStage[] = [
+            { $match: matchStage },
+            {
+                $lookup: {
+                    from: "stocks",
+                    localField: "assetId",
+                    foreignField: "_id",
+                    as: "stockDetails",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$stockDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+        ];
+
         if (search.trim()) {
-            finalFilter.assetId = { $regex: search.trim(), $options: "i" };
+            pipeline.push({
+                $match: {
+                    $or: [
+                        { "stockDetails.symbol": { $regex: search.trim(), $options: "i" } },
+                        { "stockDetails.name": { $regex: search.trim(), $options: "i" } },
+                    ],
+                },
+            });
         }
 
-        return await this.model.countDocuments(finalFilter);
+        pipeline.push({ $count: "total" });
+
+        const result = await this.model.aggregate(pipeline);
+        return result.length > 0 ? result[0].total : 0;
     }
 
     async deleteByUserIdAndSymbol(userId: string, assetId: string, session?: ClientSession): Promise<boolean> {
         const result = await this.model.deleteOne({ userId, assetId }, { session });
         return result.deletedCount > 0;
     }
-
-
-    // async findUserInvestments(userId: string, session?: ClientSession): Promise<PortfolioEntity | null> {
-    //     const docs = await this.model.aggregate([
-    //         { $match: { userId, assetType: AssetType.MUTUAL_FUND } },
-    //         {
-    //             $lookup: {
-    //                 from: 'mutualfund',
-    //                 localField: 'assetId',
-    //                 foreignField: '_id',
-    //                 as: 'fundDetails',
-    //             }
-    //         },
-    //         { $unwind: "$fundDetails" },
-    //     ])
-
-    //     console.log("mf: ", docs);
-    //     if (!docs) return null;
-
-    //     return docs.map(doc => this.mapper.toDomain(doc));
-    // }
 }

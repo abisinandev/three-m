@@ -8,4 +8,5 @@ export enum PortfolioRoutes {
     INVESTMENTS = "/investments",
     TRADES = "/trades",
     HISTORIES = "/histories",
+    ASSETS = "/assets",
 }

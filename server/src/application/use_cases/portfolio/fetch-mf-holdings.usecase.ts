@@ -4,14 +4,19 @@ import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
-import { toInvestmentResponse } from "@application/mappers/mutual-fund/investment.mapper";
 import { InvestmentResponseDTO } from "@application/dto/mutual-funds/investment-response.dto";
 import { QueryOptions } from "mongoose";
 import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
+import { InvestmentFundDTO } from "@application/dto/portfolio/aggregated-asset.dto";
 import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
+import { PortfolioXirrService } from "@domain/domain-services/portfolio/xirr-calculation.domain-service";
+import { CashFlow } from "@domain/domain-services/portfolio/xirr-calculation.interface";
+import { toInvestmentResponse } from "@application/mappers/mutual-fund/investment.mapper";
 
 @injectable()
 export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsUseCase {
+    private xirrService = new PortfolioXirrService();
+
     constructor(
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
@@ -32,10 +37,6 @@ export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsU
             this._investmentRepository.countInvestments(userId, options),
         ]);
 
-
-        console.log('inv: ', investments);
-        console.log('total: ', total);
-
         const data: InvestmentResponseDTO[] = [];
         for (const inv of investments) {
             const [latestNav, fund, schemeInvestments] = await Promise.all([
@@ -47,12 +48,16 @@ export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsU
             if (!fund) continue;
 
             const schemeInvests = schemeInvestments ?? [];
+            const currentNav = latestNav?.length ? latestNav[0].nav : 0;
+            
             let profit = 0;
-            if (inv.status === InvestmentStatus.ALLOTTED && Number(inv.units) > 0 && latestNav?.length) {
-                profit = (Number(inv.units) * latestNav[0].nav) - inv.amount;
+            if (inv.status === InvestmentStatus.ALLOTTED && Number(inv.units) > 0 && currentNav > 0) {
+                profit = (Number(inv.units) * currentNav) - inv.amount;
             }
 
-            const fundXirr = this.calculateFundXirr(schemeInvests, latestNav?.length ? latestNav[0].nav : 0);
+            const cashflows = this.buildCashFlows(schemeInvests, currentNav);
+            const fundXirr = this.xirrService.calculate(cashflows);
+
             data.push(toInvestmentResponse(inv, fund, profit, fundXirr ?? undefined));
         }
 
@@ -65,55 +70,38 @@ export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsU
         };
     }
 
-    private calculateFundXirr(investments: InvestmentEntity[], currentNav: number): number | null {
-        if (investments.length === 0) return null;
-        const cashFlows: { date: Date; amount: number }[] = [];
+    private buildCashFlows(investments: (InvestmentEntity | InvestmentFundDTO)[], currentNav: number): CashFlow[] {
+        if (investments.length === 0) return [];
+
+        const cashFlows: CashFlow[] = [];
         let totalRemainingUnits = 0;
 
         for (const inv of investments) {
-            cashFlows.push({ date: new Date(inv.createdAt), amount: -inv.amount });
+            // Purchase/Buy cashflow (negative)
+            cashFlows.push({
+                date: new Date(inv.createdAt),
+                amount: -(inv.amount || 0)
+            });
+
             if (inv.status === InvestmentStatus.REDEEMED) {
+                // Redemption cashflow (positive)
                 cashFlows.push({
-                    date: new Date(inv.redeemedAt || inv.updatedAt || new Date()),
-                    amount: inv.redeemedAmount as number,
+                    date: new Date(inv.redeemedAt || inv.updatedAt || inv.createdAt),
+                    amount: inv.redeemedAmount || 0
                 });
             } else {
-                totalRemainingUnits += (inv.remainingUnits ?? 0);
+                totalRemainingUnits += (inv.remainingUnits || 0);
             }
         }
 
-        if (totalRemainingUnits > 0) {
-            cashFlows.push({ date: new Date(), amount: totalRemainingUnits * currentNav });
+        // Terminal cashflow (Current valuation - positive)
+        if (totalRemainingUnits > 0 && currentNav > 0) {
+            cashFlows.push({
+                date: new Date(),
+                amount: totalRemainingUnits * currentNav
+            });
         }
 
-        if (cashFlows.length < 2) return null;
-        return this.solveXirr(cashFlows);
-    }
-
-    private solveXirr(cashFlows: { date: Date; amount: number }[]): number | null {
-        const hasPositive = cashFlows.some(c => c.amount > 0);
-        const hasNegative = cashFlows.some(c => c.amount < 0);
-        if (!hasPositive || !hasNegative) return null;
-
-        cashFlows.sort((a, b) => a.date.getTime() - b.date.getTime());
-        const firstDate = cashFlows[0].date;
-
-        let rate = 0.1;
-        const tolerance = 1e-7;
-        for (let i = 0; i < 1000; i++) {
-            let npv = 0;
-            let derivative = 0;
-            for (const cf of cashFlows) {
-                const years = (cf.date.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24 * 365);
-                const discount = Math.pow(1 + rate, years);
-                npv += cf.amount / discount;
-                derivative -= (years * cf.amount) / (discount * (1 + rate));
-            }
-            if (derivative === 0) return null;
-            const newRate = rate - npv / derivative;
-            if (Math.abs(newRate - rate) < tolerance) return newRate;
-            rate = newRate;
-        }
-        return null;
+        return cashFlows;
     }
 }

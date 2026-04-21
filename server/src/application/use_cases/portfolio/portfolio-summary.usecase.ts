@@ -13,10 +13,10 @@ import { IMarketDataProvider } from "@application/interfaces/repositories/stock/
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
 import { PortfolioXirrService } from "@domain/domain-services/portfolio/xirr-calculation.domain-service";
 import { CashFlow } from "@domain/domain-services/portfolio/xirr-calculation.interface";
-import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
 import { TradeEntity } from "@domain/entities/stock/trade.entity";
+import { InvestmentFundDTO } from "@application/dto/portfolio/aggregated-asset.dto";
+import { PortfolioSummaryDTO } from "@application/dto/portfolio/portfolio-summary.dto";
 import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
-
 
 /**
  * Handles portfolio summary calculation.
@@ -27,7 +27,6 @@ import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
  * XIRR:
  * - Calculates true annual return using combined cash flows (MF + Stocks)
  * - Considers timing of investments for accurate performance measurement
- * - Investments consider -ve and redemption consider +ve cashflow
  */
 
 @injectable()
@@ -44,19 +43,11 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
     ) { }
 
-    async execute(userId: string): Promise<{
-        totalCount: number;
-        totalInvestment: number;
-        totalProfit: number;
-        profitAfterSell: number;
-        totalReturns: number;
-        profitPercentage: number;
-        currentValue: number;
-        xirr: number | null;
-    }> {
+    async execute(userId: string): Promise<PortfolioSummaryDTO> {
+
         const [investments, stockPortfolios, allTrades] = await Promise.all([
-            this._investmentRepository.getUserInvestementSummary(userId) ?? [],
-            this._portfolioRepository.findByUserId(userId) ?? [],
+            this._investmentRepository.getUserInvestementSummary(userId),
+            this._portfolioRepository.findByUserId(userId),
             this._tradeRepository.findByUserId(userId)
         ]);
 
@@ -100,25 +91,22 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
 
         //Stocks
         const assetPriceMap = new Map<string, number>();
-        const uniqueAssetIds = [...new Set(stockPortfolios.map(p => p.assetId as string))];
+        const uniqueAssetIds = [...new Set(stockPortfolios.map(p => p.assetId))];
 
         await Promise.all(uniqueAssetIds.map(async (assetId) => {
             const stock = await this._stockRepository.findById(assetId);
             if (stock) {
-                try {
-                    const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
-                    if (quote) {
-                        assetPriceMap.set(assetId, quote.price);
-                    }
-                } catch (err) {
-                    console.error(`Error fetching quote for ${stock.symbol}:`, err);
+                const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
+                if (quote) {
+                    assetPriceMap.set(assetId, quote.price);
                 }
+
             }
         }));
 
         for (const stock of stockPortfolios) {
             totalInvestment += Number(stock.investedAmount);
-            const stockPrice = assetPriceMap.get(stock.assetId as string) ?? stock.avgPrice;
+            const stockPrice = assetPriceMap.get(stock.assetId) ?? stock.avgPrice;
             currentValue += (stock.quantity ?? 0) * stockPrice;
         }
 
@@ -156,7 +144,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
     }
 
     private buildCashFlows(
-        investments: InvestmentEntity[],
+        investments: InvestmentFundDTO[],
         trades: TradeEntity[],
         navMap: Map<string, number>,
         stockPortfolios: PortfolioEntity[],
@@ -175,7 +163,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             if (inv.status === InvestmentStatus.REDEEMED) {
                 cashFlows.push({
                     date: new Date(inv.redeemedAt || inv.updatedAt || inv.createdAt),
-                    amount: inv.redeemedAmount as number,
+                    amount: inv.redeemedAmount,
                 });
             } else {
                 const nav = navMap.get(inv.schemeCode) || 0;
@@ -202,7 +190,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
         // Portfolio Current Value 
         let stockCurrentValue = 0;
         for (const stock of stockPortfolios) {
-            const price = assetPriceMap.get(stock.assetId as string) ?? stock.avgPrice;
+            const price = assetPriceMap.get(stock.assetId) ?? stock.avgPrice;
             stockCurrentValue += (stock.quantity ?? 0) * price;
         }
 

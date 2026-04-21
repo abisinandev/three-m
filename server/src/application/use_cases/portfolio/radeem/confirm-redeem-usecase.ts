@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IConfirmRedeemUseCase } from "./interfaces/confirm-redeem-usecase.interface";
+import { IConfirmRedeemUseCase } from "../interfaces/confirm-redeem-usecase.interface";
 import { ConfirmRedeemDTO } from "@application/dto/portfolio/confirm-radeem-dto";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";

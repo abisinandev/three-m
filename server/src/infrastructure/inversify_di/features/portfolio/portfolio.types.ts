@@ -11,6 +11,7 @@ export const PORTFOLIO_TYPES = {
     FetchTradeHistoryUseCase: Symbol.for("FetchTradeHistoryUseCase"),
     FetchStockHoldingsUseCase: Symbol.for("FetchStockHoldingsUseCase"),
     FetchMutualFundHoldingsUseCase: Symbol.for("FetchMutualFundHoldingsUseCase"),
+    FetchPortfolioAssetsUseCase: Symbol.for("FetchPortfolioAssetsUseCase"),
 
     // controllers
     PortFolioController: Symbol.for("PortFolioController"),

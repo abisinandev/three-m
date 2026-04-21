@@ -26,7 +26,7 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
         totalPages: number;
     }> {
         const { page = 1, limit = 10, search = "" } = options;
-        
+
         const filter = { assetType: AssetType.STOCK };
 
         const [stockPortfolios, total] = await Promise.all([
@@ -40,14 +40,11 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
             const stockDetails = await this._stockRepository.findBySymbol(stockPf.assetId);
 
             let currentPrice = stockPf.avgPrice;
-            try {
-                const quote = await this._marketDataProvider.getLatestQuote(stockPf.assetId);
-                if (quote) {
-                    currentPrice = quote.price;
-                }
-            } catch (err) {
-                console.error(`Error fetching quote for ${stockPf.assetId}:`, err);
+            const quote = await this._marketDataProvider.getLatestQuote(stockPf.assetId);
+            if (quote) {
+                currentPrice = quote.price;
             }
+
 
             const currentValue = (stockPf.quantity ?? 0) * currentPrice;
             const profit = currentValue - stockPf.investedAmount;
