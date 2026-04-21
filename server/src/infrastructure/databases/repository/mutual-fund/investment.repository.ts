@@ -159,8 +159,9 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         const docs = await this.model.aggregate(pipeline);
         return docs.map(doc => this.mapper.toDomain(doc));
     }
+    
 
-    async getUserInvestmentsWithoutFilter(userId: string): Promise<InvestmentEntity[]> {
+    async getUserInvestementSummary(userId: string): Promise<InvestmentEntity[]> {
 
         const docs = await this.model.aggregate([
             {
@@ -318,10 +319,6 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         );
     };
 
-
-    async getCurrentPortfolioValue(userId: string): Promise<number> {
-        return 0;
-    }
 
     async findUserInvestmentsForXirr(userId: string): Promise<InvestmentEntity[] | null> {
         const docs = await this.model.find({

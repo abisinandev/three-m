@@ -32,6 +32,10 @@ export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsU
             this._investmentRepository.countInvestments(userId, options),
         ]);
 
+
+        console.log('inv: ', investments);
+        console.log('total: ', total);
+
         const data: InvestmentResponseDTO[] = [];
         for (const inv of investments) {
             const [latestNav, fund, schemeInvestments] = await Promise.all([

@@ -17,7 +17,7 @@ export class XirrCalculationUseCase implements IXirrCalculationUseCase {
     ) { }
 
     async execute(userId: string): Promise<number | null> {
-        
+
         const investments = await this._investmentRepository.findUserInvestmentsForXirr(userId) ?? [];
 
         if (investments.length === 0) return null;

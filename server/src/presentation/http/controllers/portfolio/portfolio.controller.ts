@@ -1,6 +1,5 @@
 import { IConfirmRedeemUseCase } from "@application/use_cases/portfolio/interfaces/confirm-redeem-usecase.interface";
-import { IPortfolioCalculationsUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-calculations-usecase.interface";
-import { IPortfolioDetailsUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-details-usecase.interface";
+import { IPortfolioSummaryUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-summary-usecase.interface";
 import { IRadeemInvestmentUseCase } from "@application/use_cases/portfolio/interfaces/redeem-investments-usecase.interface";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
@@ -17,10 +16,9 @@ import { IFetchMutualFundHoldingsUseCase } from "@application/use_cases/portfoli
 @injectable()
 export class PortFolioController {
     constructor(
-        @inject(PORTFOLIO_TYPES.PortfolioDetailsUseCase) private readonly _listAllInvestments: IPortfolioDetailsUseCase,
         @inject(PORTFOLIO_TYPES.RadeemInvestmentUseCase) private readonly _radeemInvestments: IRadeemInvestmentUseCase,
         @inject(PORTFOLIO_TYPES.ConfirmRedeemUseCase) private readonly _confirmRedeem: IConfirmRedeemUseCase,
-        @inject(PORTFOLIO_TYPES.PortfolioCalculationsUseCase) private readonly _portfolioCalcuationUseCase: IPortfolioCalculationsUseCase,
+        @inject(PORTFOLIO_TYPES.PortfolioSummaryUseCase) private readonly _portfolioSummaryUseCase: IPortfolioSummaryUseCase,
         @inject(PORTFOLIO_TYPES.XirrCalculationUseCase) private readonly _xirrCalculation: IXirrCalculationUseCase,
         @inject(PORTFOLIO_TYPES.PortfolioProjectionUseCase) private readonly _portfolioProjection: IPortfolioProjectionUseCase,
         @inject(PORTFOLIO_TYPES.FetchTradeHistoryUseCase) private readonly _fetchTradeHistory: IFetchTradeHistoryUseCase,
@@ -28,29 +26,11 @@ export class PortFolioController {
         @inject(PORTFOLIO_TYPES.FetchMutualFundHoldingsUseCase) private readonly _fetchMFHoldings: IFetchMutualFundHoldingsUseCase,
     ) { }
 
-    async listAllInvestments(req: Request, res: Response, next: NextFunction) {
+
+    async portfolioSummary(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = req?.user?.id
-
-            const result = await this._listAllInvestments.execute(userId as string, req.query);
-            console.log(result, '-------')
-            
-            return ResponseHelper.success(
-                res,
-                SuccessMessages.DATA.FETCHED,
-                result,
-                HttpStatus.OK,
-            )
-
-        } catch (error) {
-            next(error)
-        }
-    }
-
-    async portfolioCalculation(req: Request, res: Response, next: NextFunction) {
-        try {
-            const userId = req?.user?.id
-            const result = await this._portfolioCalcuationUseCase.execute(userId as string);
+            const userId = req?.user?.id;
+            const result = await this._portfolioSummaryUseCase.execute(userId as string);
             return ResponseHelper.success(
                 res,
                 SuccessMessages.DATA.FETCHED,

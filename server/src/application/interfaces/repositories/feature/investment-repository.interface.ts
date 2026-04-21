@@ -17,7 +17,7 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
     findByUsertotalInvestments(userId: string): Promise<number>;
     findInvestmentsByUser(userId: string): Promise<InvestmentEntity[] | null>;
     getUserInvestments(userId: string, options: QueryOptions): Promise<InvestmentEntity[]>;
-    getUserInvestmentsWithoutFilter(userId: string): Promise<InvestmentEntity[]>;
+    getUserInvestementSummary(userId: string): Promise<InvestmentEntity[]>;
     getTotalUnitsByUser(userId: string): Promise<number>;
     getTotalUnitsByUserAndScheme(userId: string, schemeCode: string): Promise<InvestmentEntity[]>
     findGroupedInvestmentsByUser(userId: string): Promise<GroupedSchemeInvestments[] | null>;
@@ -29,8 +29,6 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
         session: ClientSession
     ): Promise<void>;
     createInvestment(entity: InvestmentEntity): Promise<InvestmentEntity | null>;
-    getCurrentPortfolioValue(userId: string): Promise<number>;
     findUserInvestmentsForXirr(userId: string): Promise<InvestmentEntity[] | null>;
     countInvestments(userId: string, options: QueryOptions): Promise<number>;
-    // getUserTotalInvestments(userId: string): Promise<number>;
 }

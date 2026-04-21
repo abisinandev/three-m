@@ -9,4 +9,7 @@ export interface IPortfolioRepository extends IBaseRepository<PortfolioEntity> {
     findWithFilters(userId: string, options: QueryOptions): Promise<PortfolioEntity[]>;
     countWithFilters(userId: string, filter: Record<string, unknown>, search: string): Promise<number>;
     deleteByUserIdAndSymbol(userId: string, assetId: string, session?: ClientSession): Promise<boolean>;
+    
+    
+    // findUserInvestments(userId: string, session?: ClientSession): Promise<PortfolioEntity | null>;
 }

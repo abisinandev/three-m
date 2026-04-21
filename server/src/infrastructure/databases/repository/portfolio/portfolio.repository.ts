@@ -5,6 +5,7 @@ import { PortfolioModel, PortfolioDocument } from "../../mongo_db/models/schemas
 import { injectable } from "inversify";
 import { PortfolioMapper } from "@infrastructure/mappers/portfolio/portfolio.mapper";
 import { ClientSession, QueryOptions } from "mongoose";
+import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 
 @injectable()
 export class PortfolioRepository extends BaseRepository<PortfolioEntity, PortfolioDocument> implements IPortfolioRepository {
@@ -19,7 +20,11 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
     }
 
     async findByUserId(userId: string, session?: ClientSession): Promise<PortfolioEntity[]> {
-        const results = await this.model.find({ userId }, null, { session });
+        const results = await this.model.find(
+            { userId, assetType: AssetType.STOCK },
+            null,
+            { session }
+        );
         return results.map((doc) => this.mapper.toDomain(doc))
     }
 
@@ -35,8 +40,8 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
 
         const skip = (Number(page) - 1) * Number(limit);
 
-        const finalFilter: Record<string, unknown> = { 
-            ...filter, 
+        const finalFilter: Record<string, unknown> = {
+            ...filter,
             userId,
         };
 
@@ -59,9 +64,9 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
     }
 
     async countWithFilters(userId: string, filter: Record<string, unknown>, search: string): Promise<number> {
-        const finalFilter: Record<string, unknown> = { 
-            ...filter, 
-            userId 
+        const finalFilter: Record<string, unknown> = {
+            ...filter,
+            userId
         };
 
         if (search.trim()) {
@@ -75,4 +80,25 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         const result = await this.model.deleteOne({ userId, assetId }, { session });
         return result.deletedCount > 0;
     }
+
+
+    // async findUserInvestments(userId: string, session?: ClientSession): Promise<PortfolioEntity | null> {
+    //     const docs = await this.model.aggregate([
+    //         { $match: { userId, assetType: AssetType.MUTUAL_FUND } },
+    //         {
+    //             $lookup: {
+    //                 from: 'mutualfund',
+    //                 localField: 'assetId',
+    //                 foreignField: '_id',
+    //                 as: 'fundDetails',
+    //             }
+    //         },
+    //         { $unwind: "$fundDetails" },
+    //     ])
+
+    //     console.log("mf: ", docs);
+    //     if (!docs) return null;
+
+    //     return docs.map(doc => this.mapper.toDomain(doc));
+    // }
 }
