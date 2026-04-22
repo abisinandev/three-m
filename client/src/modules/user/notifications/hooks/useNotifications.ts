@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNotificationStore } from '@stores/notification/useNotificationStore';
 import { markNotificationRead, markAllNotificationsRead, getNotifications } from '@shared/services/notification/notification.service';
-import { NotificationFilter } from '../types/notification.types';
+import type { NotificationFilter } from '../types/notification.types';
 
 export const useNotifications = () => {
     const { notifications, unreadCount, markRead, markAllRead, setNotifications } = useNotificationStore();
