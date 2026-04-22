@@ -17,6 +17,9 @@ import { TradeEntity } from "@domain/entities/stock/trade.entity";
 import { InvestmentFundDTO } from "@application/dto/portfolio/aggregated-asset.dto";
 import { PortfolioSummaryDTO } from "@application/dto/portfolio/portfolio-summary.dto";
 import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
+import { ICacheProvider } from "@application/interfaces/services/externals/redis-cache.provider.interface";
+import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
+
 
 /**
  * Handles portfolio summary calculation.
@@ -41,6 +44,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
+        @inject(EXTERNAL_TYPES.RedisCacheProvider) private readonly _cache: ICacheProvider,
     ) { }
 
     async execute(userId: string): Promise<PortfolioSummaryDTO> {
@@ -73,9 +77,18 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
 
         await Promise.all(
             schemeCodes.map(async (schemeCode) => {
-                const navHistory = await this._navUpdateProvider.fetchNavHistories(schemeCode);
-                if (navHistory?.length) {
-                    navMap.set(schemeCode, Number(navHistory[0].nav));
+                const cacheKey = `nav-cache:${schemeCode}`;
+                const cachedNav = await this._cache.get(cacheKey);
+
+                if (cachedNav) {
+                    navMap.set(schemeCode, Number(cachedNav));
+                } else {
+                    const navHistory = await this._navUpdateProvider.fetchNavHistories(schemeCode);
+                    if (navHistory?.length) {
+                        const latestNav = Number(navHistory[0].nav);
+                        navMap.set(schemeCode, latestNav);
+                        await this._cache.set(cacheKey, latestNav.toString(), 3600); // Cache for 1 hour
+                    }
                 }
             })
         );
@@ -94,13 +107,20 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
         const uniqueAssetIds = [...new Set(stockPortfolios.map(p => p.assetId))];
 
         await Promise.all(uniqueAssetIds.map(async (assetId) => {
-            const stock = await this._stockRepository.findById(assetId);
-            if (stock) {
-                const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
-                if (quote) {
-                    assetPriceMap.set(assetId, quote.price);
-                }
+            const cacheKey = `stock-price-cache:${assetId}`;
+            const cachedPrice = await this._cache.get(cacheKey);
 
+            if (cachedPrice) {
+                assetPriceMap.set(assetId, Number(cachedPrice));
+            } else {
+                const stock = await this._stockRepository.findById(assetId);
+                if (stock) {
+                    const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
+                    if (quote) {
+                        assetPriceMap.set(assetId, quote.price);
+                        await this._cache.set(cacheKey, quote.price.toString(), 3600); // Cache for 1 hour
+                    }
+                }
             }
         }));
 
@@ -152,7 +172,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
     ): CashFlow[] {
         const cashFlows: CashFlow[] = [];
 
-        // Mutual Funds Cashflows
+        // mf
         let mfCurrentValue = 0;
         for (const inv of investments) {
             cashFlows.push({
@@ -171,7 +191,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             }
         }
 
-        // Stocks Cashflows
+        // Stocks
         for (const trade of trades) {
             const amount = trade.quantity * trade.price;
             if (trade.side === OrderSide.BUY) {

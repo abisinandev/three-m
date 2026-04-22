@@ -2,7 +2,11 @@ import { IEducationAgent } from "@application/interfaces/services/ai-chatbot/edu
 import { IChatHistoryService } from "@application/interfaces/services/ai-chatbot/chat-history-service.interface";
 import { ContainerModule } from "inversify";
 import { AI_SYSTEM_TYPES } from "./ai-system.type";
-import { EducationAgent } from "@infrastructure/providers/ai-agents/agents/education-agent.provider";
+import { IDetectAgent } from "@application/interfaces/services/ai-chatbot/detect-agent.interface";
+import { DetectAgent } from "@infrastructure/providers/ai-agents/agents/detect-agent.provider";
+import { EducationAgent } from "@infrastructure/providers/ai-agents/agents/education/education-agent.provider";
+import { IPortfolioAgent } from "@application/interfaces/services/ai-chatbot/portfolio-agent.interface";
+import { PortfolioAgent } from "@infrastructure/providers/ai-agents/agents/portfolio/portfolio-agent.provider";
 import { AiChatbotController } from "@presentation/http/controllers/ai-chatbot/ai-chatbot.controller";
 import { IChatbotUseCase } from "@application/use_cases/ai-chatbot/interface/chatbot-usecase.interface";
 import { ChatbotUseCase } from "@application/use_cases/ai-chatbot/chatbot-usecase";
@@ -12,7 +16,11 @@ import { SemanticCacheService } from "@infrastructure/providers/ai-agents/semant
 
 export const AiSystemModules = new ContainerModule(({ bind }) => {
 
+    bind<IDetectAgent>(AI_SYSTEM_TYPES.DetectAgent).to(DetectAgent);
+
     bind<IEducationAgent>(AI_SYSTEM_TYPES.EducationAgent).to(EducationAgent);
+
+    bind<IPortfolioAgent>(AI_SYSTEM_TYPES.PortfolioAgent).to(PortfolioAgent);
 
     bind<IChatHistoryService>(AI_SYSTEM_TYPES.ChatHistoryService).to(ChatHistoryService);
 

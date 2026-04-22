@@ -1,5 +1,5 @@
-import { model } from "../ollama.config";
-import { FinancialIntelligentTool } from "../langchain/tools/financial-intelligent";
+import { model } from "../../ollama.config";
+import { FinancialIntelligentTool } from "../../langchain/tools/financial-intelligent";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 
 export const EducationAgentGraph = createReactAgent({

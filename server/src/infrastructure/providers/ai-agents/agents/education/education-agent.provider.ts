@@ -2,7 +2,7 @@ import { injectable } from "inversify";
 import { IEducationAgent } from "@application/interfaces/services/ai-chatbot/education-agent.interface";
 import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
-import { normalizeAIResponse } from "../utils/normalize-response";
+import { normalizeAIResponse } from "../../utils/normalize-response";
 import { EducationAgentGraph } from "./education.agent-graph";
 
 @injectable()

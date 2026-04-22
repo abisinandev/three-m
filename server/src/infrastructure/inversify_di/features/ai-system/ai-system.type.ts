@@ -1,7 +1,9 @@
 export const AI_SYSTEM_TYPES = {
-    // DetectAgent: Symbol.for("DetectAgent"),
+    DetectAgent: Symbol.for("DetectAgent"),
 
     EducationAgent: Symbol.for("EducationAgent"),
+
+    PortfolioAgent: Symbol.for("PortfolioAgent"),
 
     AgentRouter: Symbol.for("AgentRouter"),
 

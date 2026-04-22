@@ -20,7 +20,7 @@ export class SemanticCacheService implements ISemanticCacheService {
         try {
             const store = await this.storePromise;
             const results = await store.similaritySearchWithScore(query, 1);
-            
+
             if (results.length > 0) {
                 const [doc, score] = results[0];
                 if (score >= threshold && doc.metadata?.response) {
@@ -35,9 +35,13 @@ export class SemanticCacheService implements ISemanticCacheService {
     }
 
     async set(query: string, response: string): Promise<void> {
+        if (!query?.trim() || !response?.trim()) {
+            return;
+        }
+
         try {
             const store = await this.storePromise;
-      
+
             await store.addDocuments([
                 new Document({
                     pageContent: query,
@@ -45,7 +49,7 @@ export class SemanticCacheService implements ISemanticCacheService {
                 })
             ]);
         } catch (error) {
-            console.error("Semantic Cache set error:", error);
+            console.error("Semantic Cache set error (Non-Fatal):", error);
         }
     }
 }
