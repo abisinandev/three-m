@@ -10,4 +10,6 @@ export const AI_SYSTEM_TYPES = {
     ChatbotUseCase: Symbol.for("ChatbotUseCase"),
 
     AiChatbotController: Symbol.for("AiChatbotController"),
+
+    SemanticCacheService: Symbol.for("SemanticCacheService"),
 }

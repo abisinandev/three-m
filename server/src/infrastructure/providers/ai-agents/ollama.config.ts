@@ -4,7 +4,7 @@ import { ChatOllama } from "@langchain/ollama";
 export const getOllamaModel = () => {
     return new ChatOllama({
         model: "llama3.1",
-        temperature: 0,
+        temperature: 0.3,
         baseUrl: process.env.OLLAMA_BASE_URL || "http://localhost:11434",
     });
 };

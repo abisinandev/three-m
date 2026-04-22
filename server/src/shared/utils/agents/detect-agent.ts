@@ -3,19 +3,16 @@ import { model } from "@infrastructure/providers/ai-agents/ollama.config";
 export function isSimpleQuestion(message: string): boolean {
     const text = message.toLowerCase();
 
-    // complex intent keywords
     const complexKeywords = [
         "suggest", "recommend", "best", "compare",
         "which is better", "invest", "buy", "sell",
         "portfolio", "strategy", "plan"
     ];
 
-    // if any complex keyword → NOT simple
     if (complexKeywords.some(k => text.includes(k))) {
         return false;
     }
 
-    // question patterns → simple
     const simplePatterns = [
         "what", "why", "how", "explain", "define"
     ];
@@ -24,7 +21,6 @@ export function isSimpleQuestion(message: string): boolean {
         return true;
     }
 
-    // fallback
     return true;
 }
 

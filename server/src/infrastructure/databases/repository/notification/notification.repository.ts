@@ -59,10 +59,6 @@ export class NotificationRepository extends BaseRepository<NotificationEntity, N
             { $set: { read: true } }
         );
 
-        if (result.matchedCount === 0) {
-            throw new Error("Notification not found or access denied");
-        }
-
         await redisClient.del(this.getCacheKey(userId));
     }
 
