@@ -77,8 +77,6 @@ export class AnalyticsUseCase implements IAnalyticsUseCase {
             ? ((topCategoryItem.thisMonth - topCategoryItem.lastMonth) / topCategoryItem.lastMonth) * 100
             : 0;
 
-        const investedAmount = currentTracker?.savingsStatus.actualAmount || 0;
-
         const financialSummary: FinancialSummary = {
             totalSpent: thisMonthTotal,
             lastMonthSpent: lastMonthTotal,
@@ -86,7 +84,9 @@ export class AnalyticsUseCase implements IAnalyticsUseCase {
             topCategory,
             topCategoryChange,
             spendingRatio: totalIncome > 0 ? thisMonthTotal / totalIncome : 0,
-            investmentRatio: totalIncome > 0 ? investedAmount / totalIncome : 0
+            investmentRatio: 0,
+            needsRatio: totalIncome > 0 ? (currentTracker?.expenseSummary.totalNeedsSpent || 0) / totalIncome : 0,
+            wantsRatio: totalIncome > 0 ? (currentTracker?.expenseSummary.totalWantsSpent || 0) / totalIncome : 0
         };
 
         const { insights, healthScore } = generateInsights(financialSummary);
@@ -113,4 +113,3 @@ export class AnalyticsUseCase implements IAnalyticsUseCase {
         };
     }
 }
-

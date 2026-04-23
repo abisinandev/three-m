@@ -65,7 +65,7 @@ export class ExpenseTrackerEntity {
             this._budget.savingsTarget,
             totalInvested
         );
-        this.touch();
+        this._updatedAt = new Date();
     }
 
     static create(data: {
@@ -136,7 +136,7 @@ export class ExpenseTrackerEntity {
             this._expenses,
             this._budget
         );
-        this.touch();
+        this._updatedAt = new Date();
     }
 
     removeExpenseAt(index: number): void {
@@ -145,10 +145,6 @@ export class ExpenseTrackerEntity {
         }
         this._expenses.splice(index, 1);
         this.recalculate();
-    }
-
-    private touch(): void {
-        this._updatedAt = new Date();
     }
 
     get id(): string | undefined {

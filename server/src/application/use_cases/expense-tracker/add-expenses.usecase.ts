@@ -10,11 +10,11 @@ import { Expense } from "@domain/entities/expense-tracker/value-objects/expense.
 import { Income } from "@domain/entities/expense-tracker/value-objects/income.vo";
 import { IncomeSource } from "@domain/entities/expense-tracker/types/expense-tracker.types";
 import { ErrorMessages } from "@shared/constants/error.messages";
-import mongoose from "mongoose";
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { ICreateNotificationUseCase } from "@application/use_cases/notification/interfaces/create-notification-usecase.interface";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
+import mongoose from "mongoose";
 
 @injectable()
 export class AddExpensesUseCase implements IAddExpenseUseCase {
@@ -23,7 +23,6 @@ export class AddExpensesUseCase implements IAddExpenseUseCase {
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotificationUseCase: ICreateNotificationUseCase,
     ) { }
-
 
     async execute(dto: AddExpenseDTO, userId: string): Promise<void> {
         const session = await mongoose.startSession();
