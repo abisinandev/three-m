@@ -2,11 +2,7 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { IPortfolioSummaryUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-summary-usecase.interface";
 
-/**
- * Factory that creates a portfolio summary tool with the userId baked in.
- * This pattern is required because the userId is only known at request time,
- * not at module initialization time.
- */
+
 export const createPortfolioSummaryTool = (
     userId: string,
     portfolioSummaryUseCase: IPortfolioSummaryUseCase

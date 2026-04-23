@@ -6,7 +6,7 @@ import { BaseMessageChunk } from "@langchain/core/messages";
 @injectable()
 export class DetectAgent implements IDetectAgent {
 
-  classifyIntent(message: string): "simple" | "complex" | "portfolio" {
+  classifyIntent(message: string): "simple" | "complex" | "portfolio" | "trade" {
     const text = message
       .toLowerCase()
       .replace(/[^\w\s]/g, "")
@@ -32,14 +32,25 @@ export class DetectAgent implements IDetectAgent {
       return "portfolio";
     }
 
+    const tradePatterns = [
+      "buy",
+      "sell",
+      "invest in",
+      "trade",
+      "stock list",
+      "list stocks",
+      "best stocks",
+      "order",
+    ];
+
+    if (tradePatterns.some((p) => text.includes(p))) {
+      return "trade";
+    }
+
     const complexKeywords = [
       "suggest",
       "recommend",
-      "best",
       "compare",
-      "invest",
-      "buy",
-      "sell",
       "strategy",
       "plan",
     ];
@@ -69,6 +80,7 @@ export class DetectAgent implements IDetectAgent {
 
     return score > 0 ? "complex" : "simple";
   }
+
 
 
   async directLLM(message: string): Promise<BaseMessageChunk> {

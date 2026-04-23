@@ -5,7 +5,8 @@ export interface IDetectAgent {
    * Classifies the user's intent into 'simple', 'complex', or 'portfolio'.
    * @param message User's prompt
    */
-  classifyIntent(message: string): "simple" | "complex" | "portfolio";
+  classifyIntent(message: string): "simple" | "complex" | "portfolio" | "trade";
+
 
   /**
    * Directly invokes the LLM for simple queries with a system prompt.

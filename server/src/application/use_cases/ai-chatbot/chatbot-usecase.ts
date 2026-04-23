@@ -19,6 +19,7 @@ export class ChatbotUseCase implements IChatbotUseCase {
         @inject(AI_SYSTEM_TYPES.ChatHistoryService) private readonly _chatHistoryService: IChatHistoryService,
         @inject(AI_SYSTEM_TYPES.EducationAgent) private readonly _educationAgent: IEducationAgent,
         @inject(AI_SYSTEM_TYPES.PortfolioAgent) private readonly _portfolioAgent: IPortfolioAgent,
+        @inject(AI_SYSTEM_TYPES.TradeAgent) private readonly _tradeAgent: IPortfolioAgent,
         @inject(AI_SYSTEM_TYPES.DetectAgent) private readonly _detectAgent: IDetectAgent,
         @inject(AI_SYSTEM_TYPES.SemanticCacheService) private readonly _semanticCache: ISemanticCacheService,
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
@@ -27,7 +28,8 @@ export class ChatbotUseCase implements IChatbotUseCase {
 
     async execute(userId: string, userInput: string): Promise<{
         message: string,
-        upgradeRequired?: boolean
+        upgradeRequired?: boolean,
+        type?: 'text' | 'confirmation'
     }> {
 
         const intent = this._detectAgent.classifyIntent(userInput);
@@ -79,13 +81,34 @@ export class ChatbotUseCase implements IChatbotUseCase {
         }
 
         if (intent === "simple") {
+
             response = String((await this._detectAgent.directLLM(userInput)).content);
+
         } else if (intent === "portfolio") {
+
             const history = await this._chatHistoryService.getConversationHistory(userId);
             response = await this._portfolioAgent.handle(userInput, history, userId);
+
+        } else if (intent === "trade") {
+
+            const history = await this._chatHistoryService.getConversationHistory(userId);
+            response = await this._tradeAgent.handle(userInput, history, userId);
+
         } else {
+
             const history = await this._chatHistoryService.getConversationHistory(userId);
             response = await this._educationAgent.handle(userInput, history);
+
+        }
+
+        let isConfirmation = false;
+        if (response.includes("CONFIRM_TRADE:")) {
+            isConfirmation = true;
+
+            const parts = response.split("CONFIRM_TRADE:")[1].split(":");
+            const symbol = parts[0];
+            const qty = parts[1];
+            response = `I've prepared a Buy Order for **${symbol}** (Quantity: ${qty}). Please review the details below and confirm to execute the trade.`;
         }
 
         const savePromises = [
@@ -101,7 +124,10 @@ export class ChatbotUseCase implements IChatbotUseCase {
 
         await Promise.all(savePromises);
 
-        return { message: response };
+        return { 
+            message: response,
+            type: isConfirmation ? "confirmation" : "text"
+        };
     }
 
     async getHistory(userId: string): Promise<ChatMessage[]> {
