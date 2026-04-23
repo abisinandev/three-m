@@ -1,6 +1,6 @@
 import React from 'react';
 import { Search, TrendingUp } from 'lucide-react';
-import { FUND_FILTERS } from '../../../contants/mutualFundContants';
+import { FUND_FILTERS } from '../../../constants/mutualFundConstants';
 import { toggleFundFilter } from '../../../helper/ToggleFilter';
 
 interface FundsTabProps {

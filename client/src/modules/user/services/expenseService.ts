@@ -44,3 +44,9 @@ export const fetchAnalyticsData = async (month?: string) => {
     const response = await api.get('/user/expense-tracker/analytics', { params: { month } });
     return response.data.data;
 };
+
+export const simulateBudget = async (data: any) => {
+    const response = await api.post('/user/expense-tracker/simulate', data);
+    return response.data.data;
+};
+

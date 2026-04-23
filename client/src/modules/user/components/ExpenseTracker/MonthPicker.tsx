@@ -1,5 +1,6 @@
+'use client';
 import { useRef, useState, useEffect } from 'react';
-import { Calendar, ChevronDown } from 'lucide-react';
+import { Calendar, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getYear, getMonth, format, startOfMonth } from 'date-fns';
 
 interface MonthPickerProps {
@@ -30,35 +31,41 @@ export const MonthPicker = ({ selectedMonth, setSelectedMonth, displayMonth }: M
                     setIsMonthPickerOpen(!isMonthPickerOpen);
                     setPickerYear(getYear(selectedMonth));
                 }}
-                className="flex items-center gap-2 bg-[#111] px-4 py-2 rounded-xl border border-neutral-800 hover:border-neutral-700 hover:bg-neutral-900 transition-all duration-300 shadow-sm group"
+                className="flex items-center gap-2 bg-[#111214] py-1.5 px-3 rounded-md border border-[#1e2025] cursor-pointer transition-colors duration-150 hover:border-[#3a3d45]"
             >
-                <Calendar size={16} className="text-neutral-500 group-hover:text-blue-500 transition-colors" />
-                <span className="text-sm text-neutral-200 font-bold tracking-tight">{displayMonth}</span>
-                <ChevronDown size={14} className={`text-neutral-500 transition-transform duration-300 ${isMonthPickerOpen ? 'rotate-180 text-blue-500' : ''}`} />
+                <Calendar size={13} className="text-[#5a5f6e]" />
+                <span className="text-[11px] font-bold text-[#e8eaed] tracking-[-0.2px]">{displayMonth.toUpperCase()}</span>
+                <ChevronDown size={12} className={`text-[#5a5f6e] transition-transform duration-200 ${isMonthPickerOpen ? 'rotate-180' : ''}`} />
             </button>
 
+
             {isMonthPickerOpen && (
-                <div className="absolute top-full right-0 mt-3 z-50 bg-[#0a0a0a]/95 backdrop-blur-xl border border-neutral-800 rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] w-72 animate-in fade-in zoom-in duration-200 origin-top-right">
-                    <div className="flex items-center justify-between mb-4 px-1">
+                <div className="absolute top-full right-0 mt-2 z-50 bg-[#0b0c0e] border border-[#1e2025] rounded-lg p-4 w-[240px] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+                    <div className="flex items-center justify-between mb-3">
                         <button
                             onClick={() => setPickerYear(prev => prev - 1)}
-                            className="p-1.5 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-colors"
+                            className="bg-transparent border-none cursor-pointer text-[#5a5f6e] p-1 hover:text-[#e8eaed] transition-colors"
                         >
-                            <ChevronDown className="rotate-90" size={16} />
+                            <ChevronLeft size={16} />
                         </button>
-                        <span className="text-sm font-black text-white tracking-widest">{pickerYear}</span>
+                        <span className="text-[11px] font-extrabold text-[#e8eaed] tracking-[0.1em]">{pickerYear}</span>
                         <button
                             onClick={() => setPickerYear(prev => prev + 1)}
-                            className="p-1.5 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-colors"
+                            className="bg-transparent border-none cursor-pointer text-[#5a5f6e] p-1 hover:text-[#e8eaed] transition-colors"
                         >
-                            <ChevronDown className="-rotate-90" size={16} />
+                            <ChevronRight size={16} />
                         </button>
                     </div>
-                    <div className="grid grid-cols-3 gap-2">
+
+                    <div className="grid grid-cols-3 gap-1.5">
                         {Array.from({ length: 12 }).map((_, i) => {
                             const monthDate = new Date(pickerYear, i, 1);
                             const isSelected = getYear(selectedMonth) === pickerYear && getMonth(selectedMonth) === i;
                             const isCurrentMonth = getYear(new Date()) === pickerYear && getMonth(new Date()) === i;
+                            
+                            const btnBorder = isCurrentMonth && !isSelected ? 'border border-blue-500/25' : 'border border-transparent';
+                            const btnBg = isSelected ? 'bg-blue-500 hover:bg-blue-600' : 'bg-transparent hover:bg-[#1e2025]';
+                            const btnText = isSelected ? 'text-white' : isCurrentMonth ? 'text-blue-500' : 'text-[#5a5f6e]';
 
                             return (
                                 <button
@@ -67,32 +74,28 @@ export const MonthPicker = ({ selectedMonth, setSelectedMonth, displayMonth }: M
                                         setSelectedMonth(monthDate);
                                         setIsMonthPickerOpen(false);
                                     }}
-                                    className={`
-                                        py-2.5 rounded-xl text-xs font-bold transition-all duration-200
-                                        ${isSelected
-                                            ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)] scale-105 z-10'
-                                            : 'text-neutral-500 hover:bg-neutral-800/80 hover:text-neutral-200'}
-                                        ${isCurrentMonth && !isSelected ? 'border border-blue-500/30 text-blue-400' : ''}
-                                    `}
+                                    className={`py-2 rounded text-[10px] font-bold cursor-pointer transition-colors duration-150 ${btnBorder} ${btnBg} ${btnText}`}
                                 >
-                                    {format(monthDate, 'MMM')}
+                                    {format(monthDate, 'MMM').toUpperCase()}
                                 </button>
                             );
                         })}
                     </div>
-                    <div className="mt-4 pt-4 border-t border-neutral-800/50 flex justify-center">
+
+                    <div className="mt-3 pt-2.5 border-t border-[#1e2025] flex justify-center">
                         <button
                             onClick={() => {
                                 setSelectedMonth(startOfMonth(new Date()));
                                 setIsMonthPickerOpen(false);
                             }}
-                            className="text-[10px] font-black uppercase tracking-widest text-blue-500/80 hover:text-blue-400 transition-colors"
+                            className="bg-transparent border-none cursor-pointer text-[9px] font-extrabold text-[#3B82F6] tracking-[0.05em] hover:text-blue-400 transition-colors"
                         >
-                            Go to Current Month
+                            CURRENT MONTH
                         </button>
                     </div>
                 </div>
             )}
         </div>
+
     );
 };

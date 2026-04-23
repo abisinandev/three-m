@@ -2,7 +2,7 @@
 export interface AddExpenseRequest {
     amount: number;
     category: string;
-    type: 'NEED' | 'WANT';
+    type: 'NEED' | 'WANT' | 'SAVING';
     description?: string;
     date?: string;
     paymentMode?: 'CASH' | 'BANK' | 'UPI' | 'WALLET';
@@ -24,39 +24,51 @@ export interface IncomeSource {
     amount: number;
 }
 
-export interface Investment {
-    schemeName: string;
-    amount: number;
-    type: string;
-    date: Date;
-}
-
 export interface Expense {
     amount: number;
     category: string;
-    type: 'NEED' | 'WANT';
+    type: 'NEED' | 'WANT' | 'SAVING';
     description?: string;
     date: Date;
     paymentMode?: 'CASH' | 'BANK' | 'UPI' | 'WALLET';
 }
 
 export interface ExpenseTrackerData {
-    mutualFundInvestedAmount: number;
-    sipInvestedAmount: number;
-    stocks: number;
-    totalInvestedAmount: number;
-    walletBalance: number;
     income: number;
     incomeSources: IncomeSource[];
-    investments: Investment[];
     expenses?: Expense[];
     totalNeeds?: number;
     totalWants?: number;
+    totalSavings?: number;
     needsTarget: number;
     wantsTarget: number;
     savingsTarget: number;
     totalSpent: number;
     currentMonthBalance: number;
-    savingsGap: number;
-    isSavingsGoalMet: boolean;
+    healthScore?: number;
 }
+
+export type AdjustmentType = 'INCOME' | 'CATEGORY';
+
+export interface SimulationAdjustment {
+    type: AdjustmentType;
+    categoryType?: 'NEED' | 'WANT' | 'SAVING';
+    amount: number;
+    description?: string;
+}
+
+export interface SimulationRequest {
+    month?: string;
+    adjustments: SimulationAdjustment[];
+}
+
+export interface SimulationResult {
+    original: ExpenseTrackerData;
+    simulated: ExpenseTrackerData;
+    impact: {
+        savingsChange: number;
+        balanceChange: number;
+        isBetter: boolean;
+    };
+}
+
