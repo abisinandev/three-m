@@ -4,5 +4,7 @@ import { ClientSession } from "mongoose";
 
 export interface IOrderRepository extends IBaseRepository<OrderEntity> {
     create(entity: OrderEntity, session?: ClientSession): Promise<OrderEntity>;
+    findPendingLimitOrders(): Promise<OrderEntity[]>;
+    findPendingLimitOrdersByUserId(userId: string, symbol?: string): Promise<OrderEntity[]>;
     countCancelledOrders(): Promise<number>;
-}
+}

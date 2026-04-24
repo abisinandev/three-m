@@ -26,6 +26,13 @@ import { IFeatureAccessService } from "@application/interfaces/services/subscrip
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { isIndianMarketOpen } from "@shared/utils/market/market-time";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
+import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
+import { CurrencyTypes } from "@domain/enum/users/currency-enum";
+import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
+import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
+import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
+import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
+import { OrderStatus } from "@domain/entities/stock/enum/order-status.enum";
 
 @injectable()
 export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
@@ -39,9 +46,10 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
+        @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
     ) { }
 
-    async execute(data: BuyOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
+    async execute(order: BuyOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
 
         const hasAccess = await this._featureAccess.hasAccess(
             userId,
@@ -64,7 +72,7 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
             const user = await this._userRepository.findById(userId);
             if (!user) throw new NotFoundError(ErrorMessages.USER.NOT_FOUND);
 
-            const stock = await this._stockRepository.findBySymbol(data.symbol);
+            const stock = await this._stockRepository.findBySymbol(order.symbol);
             if (!stock) throw new NotFoundError(ErrorMessages.STOCKS.NOT_FOUND);
 
             if (!stock.isVisible)
@@ -73,22 +81,22 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
             if (!stock.isTradable)
                 throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
 
-            if (!isIndianMarketOpen())
-                throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+            // if (!isIndianMarketOpen())
+            //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
-            if (!data.quantity || data.quantity <= 0)
+            if (!order.quantity || order.quantity <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);
 
-            const latestQuote = await this._marketDataProvider.getLatestQuote(data.symbol);
-            const marketPrice = latestQuote?.price ?? data.price;
+            const latestQuote = await this._marketDataProvider.getLatestQuote(order.symbol);
+            const marketPrice = latestQuote?.price ?? order.price;
 
             if (!marketPrice || marketPrice <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.INVALID_MARKET_PRICE);
 
             const execution = {
-                filledQty: data.quantity,
+                filledQty: order.quantity,
                 avgPrice: marketPrice,
-                totalValue: marketPrice * data.quantity,
+                totalValue: marketPrice * order.quantity,
             };
 
             const wallet = await this._wallet.findByUserId(userId, session);
@@ -98,10 +106,54 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
                 throw new ValidationError(ErrorMessages.WALLET.INSUFFICIENT_BALANCE);
 
 
-            ///📌📌📌📌📌📌📌📌Transaction not managed
+            const transaction = TransactionEntity.create({
+                userId,
+                userCode: user.userCode,
+                amount: execution.totalValue,
+                currency: CurrencyTypes.INR,
+                referenceType: TransactionReferenceType.WALLET,
+                status: TransactionStatus.PENDING,
+                type: TransactionTypes.BUY
+            })
+            const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
 
             wallet.debit(execution.totalValue);
             await this._wallet.update(userId, wallet, session);
+
+            const marketOrder = OrderEntity.create({
+                userId,
+                symbol: order.symbol,
+                side: OrderSide.BUY,
+                orderType: OrderType.MARKET_ORDER,
+                quantity: execution.filledQty,
+                price: execution.avgPrice,
+                status: OrderStatus.FILLED,
+                stopLoss: order.stopLoss,
+                takeProfit: order.takeProfit,
+                isAlgoTrade: order.isAlgoTrade ?? false,
+            })
+
+            marketOrder.updateFilledQty(
+                execution.filledQty,
+                execution.totalValue
+            );
+            marketOrder.markFilled();
+
+            const newOrder = await this._orderRepository.create(
+                marketOrder,
+                session
+            );
+
+            const trade = TradeEntity.create({
+                userId,
+                orderId: newOrder.id as string,
+                symbol: order.symbol,
+                price: execution.avgPrice,
+                quantity: execution.filledQty,
+                side: OrderSide.BUY,
+                isAlgoTrade: order.isAlgoTrade ?? false,
+            })
+            await this._tradeRepository.create(trade, session);
 
             let portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
                 userId,
@@ -120,8 +172,8 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
                     newTotalInvested
                 );
 
-                if (data.stopLoss || data.takeProfit) {
-                    portfolio.updateRiskLevels(data.stopLoss, data.takeProfit);
+                if (order.stopLoss || order.takeProfit) {
+                    portfolio.updateRiskLevels(order.stopLoss, order.takeProfit);
                 }
 
                 await this._portfolioRepository.update(
@@ -139,46 +191,15 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
                     investedAmount: execution.totalValue,
                 });
 
-                if (data.stopLoss || data.takeProfit) {
-                    portfolio.updateRiskLevels(data.stopLoss, data.takeProfit);
+                if (order.stopLoss || order.takeProfit) {
+                    portfolio.updateRiskLevels(order.stopLoss, order.takeProfit);
                 }
 
                 await this._portfolioRepository.create(portfolio, session);
             }
 
-
-            const marketOrder = OrderEntity.create({
-                userId,
-                symbol: data.symbol,
-                side: OrderSide.BUY,
-                orderType: OrderType.MARKET_ORDER,
-                quantity: execution.filledQty,
-                price: execution.avgPrice,
-                stopLoss: data.stopLoss,
-                takeProfit: data.takeProfit,
-            })
-
-            marketOrder.updateFilledQty(
-                execution.filledQty,
-                execution.totalValue
-            );
-            marketOrder.markFilled();
-
-            const newOrder = await this._orderRepository.create(
-                marketOrder,
-                session
-            );
-
-            const trade = TradeEntity.create({
-                userId,
-                orderId: newOrder.id as string,
-                symbol: data.symbol,
-                price: execution.avgPrice,
-                quantity: execution.filledQty,
-                side: OrderSide.BUY,
-                isAlgoTrade: data.isAlgoTrade ?? false,
-            })
-            await this._tradeRepository.create(trade, session);
+            newTransaction.markSucess();
+            await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
 
             await session.commitTransaction();
 

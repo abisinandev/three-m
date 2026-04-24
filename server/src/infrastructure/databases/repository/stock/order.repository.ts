@@ -23,4 +23,25 @@ export class OrderRepository extends BaseRepository<OrderEntity, OrderDocument> 
     async countCancelledOrders(): Promise<number> {
         return this.model.countDocuments({ status: OrderStatus.CANCELLED }).exec();
     }
-}
+
+    async findPendingLimitOrders(): Promise<OrderEntity[]> {
+        const docs = await this.model.find({
+            status: OrderStatus.PENDING,
+            orderType: "LIMIT_ORDER"
+        }).exec();
+
+        return Promise.all(docs.map(doc => this.mapper.toDomain(doc)));
+    }
+
+    async findPendingLimitOrdersByUserId(userId: string, symbol?: string): Promise<OrderEntity[]> {
+        const query: Record<string, unknown> = {
+            userId,
+            status: OrderStatus.PENDING,
+            orderType: "LIMIT_ORDER"
+        };
+        if (symbol) query.symbol = symbol;
+
+        const docs = await this.model.find(query).sort({ createdAt: -1 }).exec();
+        return Promise.all(docs.map(doc => this.mapper.toDomain(doc)));
+    }
+}

@@ -73,6 +73,10 @@ export const OrderSchema = new Schema<OrderDocument>(
             type: Date,
             default: null,
         },
+        isAlgoTrade: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         timestamps: true,

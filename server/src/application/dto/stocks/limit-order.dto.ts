@@ -25,4 +25,9 @@ export class LimitBuyOrderDTO {
     @IsNumber()
     @Min(0.01)
     takeProfit?: number;
+
+    @IsOptional()
+    isAlgoTrade?: boolean;
 }
+
+export class LimitSellOrderDTO extends LimitBuyOrderDTO {}

@@ -11,9 +11,14 @@ import { ISocketService } from "@application/interfaces/services/notification/so
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import http from "http";
 import app from "./app";
-// import { STOCK_TYPES } from "@infrastructure/inversify_di/featur.es/stock/stock.types";
 import { container } from "@infrastructure/inversify_di/container";
 // import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/RAG/ingest-docs";
+import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
+import { StrategyWorker } from "@infrastructure/providers/algos/queue/workers/strategy.worker";
+import { SignalWorker } from "@infrastructure/providers/algos/queue/workers/signal.worker";
+import { IStrategyScheduler } from "@application/interfaces/services/algo-trading/strategy-scheduler.interface";
+import { OrderWorker } from "@infrastructure/providers/stocks/queue/workers/order.worker";
+import { LimitOrderScheduler } from "@infrastructure/providers/stocks/queue/limit-order-scheduler";
 
 const bootstrap = async () => {
   try {
@@ -34,10 +39,15 @@ const bootstrap = async () => {
 
 
     // Algo Trading BullMQ system
-    // container.get<StrategyWorker>(STOCK_TYPES.StrategyWorker);
-    // container.get<SignalWorker>(STOCK_TYPES.SignalWorker);
-    // const algoScheduler = container.get<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler);
-    // algoScheduler.start();
+    container.get<StrategyWorker>(STOCK_TYPES.StrategyWorker);
+    container.get<SignalWorker>(STOCK_TYPES.SignalWorker);
+    const algoScheduler = container.get<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler);
+    algoScheduler.start();
+
+    // Order Execution BullMQ system
+    container.get<OrderWorker>(STOCK_TYPES.OrderWorker);
+    const limitOrderScheduler = container.get<LimitOrderScheduler>(STOCK_TYPES.LimitOrderScheduler);
+    limitOrderScheduler.start();
 
     const server = http.createServer(app);
 

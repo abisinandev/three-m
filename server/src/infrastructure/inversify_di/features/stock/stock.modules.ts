@@ -59,6 +59,22 @@ import { YahooProvider } from "@infrastructure/providers/stocks/market-data/prov
 import { SignalManager } from "@infrastructure/providers/algos/signal-manager";
 import { ISignalManager } from "@application/interfaces/repositories/algo/signal-manager.interface";
 import { ITurnOnAlgoTradingUseCase } from "@application/use_cases/algo-trading/interfaces/turn-on-algo-trading.interface";
+import { ILimitBuyOrderUseCase } from "@application/use_cases/stock/interfaces/limit-buy-order-usecase.interface";
+import { LimitBuyOrderUseCase } from "@application/use_cases/stock/limit-buy-order.usecase";
+import { IExecuteLimitBuyOrderUseCase } from "@application/use_cases/stock/interfaces/execute-limit-buy-order.interface";
+import { ExecuteLimitBuyOrderUseCase } from "@application/use_cases/stock/execute-limit-buy-order.usecase";
+import { ILimitSellOrderUseCase } from "@application/use_cases/stock/interfaces/limit-sell-order-usecase.interface";
+import { LimitSellOrderUseCase } from "@application/use_cases/stock/limit-sell-order.usecase";
+import { IExecuteLimitSellOrderUseCase } from "@application/use_cases/stock/interfaces/execute-limit-sell-order.interface";
+import { ExecuteLimitSellOrderUseCase } from "@application/use_cases/stock/execute-limit-sell-order.usecase";
+import { ICancelLimitOrderUseCase } from "@application/use_cases/stock/interfaces/cancel-limit-order-usecase.interface";
+import { CancelLimitOrderUseCase } from "@application/use_cases/stock/cancel-limit-order.usecase";
+import { IFetchPendingOrdersUseCase } from "@application/use_cases/stock/interfaces/fetch-pending-orders-usecase.interface";
+import { FetchPendingOrdersUseCase } from "@application/use_cases/stock/fetch-pending-orders.usecase";
+import { IOrderQueue } from "@application/interfaces/services/stocks/order-queue.interface";
+import { OrderQueue } from "@infrastructure/providers/stocks/queue/order.queue";
+import { OrderWorker } from "@infrastructure/providers/stocks/queue/workers/order.worker";
+import { LimitOrderScheduler } from "@infrastructure/providers/stocks/queue/limit-order-scheduler";
 
 // BullMQ & Queues
 import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy.queue";
@@ -96,6 +112,12 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<OrdersController>(STOCK_TYPES.OrdersController).to(OrdersController);
     bind<IMarketBuyOrderUseCase>(STOCK_TYPES.MarketBuyOrderUseCase).to(MarketBuyOrderUseCase);
     bind<IMarketSellOrderUseCase>(STOCK_TYPES.MarketSellOrderUseCase).to(MarketSellOrderUseCase);
+    bind<ILimitBuyOrderUseCase>(STOCK_TYPES.LimitBuyOrderUseCase).to(LimitBuyOrderUseCase);
+    bind<IExecuteLimitBuyOrderUseCase>(STOCK_TYPES.ExecuteLimitBuyOrderUseCase).to(ExecuteLimitBuyOrderUseCase);
+    bind<ILimitSellOrderUseCase>(STOCK_TYPES.LimitSellOrderUseCase).to(LimitSellOrderUseCase);
+    bind<IExecuteLimitSellOrderUseCase>(STOCK_TYPES.ExecuteLimitSellOrderUseCase).to(ExecuteLimitSellOrderUseCase);
+    bind<ICancelLimitOrderUseCase>(STOCK_TYPES.CancelLimitOrderUseCase).to(CancelLimitOrderUseCase);
+    bind<IFetchPendingOrdersUseCase>(STOCK_TYPES.FetchPendingOrdersUseCase).to(FetchPendingOrdersUseCase);
     bind<IOrderRepository>(STOCK_TYPES.OrderRepository).to(OrderRepository);
     bind<ITradeRepository>(STOCK_TYPES.TradeRepository).to(TradeRepository);
 
@@ -117,7 +139,11 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<ISignalQueue>(STOCK_TYPES.SignalQueue).to(SignalQueue);
     bind<StrategyWorker>(STOCK_TYPES.StrategyWorker).to(StrategyWorker);
     bind<SignalWorker>(STOCK_TYPES.SignalWorker).to(SignalWorker);
+    bind<OrderWorker>(STOCK_TYPES.OrderWorker).to(OrderWorker);
     bind<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler).to(StrategyScheduler);
+    bind<LimitOrderScheduler>(STOCK_TYPES.LimitOrderScheduler).to(LimitOrderScheduler);
+
+    bind<IOrderQueue>(STOCK_TYPES.OrderQueue).to(OrderQueue);
 
     // bind<IEngineRunner>(STOCK_TYPES.EngineRunner).to(EngineRunner);
     bind<IWatchlistRepository>(STOCK_TYPES.WatchlistRepository).to(WatchlistRepository);

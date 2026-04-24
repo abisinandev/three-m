@@ -26,8 +26,10 @@ export interface IBudget {
 export interface IExpenseSummary {
     needsSpent: number,
     wantsSpent: number,
+    savingsSpent: number,
     needsUsage: number,
-    wantsUsage: number
+    wantsUsage: number,
+    savingsUsage: number
 }
 
 export interface ISavingsStatus {

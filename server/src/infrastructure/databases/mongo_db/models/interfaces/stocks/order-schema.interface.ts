@@ -23,4 +23,5 @@ export interface IOrder {
     createdAt: Date;
     updatedAt: Date;
     executedAt?: Date | null;
+    isAlgoTrade?: boolean;
 }

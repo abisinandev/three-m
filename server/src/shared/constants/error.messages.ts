@@ -97,4 +97,10 @@ export const ErrorMessages = {
         PLAN_NOT_FOUND: "Plan not found",
         PLAN_UNAVAILABLE: "Premium plan currently unavailable.",
     },
+    ORDER: {
+        NOT_FOUND: "Order not found",
+        UNAUTHORIZED: "You are not authorized to cancel this order",
+        CANNOT_CANCEL: "Only pending orders can be cancelled",
+    },
 } as const;
+

@@ -10,7 +10,7 @@ const toDomain = (doc: OrderDocument): OrderEntity => {
         side: doc.side,
         orderType: doc.orderType,
         quantity: doc.quantity,
-        price: doc.price ?? null,
+        price: doc.price as number,
         status: doc.status as OrderStatus,
         filledQty: doc.filledQty,
         executedPrice: doc.executedPrice ?? null,
@@ -19,6 +19,7 @@ const toDomain = (doc: OrderDocument): OrderEntity => {
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
         executedAt: doc.executedAt ?? null,
+        isAlgoTrade: doc.isAlgoTrade ?? false,
     });
 };
 
@@ -38,6 +39,7 @@ const toPersistance = (entity: OrderEntity): Partial<OrderDocument> => {
         takeProfit: entity.takeProfit,
         createdAt: entity.createdAt,
         updatedAt: new Date(),
+        isAlgoTrade: entity.isAlgoTrade,
     };
 };
 

@@ -25,6 +25,12 @@ export const STOCK_TYPES = {
     OrdersController: Symbol.for("OrdersController"),
     MarketBuyOrderUseCase: Symbol.for("MarketBuyOrderUseCase"),
     MarketSellOrderUseCase: Symbol.for("MarketSellOrderUseCase"),
+    LimitBuyOrderUseCase: Symbol.for("LimitBuyOrderUseCase"),
+    ExecuteLimitBuyOrderUseCase: Symbol.for("ExecuteLimitBuyOrderUseCase"),
+    LimitSellOrderUseCase: Symbol.for("LimitSellOrderUseCase"),
+    ExecuteLimitSellOrderUseCase: Symbol.for("ExecuteLimitSellOrderUseCase"),
+    CancelLimitOrderUseCase: Symbol.for("CancelLimitOrderUseCase"),
+    FetchPendingOrdersUseCase: Symbol.for("FetchPendingOrdersUseCase"),
     OrderRepository: Symbol.for("OrderRepository"),
     TradeRepository: Symbol.for("TradeRepository"),
 
@@ -46,7 +52,11 @@ export const STOCK_TYPES = {
     SignalQueue: Symbol.for("SignalQueue"),
     StrategyWorker: Symbol.for("StrategyWorker"),
     SignalWorker: Symbol.for("SignalWorker"),
+    OrderWorker: Symbol.for("OrderWorker"),
     StrategyScheduler: Symbol.for("StrategyScheduler"),
+    LimitOrderScheduler: Symbol.for("LimitOrderScheduler"),
+
+    OrderQueue: Symbol.for("OrderQueue"),
 
     // EngineRunner:Symbol.for("EngineRunner")
     WatchlistRepository: Symbol.for("WatchlistRepository"),
