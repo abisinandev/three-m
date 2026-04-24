@@ -1,5 +1,6 @@
-import { Plus, X } from 'lucide-react';
+'use client';
 import { useState } from 'react';
+import { X, Loader2, DollarSign } from 'lucide-react';
 import { useAddIncomeMutation } from '@modules/user/hooks/useExpenseMutations';
 import { toast } from 'sonner';
 import { formatCurrency } from '@modules/user/helpers/expenseHelpers';
@@ -30,79 +31,129 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
                 setNewSourceName('');
                 setNewSourceAmount('');
                 onClose();
-                toast.success("Income source added");
+                toast.success("Income source recorded");
             }
         });
     };
 
     if (!isOpen) return null;
 
+    const labelStyle: React.CSSProperties = {
+        fontSize: 10,
+        fontWeight: 700,
+        color: '#5a5f6e',
+        textTransform: 'uppercase',
+        letterSpacing: '0.06em',
+        marginBottom: 6,
+        display: 'block'
+    };
+
+    const inputStyle: React.CSSProperties = {
+        width: '100%',
+        background: '#111214',
+        border: '1px solid #1e2025',
+        borderRadius: 6,
+        padding: '10px 12px',
+        fontSize: 12,
+        color: '#e8eaed',
+        outline: 'none',
+        boxSizing: 'border-box'
+    };
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-[#111] border border-neutral-800 w-full max-w-md rounded-2xl p-6 shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                        <span className="bg-blue-500/10 p-1.5 rounded text-blue-500"><Plus size={18} /></span> Add Income Source
-                    </h2>
-                    <button onClick={onClose} className="text-neutral-500 hover:text-white transition-colors">
-                        <X size={20} />
+        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <div
+                style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}
+                onClick={onClose}
+            />
+
+            <div style={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: 420,
+                background: '#0b0c0e',
+                border: '1px solid #1e2025',
+                borderRadius: 12,
+                overflow: 'hidden',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
+            }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid #1e2025' }}>
+                    <h2 style={{ fontSize: 13, fontWeight: 700, color: '#e8eaed', margin: 0, letterSpacing: '0.02em' }}>ADD INCOME SOURCE</h2>
+                    <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#5a5f6e', cursor: 'pointer', padding: 4 }}>
+                        <X size={18} />
                     </button>
                 </div>
 
-                <div className="space-y-4">
+                <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
                     <div>
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 block">Source Name</label>
+                        <label style={labelStyle}>Source Name</label>
                         <input
-                            type="text"
-                            placeholder="e.g. Freelance, Salary"
-                            className="w-full bg-[#1a1a1a] text-sm text-white px-4 py-3 rounded-xl border border-neutral-800 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder-neutral-600"
+                            style={inputStyle}
+                            placeholder="e.g. Primary Salary"
                             value={newSourceName}
-                            onChange={e => setNewSourceName(e.target.value)}
-                            autoFocus
+                            onChange={(e) => setNewSourceName(e.target.value)}
                         />
                     </div>
 
                     <div>
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 block">Amount</label>
-                        <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 font-sans">₹</span>
-                            <input
-                                type="number"
-                                placeholder="0.00"
-                                className="w-full bg-[#1a1a1a] text-sm text-white pl-8 pr-4 py-3 rounded-xl border border-neutral-800 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all font-mono"
-                                value={newSourceAmount}
-                                onChange={e => setNewSourceAmount(e.target.value)}
-                            />
+                        <label style={labelStyle}>Amount (₹)</label>
+                        <input
+                            style={inputStyle}
+                            type="number"
+                            placeholder="0.00"
+                            value={newSourceAmount}
+                            onChange={(e) => setNewSourceAmount(e.target.value)}
+                        />
+                    </div>
+
+                    <div style={{ marginTop: 8 }}>
+                        <button
+                            onClick={handleAddIncomeSource}
+                            disabled={isAddingIncome}
+                            style={{
+                                width: '100%',
+                                padding: '12px 0',
+                                background: '#e8eaed',
+                                border: 'none',
+                                borderRadius: 6,
+                                color: '#0b0c0e',
+                                fontSize: 11,
+                                fontWeight: 800,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.1em',
+                                cursor: 'pointer',
+                                transition: 'all 0.15s',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 8
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.background = '#fff'}
+                            onMouseLeave={e => e.currentTarget.style.background = '#e8eaed'}
+                        >
+                            {isAddingIncome ? <Loader2 size={14} className="animate-spin" /> : 'Confirm Income'}
+                        </button>
+                    </div>
+
+                    <div style={{ marginTop: 12, borderTop: '1px solid #1e2025', paddingTop: 16 }}>
+                        <p style={labelStyle}>Current Monthly Sources</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 120, overflowY: 'auto' }}>
+                            {incomeSources.length === 0 ? (
+                                <p style={{ fontSize: 10, color: '#3a3d45', fontStyle: 'italic', margin: 0 }}>No income recorded for this month.</p>
+                            ) : (
+                                incomeSources.map((source, i) => (
+                                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#111214', padding: '8px 12px', borderRadius: 6, border: '1px solid #1e2025' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                            <DollarSign size={10} color="#00C853" />
+                                            <span style={{ fontSize: 11, fontWeight: 600, color: '#e8eaed' }}>{source.source}</span>
+                                        </div>
+                                        <span style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af' }}>{formatCurrency(source.amount)}</span>
+                                    </div>
+                                ))
+                            )}
                         </div>
                     </div>
-
-                    <button
-                        onClick={handleAddIncomeSource}
-                        disabled={isAddingIncome}
-                        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all active:scale-[0.98] mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {isAddingIncome ? (
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        ) : 'Add Income Source'}
-                    </button>
                 </div>
-
-                <div className="mt-6 pt-4 border-t border-neutral-800">
-                    <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-3">Current Sources</p>
-                    <div className="space-y-2 max-h-32 overflow-y-auto pr-1">
-                        {incomeSources.length === 0 ? (
-                            <p className="text-xs text-neutral-600 italic">No income sources added yet.</p>
-                        ) : (
-                            incomeSources.map((source: any, idx: number) => (
-                                <div key={idx} className="flex items-center justify-between text-xs bg-[#1a1a1a] p-2.5 rounded-lg border border-neutral-800">
-                                    <span className="text-neutral-300 font-medium">{source.source}</span>
-                                    <span className="font-mono text-neutral-400">{formatCurrency(source.amount)}</span>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </div>
-
             </div>
         </div>
     );

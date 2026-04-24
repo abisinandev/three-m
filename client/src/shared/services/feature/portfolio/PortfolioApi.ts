@@ -1,6 +1,6 @@
 import api from "@lib/axiosUser";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
-import type { IInvestmentBaseResponse, IPortfolioDatasResponse, IPortfolioProjectionResponse, IRedeemedInvestment } from "@shared/types/portfolio.types";
+import type { IInvestmentBaseResponse, IPortfolioProjectionResponse, IPortfolioSummaryResponse, IRedeemedInvestment } from "@shared/types/portfolio.types";
 
 export const getPortfolioInvestments = async (
     page = 1,
@@ -16,14 +16,15 @@ export const getPortfolioInvestments = async (
 
     return {
         data: responseData?.data ?? [],
-        limit: responseData?.limit ?? limit,
-        page: responseData?.page ?? page,
-        totalCount: responseData?.totalCount ?? 0,
+        limit: Number(responseData?.limit ?? limit),
+        page: Number(responseData?.page ?? page),
+        total: Number(responseData?.total ?? 0),
+        totalPages: Number(responseData?.totalPages ?? 0),
     };
 };
 
-export const getPortfolioDatas = async (): Promise<IPortfolioDatasResponse> => {
-    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.GET_DATAS);
+export const getPortfolioSummary = async (): Promise<IPortfolioSummaryResponse> => {
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.GET_SUMMARY);
 
     const responseData = data?.data;
 
@@ -31,10 +32,11 @@ export const getPortfolioDatas = async (): Promise<IPortfolioDatasResponse> => {
         totalCount: responseData?.totalCount ?? 0,
         totalInvestment: responseData?.totalInvestment ?? 0,
         totalProfit: responseData?.totalProfit ?? 0,
-        realizedProfit: responseData?.realizedProfit ?? 0,
+        profitAfterSell: responseData?.profitAfterSell ?? 0,
         totalReturns: responseData?.totalReturns ?? 0,
         currentValue: responseData?.currentValue ?? 0,
         profitPercentage: responseData?.profitPercentage ?? 0,
+        xirr: responseData?.xirr ?? null,
     };
 };
 
@@ -57,30 +59,69 @@ export const getPortfolioProjection = async (): Promise<IPortfolioProjectionResp
     return data?.data;
 };
 
-export const getTradeHistory = async (page = 1, limit = 10) => {
+export const getTradeHistory = async (page = 1, limit = 10): Promise<IInvestmentBaseResponse> => {
     const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.TRADE_HISTORY, {
         params: { page, limit }
     });
-    return data?.data;
+    const responseData = data?.data;
+    return {
+        data: responseData?.data ?? [],
+        limit: Number(responseData?.limit ?? limit),
+        page: Number(responseData?.page ?? page),
+        total: Number(responseData?.total ?? 0),
+        totalPages: Number(responseData?.totalPages ?? 0),
+    };
 };
 
-export const getMFHoldings = async (page = 1, limit = 10, search?: string) => {
-    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.INVESTMENTS, {
-        params: { page, limit, search }
+export const getPortfolioAssets = async (
+    page = 1,
+    limit = 10,
+    search?: string,
+    assetType: "MF" | "STOCK" | "ALL" = "ALL"
+): Promise<IInvestmentBaseResponse> => {
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.GET_ASSETS, {
+        params: { page, limit, search, assetType }
     });
-    return data?.data;
+
+    const responseData = data?.data;
+
+    return {
+        data: responseData?.data.map((item: any) => ({
+            ...item,
+            // Mapping for existing UI compatibility
+            schemeCode: item.symbol || item.assetId,
+            schemeName: item.name || item.symbol || item.assetId,
+            logo: item.logo || "",
+            amount: item.investedAmount,
+            units: item.quantity,
+            nav: item.avgPrice,
+            navDate: item.updatedAt || item.createdAt,
+            investmentType: item.assetType === "MF" ? "MUTUAL_FUND" : "STOCK",
+            paymentMethod: "WALLET", // Default as per existing logic
+        })) ?? [],
+        limit: Number(responseData?.limit ?? limit),
+        page: Number(responseData?.page ?? page),
+        total: Number(responseData?.total ?? 0),
+        totalPages: Number(responseData?.totalPages ?? 0),
+    };
 };
 
-export const getStockHoldings = async (page = 1, limit = 10, search?: string) => {
-    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.TRADES, {
-        params: { page, limit, search }
-    });
-    return data?.data;
-};
+export const getMFHoldings = (page = 1, limit = 10, search?: string) => 
+    getPortfolioAssets(page, limit, search, "MF");
 
-export const getHistories = async (page = 1, limit = 10) => {
+export const getStockHoldings = (page = 1, limit = 10, search?: string) => 
+    getPortfolioAssets(page, limit, search, "STOCK");
+
+export const getHistories = async (page = 1, limit = 10): Promise<IInvestmentBaseResponse> => {
     const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.HISTORIES, {
         params: { page, limit }
     });
-    return data?.data;
+    const responseData = data?.data;
+    return {
+        data: responseData?.data ?? [],
+        limit: Number(responseData?.limit ?? limit),
+        page: Number(responseData?.page ?? page),
+        total: Number(responseData?.total ?? 0),
+        totalPages: Number(responseData?.totalPages ?? 0),
+    };
 };

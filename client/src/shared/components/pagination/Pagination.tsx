@@ -4,11 +4,12 @@ type PaginationProps = {
   page: number;
   limit: number;
   total: number;
+  totalPages?: number;
   onPageChange: (page: number) => void;
 };
 
-export const Pagination = ({ page, limit, total, onPageChange }: PaginationProps) => {
-  const totalPages = Math.ceil(total / limit);
+export const Pagination = ({ page, limit, total, totalPages: totalPagesProp, onPageChange }: PaginationProps) => {
+  const totalPages = totalPagesProp ?? Math.ceil(total / limit);
   const startItem = (page - 1) * limit + 1;
   const endItem = Math.min(page * limit, total);
 

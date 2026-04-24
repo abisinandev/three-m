@@ -1,18 +1,17 @@
 'use client';
 import { useState, useMemo } from 'react';
-import { Plus } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 import { fetchMutualFunds, fetchSips } from '@shared/services/feature/mutual-fund/MutualFundApisUserSide';
 import { useNavigate } from '@tanstack/react-router';
-import type { SipDto } from '../types/mutual-fund.types';
+import type { SipDto } from '../types/mutual-fund/dashboard.types';
 import api from '@lib/axiosUser';
 import { ROUTES } from '@shared/constants/routes';
 
-import FundsTab from '../components/mutual-fund/FundsTab';
-import SipsTab from '../components/mutual-fund/SipsTab';
-import HistoryTab from '../components/mutual-fund/HistoryTab';
-import DashboardSidebar from '../components/mutual-fund/DashboardSidebar';
+import FundsTab from '../components/mutual-fund/dashboard/FundsTab';
+import SipsTab from '../components/mutual-fund/dashboard/SipsTab';
+import HistoryTab from '../components/mutual-fund/dashboard/HistoryTab';
+import DashboardSidebar from '../components/mutual-fund/dashboard/DashboardSidebar';
 import { CancelSipStatus, PauseSipStatus, ResumeSipStatus } from '@shared/services/admin/sip-management/SipManagementUserApi';
 import { toast } from 'sonner';
 
@@ -96,39 +95,47 @@ const MutualFundDashboard = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white pb-10">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 pt-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-xl font-bold">Mutual Funds</h1>
-                        <p className="text-xs text-gray-400 mt-0.5">Your investment portfolio</p>
+        <div 
+            className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] pb-10 selection:bg-[#2962ff]/30"
+            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+        >
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pt-6 px-6 max-w-[1600px] mx-auto">
+                <div>
+                    <h2 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                        Mutual Funds Dashboard
+                    </h2>
+                    <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+                        Manage your investments, SIPs, and mutual fund history.
+                    </p>
+                </div>
+            </div>
+
+            <div className="flex flex-col xl:flex-row gap-6 px-6 max-w-[1600px] mx-auto">
+                
+                <div className="flex-1 space-y-6">
+                    
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-[#1e2025] pb-4">
+                        <div className="flex bg-[#111214] p-1 rounded-lg border border-[#1e2025]">
+                            {['funds', 'sips', 'transactions'].map(tab => {
+                                const isActive = activeTab === tab;
+                                return (
+                                    <button
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab as any)}
+                                        className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-colors ${
+                                            isActive
+                                                ? 'bg-[#1a1c20] text-[#e8eaed] shadow-sm'
+                                                : 'text-[#6a7182] hover:text-[#e8eaed] hover:bg-[#1a1c20]/50'
+                                        }`}
+                                    >
+                                        {tab === 'funds' ? 'All Funds' : tab === 'sips' ? 'Active SIPs' : 'History'}
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
-                    <button
-                        onClick={() => navigate({ to: ROUTES.USER.MUTUAL_FUNDS.ROOT })}
-                        className="flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
-                    >
-                        <Plus size={16} />
-                        New SIP
-                    </button>
-                </div>
 
-                <div className="flex border-b border-[#1f1f1f] gap-8">
-                    {['funds', 'sips', 'transactions'].map(tab => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab as any)}
-                            className={`pb-2 text-sm font-medium transition-colors ${activeTab === tab
-                                ? 'text-white border-b-2 border-green-500'
-                                : 'text-gray-400 hover:text-gray-300'
-                                }`}
-                        >
-                            {tab === 'funds' ? 'Funds' : tab === 'sips' ? 'SIPs' : 'History'}
-                        </button>
-                    ))}
-                </div>
-
-                <div className="grid lg:grid-cols-12 gap-5">
-                    <div className="lg:col-span-8 space-y-5">
+                    <div className="space-y-5">
                         {activeTab === 'funds' && (
                             <FundsTab
                                 searchTerm={searchTerm}
@@ -164,12 +171,10 @@ const MutualFundDashboard = () => {
                             />
                         )}
                     </div>
+                </div>
 
-                    <DashboardSidebar
-                        recentNAVUpdates={recentNAVUpdates}
-                        onNewSipClick={() => navigate({ to: ROUTES.USER.MUTUAL_FUNDS.ROOT })}
-                        onOneTimeClick={() => navigate({ to: ROUTES.USER.MUTUAL_FUNDS.ROOT })}
-                    />
+                <div className="w-full xl:w-80 space-y-6">
+                    <DashboardSidebar recentNAVUpdates={recentNAVUpdates} />
                 </div>
             </div>
         </div>

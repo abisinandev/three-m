@@ -17,6 +17,8 @@ export interface FinancialSummary {
     topCategoryChange: number;
     spendingRatio: number;
     investmentRatio: number;
+    needsRatio: number;
+    wantsRatio: number;
 }
 
 export interface Insight {

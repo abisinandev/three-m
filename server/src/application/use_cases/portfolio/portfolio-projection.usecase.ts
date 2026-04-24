@@ -25,7 +25,7 @@ export class PortfolioProjectionUseCase implements IPortfolioProjectionUseCase {
             throw new ValidationError("Invalid expected return rate");
         }
 
-        const investments = await this._investmentRepository.getUserInvestmentsWithoutFilter(userId) ?? [];
+        const investments = await this._investmentRepository.getUserInvestementSummary(userId) ?? [];
         if (!investments.length) return {
             projectedValue: 0,
             projectedProfit: 0,
@@ -75,7 +75,7 @@ export class PortfolioProjectionUseCase implements IPortfolioProjectionUseCase {
                 });
             }
         }
- 
+
         const futureTotalInvestment = totalInvestment;
         const projectedProfit = futureValue - futureTotalInvestment;
 

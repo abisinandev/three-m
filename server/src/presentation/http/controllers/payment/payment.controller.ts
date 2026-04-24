@@ -6,7 +6,7 @@ import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { PAYMENT_TYPES } from "@infrastructure/inversify_di/features/payment/payment.types";
 import { IProcessStripePaymentUseCase } from "@application/use_cases/payment/interfaces/process-payment-usecase.interface";
-
+import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 
 /**
  * Creates a Stripe Checkout Session for a one-time payment.
@@ -36,7 +36,7 @@ export class PaymentController {
                 throw new ValidationError(ErrorMessages.PAYMENT.INVALID_AMOUNT);
             }
 
-            if (amount > 10000) {
+            if (amount > 100000) {
                 throw new ValidationError(ErrorMessages.PAYMENT.LIMIT_EXCEEDED);
             }
 
@@ -68,11 +68,14 @@ export class PaymentController {
                 },
             });
 
-            return res.status(200).json({
-                checkoutUrl: session.url,
-            });
+            return ResponseHelper.success(
+                res,
+                "Checkout session created",
+                { checkoutUrl: session.url },
+                200
+            );
         } catch (error) {
-            next(error); 
+            next(error);
         }
     }
 
@@ -90,12 +93,18 @@ export class PaymentController {
 
             await this._processPayment.execute(session);
 
-            return res.json({ success: true });
-
+            return ResponseHelper.success(
+                res,
+                "Payment verified successfully",
+                {
+                    amount: (session.amount_total || 0) / 100,
+                    purpose: session.metadata?.purpose || 'TOPUP',
+                    status: 'SUCCESSFUL'
+                },
+                200
+            );
         } catch (error) {
             next(error)
         }
     }
 }
-
-

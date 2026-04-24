@@ -1,4 +1,4 @@
-import { CagrDTO } from "@application/dto/mutual-funds/mf-cagr.dto";
+import { ICagrDTO } from "@application/dto/mutual-funds/mf-cagr.dto";
 import { FundListDTO } from "@application/dto/mutual-funds/mutual-fund-response.dto";
 import { MutualFundDTO } from "@application/dto/mutual-funds/mutual-fund.dto";
 import { MutualFundEntity } from "@domain/entities/mutual-fund/mutual-fund-entity";
@@ -19,7 +19,7 @@ export const toEntity = (dto: MutualFundDTO): MutualFundEntity => {
 }
 
 
-export const toMutualFundResponse = (data: MutualFundEntity, cagr?: CagrDTO): FundListDTO => {
+export const toMutualFundResponse = (data: MutualFundEntity, cagr?: ICagrDTO): FundListDTO => {
     return {
         id: data.id as string,
         schemeName: data.schemeName,

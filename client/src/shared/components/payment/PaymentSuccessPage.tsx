@@ -1,30 +1,32 @@
-
 import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
-import { Check, ArrowLeft, Wallet, ExternalLink, Crown, Sparkles } from "lucide-react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Check, ArrowLeft, Wallet, ExternalLink, Crown, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import { ROUTES } from "@shared/constants/routes";
+import { VerifyPaymentApi } from "@shared/services/user/VerifyPaymentApi";
 
 const PaymentSuccessPage = () => {
     const navigate = useNavigate();
     const [animated, setAnimated] = useState(false);
+    const search = useSearch({ from: '/user/_payment/payment-success' }) as { session_id: string };
+    const sessionId = search.session_id;
+
+    const { data: verifyData, isLoading, isError } = useQuery({
+        queryKey: ["verify-payment", sessionId],
+        queryFn: () => VerifyPaymentApi(sessionId),
+        enabled: !!sessionId,
+        retry: 1,
+    });
 
     useEffect(() => {
         const timer = setTimeout(() => setAnimated(true), 100);
         return () => clearTimeout(timer);
     }, []);
 
-    const getNumber = (key: string) => {
-        const value = localStorage.getItem(key);
-        const num = Number(value);
-        return isNaN(num) ? 0 : num;
-    };
-
-    const purpose = localStorage.getItem('paymentPurpose') || 'TOPUP';
+    const paymentInfo = verifyData?.data;
+    const amount = paymentInfo?.amount ?? 0;
+    const purpose = paymentInfo?.purpose ?? 'TOPUP';
     const isSubscription = purpose === 'SUBSCRIPTION';
-
-    const newBalance = getNumber("newBalance");
-    const addedAmount = getNumber("addedAmount");
-    const previousBalance = getNumber("previousBalance");
 
     const format = (v: number) =>
         new Intl.NumberFormat("en-IN", {
@@ -34,11 +36,39 @@ const PaymentSuccessPage = () => {
             maximumFractionDigits: 0,
         }).format(v);
 
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] flex flex-col items-center justify-center p-6 space-y-4">
+                <Loader2 className="w-8 h-8 text-[#00C853] animate-spin" />
+                <p className="text-[10px] text-[#5a5f6e] uppercase tracking-[0.2em] animate-pulse">Verifying Transaction...</p>
+            </div>
+        );
+    }
+
+    if (isError || !sessionId) {
+        return (
+            <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] flex flex-col items-center justify-center p-6 space-y-6">
+                <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                    <AlertCircle className="w-8 h-8 text-red-500" />
+                </div>
+                <div className="text-center space-y-2">
+                    <h1 className="text-sm font-bold uppercase">Verification Invalid</h1>
+                    <p className="text-[11px] text-[#5a5f6e] max-w-[240px]">We couldn't verify this payment session. If you believe this is an error, please contact support.</p>
+                </div>
+                <button
+                    onClick={() => navigate({ to: ROUTES.HOME })}
+                    className="px-6 py-2 bg-[#111214] border border-[#1e2025] rounded text-[10px] font-bold uppercase tracking-widest"
+                >
+                    Return Home
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] flex flex-col items-center justify-center px-6">
             <div className={`w-full max-w-[380px] space-y-6 transition-all duration-700 ${animated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
-                
-                {/* Status Card */}
+
                 <div className="bg-[#111214] border border-[#1e2025] rounded-xl overflow-hidden shadow-2xl">
                     <div className="flex items-center justify-between px-5 py-4 border-b border-[#1e2025]">
                         <div className="flex items-center gap-2.5">
@@ -49,17 +79,17 @@ const PaymentSuccessPage = () => {
                                 <p className="text-sm font-bold leading-tight">
                                     {isSubscription ? "Premium Activated" : "Payment Successful"}
                                 </p>
-                                <p className="text-[10px] text-[#5a5f6e] uppercase tracking-widest mt-0.5">Reference: STRIPE_CONFIRMED</p>
+                                <p className="text-[10px] text-[#5a5f6e] uppercase tracking-widest mt-0.5">ID: {sessionId.slice(-12).toUpperCase()}</p>
                             </div>
                         </div>
                     </div>
 
                     <div className="p-6 text-center border-b border-[#1e2025]">
                         <p className="text-[10px] text-[#5a5f6e] uppercase tracking-widest mb-1.5 font-medium">
-                            {isSubscription ? "Plan Status" : "Amount Received"}
+                            {isSubscription ? "Tier Unlocked" : "Credited Amount"}
                         </p>
                         <h1 className={`text-2xl font-extrabold tracking-tight ${isSubscription ? 'text-amber-500' : 'text-[#e8eaed]'}`}>
-                            {isSubscription ? "Premium Membership" : format(addedAmount)}
+                            {isSubscription ? "Premium Access" : format(amount)}
                         </h1>
                     </div>
 
@@ -67,47 +97,39 @@ const PaymentSuccessPage = () => {
                         {isSubscription ? (
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between text-[11px]">
-                                    <span className="text-[#5a5f6e]">Access Status</span>
+                                    <span className="text-[#5a5f6e]">Plan Benefits</span>
                                     <span className="text-amber-500 font-bold flex items-center gap-1.5 uppercase tracking-tighter">
                                         <Sparkles className="w-3 h-3" />
-                                        Full Access
+                                        Advanced Ready
                                     </span>
                                 </div>
                                 <p className="text-[10px] text-[#5a5f6e] leading-relaxed">
-                                    Welcome to threeM Premium. Your advanced trading features and AI insights are now unlocked and ready for use.
+                                    Your algorithmic trading terminal is now operational with full depth features and premium data pipes.
                                 </p>
                             </div>
                         ) : (
-                            <>
+                            <div className="space-y-3">
                                 <div className="flex items-center justify-between text-[11px]">
-                                    <span className="text-[#5a5f6e]">Wallet Status</span>
-                                    <span className="text-[#c8cacd] font-medium flex items-center gap-1.5">
-                                        <Wallet className="w-3 h-3 text-[#5a5f6e]" />
-                                        Updated
+                                    <span className="text-[#5a5f6e]">Status Update</span>
+                                    <span className="text-[#00C853] font-bold flex items-center gap-1.5 uppercase tracking-tighter">
+                                        <Wallet className="w-3 h-3" />
+                                        Balance Updated
                                     </span>
                                 </div>
-                                <div className="space-y-2">
-                                    <div className="flex justify-between text-[11px]">
-                                        <span className="text-[#5a5f6e]">Previous Balance</span>
-                                        <span className="text-[#5a5f6e]">{format(previousBalance)}</span>
-                                    </div>
-                                    <div className="flex justify-between text-[11px]">
-                                        <span className="text-[#5a5f6e]">New Balance</span>
-                                        <span className="text-green-500 font-bold">{format(newBalance)}</span>
-                                    </div>
-                                </div>
-                            </>
+                                <p className="text-[10px] text-[#5a5f6e] leading-relaxed">
+                                    Funds have been successfully provisioned to your account margin and are immediately available for market orders.
+                                </p>
+                            </div>
                         )}
                     </div>
                 </div>
 
-                {/* Primary Actions */}
                 <div className="flex flex-col gap-2.5">
                     <button
                         onClick={() => navigate({ to: isSubscription ? ROUTES.HOME : ROUTES.USER.WALLET.ROOT })}
                         className={`w-full py-3 ${isSubscription ? 'bg-amber-500 hover:bg-amber-400 text-black' : 'bg-green-600 hover:bg-green-500 text-white'} active:scale-[0.99] transition-all text-[11px] font-black uppercase tracking-widest rounded-md flex items-center justify-center gap-2`}
                     >
-                        {isSubscription ? "Go to Dashboard" : "View Wallet Details"}
+                        {isSubscription ? "Go to Dashboard" : "Go to wallet"}
                         <ExternalLink className="w-3 h-3" />
                     </button>
 
@@ -115,20 +137,20 @@ const PaymentSuccessPage = () => {
                         onClick={() => navigate({ to: ROUTES.HOME })}
                         className="w-full py-2.5 bg-[#111214] border border-[#1e2025] hover:bg-[#1e2025] text-[#c8cacd] text-[10px] font-bold uppercase tracking-widest rounded-md transition-all"
                     >
-                        Back to Home
+                        Dashboard Home
                     </button>
                 </div>
 
-                <div className="flex flex-col items-center gap-4 pt-4">
-                    <p className="text-[10px] text-[#3a3d45] text-center px-8 leading-relaxed">
-                        A confirmation receipt has been sent to your registered email address.
+                <div className="flex flex-col items-center gap-4 pt-4 border-t border-[#1e2025]/50">
+                    <p className="text-[10px] text-[#3a3d45] text-center px-8 leading-relaxed italic">
+                        Node Confirmation: A high-integrity receipt has been dispatched to your primary secure mailbox.
                     </p>
                     <button
                         onClick={() => navigate({ to: ROUTES.HOME })}
                         className="flex items-center gap-2 text-[10px] text-[#5a5f6e] hover:text-[#c8cacd] transition-colors"
                     >
                         <ArrowLeft className="w-3 h-3" />
-                        Explore Platform
+                        Platform Navigation
                     </button>
                 </div>
             </div>
@@ -136,4 +158,4 @@ const PaymentSuccessPage = () => {
     );
 };
 
-export default PaymentSuccessPage;
+export default PaymentSuccessPage;

@@ -1,42 +1,19 @@
 import { RouterProvider } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { LoaderCircle } from 'lucide-react'
 import { useUserStore } from '@stores/user/UserStore';
 import { useAdminStore } from '@stores/admin/useAdminStore';
 import { router } from './router';
-import { useNotificationStore } from '@stores/notification/useNotificationStore';
-import { socket } from '@socket';
-import { getNotifications } from '@shared/services/notification/notification.service';
-
+import { useNotificationSocket } from '@modules/user/notifications/hooks/useNotificationSocket';
 
 const App = () => {
-
     const user = useUserStore();
     const admin = useAdminStore()
     const queryClient = useQueryClient()
 
-    const addNotification = useNotificationStore(
-        (state) => state.addNotification
-    );
-
-    const setNotifications = useNotificationStore(
-        (state) => state.setNotifications
-    );
-
-    useEffect(() => {
-        getNotifications().then(setNotifications);
-
-        const handler = (data: any) => {
-            addNotification(data);
-        }
-        socket.on("notification", handler);
-
-        return () => {
-            socket.off("notification", handler);
-        };
-    }, [addNotification, setNotifications]);
-
+    // Initialize real-time listeners
+    useNotificationSocket();
 
     return (
         <Suspense fallback={<LoaderCircle />}>

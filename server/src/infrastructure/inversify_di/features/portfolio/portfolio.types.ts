@@ -3,15 +3,15 @@ export const PORTFOLIO_TYPES = {
     PortfolioRepository: Symbol.for("PortfolioRepository"),
 
     // usecases
-    PortfolioDetailsUseCase: Symbol.for("PortfolioDetailsUseCase"),
     RadeemInvestmentUseCase: Symbol.for("RadeemInvestmentUseCase"),
     ConfirmRedeemUseCase: Symbol.for("ConfirmRadeemUseCase"),
-    PortfolioCalculationsUseCase: Symbol.for("PortfolioCalculationsUseCase"),
+    PortfolioSummaryUseCase: Symbol.for("PortfolioSummaryUseCase"),
     XirrCalculationUseCase: Symbol.for("XirrCalculationUseCase"),
     PortfolioProjectionUseCase: Symbol.for("PortfolioProjectionUseCase"),
     FetchTradeHistoryUseCase: Symbol.for("FetchTradeHistoryUseCase"),
     FetchStockHoldingsUseCase: Symbol.for("FetchStockHoldingsUseCase"),
     FetchMutualFundHoldingsUseCase: Symbol.for("FetchMutualFundHoldingsUseCase"),
+    FetchPortfolioAssetsUseCase: Symbol.for("FetchPortfolioAssetsUseCase"),
 
     // controllers
     PortFolioController: Symbol.for("PortFolioController"),

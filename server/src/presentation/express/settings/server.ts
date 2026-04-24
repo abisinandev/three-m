@@ -7,14 +7,11 @@ import { CagrUpdateScheduler } from "@infrastructure/providers/cron-scheduler/mu
 // import { NavYearScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-yearly.scheduler";
 import { NavAllocationScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-allocatation-scheduler";
 import { StartSipScheduler } from "@infrastructure/providers/cron-scheduler/sip/sip-process-scheduler";
-import { InitSocketConfigs } from "@infrastructure/providers/notification/socket.configs";
+import { ISocketService } from "@application/interfaces/services/notification/socket-service.interface";
+import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import http from "http";
 import app from "./app";
-import { StrategyWorker } from "@infrastructure/providers/algos/queue/workers/strategy.worker";
-import { SignalWorker } from "@infrastructure/providers/algos/queue/workers/signal.worker";
-import { StrategyScheduler } from "@infrastructure/providers/algos/queue/strategy-scheduler";
-import { IStrategyScheduler } from "@application/interfaces/services/algo-trading/strategy-scheduler.interface";
-import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
+// import { STOCK_TYPES } from "@infrastructure/inversify_di/featur.es/stock/stock.types";
 import { container } from "@infrastructure/inversify_di/container";
 // import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/RAG/ingest-docs";
 
@@ -37,13 +34,16 @@ const bootstrap = async () => {
 
 
     // Algo Trading BullMQ system
-    container.get<StrategyWorker>(STOCK_TYPES.StrategyWorker);
-    container.get<SignalWorker>(STOCK_TYPES.SignalWorker);
-    const algoScheduler = container.get<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler);
-    algoScheduler.start();
+    // container.get<StrategyWorker>(STOCK_TYPES.StrategyWorker);
+    // container.get<SignalWorker>(STOCK_TYPES.SignalWorker);
+    // const algoScheduler = container.get<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler);
+    // algoScheduler.start();
 
-    const server = http.createServer(app); 
-    InitSocketConfigs(server);
+    const server = http.createServer(app);
+
+    // Initialize SocketService
+    const socketService = container.get<ISocketService>(NOTIFICATION_TYEPS.SocketService);
+    socketService.init(server);
 
     server.listen(env.PORT, () => {
       logger.info(`Server running on PORT: ${env.PORT}`);

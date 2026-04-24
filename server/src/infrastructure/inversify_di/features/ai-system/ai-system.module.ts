@@ -1,24 +1,40 @@
 import { IEducationAgent } from "@application/interfaces/services/ai-chatbot/education-agent.interface";
-import { IAgentRouter } from "@application/interfaces/services/ai-chatbot/agent-router.interface";
 import { IChatHistoryService } from "@application/interfaces/services/ai-chatbot/chat-history-service.interface";
 import { ContainerModule } from "inversify";
 import { AI_SYSTEM_TYPES } from "./ai-system.type";
-// import { AgentRouter } from "@infrastructure/providers/ai-agents/agent-router";
-import { EducationAgent } from "@infrastructure/providers/ai-agents/agents/education-agent.provider";
+import { IDetectAgent } from "@application/interfaces/services/ai-chatbot/detect-agent.interface";
+import { DetectAgent } from "@infrastructure/providers/ai-agents/agents/detect-agent.provider";
+import { EducationAgent } from "@infrastructure/providers/ai-agents/agents/education/education-agent.provider";
+import { IPortfolioAgent } from "@application/interfaces/services/ai-chatbot/portfolio-agent.interface";
+import { PortfolioAgent } from "@infrastructure/providers/ai-agents/agents/portfolio/portfolio-agent.provider";
 import { AiChatbotController } from "@presentation/http/controllers/ai-chatbot/ai-chatbot.controller";
 import { IChatbotUseCase } from "@application/use_cases/ai-chatbot/interface/chatbot-usecase.interface";
+import { ListBestStockUseCase } from "@application/use_cases/ai-chatbot/trade-agent/list-best-stocks.usecase";
+import { IListBestStocksUseCase } from "@application/use_cases/ai-chatbot/interface/list-best-stocks.usecase.interface";
+import { TradeAgentProvider } from "@infrastructure/providers/ai-agents/agents/trade/trade-agent.provider";
+import { BotStockDetailsUseCase } from "@application/use_cases/ai-chatbot/trade-agent/bot-stock-details.usecase";
+import { IBotStockDetailsUseCase } from "@application/use_cases/ai-chatbot/interface/bot-stock-details.usecase.interface";
 import { ChatbotUseCase } from "@application/use_cases/ai-chatbot/chatbot-usecase";
 import { ChatHistoryService } from "@infrastructure/providers/ai-agents/store/chat-histroy.service";
+import { ISemanticCacheService } from "@application/interfaces/services/ai-chatbot/semantic-cache-service.interface";
+import { SemanticCacheService } from "@infrastructure/providers/ai-agents/semantic-cache/semantic-cache.service";
 
 export const AiSystemModules = new ContainerModule(({ bind }) => {
 
+    bind<IDetectAgent>(AI_SYSTEM_TYPES.DetectAgent).to(DetectAgent);
+
     bind<IEducationAgent>(AI_SYSTEM_TYPES.EducationAgent).to(EducationAgent);
 
-    // bind<IAgentRouter>(AI_SYSTEM_TYPES.AgentRouter).to(AgentRouter);
+    bind<IPortfolioAgent>(AI_SYSTEM_TYPES.PortfolioAgent).to(PortfolioAgent);
 
     bind<IChatHistoryService>(AI_SYSTEM_TYPES.ChatHistoryService).to(ChatHistoryService);
 
     bind<IChatbotUseCase>(AI_SYSTEM_TYPES.ChatbotUseCase).to(ChatbotUseCase);
 
     bind<AiChatbotController>(AI_SYSTEM_TYPES.AiChatbotController).to(AiChatbotController);
-})
+
+    bind<ISemanticCacheService>(AI_SYSTEM_TYPES.SemanticCacheService).to(SemanticCacheService);
+    bind<IPortfolioAgent>(AI_SYSTEM_TYPES.TradeAgent).to(TradeAgentProvider);
+    bind<IListBestStocksUseCase>(AI_SYSTEM_TYPES.ListBestStockUseCase).to(ListBestStockUseCase);
+    bind<IBotStockDetailsUseCase>(AI_SYSTEM_TYPES.BotStockDetailsUseCase).to(BotStockDetailsUseCase);
+})

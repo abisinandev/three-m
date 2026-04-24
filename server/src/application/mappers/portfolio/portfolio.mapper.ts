@@ -6,10 +6,14 @@ export class PortfolioMapper {
         return {
             id: entity.id as string,
             userId: entity.userId,
-            symbol: entity.symbol,
+            assetId: entity.assetId,
+            assetType: entity.assetType,
             quantity: entity.quantity,
             avgPrice: entity.avgPrice,
             investedAmount: entity.investedAmount,
+            lockQty: entity.lockQty,
+            stopLoss: entity.stopLoss,
+            takeProfit: entity.takeProfit,
             createdAt: entity.createdAt,
             updatedAt: entity.updatedAt,
         };

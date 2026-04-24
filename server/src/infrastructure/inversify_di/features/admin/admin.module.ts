@@ -34,8 +34,6 @@ import { AdminRepository } from "@infrastructure/databases/repository/admin/admi
 import { IFetchTransactionsUseCase } from "@application/use_cases/admin/interfaces/fetch-transactions-usecase.interface";
 import { FetchTransactionsUseCase } from "@application/use_cases/admin/transactions-management/fetch-transactions.usecase";
 import { AdminTransactionsController } from "@presentation/http/controllers/admin/admin-transactions.controller";
-import { IAdminVerifyTransactionUseCase } from "@application/use_cases/user/interfaces/admin-verify-transaction-usecase.interface";
-import { AdminVerifyTransactionUseCase } from "@application/use_cases/admin/transactions-management/admin-verify-transaction.usecase";
 import { IAdminRepository } from "@application/interfaces/repositories/admin/admin.repository.interface";
 import { AdminSipController } from "@presentation/http/controllers/admin/admin-sip.controller";
 import { ISipManagementUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-management-usecase.interface";
@@ -63,7 +61,6 @@ export const AdminModule = new ContainerModule(({ bind }) => {
   bind<IViewKycDetailsUseCase>(ADMIN_TYPES.ViewKycDetailsUseCase).to(ViewKycDetailsUseCase);
   bind<IVerifyKycUseCase>(ADMIN_TYPES.VerifyKycUseCase).to(VerifyKycUseCase);
   bind<IRejectKycUseCase>(ADMIN_TYPES.RejectKycUseCase).to(RejectKycUseCase);
-  bind<IAdminVerifyTransactionUseCase>(ADMIN_TYPES.VerifyTransactionUseCase).to(AdminVerifyTransactionUseCase);
   bind<ISipManagementUseCase>(ADMIN_TYPES.SipManagementUseCase).to(SipManagementUseCase);
   bind<IAdminStocksUseCase>(ADMIN_TYPES.AdminStocksUseCase).to(AdminStocksUseCase);
   bind<IAdminStockUpdateUseCase>(ADMIN_TYPES.AdminStockUpdateUseCase).to(AdminStockUpdateUseCase);

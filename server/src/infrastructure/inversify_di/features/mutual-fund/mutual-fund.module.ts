@@ -16,7 +16,7 @@ import { ListFundUserSideUseCase } from "@application/use_cases/user/mutual-fund
 import { MfCagrUseCase } from "@application/use_cases/mutual-fund/mf-cagr-usecase";
 import { MutualFundDetailsUseCase } from "@application/use_cases/user/mutual-fund/mutual-fund-details.usecase";
 import { NavHistoryUseCase } from "@application/use_cases/mutual-fund/nav-chart-usecase";
-import { InvestmentUseCase } from "@application/use_cases/mutual-fund/investment.usecase";
+import { OneTimeInvestmentUseCase } from "@application/use_cases/mutual-fund/one-time-investment.usecase";
 import { NavAllocateUseCase } from "@application/use_cases/mutual-fund/nav-allocatation-usecase";
 import { MfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/mf-investment-history.usecase";
 
@@ -40,7 +40,7 @@ import { IListFundsUserSideUseCase } from "@application/use_cases/mutual-fund/in
 import { IMfCagrUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-cagr-usecse.interface";
 import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-details-usecase.interface";
 import { INavHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/nav-history-usecase.interface";
-import { IInvestmentUseCase } from "@application/use_cases/mutual-fund/interfaces/investment-usecase.interface";
+import { IOneTimeInvestmentUseCase } from "@application/use_cases/mutual-fund/interfaces/one-time-investment.usecase.interface";
 import { INavAllocateUseCase } from "@application/use_cases/mutual-fund/interfaces/nav-allocate-usecase.interface";
 import { IMfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-investment-history-usecase.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
@@ -62,7 +62,7 @@ export const MutualFundModule = new ContainerModule(({ bind }) => {
     bind<IMfCagrUseCase>(MUTUAL_FUND_TYPES.MfCagrUseCase).to(MfCagrUseCase);
     bind<IMutualFundDetailsUseCase>(MUTUAL_FUND_TYPES.MutualFundDetailsUseCase).to(MutualFundDetailsUseCase);
     bind<INavHistoryUseCase>(MUTUAL_FUND_TYPES.NavHistoryUseCase).to(NavHistoryUseCase);
-    bind<IInvestmentUseCase>(MUTUAL_FUND_TYPES.InvestmentUseCase).to(InvestmentUseCase);
+    bind<IOneTimeInvestmentUseCase>(MUTUAL_FUND_TYPES.InvestmentUseCase).to(OneTimeInvestmentUseCase);
     bind<INavAllocateUseCase>(MUTUAL_FUND_TYPES.NavAllocateUseCase).to(NavAllocateUseCase);
     bind<IMfInvestmentHistoryUseCase>(MUTUAL_FUND_TYPES.MfInvestmentHistoryUseCase).to(MfInvestmentHistoryUseCase);
 

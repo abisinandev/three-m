@@ -10,14 +10,13 @@ export interface TransactionResponseDTO {
     amount: number;
     currency: string;
     type: TransactionTypes;
-    isVerified: boolean;
+    // isVerified: boolean;
     referenceType: TransactionReferenceType;
     paymentIntentId: string;
     status: TransactionStatus;
-    paymentStatus: TransactionStatus;
     referenceId?: string;
     fundId?: string;
-    units?: number;
+    // units?: number;
     receipt_url?: string;
     createdAt?: Date;
 }

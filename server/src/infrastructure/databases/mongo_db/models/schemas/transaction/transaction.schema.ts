@@ -44,48 +44,19 @@ const TransactionSchema = new Schema<TransactionDocument>(
             required: true,
         },
 
-        paymentStatus: {
-            type: String,
-            enum: Object.values(TransactionStatus),
-            required: true,
-        },
-
-        isVerified: {
-            type: Boolean,
-            default: false,
-        },
-
         fundId: {
             type: Schema.Types.ObjectId,
             ref: "Fund",
             default: null,
         },
 
-        units: {
-            type: Number,
-            default: null,
-        },
-
-        txHash: {
-            type: String,
-            required: true,
-            unique: true,
-            index: true,
-        },
-
-        signature: {
-            type: String,
-            required: true,
-            unique: true,
-            index: true,
-        },
         referenceType: {
             type: String,
             enum: Object.values(TransactionReferenceType),
             required: true,
         },
 
-        referenceId: { trpe: String },
+        referenceId: { type: String },
 
         receipt_url: {
             type: String,
@@ -94,6 +65,10 @@ const TransactionSchema = new Schema<TransactionDocument>(
 
         paymentIntentId: {
             type: String,
+            index: {
+                unique: true,
+                partialFilterExpression: { paymentIntentId: { $type: "string" } },
+            },
         },
     },
     {

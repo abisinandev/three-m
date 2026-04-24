@@ -1,16 +1,8 @@
-import { Income } from "@domain/entities/expense-tracker/value-objects/income.vo";
 import { ExpenseType, PaymentMode } from "./add-expense.dto";
 
 export interface IncomeSourceDTO {
     source: string;
     amount: number;
-}
-
-export interface InvestmentDTO {
-    schemeName: string;
-    amount: number;
-    type: string;
-    date: Date;
 }
 
 export interface ExpenseDTO {
@@ -23,21 +15,17 @@ export interface ExpenseDTO {
 }
 
 export interface ExpenseTrackerDTO {
-    walletBalance?: number;
     income: number;
     incomeSources: IncomeSourceDTO[];
-    investments: InvestmentDTO[];
-    mutualFundInvestedAmount: number;
-    totalInvestedAmount: number;
-    totalOutflow: number;
     expenses?: ExpenseDTO[];
     totalNeeds?: number;
     totalWants?: number;
+    totalSavings?: number;
+
     needsTarget: number;
     wantsTarget: number;
     savingsTarget: number;
     totalSpent: number;
     currentMonthBalance: number;
-    savingsGap: number;
-    isSavingsGoalMet: boolean;
+    healthScore?: number;
 }

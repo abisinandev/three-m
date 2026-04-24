@@ -9,7 +9,9 @@ import {
 export enum ExpenseType {
     NEED = 'NEED',
     WANT = 'WANT',
+    SAVING = 'SAVING',
 }
+
 
 export enum PaymentMode {
     CASH = 'CASH',

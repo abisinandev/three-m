@@ -1,4 +1,4 @@
-export interface CagrDTO {
+export interface ICagrDTO {
     schemeCode?: string;
 
     cagr1Y?: number;

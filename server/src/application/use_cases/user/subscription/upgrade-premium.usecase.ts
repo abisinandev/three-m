@@ -14,7 +14,6 @@ import { SubscriptionPlans } from "@domain/entities/subscription/enums/plans.enu
 import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
-import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import mongoose from "mongoose";
 
 @injectable()
@@ -29,9 +28,10 @@ export class UpgradePremiumUseCase implements IUpgradePremiumUseCase {
     async execute(data: UpgradePremiumDTO): Promise<void> {
 
         const session = await mongoose.startSession();
-        session.startTransaction();
 
         try {
+            session.startTransaction();
+
             const user = await this._userRepository.findById(data.userId);
             if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
             if (!user.isVerified) throw new ValidationError(ErrorMessages.USER.NOT_VERIFIED);
@@ -55,20 +55,40 @@ export class UpgradePremiumUseCase implements IUpgradePremiumUseCase {
 
             const transaction = TransactionEntity.create({
                 userId: data.userId,
-                userCode: user.userCode || "",
+                userCode: user.userCode,
                 amount: data.amount,
                 currency: data.currency,
                 type: TransactionTypes.SUBSCRIPTION,
                 referenceType: TransactionReferenceType.STRIPE,
                 referenceId: subscription.id as string,
                 paymentIntentId: data.paymentIntentId,
-                status: TransactionStatus.SUCCESSFUL,
-                paymentStatus: data.paymentStatus,
+                status: data.status,
                 receipt_url: data.receipt_url,
-                isVerified: true//Change📌📌
             });
 
-            await this._transactionRepository.createTransaction(transaction, session);
+            const isExists = await this._transactionRepository.findByPaymentId(
+                data.paymentIntentId as string,
+                session
+            );
+            if (isExists) {
+                await session.commitTransaction();
+                return;
+            }
+
+            try {
+
+                await this._transactionRepository.createTransaction(transaction, session);
+
+            } catch (error: unknown) {
+                if (
+                    typeof error === "object" && error !== null && "code" in error &&
+                    (error as { code: number }).code === 11000
+                ) {
+                    await session.commitTransaction();
+                    return;
+                }
+                throw error;
+            }
 
             let subId = await this._subscriptionRepository.findByUserId(data.userId);
             user.subscribePlan(subId?.id as string);
@@ -83,4 +103,4 @@ export class UpgradePremiumUseCase implements IUpgradePremiumUseCase {
         }
     }
 }
- 
+

@@ -1,5 +1,5 @@
 import { FundCategory } from "@domain/enum/funds/fund-category.enum";
-import { CagrDTO } from "./mf-cagr.dto";
+import { ICagrDTO } from "./mf-cagr.dto";
 import { SubCategory } from "@domain/enum/funds/fund-sub-category.enum";
 import { FundStatus } from "@domain/enum/funds/fund-status.enum";
 import { RiskLevel } from "@domain/enum/funds/fund-risk-level.enum";
@@ -19,7 +19,7 @@ export interface FundDetailsDTO {
     nav: number;
     navDate: Date;
 
-    cagr: CagrDTO | null;
+    cagr: ICagrDTO | null;
 
     risk: RiskLevel;
     status: FundStatus;

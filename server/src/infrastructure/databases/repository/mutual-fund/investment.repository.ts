@@ -6,9 +6,10 @@ import { InvestmentMapper } from "@infrastructure/mappers/mutual-fund/investment
 import { InvestmentModel } from "@infrastructure/databases/mongo_db/models/schemas/mutual-fund/investment.schema";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
-import { ClientSession, QueryOptions, Types } from "mongoose";
+import { ClientSession, QueryOptions, Types, PipelineStage } from "mongoose";
 import { GroupedSchemeInvestments } from "@application/dto/portfolio/grouped-scheme-investments ";
 import { InvestmentRedeemResult } from "@domain/types/radeem-units.types";
+import { InvestmentFundDTO } from "@application/dto/portfolio/aggregated-asset.dto";
 
 @injectable()
 export class InvestmentRepository extends BaseRepository<InvestmentEntity, InvestmentDocument> implements IInvestmentRepository {
@@ -21,8 +22,6 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         const createdDoc = await this.model.create(persistenceData);
         return this.mapper.toDomain(createdDoc);
     }
-
-
 
     async findInitiatedFunds(): Promise<InvestmentEntity[] | null> {
         const docs = await this.model.find({ status: InvestmentStatus.INITIATED });
@@ -71,8 +70,7 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         return result.length > 0 ? result[0] : 0;
     };
 
-
-    async getUserInvestments(userId: string, options: QueryOptions): Promise<InvestmentEntity[]> {
+    async getUserInvestments(userId: string, options: QueryOptions): Promise<InvestmentFundDTO[]> {
         const {
             page = 1,
             limit = 10,
@@ -95,21 +93,23 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             [sortBy]: sortOrder === "asc" ? 1 : -1,
         };
 
-        const pipeline: any[] = [{ $match: matchStage }];
-
-        pipeline.push({
-            $lookup: {
-                from: "mutualfunds",
-                localField: "schemeCode",
-                foreignField: "schemeCode",
-                as: "fund",
+        const pipeline: PipelineStage[] = [
+            { $match: matchStage },
+            {
+                $lookup: {
+                    from: "mutualfunds",
+                    localField: "schemeCode",
+                    foreignField: "schemeCode",
+                    as: "fund",
+                },
             },
-        }, {
-            $unwind: {
-                path: "$fund",
-                preserveNullAndEmptyArrays: true,
+            {
+                $unwind: {
+                    path: "$fund",
+                    preserveNullAndEmptyArrays: true,
+                },
             },
-        });
+        ];
 
         if (search) {
             pipeline.push({
@@ -143,7 +143,6 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
                     redeemedAmount: 1,
                     createdAt: 1,
                     updatedAt: 1,
-
                     fund: {
                         schemeName: 1,
                         category: 1,
@@ -156,10 +155,28 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         );
 
         const docs = await this.model.aggregate(pipeline);
-        return docs.map(doc => this.mapper.toDomain(doc));
+        return docs.map(doc => ({
+            id: doc._id.toString(),
+            userId: doc.userId.toString(),
+            schemeCode: doc.schemeCode,
+            amount: doc.amount,
+            units: doc.units,
+            nav: doc.nav,
+            navDate: doc.navDate,
+            status: doc.status,
+            investmentType: doc.investmentType,
+            paymentMethod: doc.paymentMethod,
+            remainingUnits: doc.remainingUnits,
+            redeemedUnits: doc.redeemedUnits,
+            redeemedAmount: doc.redeemedAmount,
+            createdAt: doc.createdAt,
+            updatedAt: doc.updatedAt,
+            fund: doc.fund
+        }));
     }
+    
 
-    async getUserInvestmentsWithoutFilter(userId: string): Promise<InvestmentEntity[]> {
+    async getUserInvestementSummary(userId: string): Promise<InvestmentFundDTO[]> {
 
         const docs = await this.model.aggregate([
             {
@@ -194,6 +211,9 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
                     status: 1,
                     investmentType: 1,
                     paymentMethod: 1,
+                    remainingUnits: 1,
+                    redeemedUnits: 1,
+                    redeemedAmount: 1,
                     createdAt: 1,
                     updatedAt: 1,
                     fund: {
@@ -207,7 +227,24 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             },
         ]);
 
-        return docs.map(doc => this.mapper.toDomain(doc));
+        return docs.map(doc => ({
+            id: doc._id.toString(),
+            userId: doc.userId.toString(),
+            schemeCode: doc.schemeCode,
+            amount: doc.amount,
+            units: doc.units,
+            nav: doc.nav,
+            navDate: doc.navDate,
+            status: doc.status,
+            investmentType: doc.investmentType,
+            paymentMethod: doc.paymentMethod,
+            remainingUnits: doc.remainingUnits,
+            redeemedUnits: doc.redeemedUnits,
+            redeemedAmount: doc.redeemedAmount,
+            createdAt: doc.createdAt,
+            updatedAt: doc.updatedAt,
+            fund: doc.fund
+        }));
     }
 
     async getTotalUnitsByUser(userId: string): Promise<number> {
@@ -318,10 +355,6 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
     };
 
 
-    async getCurrentPortfolioValue(userId: string): Promise<number> {
-        return 0;
-    }
-
     async findUserInvestmentsForXirr(userId: string): Promise<InvestmentEntity[] | null> {
         const docs = await this.model.find({
             userId,
@@ -331,17 +364,18 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         return docs.map(doc => this.mapper.toDomain(doc));
     }
 
-    async countInvestments(userId: string, filter: any = {}, search: string = ""): Promise<number> {
+    async countInvestments(userId: string, options: QueryOptions): Promise<number> {
+        const {
+            filter = {},
+            search = "",
+        } = options;
+
         const matchStage: Record<string, unknown> = {
             ...filter,
             userId: new Types.ObjectId(userId),
         };
 
-        if (!search) {
-            return await this.model.countDocuments(matchStage);
-        }
-
-        const result = await this.model.aggregate([
+        const pipeline: PipelineStage[] = [
             { $match: matchStage },
             {
                 $lookup: {
@@ -351,18 +385,28 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
                     as: "fund",
                 },
             },
-            { $unwind: "$fund" },
             {
+                $unwind: {
+                    path: "$fund",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+        ];
+
+        if (search) {
+            pipeline.push({
                 $match: {
                     $or: [
                         { schemeCode: { $regex: search, $options: "i" } },
                         { "fund.schemeName": { $regex: search, $options: "i" } },
                     ],
                 },
-            },
-            { $count: "count" },
-        ]);
+            });
+        }
 
-        return result.length > 0 ? result[0].count : 0;
+        pipeline.push({ $count: "total" });
+
+        const result = await this.model.aggregate(pipeline);
+        return result.length > 0 ? result[0].total : 0;
     }
 }  

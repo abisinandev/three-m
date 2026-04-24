@@ -1,21 +1,32 @@
+import { AssetType } from "./enum/asset-type";
+
 export class PortfolioEntity {
-    private readonly _id?: string | null;
+    private readonly _id?: string;
     private readonly _userId: string;
-    private readonly _symbol: string;
-    private _quantity: number;
+
+    private readonly _assetId: string;
+    private readonly _assetType: AssetType;
+
+    private _quantity?: number;
+    private _units?: number;
     private _avgPrice: number;
     private _investedAmount: number;
-    private _lockQty: number;
+
+    private _lockQty: number; 
+
     private _stopLoss?: number | null;
     private _takeProfit?: number | null;
+
     private readonly _createdAt: Date;
     private _updatedAt?: Date;
 
     private constructor(props: {
-        id?: string | null;
+        id?: string;
         userId: string;
-        symbol: string;
-        quantity: number;
+        assetId: string;
+        assetType: AssetType;
+        quantity?: number;
+        units?: number;
         avgPrice: number;
         investedAmount: number;
         lockQty?: number;
@@ -24,43 +35,58 @@ export class PortfolioEntity {
         createdAt?: Date;
         updatedAt?: Date;
     }) {
-        this._id = props.id ?? null;
+        this._id = props.id;
         this._userId = props.userId;
-        this._symbol = props.symbol;
+
+        this._assetId = props.assetId;
+        this._assetType = props.assetType;
+
         this._quantity = props.quantity;
+        this._units = props.units;
         this._avgPrice = props.avgPrice;
         this._investedAmount = props.investedAmount;
+
         this._lockQty = props.lockQty ?? 0;
+
         this._stopLoss = props.stopLoss ?? null;
         this._takeProfit = props.takeProfit ?? null;
+
         this._createdAt = props.createdAt ?? new Date();
         this._updatedAt = props.updatedAt;
     }
 
     static create(data: {
         userId: string;
-        symbol: string;
-        quantity: number;
+        assetId: string;
+        assetType: AssetType;
+        quantity?: number;
+        units?: number;
         avgPrice: number;
         investedAmount: number;
+        stopLoss?: number | null;
+        takeProfit?: number | null;
     }): PortfolioEntity {
         return new PortfolioEntity({
             userId: data.userId,
-            symbol: data.symbol,
+            assetId: data.assetId,
+            assetType: data.assetType,
             quantity: data.quantity,
+            units: data.units,
             avgPrice: data.avgPrice,
             investedAmount: data.investedAmount,
-            lockQty: 0,
-            stopLoss: null,
-            takeProfit: null,
+            stopLoss: data.stopLoss ?? null,
+            takeProfit: data.takeProfit ?? null,
+            lockQty: 0
         });
     }
 
     static fromPersistence(data: {
         id: string;
         userId: string;
-        symbol: string;
-        quantity: number;
+        assetId: string;
+        assetType: AssetType;
+        quantity?: number;
+        units?: number;
         avgPrice: number;
         investedAmount: number;
         lockQty: number;
@@ -72,8 +98,10 @@ export class PortfolioEntity {
         return new PortfolioEntity({
             id: data.id,
             userId: data.userId,
-            symbol: data.symbol,
+            assetId: data.assetId,
+            assetType: data.assetType,
             quantity: data.quantity,
+            units: data.units,
             avgPrice: data.avgPrice,
             investedAmount: data.investedAmount,
             lockQty: data.lockQty,
@@ -84,20 +112,24 @@ export class PortfolioEntity {
         });
     }
 
-    get id(): string | null | undefined {
-        return this._id;
+    get assetId(): string {
+        return this._assetId;
+    }
+
+    get assetType(): AssetType {
+        return this._assetType;
     }
 
     get userId(): string {
         return this._userId;
     }
 
-    get symbol(): string {
-        return this._symbol;
+    get quantity(): number | undefined {
+        return this._quantity;
     }
 
-    get quantity(): number {
-        return this._quantity;
+    get units(): number | undefined {
+        return this._units;
     }
 
     get avgPrice(): number {
@@ -120,6 +152,10 @@ export class PortfolioEntity {
         return this._takeProfit;
     }
 
+    get id(): string | undefined {
+        return this._id;
+    }
+
     get createdAt(): Date {
         return this._createdAt;
     }
@@ -129,9 +165,11 @@ export class PortfolioEntity {
     }
 
     lockQuantity(qty: number) {
-        if (this._quantity - this._lockQty < qty) {
+        const currentQty = this._quantity ?? 0;
+        if (currentQty - this._lockQty < qty) {
             throw new Error("Insufficient unlocked quantity");
         }
+
         this._lockQty += qty;
         this._updatedAt = new Date();
     }
@@ -140,6 +178,7 @@ export class PortfolioEntity {
         if (this._lockQty < qty) {
             throw new Error("Cannot unlock more than locked quantity");
         }
+
         this._lockQty -= qty;
         this._updatedAt = new Date();
     }
@@ -148,6 +187,15 @@ export class PortfolioEntity {
         this._quantity = quantity;
         this._avgPrice = avgPrice;
         this._investedAmount = investedAmount;
+        // Automatically sync units if it's a mutual fund
+        if (this._assetType === AssetType.MUTUAL_FUND) {
+            this._units = quantity;
+        }
+        this._updatedAt = new Date();
+    }
+
+    updateUnits(units: number) {
+        this._units = units;
         this._updatedAt = new Date();
     }
 
@@ -161,8 +209,10 @@ export class PortfolioEntity {
         return {
             id: this._id,
             userId: this._userId,
-            symbol: this._symbol,
+            assetId: this._assetId,  
+            assetType: this._assetType, 
             quantity: this._quantity,
+            units: this._units,
             avgPrice: this._avgPrice,
             investedAmount: this._investedAmount,
             lockQty: this._lockQty,

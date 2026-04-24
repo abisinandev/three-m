@@ -13,26 +13,24 @@ export class FetchTradeHistoryUseCase implements IFetchTradeHistoryUseCase {
 
     async execute(userId: string, options: QueryOptions): Promise<{
         data: TradeEntity[];
-        totalCount: number;
+        total: number;
         page: number;
         limit: number;
+        totalPages: number;
     }> {
-        const { page = 1, limit = 10 } = options;
+        const { page = 1, limit = 10, search = "" } = options;
 
-        const allTrades = await this._tradeRepository.findByUserId(userId);
-
-        const start = (Number(page) - 1) * Number(limit);
-        const end = start + Number(limit);
-
-        const sortedTrades = allTrades.sort((a, b) =>
-            new Date(b.createdAt as Date).getTime() - new Date(a.createdAt as Date).getTime()
-        );
+        const [trades, total] = await Promise.all([
+            this._tradeRepository.findWithFilters(userId, options),
+            this._tradeRepository.countWithFilters(userId, {}, search as string)
+        ]);
 
         return {
-            data: sortedTrades.slice(start, end).map(t => t),
-            totalCount: allTrades.length,
+            data: trades,
+            total,
             page: Number(page),
             limit: Number(limit),
+            totalPages: Math.ceil(total / (Number(limit) || 10)),
         };
     }
 }

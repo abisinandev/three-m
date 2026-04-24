@@ -33,6 +33,7 @@ export const API_ROUTES = {
         },
         PAYMENT: {
             CHECKOUT_SESSION: "/payments/create-checkout-session",
+            VERIFY: "/payments/verify",
         },
         NOTIFICATIONS: {
             GET_ALL: "/notifications",
@@ -44,7 +45,7 @@ export const API_ROUTES = {
         },
         PORTFOLIO: {
             GET_INVESTMENTS: "/user/portfolio",
-            GET_DATAS: "/user/portfolio/datas",
+            GET_SUMMARY: "/user/portfolio/summary",
             REDEEM_INVESTMENT: "/user/portfolio/redeem-investment",
             CONFIRM_REDEEM: "/user/portfolio/confirm-redeem",
             PROJECTION: "/user/portfolio/projection",
@@ -52,6 +53,7 @@ export const API_ROUTES = {
             INVESTMENTS: "/user/portfolio/investments",
             TRADES: "/user/portfolio/trades",
             HISTORIES: "/user/portfolio/histories",
+            GET_ASSETS: "/user/portfolio/assets",
         },
         MUTUAL_FUNDS: {
             LIST: "/user/mutual-funds/lists",

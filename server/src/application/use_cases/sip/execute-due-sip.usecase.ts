@@ -18,7 +18,6 @@ import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
-// import { IInternalTransactionVerificationService } from "@application/interfaces/services/externals/internal-transaction-verify.interface";
 import mongoose from "mongoose";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
@@ -26,7 +25,6 @@ import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notifi
 import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
-// import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 
 @injectable()
 export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
@@ -37,7 +35,6 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualfundRepo: IMutualFundRepository,
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
-        // @inject(EXTERNAL_TYPES.InternalTransactionVerificationService) private readonly _internalTransactionVerify: IInternalTransactionVerificationService
         @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotificationUseCase: ICreateNotificationUseCase,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
     ) { }
@@ -86,13 +83,11 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 userCode: user.userCode!,
                 amount: installment.amount,
                 currency: CurrencyTypes.INR,
-                status: TransactionStatus.SUCCESSFUL,
+                status: TransactionStatus.PENDING,
                 type: TransactionTypes.SIP_INSTALLMENT,
                 referenceType: TransactionReferenceType.SIP,
                 referenceId: installment.id,
                 fundId: fund.id,
-                paymentStatus: TransactionStatus.SUCCESSFUL, // THIS IS NOT NEEDED HERE MANAGE 📌
-                isVerified: true,
             });
             await this._transactionRepository.create(transaction, session);
 
@@ -105,7 +100,7 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 sipInstallmentId: installment.id,
             });
 
-            await this._investmentRepository.create(investment);
+            await this._investmentRepository.create(investment,session);
 
             const nextDate = calculateNextExecutionDate(
                 sip.nextExecutionDate,
@@ -129,7 +124,7 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
 
             if (updatedSip.status === SipStatus.ACTIVE) {
                 const nextInstallment = SipInstallmentEntity.create({
-                    sipId: sip.id!,
+                    sipId: sip.id as string,
                     userId: sip.userId,
                     schemeCode: sip.schemeCode,
                     installmentNo: updatedSip.executedInstallments + 1,
@@ -138,7 +133,6 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 });
                 await this._sipInstallmentRepository.create(nextInstallment, session);
             }
-            // await this._internalTransactionVerify.verify(transaction.id as string);📌
 
         } catch (error) {
             await session.abortTransaction();

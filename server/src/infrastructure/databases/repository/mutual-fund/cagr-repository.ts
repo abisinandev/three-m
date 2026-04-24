@@ -5,7 +5,7 @@ import { MfCagrEntity } from "@domain/entities/mutual-fund/cagr-entity";
 import { MfCAGRDocument } from "@infrastructure/databases/mongo_db/models/interfaces/mutual-fund/cagr.schema.interface";
 import { MfCAGRModel } from "@infrastructure/databases/mongo_db/models/schemas/mutual-fund/cagr.schema";
 import { MfCagrMapper } from "@infrastructure/mappers/mutual-fund/mf-cagr-mapper";
-import { CagrDTO } from "@application/dto/mutual-funds/mf-cagr.dto";
+import { ICagrDTO } from "@application/dto/mutual-funds/mf-cagr.dto";
 
 @injectable()
 export class MfCagrRepository extends BaseRepository<MfCagrEntity, MfCAGRDocument> implements IMfCagrRepository {
@@ -13,7 +13,7 @@ export class MfCagrRepository extends BaseRepository<MfCagrEntity, MfCAGRDocumen
         super(MfCAGRModel, MfCagrMapper);
     }
 
-    async upsertBySchemeCode(data: CagrDTO): Promise<void> {
+    async upsertBySchemeCode(data: ICagrDTO): Promise<void> {
         await this.model.updateOne(
             { schemeCode: data.schemeCode },
             {

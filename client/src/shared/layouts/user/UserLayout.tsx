@@ -7,7 +7,7 @@ import { Wallet, ChevronDown, LogOut, User, Menu, Bell } from 'lucide-react';
 import { Footer } from '@shared/components/LandingPage/Footer';
 import { LOGOUT } from '@shared/constants/userContants';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
-import { NotificationDropdown } from '@shared/components/notification/NotificationDropdown';
+import { NotificationDropdown } from '@modules/user/notifications/components/NotificationDropdown';
 import { useProfileQuery } from '@shared/services/user/ProfileApi';
 import AiAssistantPanel from '@shared/components/ai-chatbot/AiChatbot';
 import { ROUTES } from '@shared/constants/routes';

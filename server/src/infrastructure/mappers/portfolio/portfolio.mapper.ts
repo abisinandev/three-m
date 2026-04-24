@@ -5,8 +5,10 @@ export const toDomain = (doc: PortfolioDocument): PortfolioEntity => {
     return PortfolioEntity.fromPersistence({
         id: doc._id?.toString(),
         userId: doc.userId?.toString(),
-        symbol: doc.symbol,
+        assetId: doc.assetId?.toString(),
+        assetType: doc.assetType,
         quantity: doc.quantity,
+        units: doc.units,
         avgPrice: doc.avgPrice,
         investedAmount: doc.investedAmount,
         lockQty: doc.lockQty || 0,
@@ -18,17 +20,19 @@ export const toDomain = (doc: PortfolioDocument): PortfolioEntity => {
 };
 
 export const toPersistance = (entity: PortfolioEntity): Partial<PortfolioDocument> => {
-    const persistence = entity.toPersistence();
+    const data = entity.toPersistence();
     return {
-        userId: persistence.userId as any,
-        symbol: persistence.symbol,
-        quantity: persistence.quantity,
-        avgPrice: persistence.avgPrice,
-        investedAmount: persistence.investedAmount,
-        lockQty: persistence.lockQty,
-        stopLoss: persistence.stopLoss,
-        takeProfit: persistence.takeProfit,
-        createdAt: persistence.createdAt,
+        userId: data.userId as any,
+        assetId: data.assetId as any,
+        assetType: data.assetType,
+        quantity: data.quantity,
+        units: data.units,
+        avgPrice: data.avgPrice,
+        investedAmount: data.investedAmount,
+        lockQty: data.lockQty,
+        stopLoss: data.stopLoss,
+        takeProfit: data.takeProfit,
+        createdAt: data.createdAt,
         updatedAt: new Date(),
     };
 };

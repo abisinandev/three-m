@@ -1,98 +1,157 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+'use client';
+import { useState } from 'react';
+import {
+    PieChart,
+    Pie,
+    Cell,
+    Tooltip,
+    ResponsiveContainer,
+    Sector,
+} from 'recharts';
 import { formatCurrency } from '@modules/user/helpers/expenseHelpers';
+
+const renderActiveShape = (props: any) => {
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+
+    return (
+        <g>
+            <Sector
+                cx={cx}
+                cy={cy}
+                innerRadius={innerRadius}
+                outerRadius={outerRadius + 4}
+                startAngle={startAngle}
+                endAngle={endAngle}
+                fill={fill}
+                style={{ filter: `drop-shadow(0 0 8px ${fill}44)` }}
+            />
+            <Sector
+                cx={cx}
+                cy={cy}
+                startAngle={startAngle}
+                endAngle={endAngle}
+                innerRadius={outerRadius + 6}
+                outerRadius={outerRadius + 8}
+                fill={fill}
+            />
+        </g>
+    );
+};
 
 interface BudgetPatternProps {
     finalChartData: any[];
     activeChartData: any[];
     filteredSpent: number;
-    filteredInvested: number;
     totalIncome: number;
     needsTarget: number;
     wantsTarget: number;
     savingsTarget: number;
     filteredNeeds: number;
     filteredWants: number;
+    filteredSavings: number;
+    unspentBalance: number;
 }
 
 export const BudgetPattern = ({
-    finalChartData,
     activeChartData,
     filteredSpent,
-    filteredInvested,
     totalIncome,
-    needsTarget,
-    wantsTarget,
-    savingsTarget,
-    filteredNeeds,
-    filteredWants
-}: BudgetPatternProps) => {
-    return (
-        <div className="lg:col-span-1 bg-[#111] rounded-2xl p-6 border border-neutral-800/60 flex flex-col items-center justify-center relative min-h-[300px]">
-            <h3 className="absolute top-6 left-6 text-sm font-bold text-white uppercase tracking-wide">
-                Budget Distribution
-            </h3>
-            <div className="absolute top-6 right-6 text-[10px] font-bold bg-neutral-800/50 px-2 py-1 rounded text-neutral-400 border border-neutral-700">
-                50-30-20 Rule
-            </div>
 
-            <div className="w-full h-56 relative mt-6">
+    filteredSavings,
+    unspentBalance
+}: BudgetPatternProps) => {
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+    const onPieEnter = (_: any, index: number) => {
+        setActiveIndex(index);
+    };
+
+    const onPieLeave = () => {
+        setActiveIndex(null);
+    };
+
+    const activeItem = activeIndex !== null ? activeChartData[activeIndex] : null;
+    const totalOutput = filteredSpent + filteredSavings;
+
+    return (
+        <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 h-[340px] flex flex-col relative">
+            <h3 className="text-[10px] font-bold text-[#5a5f6e] uppercase tracking-[0.1em] m-0 mb-3">
+                Budget Allocation
+            </h3>
+
+            <div className="flex-1 relative">
+
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none z-10 -mt-1.5">
+                    <p
+                        className="text-[9px] font-bold uppercase tracking-[0.05em] m-0"
+                        style={{ color: activeItem ? activeItem.color : '#5a5f6e' }}
+                    >
+                        {activeItem ? activeItem.name : 'Total Out'}
+                    </p>
+                    <p className="text-[15px] font-extrabold text-[#e8eaed] mt-0.5 m-0">
+                        {formatCurrency(activeItem ? activeItem.value : totalOutput)}
+                    </p>
+                    <p className="text-[9px] font-semibold text-[#5a5f6e] m-0">
+                        {activeItem
+                            ? `${totalIncome > 0 ? ((activeItem.value / totalIncome) * 100).toFixed(1) : 0}%`
+                            : 'of Income'
+                        }
+                    </p>
+                </div>
+
                 <ResponsiveContainer width="100%" height="100%">
+
                     <PieChart>
                         <Pie
-                            data={finalChartData}
-                            innerRadius={60}
+                            activeIndex={activeIndex ?? undefined}
+                            activeShape={renderActiveShape}
+                            data={activeChartData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={65}
                             outerRadius={80}
-                            paddingAngle={5}
+                            paddingAngle={3}
                             dataKey="value"
+                            onMouseEnter={onPieEnter}
+                            onMouseLeave={onPieLeave}
                             stroke="none"
-                            cornerRadius={4}
+                            animationDuration={600}
                         >
                             {activeChartData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
-                            {activeChartData.length === 0 && <Cell fill="#1a1a1a" />}
                         </Pie>
-                        <Tooltip
-                            contentStyle={{ backgroundColor: '#000', borderColor: '#333', borderRadius: '12px', padding: '12px', border: '1px solid #222' }}
-                            itemStyle={{ fontSize: '11px', fontWeight: 'bold' }}
-                            cursor={{ fill: 'transparent' }}
-                            formatter={(val: any, name?: string) => {
-                                return [formatCurrency(val), name || ''];
-                            }}
-                        />
+                        <Tooltip content={<></>} />
                     </PieChart>
                 </ResponsiveContainer>
-                {/* Center Text */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-xs text-neutral-500 font-bold uppercase tracking-wider">Filtered Spend</span>
-                    <span className="text-lg font-bold text-white mt-0.5">{formatCurrency(filteredSpent + filteredInvested)}</span>
-                </div>
             </div>
 
-            {/* Custom Legend */}
-            <div className="w-full mt-6 grid grid-cols-3 gap-2 px-2">
-                <div className="flex flex-col items-center">
-                    <div className="w-full h-1 bg-blue-500/20 rounded-full mb-2 overflow-hidden">
-                        <div className="h-full bg-blue-500" style={{ width: `${Math.min(100, (filteredNeeds / (totalIncome * (needsTarget || 0.5))) * 100)}%` }}></div>
+            <div className="flex flex-wrap gap-y-2 gap-x-4 mt-3 justify-center">
+                {activeChartData.map((item, i) => (
+                    <div
+                        key={i}
+                        onMouseEnter={() => setActiveIndex(i)}
+                        onMouseLeave={() => setActiveIndex(null)}
+                        className={`flex items-center gap-1.5 cursor-pointer transition-opacity duration-200 ${activeIndex === null || activeIndex === i ? 'opacity-100' : 'opacity-40'}`}
+                    >
+                        <div
+                            className="w-1.5 h-1.5 rounded-full"
+                            style={{ backgroundColor: item.color }}
+                        />
+                        <span className="text-[10px] font-bold text-[#e8eaed]">{item.name}</span>
+                        <span className="text-[9px] text-[#5a5f6e]">{totalIncome > 0 ? ((item.value / totalIncome) * 100).toFixed(0) : 0}%</span>
                     </div>
-                    <span className="text-[10px] text-neutral-500 uppercase font-bold">Needs</span>
-                    <span className="text-xs font-bold text-blue-400">{Math.round((filteredNeeds / totalIncome) * 100) || 0}%</span>
-                </div>
-                <div className="flex flex-col items-center">
-                    <div className="w-full h-1 bg-amber-500/20 rounded-full mb-2 overflow-hidden">
-                        <div className="h-full bg-amber-500" style={{ width: `${Math.min(100, (filteredWants / (totalIncome * (wantsTarget || 0.3))) * 100)}%` }}></div>
+                ))}
+
+                {unspentBalance > 0 && (
+                    <div className="flex items-center gap-1.5 opacity-60">
+                        <div className="w-1.5 h-1.5 rounded-full border border-[#5a5f6e]" />
+                        <span className="text-[10px] font-bold text-[#5a5f6e]">Remaining Amount</span>
+                        <span className="text-[9px] text-[#5a5f6e]">{totalIncome > 0 ? ((unspentBalance / totalIncome) * 100).toFixed(0) : 0}%</span>
                     </div>
-                    <span className="text-[10px] text-neutral-500 uppercase font-bold">Wants</span>
-                    <span className="text-xs font-bold text-amber-500">{Math.round((filteredWants / totalIncome) * 100) || 0}%</span>
-                </div>
-                <div className="flex flex-col items-center">
-                    <div className="w-full h-1 bg-emerald-500/20 rounded-full mb-2 overflow-hidden">
-                        <div className="h-full bg-emerald-500" style={{ width: `${Math.min(100, (filteredInvested / (totalIncome * (savingsTarget || 0.2))) * 100)}%` }}></div>
-                    </div>
-                    <span className="text-[10px] text-neutral-500 uppercase font-bold">Savings</span>
-                    <span className="text-xs font-bold text-emerald-500">{Math.round((filteredInvested / totalIncome) * 100) || 0}%</span>
-                </div>
+                )}
             </div>
         </div>
     );
 };
+
