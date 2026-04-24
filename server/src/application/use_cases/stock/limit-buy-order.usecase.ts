@@ -97,12 +97,18 @@ export class LimitBuyOrderUseCase implements ILimitBuyOrderUseCase {
                 orderType: OrderType.LIMIT_ORDER,
                 quantity: execution.filledQty,
                 price: execution.avgPrice,
+                limitPrice: order.price,
                 status: OrderStatus.PENDING,
                 stopLoss: order.stopLoss,
                 takeProfit: order.takeProfit,
                 isAlgoTrade: order.isAlgoTrade ?? false,
             })
+
+            wallet.debit(execution.totalValue);
+            await this._wallet.update(userId, wallet, session);
+
             await this._orderRepository.create(limitOrder, session);
+
 
             await session.commitTransaction();
         } catch (error) {

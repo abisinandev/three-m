@@ -46,9 +46,11 @@ export class ExecuteLimitSellOrderUseCase implements IExecuteLimitSellOrderUseCa
         const latestQuote = await this._marketDataProvider.getLatestQuote(order.symbol);
         const currentPrice = latestQuote?.price;
 
-        if (!currentPrice || currentPrice < Number(order.price)) {
+        const triggerPrice = order.limitPrice ?? order.price;
+        if (!currentPrice || currentPrice < Number(triggerPrice)) {
             return;
         }
+
 
         const session = await mongoose.startSession();
 

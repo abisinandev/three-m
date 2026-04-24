@@ -47,7 +47,8 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
         const latestQuote = await this._marketDataProvider.getLatestQuote(order.symbol);
         const currentPrice = latestQuote?.price;
 
-        if (!currentPrice || currentPrice > order.price) {
+        const triggerPrice = order.limitPrice ?? order.price;
+        if (!currentPrice || currentPrice > Number(triggerPrice)) {
             return;
         }
 
@@ -65,6 +66,9 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
                 totalValue: currentPrice * order.quantity,
             };
 
+            const reservedValue = order.price * order.quantity;
+            const refundAmount = reservedValue - execution.totalValue;
+
             const transaction = TransactionEntity.create({
                 userId: order.userId,
                 userCode: user.userCode,
@@ -79,14 +83,15 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
             const wallet = await this._wallet.findByUserId(order.userId, session);
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
 
-            if (wallet.availableBalance < execution.totalValue) {
-                throw new ValidationError(ErrorMessages.WALLET.INSUFFICIENT_BALANCE);
+            if (refundAmount > 0) {
+                wallet.credit(refundAmount);
+            } else if (refundAmount < 0) {
+                wallet.debit(Math.abs(refundAmount));
             }
 
-            wallet.debit(execution.totalValue);
             await this._wallet.update(order.userId, wallet, session);
 
-            order.updateFilledQty(execution.filledQty, execution.totalValue);
+            order.updateFilledQty(execution.filledQty, execution.avgPrice);
             order.markFilled();
             await this._orderRepository.update(order.id as string, order, session);
 
@@ -161,3 +166,4 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
         }
     }
 }
+

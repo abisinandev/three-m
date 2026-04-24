@@ -11,9 +11,11 @@ export interface IOrder {
     orderType: OrderType;
 
     quantity: number;
-    price?: number | null;
+    price: number;
+    limitPrice?: number | null;
     stopLoss?: number | null;
     takeProfit?: number | null;
+
 
     status: OrderStatus;
     filledQty: number;

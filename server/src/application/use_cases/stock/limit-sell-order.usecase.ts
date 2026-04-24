@@ -98,11 +98,13 @@ export class LimitSellOrderUseCase implements ILimitSellOrderUseCase {
                 orderType: OrderType.LIMIT_ORDER,
                 quantity: order.quantity,
                 price: order.price,
+                limitPrice: order.price,
                 status: OrderStatus.PENDING,
                 stopLoss: order.stopLoss,
                 takeProfit: order.takeProfit,
                 isAlgoTrade: order.isAlgoTrade ?? false,
             })
+
             await this._orderRepository.create(limitOrder, session);
 
             await session.commitTransaction();

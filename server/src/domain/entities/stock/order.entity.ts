@@ -10,7 +10,9 @@ export class OrderEntity {
     private readonly _orderType: OrderType;
     private readonly _quantity: number;
     private readonly _price: number;
+    private readonly _limitPrice?: number | null;
     private readonly _stopLoss?: number | null;
+
     private readonly _takeProfit?: number | null;
     private readonly _isAlgoTrade: boolean;
 
@@ -31,6 +33,7 @@ export class OrderEntity {
         quantity: number;
         isAlgoTrade: boolean;
         price: number;
+        limitPrice?: number | null;
         status: OrderStatus;
         filledQty?: number;
         executedPrice?: number | null;
@@ -39,6 +42,7 @@ export class OrderEntity {
         createdAt?: Date;
         updatedAt?: Date;
         executedAt?: Date | null;
+
     }) {
         this._id = props.id ?? null;
         this._userId = props.userId;
@@ -47,8 +51,10 @@ export class OrderEntity {
         this._orderType = props.orderType;
         this._quantity = props.quantity;
         this._price = props.price;
+        this._limitPrice = props.limitPrice ?? null;
         this._stopLoss = props.stopLoss ?? null;
         this._takeProfit = props.takeProfit ?? null;
+
         this._isAlgoTrade = props.isAlgoTrade,
             this._status = props.status;
         this._filledQty = props.filledQty ?? 0;
@@ -67,10 +73,12 @@ export class OrderEntity {
         status: OrderStatus;
         quantity: number;
         price: number;
+        limitPrice?: number;
         isAlgoTrade: boolean;
         stopLoss?: number;
         takeProfit?: number;
     }): OrderEntity {
+
         return new OrderEntity({
             userId: data.userId,
             symbol: data.symbol,
@@ -78,11 +86,13 @@ export class OrderEntity {
             orderType: data.orderType,
             quantity: data.quantity,
             price: data.price,
+            limitPrice: data.limitPrice ?? null,
             stopLoss: data.stopLoss ?? null,
             takeProfit: data.takeProfit ?? null,
             status: data.status,
             isAlgoTrade: data.isAlgoTrade,
         });
+
     }
 
     static fromPersistence(data: {
@@ -93,6 +103,7 @@ export class OrderEntity {
         orderType: OrderType; 
         quantity: number;
         price: number;
+        limitPrice?: number | null;
         stopLoss?: number | null;
         takeProfit?: number | null;
         status: OrderStatus;
@@ -102,6 +113,7 @@ export class OrderEntity {
         createdAt: Date;
         updatedAt: Date;
         executedAt: Date | null;
+
     }): OrderEntity {
         return new OrderEntity({
             id: data.id,
@@ -111,6 +123,7 @@ export class OrderEntity {
             orderType: data.orderType,
             quantity: data.quantity,
             price: data.price,
+            limitPrice: data.limitPrice ?? null,
             stopLoss: data.stopLoss ?? null,
             takeProfit: data.takeProfit ?? null,
             status: data.status,
@@ -121,6 +134,7 @@ export class OrderEntity {
             updatedAt: data.updatedAt,
             executedAt: data.executedAt,
         });
+
     }
 
     // Getters
@@ -131,8 +145,10 @@ export class OrderEntity {
     get orderType() { return this._orderType; }
     get quantity() { return this._quantity; }
     get price() { return this._price; }
+    get limitPrice() { return this._limitPrice; }
     get stopLoss() { return this._stopLoss; }
     get takeProfit() { return this._takeProfit; }
+
     get status() { return this._status; }
     get isAlgoTrade() { return this._isAlgoTrade };
     get filledQty() { return this._filledQty; }
@@ -181,8 +197,10 @@ export class OrderEntity {
             orderType: this._orderType,
             quantity: this._quantity,
             price: this._price,
+            limitPrice: this._limitPrice,
             stopLoss: this._stopLoss,
             takeProfit: this._takeProfit,
+
             status: this._status,
             filledQty: this._filledQty,
             executedPrice: this._executedPrice,

@@ -19,6 +19,12 @@ export class LimitBuyOrderDTO {
     @IsOptional()
     @IsNumber()
     @Min(0.01)
+    limitPrice?: number;
+
+
+    @IsOptional()
+    @IsNumber()
+    @Min(0.01)
     stopLoss?: number;
 
     @IsOptional()
