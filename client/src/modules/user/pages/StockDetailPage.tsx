@@ -8,13 +8,14 @@ import TradeModal from "@shared/components/modals/TradeModal";
 import PremiumPaymentModal from "@shared/components/modals/PremiumPaymentModal";
 import type { TradeData } from "@shared/components/modals/TradeModal";
 import { useTradeMutation } from "@shared/hooks/useTradeMutation";
-import { getPortfolioInvestments } from "@shared/services/feature/portfolio/PortfolioApi";
+import { getStockHoldings } from "@shared/services/feature/portfolio/PortfolioApi";
 
 import { StockDetailHeader } from "../components/stock-detail/StockDetailHeader";
 import { AlgoConsole } from "../components/stock-detail/AlgoConsole";
 import { MarketStatCard } from "../components/stock-detail/MarketStatCard";
 import { MarketDepthCard } from "../components/stock-detail/MarketDepthCard";
 import { CompanyInfoCard } from "../components/stock-detail/CompanyInfoCard";
+import PendingOrdersTable from "../components/stock-detail/PendingOrdersTable";
 
 const StockDetailPage = () => {
   const { symbol } = useParams({ strict: false }) as { symbol: string };
@@ -37,7 +38,7 @@ const StockDetailPage = () => {
 
   const { data: holdingsData } = useQuery({
     queryKey: ["portfolio", symbol],
-    queryFn: () => getPortfolioInvestments(1, 10, undefined, symbol),
+    queryFn: () => getStockHoldings(1, 10, symbol),
     enabled: !!symbol,
   });
 
@@ -80,7 +81,7 @@ const StockDetailPage = () => {
     });
   };
 
-  const { buy, sell, isTrading } = useTradeMutation();
+  const { buy, sell, limitBuy, limitSell, isTrading } = useTradeMutation();
 
   const handleTradeClick = (type: "buy" | "sell") => {
     setTradeType(type);
@@ -90,23 +91,46 @@ const StockDetailPage = () => {
   const handleTradeConfirm = async (tradeData: TradeData) => {
     try {
       if (tradeData.type === "buy") {
-        await buy({
-          symbol: tradeData.symbol,
-          quantity: tradeData.quantity,
-          orderType: tradeData.orderType as any,
-          price: tradeData.price,
-          stopLoss: tradeData.stopLoss,
-          takeProfit: tradeData.takeProfit,
-        });
+        if (tradeData.orderType === "LIMIT_ORDER") {
+          // Route limit buy orders to the dedicated endpoint
+          await limitBuy({
+            symbol: tradeData.symbol,
+            quantity: tradeData.quantity,
+            orderType: "LIMIT_ORDER",
+            price: tradeData.price,
+            stopLoss: tradeData.stopLoss,
+            takeProfit: tradeData.takeProfit,
+          });
+        } else {
+          await buy({
+            symbol: tradeData.symbol,
+            quantity: tradeData.quantity,
+            orderType: tradeData.orderType as any,
+            price: tradeData.price,
+            stopLoss: tradeData.stopLoss,
+            takeProfit: tradeData.takeProfit,
+          });
+        }
       } else {
-        await sell({
-          symbol: tradeData.symbol,
-          quantity: tradeData.quantity,
-          orderType: tradeData.orderType as any,
-          price: tradeData.price,
-          stopLoss: tradeData.stopLoss,
-          takeProfit: tradeData.takeProfit,
-        });
+        if (tradeData.orderType === "LIMIT_ORDER") {
+          await limitSell({
+            symbol: tradeData.symbol,
+            quantity: tradeData.quantity,
+            orderType: "LIMIT_ORDER",
+            price: tradeData.price,
+            stopLoss: tradeData.stopLoss,
+            takeProfit: tradeData.takeProfit,
+          });
+        } else {
+          await sell({
+            symbol: tradeData.symbol,
+            quantity: tradeData.quantity,
+            orderType: tradeData.orderType as any,
+            price: tradeData.price,
+            stopLoss: tradeData.stopLoss,
+            takeProfit: tradeData.takeProfit,
+          });
+        }
       }
       setIsTradeModalOpen(false);
     } catch (error) {
@@ -171,6 +195,8 @@ const StockDetailPage = () => {
                 value={`₹${fmt(responseData?.previousClose)}`}
               />
             </div>
+
+            <PendingOrdersTable symbol={symbol} />
           </div>
 
           <div className="col-span-12 lg:col-span-3 space-y-6">

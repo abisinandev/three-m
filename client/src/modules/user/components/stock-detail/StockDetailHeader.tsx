@@ -83,8 +83,9 @@ export const StockDetailHeader = ({
               <span>
                 {isPositive ? "+" : ""}
                 {fmt(change)} ({isPositive ? "+" : ""}
-                {changePercent.toFixed(2)}%)
+                {(changePercent || 0).toFixed(2)}%)
               </span>
+
             </div>
           </div>
           <div className="flex gap-2">

@@ -12,6 +12,8 @@ import { AssetAllocationDonut } from '../portfolio/components/AssetAllocationDon
 import { PortfolioXirrCard } from '../portfolio/components/StatsSidebar';
 import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
 import { usePortfolio } from '../portfolio/hooks/usePortfolio';
+import PendingOrdersTable from '../components/stock-detail/PendingOrdersTable';
+
 
 const PortfolioDashboard = () => {
     const user = useUserStore((state) => state.user);
@@ -146,6 +148,8 @@ const PortfolioDashboard = () => {
                                 onPageChange={handlePageChange}
                                 isLoading={isHistoryLoading}
                             />
+                        ) : activeTab === 'pending' ? (
+                            <PendingOrdersTable />
                         ) : (
                             <HoldingsTable 
                                 items={investments}
@@ -162,6 +166,7 @@ const PortfolioDashboard = () => {
                                 onNavigate={(symbol) => navigate({ to: `/user/trading/${symbol}` })}
                             />
                         )}
+
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
