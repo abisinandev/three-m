@@ -74,8 +74,8 @@ const TradeModal: React.FC<TradeModalProps> = ({
       price: executionPrice,
       total,
       orderType,
-      stopLoss: stopLoss ? parseFloat(stopLoss) : undefined,
-      takeProfit: takeProfit ? parseFloat(takeProfit) : undefined,
+      stopLoss: type === 'buy' && stopLoss ? parseFloat(stopLoss) : undefined,
+      takeProfit: type === 'buy' && takeProfit ? parseFloat(takeProfit) : undefined,
     });
   };
 
@@ -185,31 +185,33 @@ const TradeModal: React.FC<TradeModalProps> = ({
               </div>
             </div>
 
-            <div className="pt-2 border-t border-[#1f1f1f]">
-                 <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-3">Risk Management (Optional)</label>
-                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] text-gray-500 mb-1">Stop Loss</label>
-                    <input
-                      type="number"
-                      placeholder="SL Price"
-                      value={stopLoss}
-                      onChange={(e) => setStopLoss(e.target.value)}
-                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-[4px] px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder:text-gray-600"
-                    />
+            {type === 'buy' && (
+              <div className="pt-2 border-t border-[#1f1f1f]">
+                   <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-3">Risk Management (Optional)</label>
+                   <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-1">Stop Loss</label>
+                      <input
+                        type="number"
+                        placeholder="SL Price"
+                        value={stopLoss}
+                        onChange={(e) => setStopLoss(e.target.value)}
+                        className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-[4px] px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder:text-gray-600"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-1">Take Profit</label>
+                      <input
+                        type="number"
+                        placeholder="TP Price"
+                        value={takeProfit}
+                        onChange={(e) => setTakeProfit(e.target.value)}
+                        className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-[4px] px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder:text-gray-600"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-[10px] text-gray-500 mb-1">Take Profit</label>
-                    <input
-                      type="number"
-                      placeholder="TP Price"
-                      value={takeProfit}
-                      onChange={(e) => setTakeProfit(e.target.value)}
-                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-[4px] px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder:text-gray-600"
-                    />
-                  </div>
-                </div>
-            </div>
+              </div>
+            )}
           </div>
 
           <div className="px-5 py-4 bg-[#161616] flex items-center justify-between border-t border-[#1f1f1f]">

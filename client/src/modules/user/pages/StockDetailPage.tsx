@@ -64,7 +64,7 @@ const StockDetailPage = () => {
     return () => socketService.off("stock_update", handleUpdate);
   }, [symbol]);
 
-  // Derived values
+   
   const responseData = queryData?.data;
   const stockInfo = responseData?.data;
   const apiPrice = responseData?.latestPrice;
@@ -92,7 +92,7 @@ const StockDetailPage = () => {
     try {
       if (tradeData.type === "buy") {
         if (tradeData.orderType === "LIMIT_ORDER") {
-          // Route limit buy orders to the dedicated endpoint
+      
           await limitBuy({
             symbol: tradeData.symbol,
             quantity: tradeData.quantity,
@@ -118,8 +118,6 @@ const StockDetailPage = () => {
             quantity: tradeData.quantity,
             orderType: "LIMIT_ORDER",
             price: tradeData.price,
-            stopLoss: tradeData.stopLoss,
-            takeProfit: tradeData.takeProfit,
           });
         } else {
           await sell({
@@ -127,10 +125,9 @@ const StockDetailPage = () => {
             quantity: tradeData.quantity,
             orderType: tradeData.orderType as any,
             price: tradeData.price,
-            stopLoss: tradeData.stopLoss,
-            takeProfit: tradeData.takeProfit,
           });
         }
+
       }
       setIsTradeModalOpen(false);
     } catch (error) {

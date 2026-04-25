@@ -62,10 +62,6 @@ export const StockTable: React.FC<IStockTableProps> = ({ stocks, isLoading, isEr
                                 onToggle={(v) => onStatusToggle(stock.symbol, 'isTradable', v)}
                             />
                             <StatusCell
-                                status={stock.isTracked}
-                                onToggle={(v) => onStatusToggle(stock.symbol, 'isTracked', v)}
-                            />
-                            <StatusCell
                                 status={stock.isVisible}
                                 onToggle={(v) => onStatusToggle(stock.symbol, 'isVisible', v)}
                             />

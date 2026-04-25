@@ -7,7 +7,6 @@ export interface StockFilters {
     search?: string;
     exchange?: string;
     isTradable?: boolean | string;
-    isTracked?: boolean | string;
     isVisible?: boolean | string;
 }
 

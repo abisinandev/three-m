@@ -23,6 +23,5 @@ export const DEFAULT_FILTERS = {
     search: '',
     exchange: '',
     isTradable: '',
-    isTracked: '',
     isVisible: '',
 };
