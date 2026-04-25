@@ -17,11 +17,11 @@ import { FundStatus } from "@domain/enum/funds/fund-status.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
-import mongoose from "mongoose";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
+import mongoose from "mongoose";
 
 
 @injectable()

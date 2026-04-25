@@ -58,7 +58,7 @@ export const ErrorMessages = {
         INVALID_AMOUNT: "Invalid amount",
     },
     TRANSACTIONS: {
-        MAX_TRANSACTION:"At a time only can transfer 10_0000rs"
+        MAX_TRANSACTION: "At a time only can transfer 10_0000rs"
     },
     MUTUAL_FUND: {
         FUND_INACTIVE: "Investments in this fund are temporarily disabled. Please try another fund",
@@ -70,6 +70,15 @@ export const ErrorMessages = {
         NOT_ENOUGH_UNITS: "Insufficient units to complete the transaction",
         NOT_ENOUGH_AMOUNT: "Insufficient amount to complete the transaction",
         INVALID_REDEEM_REQUEST: "The redemption request is invalid. Please verify the details and try again",
+
+    },
+    SIP: {
+        UNAUTHORIZED_ACCESS: "Unauthorized SIP access",
+        ALREADY_PAUSED: "SIP already paused",
+        ALREADY_CANCELLED: "Cannot pause cancelled SIP",
+        ALREADY_COMPLETED: "Cannot pause completed SIP",
+        ONLY_ACTIVE_SIP: "Only active SIP can be paused",
+        INVALID_STATE_RESUME: "Invalid SIP state for resume",
     },
     EXPENSE_TRACKER: {
         INSUFFICIENT_BALANCE: "Insufficient funds: You don't have enough balance to add this expense."

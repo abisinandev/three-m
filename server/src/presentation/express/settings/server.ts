@@ -6,7 +6,6 @@ import { CagrUpdateScheduler } from "@infrastructure/providers/cron-scheduler/mu
 // import { NavMontlyScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-monthly-scheduler";
 // import { NavYearScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-yearly.scheduler";
 import { NavAllocationScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-allocatation-scheduler";
-import { StartSipScheduler } from "@infrastructure/providers/cron-scheduler/sip/sip-process-scheduler";
 import { ISocketService } from "@application/interfaces/services/notification/socket-service.interface";
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import http from "http";
@@ -33,7 +32,6 @@ const bootstrap = async () => {
     NavDailyScheduler();
     CagrUpdateScheduler();
     NavAllocationScheduler();
-    // StartSipScheduler(); 
 
     // Algo Trading BullMQ system
     container.get<StrategyWorker>(STOCK_TYPES.StrategyWorker);
