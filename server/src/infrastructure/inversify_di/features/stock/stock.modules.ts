@@ -46,10 +46,10 @@ import { GetActiveStrategyUseCase } from "@application/use_cases/algo-trading/ge
 import { TurnOnAlgoTradingUseCase } from "@application/use_cases/algo-trading/turn-on-algo-trading.usecase";
 import { IAlgoSignalRepository } from "@application/interfaces/repositories/algo/algo-signal-repository.interface";
 import { AlgoSignalRepository } from "@infrastructure/databases/repository/algo-trading/algo-signal.repository";
-import { SignalService } from "@infrastructure/providers/algos/queue/signal.service";
+import { SignalService } from "@infrastructure/providers/algos/queue/signal/signal.service";
 import { ISignalService } from "@application/interfaces/services/algo-trading/signal.service.interface";
 import { IStrategyService } from "@application/interfaces/services/algo-trading/strategy-service.interface";
-import { StrategyService } from "@infrastructure/providers/algos/queue/strategy.service";
+import { StrategyService } from "@infrastructure/providers/algos/queue/strategy/strategy.service";
 import { IConfirmBuySignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-buy-signal.interface";
 import { ConfirmBuySignalUseCase } from "@application/use_cases/algo-trading/confirm-buy-signal.usecase";
 import { IConfirmSellSignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-sell-signal.interface";
@@ -83,8 +83,7 @@ import { IGetMarketMoversUseCase } from "@application/use_cases/stock/interfaces
 import { GetMarketMoversUseCase } from "@application/use_cases/stock/get-market-movers.usecase";
 
 // BullMQ & Queues
-import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy.queue";
-import { SignalQueue } from "@infrastructure/providers/algos/queue/signal.queue";
+import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy/strategy.queue";
 import { StrategyWorker } from "@infrastructure/providers/algos/queue/workers/strategy.worker";
 import { SignalWorker } from "@infrastructure/providers/algos/queue/workers/signal.worker";
 import { StrategyScheduler } from "@infrastructure/providers/algos/queue/strategy-scheduler";
@@ -98,6 +97,7 @@ import { IMarketDataService } from "@application/interfaces/services/stocks/mark
 import { IWsGateway } from "@application/interfaces/services/stocks/ws-gateway.interface";
 import { ISlTpOrderQueue } from "@application/interfaces/services/stocks/sl-tp-order-queue.interface";
 import { SlTpOrderQueue } from "@infrastructure/providers/stocks/queue/sl-tp-order-queue";
+import { SignalQueue } from "@infrastructure/providers/algos/queue/signal/signal.queue";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);

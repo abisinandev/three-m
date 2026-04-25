@@ -1,7 +1,7 @@
 import { Worker, Job } from 'bullmq';
 import { injectable, inject } from 'inversify';
 import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.types';
-import { bullConnection } from '@infrastructure/providers/algos/queue/queue.config';
+import { bullConnection } from '@infrastructure/providers/bullmq/queue.config';
 import { IExecuteSlTpUseCase } from '@application/use_cases/stock/interfaces/execute-sl-tp.interface';
 
 @injectable()

@@ -1,6 +1,6 @@
 import { Queue } from 'bullmq';
 import { injectable } from 'inversify';
-import { bullConnection } from './queue.config';
+import { bullConnection } from '../../../bullmq/queue.config';
 import { IStrategyQueue } from '@application/interfaces/services/algo-trading/strategy-queue.interface';
 
 @injectable()

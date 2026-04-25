@@ -1,7 +1,7 @@
 import { Queue } from 'bullmq';
 import { injectable } from 'inversify';
-import { bullConnection } from './queue.config';
 import { ISignalQueue, SignalJobData } from '@application/interfaces/services/algo-trading/signal-queue.interface';
+import { bullConnection } from '../../../bullmq/queue.config';
 
 @injectable()
 export class SignalQueue implements ISignalQueue {

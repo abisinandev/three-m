@@ -7,5 +7,5 @@ export const bullConnection: ConnectionOptions = {
 };
 
 if (env.REDIS_URL.includes('://')) {
-    (bullConnection as any).url = env.REDIS_URL;
+    bullConnection.url = env.REDIS_URL;
 }

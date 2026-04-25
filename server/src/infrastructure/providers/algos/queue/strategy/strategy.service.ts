@@ -2,7 +2,7 @@ import { IAlgoStrategyRepository } from "@application/interfaces/repositories/al
 import { IStrategyService } from "@application/interfaces/services/algo-trading/strategy-service.interface";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { inject, injectable } from "inversify";
-import { StrategyRegistry } from "../strategy-registry";
+import { StrategyRegistry } from "../../strategy-registry";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 
 type StrategyName = keyof typeof StrategyRegistry;

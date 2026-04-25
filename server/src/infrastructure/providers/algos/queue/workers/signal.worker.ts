@@ -1,6 +1,6 @@
 import { Worker, Job } from 'bullmq';
 import { injectable, inject } from 'inversify';
-import { bullConnection } from '../queue.config';
+import { bullConnection } from '../../../bullmq/queue.config';
 import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.types';
 import { ISignalService } from '@application/interfaces/services/algo-trading/signal.service.interface';
 import { SignalJobData } from '@application/interfaces/services/algo-trading/signal-queue.interface';

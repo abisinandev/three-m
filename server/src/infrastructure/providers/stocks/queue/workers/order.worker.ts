@@ -4,7 +4,7 @@ import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.t
 import { IExecuteLimitBuyOrderUseCase } from '@application/use_cases/stock/interfaces/execute-limit-buy-order.interface';
 import { IExecuteLimitSellOrderUseCase } from '@application/use_cases/stock/interfaces/execute-limit-sell-order.interface';
 import { IOrderRepository } from '@application/interfaces/repositories/stock/order-repository.interface';
-import { bullConnection } from '@infrastructure/providers/algos/queue/queue.config';
+import { bullConnection } from '@infrastructure/providers/bullmq/queue.config';
 import { OrderSide } from '@domain/entities/stock/enum/order-side.enum';
 
 @injectable()

@@ -9,6 +9,7 @@ import { IUpgradePremiumUseCase } from "../user/subscription/interfaces/upgrade-
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 @injectable()
 export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase {
@@ -26,13 +27,13 @@ export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase
         );
 
         if (paymentIntent.status !== "succeeded") {
-            throw new Error("Payment not successful");
+            throw new ValidationError("Payment not successful");
         }
 
         const metadata = paymentIntent.metadata;
 
         if (!metadata?.userId || !metadata?.purpose) {
-            throw new Error("Invalid metadata");
+            throw new ValidationError("Invalid metadata");
         }
 
         const userId = metadata.userId;
@@ -65,7 +66,7 @@ export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase
                 break;
 
             default:
-                throw new Error("Unknown payment purpose");
+                throw new ValidationError("Unknown payment purpose");
         }
 
         return { success: true };
