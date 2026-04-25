@@ -1,4 +1,4 @@
-import { ParsedNav } from "@infrastructure/providers/mutual-fund/nav-interfaces";
+import { ParsedNav } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 
 export function findOldNav(navList: ParsedNav[], yearsAgo: number): ParsedNav | null {
 

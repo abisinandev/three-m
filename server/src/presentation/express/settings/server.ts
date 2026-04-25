@@ -20,6 +20,9 @@ import { IStrategyScheduler } from "@application/interfaces/services/algo-tradin
 import { OrderWorker } from "@infrastructure/providers/stocks/queue/workers/order.worker";
 import { LimitOrderScheduler } from "@infrastructure/providers/stocks/queue/limit-order-scheduler";
 import { SlTpOrderWorker } from "@infrastructure/providers/stocks/queue/workers/sl-tp-order.worker";
+import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
+import { SipWorker } from "@infrastructure/providers/sip/queue/workers/sip.worker";
+import { SipScheduler } from "@infrastructure/providers/sip/queue/sip.scheduler";
 import { SlTpOrderScheduler } from "@infrastructure/providers/stocks/queue/sl-tp-order.scheduler";
 
 const bootstrap = async () => {
@@ -28,17 +31,9 @@ const bootstrap = async () => {
 
     //cron-scheduler 
     NavDailyScheduler();
-    // NavMontlyScheduler();
-    // NavYearScheduler();
     CagrUpdateScheduler();
     NavAllocationScheduler();
     // StartSipScheduler(); 
-
-
-    //vector-db 
-    // IngestDocuments() 
-    // SyncStocks()
-
 
     // Algo Trading BullMQ system
     container.get<StrategyWorker>(STOCK_TYPES.StrategyWorker);
@@ -56,7 +51,13 @@ const bootstrap = async () => {
     const slTpScheduler = container.get<SlTpOrderScheduler>(STOCK_TYPES.SlTpOrderScheduler);
     slTpScheduler.start();
 
+    // SIP BullMQ system
+    container.get<SipWorker>(SIP_TYPES.SipWorker);
+    const sipScheduler = container.get<SipScheduler>(SIP_TYPES.SipScheduler);
+    sipScheduler.start();
+
     const server = http.createServer(app);
+
 
     // Initialize SocketService
     const socketService = container.get<ISocketService>(NOTIFICATION_TYEPS.SocketService);

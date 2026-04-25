@@ -14,4 +14,10 @@ export const SIP_TYPES = {
     SipBlockUseCase: Symbol.for('SipBlockUseCase'),
     // controllers
     MutualFundSipController: Symbol.for("MutualFundSipController"),
+
+    // queue
+    SipQueue: Symbol.for("SipQueue"),
+    SipWorker: Symbol.for("SipWorker"),
+    SipScheduler: Symbol.for("SipScheduler"),
 };
+
