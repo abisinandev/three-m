@@ -32,7 +32,7 @@ export class StrategyService implements IStrategyService {
 
         if (!candles || candles.length < 20) return null;
 
-        const closedCandles = candles.slice(0, -1);
+        const closedCandles = candles.slice(0, -1);//ignoring current candle
         const priceHistory = closedCandles.map(c => c.close);
         const currentPrice = priceHistory[priceHistory.length - 1];
 

@@ -33,7 +33,7 @@ export class SignalWorker {
     }
 
     private async process(job: Job<SignalJobData>) {
-        console.log(`📡 Processing signal for ${job.data.symbol}`);
+        console.log(`Processing signal for ${job.data.symbol}`);
 
         try {
             await this._signalService.processSignal(job.data);

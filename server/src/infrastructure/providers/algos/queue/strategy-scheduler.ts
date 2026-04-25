@@ -15,16 +15,13 @@ export class StrategyScheduler implements IStrategyScheduler {
     ) { }
 
     private async execute(): Promise<void> {
-        const now = new Date();
-        console.log(`[StrategyScheduler] Triggered at ${now.toISOString()}`);
 
         try {
             const activeStrategies = await this._strategyRepository.getAllActive();
-            console.log(`[StrategyScheduler] Found ${activeStrategies.length} active strategies`);
 
             for (const strategy of activeStrategies) {
                 const strategyId = strategy.id as string;
-                console.log(`[StrategyScheduler] Enqueueing strategy: ${strategyId} (${strategy.symbol})`);
+
                 await this._strategyQueue.addStrategyJob(strategyId);
             }
         } catch (error) {
@@ -34,8 +31,6 @@ export class StrategyScheduler implements IStrategyScheduler {
 
     public async start(): Promise<void> {
         if (this.cronJob) return;
-
-        console.log("Algo Strategy Scheduler started (every minute)");
 
         this.cronJob = cron.schedule('* * * * *', async () => {
             await this.execute();

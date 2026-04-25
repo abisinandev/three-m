@@ -29,13 +29,13 @@ export class StrategyWorker {
         });
 
         this.worker.on('completed', (job) => {
-            console.log(`✅ Strategy job ${job.id} completed`);
+            console.log(`Strategy job ${job.id} completed`);
         });
     }
 
     private async process(job: Job) {
         const { strategyId } = job.data;
-        console.log(`📡 Evaluating strategy: ${strategyId}`);
+        console.log(`Evaluating strategy: ${strategyId}`);
 
         try {
             const result = await this._strategyService.evaluateStrategy(strategyId);

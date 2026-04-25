@@ -1,22 +1,19 @@
 import { IAlgoSignalRepository } from "@application/interfaces/repositories/algo/algo-signal-repository.interface";
-import { INotificationRepository } from "@application/interfaces/repositories/feature/notification-repository.interface";
 import { ISignalService } from "@application/interfaces/services/algo-trading/signal.service.interface";
-import { INotificationService } from "@application/interfaces/services/notification/notification-service.interface";
 import { AlgoSignalEntity } from "@domain/entities/algo/algo-signal.entity";
 import { SignalAction } from "@domain/entities/algo/enum/signal-enums";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
-import { NotificationEntity } from "@domain/entities/notification/notification.entity";
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { inject, injectable } from "inversify";
 import { ISignalManager } from "@application/interfaces/repositories/algo/signal-manager.interface";
+import { ICreateNotificationUseCase } from "@application/use_cases/notification/interfaces/create-notification-usecase.interface";
 
 @injectable()
 export class SignalService implements ISignalService {
     constructor(
         @inject(STOCK_TYPES.AlgoSignalRepository) private readonly _signalRepository: IAlgoSignalRepository,
-        @inject(NOTIFICATION_TYEPS.NotificationService) private readonly _notificationService: INotificationService,
-        @inject(NOTIFICATION_TYEPS.NotificationRepository) private readonly _notificationRepository: INotificationRepository,
+        @inject(NOTIFICATION_TYEPS.NotificationService) private readonly _createNotification: ICreateNotificationUseCase,
         @inject(STOCK_TYPES.SignalManager) private readonly _signalManager: ISignalManager,
     ) { }
 
@@ -29,7 +26,7 @@ export class SignalService implements ISignalService {
         price: number;
         reason: string;
     }): Promise<void> {
-        
+
         const shouldEmit = await this._signalManager.shouldEmitSignal(
             input.algoId,
             input.symbol,
@@ -64,29 +61,15 @@ export class SignalService implements ISignalService {
             expiresAt,
         });
 
-        const savedSignal = await this._signalRepository.create(signal);
+        await this._signalRepository.create(signal);
 
         const message = `${input.action} signal for ${input.symbol}: ${input.reason}`;
-        const notification = NotificationEntity.create({
+        this._createNotification.execute({
             userId: input.userId,
             type: NotificationType.ALGO_SIGNAL,
             title: 'Algo signal',
-            message: message
+            message: message,
         });
-
-        const savedNotification = await this._notificationRepository.save(notification);
-
-        this._notificationService.send(
-            input.userId,
-            {
-                id: savedNotification.id as string,
-                type: NotificationType.ALGO_SIGNAL,
-                title: 'Algo signal',
-                message: message,
-                createdAt: new Date(notification.createdAt),
-                signalId: savedSignal.id as string,
-            }
-        );
     }
 
     async createSignal(input: any): Promise<void> {

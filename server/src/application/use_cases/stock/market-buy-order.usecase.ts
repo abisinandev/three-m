@@ -65,7 +65,6 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
 
         const session = await mongoose.startSession()
 
-
         try {
             session.startTransaction();
 
@@ -211,6 +210,5 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
         } finally {
             session.endSession();
         }
-
     }
 }  
