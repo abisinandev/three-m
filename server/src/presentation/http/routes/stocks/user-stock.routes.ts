@@ -15,6 +15,8 @@ router.delete(StockTradingRoutes.WATCHLIST, userStocksController.removeFromWatch
 router.get(StockTradingRoutes.DEFAUTL, userStocksController.getStocks.bind(userStocksController));
 router.get(StockTradingRoutes.GET_STOCKS, userStocksController.getStockDetails.bind(userStocksController));
 router.get(StockTradingRoutes.GET_CANDLES, userStocksController.getStockCandles.bind(userStocksController));
+router.get(StockTradingRoutes.MOVERS, userStocksController.getMarketMovers.bind(userStocksController));
+
 
 
 export default router;

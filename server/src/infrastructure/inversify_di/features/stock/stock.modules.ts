@@ -79,6 +79,8 @@ import { IExecuteSlTpUseCase } from "@application/use_cases/stock/interfaces/exe
 import { ExecuteSlTpUseCase } from "@application/use_cases/stock/execute-sl-tp.usecase";
 import { SlTpOrderWorker } from "@infrastructure/providers/stocks/queue/workers/sl-tp-order.worker";
 import { SlTpOrderScheduler } from "@infrastructure/providers/stocks/queue/sl-tp-order.scheduler";
+import { IGetMarketMoversUseCase } from "@application/use_cases/stock/interfaces/get-market-movers.interface";
+import { GetMarketMoversUseCase } from "@application/use_cases/stock/get-market-movers.usecase";
 
 // BullMQ & Queues
 import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy.queue";
@@ -161,4 +163,6 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IAddToWatchlistUseCase>(STOCK_TYPES.AddToWatchlistUseCase).to(AddToWatchlistUseCase);
     bind<IRemoveFromWatchlistUseCase>(STOCK_TYPES.RemoveFromWatchlistUseCase).to(RemoveFromWatchlistUseCase);
     bind<IFetchWatchlistUseCase>(STOCK_TYPES.FetchWatchlistUseCase).to(FetchWatchlistUseCase);
+    bind<IGetMarketMoversUseCase>(STOCK_TYPES.GetMarketMoversUseCase).to(GetMarketMoversUseCase);
+
 });

@@ -9,6 +9,8 @@ import { IAddToWatchlistUseCase } from "@application/use_cases/stock/interfaces/
 import { IRemoveFromWatchlistUseCase } from "@application/use_cases/stock/interfaces/remove-from-watchlist-usecase.interface";
 import { StockQueryOptions } from "@application/dto/stocks/stock.dto";
 import { WatchlistDTO } from "@application/dto/stocks/watchlist.dto";
+import { IGetMarketMoversUseCase } from "@application/use_cases/stock/interfaces/get-market-movers.interface";
+
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
@@ -22,7 +24,9 @@ export class UserStocksController {
         @inject(STOCK_TYPES.FetchWatchlistUseCase) private _fetchWatchlistUseCase: IFetchWatchlistUseCase,
         @inject(STOCK_TYPES.AddToWatchlistUseCase) private _addToWatchlistUseCase: IAddToWatchlistUseCase,
         @inject(STOCK_TYPES.RemoveFromWatchlistUseCase) private _removeFromWatchlistUseCase: IRemoveFromWatchlistUseCase,
+        @inject(STOCK_TYPES.GetMarketMoversUseCase) private _getMarketMoversUseCase: IGetMarketMoversUseCase,
     ) { }
+
 
     async getStocks(req: Request, res: Response, next: NextFunction) {
         try {
@@ -143,4 +147,19 @@ export class UserStocksController {
             next(error);
         }
     }
+    async getMarketMovers(req: Request, res: Response, next: NextFunction) {
+        try {
+            const result = await this._getMarketMoversUseCase.execute();
+
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.STOCK.STOCK_FETCHED,
+                result,
+                HttpStatus.OK
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
 }
+
