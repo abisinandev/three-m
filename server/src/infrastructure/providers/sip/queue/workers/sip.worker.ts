@@ -14,11 +14,9 @@ export class SipWorker {
             'sip-execution-queue',
             async (job: Job) => {
                 if (job.name === 'execute-due-sips') {
-                    console.log(`[SIP WORKER] Processing job: ${job.id}`);
                     try {
                         const useCase = container.get<IExecuteDueSipsUseCase>(SIP_TYPES.ExecuteDueSipUseCase);
                         await useCase.execute();
-
                     } catch (error) {
                         console.error(`[SIP WORKER] Error processing job: ${job.id}`, error);
                         throw error;
@@ -27,7 +25,7 @@ export class SipWorker {
             },
             {
                 connection: bullConnection,
-                concurrency: 1, 
+                concurrency: 1,
             }
         );
 
