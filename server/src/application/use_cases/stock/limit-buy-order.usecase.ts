@@ -105,7 +105,7 @@ export class LimitBuyOrderUseCase implements ILimitBuyOrderUseCase {
             })
 
             wallet.debit(execution.totalValue);
-            await this._wallet.update(userId, wallet, session);
+            await this._wallet.update(wallet.id as string, wallet, session);
 
             await this._orderRepository.create(limitOrder, session);
 

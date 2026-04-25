@@ -12,7 +12,6 @@ export class StockMapper {
             sector: entity.sector,
             isTradable: entity.isTradable,
             isVisible: entity.isVisible,
-            isTracked: entity.isTracked,
         };
     }
 

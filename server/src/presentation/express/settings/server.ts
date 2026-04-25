@@ -19,6 +19,8 @@ import { SignalWorker } from "@infrastructure/providers/algos/queue/workers/sign
 import { IStrategyScheduler } from "@application/interfaces/services/algo-trading/strategy-scheduler.interface";
 import { OrderWorker } from "@infrastructure/providers/stocks/queue/workers/order.worker";
 import { LimitOrderScheduler } from "@infrastructure/providers/stocks/queue/limit-order-scheduler";
+import { SlTpOrderWorker } from "@infrastructure/providers/stocks/queue/workers/sl-tp-order.worker";
+import { SlTpOrderScheduler } from "@infrastructure/providers/stocks/queue/sl-tp-order.scheduler";
 
 const bootstrap = async () => {
   try {
@@ -48,6 +50,11 @@ const bootstrap = async () => {
     container.get<OrderWorker>(STOCK_TYPES.OrderWorker);
     const limitOrderScheduler = container.get<LimitOrderScheduler>(STOCK_TYPES.LimitOrderScheduler);
     limitOrderScheduler.start();
+
+    // SL/TP Monitor system
+    container.get<SlTpOrderWorker>(STOCK_TYPES.SlTpOrderWorker);
+    const slTpScheduler = container.get<SlTpOrderScheduler>(STOCK_TYPES.SlTpOrderScheduler);
+    slTpScheduler.start();
 
     const server = http.createServer(app);
 

@@ -1,7 +1,7 @@
 import { OrderType } from "@domain/entities/stock/enum/order-type.enum";
 import { IsEnum, IsNumber, IsOptional, IsString, Min } from "class-validator";
 
-export class LimitBuyOrderDTO {
+export class BaseLimitOrderDTO {
     @IsString()
     symbol!: string;
 
@@ -21,7 +21,11 @@ export class LimitBuyOrderDTO {
     @Min(0.01)
     limitPrice?: number;
 
+    @IsOptional()
+    isAlgoTrade?: boolean;
+}
 
+export class LimitBuyOrderDTO extends BaseLimitOrderDTO {
     @IsOptional()
     @IsNumber()
     @Min(0.01)
@@ -31,9 +35,6 @@ export class LimitBuyOrderDTO {
     @IsNumber()
     @Min(0.01)
     takeProfit?: number;
-
-    @IsOptional()
-    isAlgoTrade?: boolean;
 }
 
-export class LimitSellOrderDTO extends LimitBuyOrderDTO {}
+export class LimitSellOrderDTO extends BaseLimitOrderDTO {}

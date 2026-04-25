@@ -75,6 +75,10 @@ import { IOrderQueue } from "@application/interfaces/services/stocks/order-queue
 import { OrderQueue } from "@infrastructure/providers/stocks/queue/order.queue";
 import { OrderWorker } from "@infrastructure/providers/stocks/queue/workers/order.worker";
 import { LimitOrderScheduler } from "@infrastructure/providers/stocks/queue/limit-order-scheduler";
+import { IExecuteSlTpUseCase } from "@application/use_cases/stock/interfaces/execute-sl-tp.interface";
+import { ExecuteSlTpUseCase } from "@application/use_cases/stock/execute-sl-tp.usecase";
+import { SlTpOrderWorker } from "@infrastructure/providers/stocks/queue/workers/sl-tp-order.worker";
+import { SlTpOrderScheduler } from "@infrastructure/providers/stocks/queue/sl-tp-order.scheduler";
 
 // BullMQ & Queues
 import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy.queue";
@@ -90,6 +94,8 @@ import { ICandleEngineService } from "@application/interfaces/services/stocks/ca
 import { IPollingService } from "@application/interfaces/services/stocks/polling-service.interface";
 import { IMarketDataService } from "@application/interfaces/services/stocks/market-data-service.usecase";
 import { IWsGateway } from "@application/interfaces/services/stocks/ws-gateway.interface";
+import { ISlTpOrderQueue } from "@application/interfaces/services/stocks/sl-tp-order-queue.interface";
+import { SlTpOrderQueue } from "@infrastructure/providers/stocks/queue/sl-tp-order-queue";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
@@ -118,6 +124,7 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IExecuteLimitSellOrderUseCase>(STOCK_TYPES.ExecuteLimitSellOrderUseCase).to(ExecuteLimitSellOrderUseCase);
     bind<ICancelLimitOrderUseCase>(STOCK_TYPES.CancelLimitOrderUseCase).to(CancelLimitOrderUseCase);
     bind<IFetchPendingOrdersUseCase>(STOCK_TYPES.FetchPendingOrdersUseCase).to(FetchPendingOrdersUseCase);
+    bind<IExecuteSlTpUseCase>(STOCK_TYPES.ExecuteSlTpUseCase).to(ExecuteSlTpUseCase);
     bind<IOrderRepository>(STOCK_TYPES.OrderRepository).to(OrderRepository);
     bind<ITradeRepository>(STOCK_TYPES.TradeRepository).to(TradeRepository);
 
@@ -142,8 +149,11 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<OrderWorker>(STOCK_TYPES.OrderWorker).to(OrderWorker);
     bind<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler).to(StrategyScheduler);
     bind<LimitOrderScheduler>(STOCK_TYPES.LimitOrderScheduler).to(LimitOrderScheduler);
+    bind<SlTpOrderWorker>(STOCK_TYPES.SlTpOrderWorker).to(SlTpOrderWorker);
+    bind<SlTpOrderScheduler>(STOCK_TYPES.SlTpOrderScheduler).to(SlTpOrderScheduler);
 
     bind<IOrderQueue>(STOCK_TYPES.OrderQueue).to(OrderQueue);
+    bind<ISlTpOrderQueue>(STOCK_TYPES.SlTpOrderQueue).to(SlTpOrderQueue);
 
     // bind<IEngineRunner>(STOCK_TYPES.EngineRunner).to(EngineRunner);
     bind<IWatchlistRepository>(STOCK_TYPES.WatchlistRepository).to(WatchlistRepository);

@@ -22,6 +22,9 @@ import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { IExecuteLimitSellOrderUseCase } from "./interfaces/execute-limit-sell-order.interface";
 import mongoose from "mongoose";
+import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
+import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
+import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 
 @injectable()
 export class ExecuteLimitSellOrderUseCase implements IExecuteLimitSellOrderUseCase {
@@ -34,6 +37,8 @@ export class ExecuteLimitSellOrderUseCase implements IExecuteLimitSellOrderUseCa
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
+        @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotification: ICreateNotificationUseCase,
+
     ) { }
 
     async execute(orderId: string): Promise<void> {
@@ -50,7 +55,6 @@ export class ExecuteLimitSellOrderUseCase implements IExecuteLimitSellOrderUseCa
         if (!currentPrice || currentPrice < Number(triggerPrice)) {
             return;
         }
-
 
         const session = await mongoose.startSession();
 
@@ -98,7 +102,8 @@ export class ExecuteLimitSellOrderUseCase implements IExecuteLimitSellOrderUseCa
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
 
             wallet.credit(execution.totalValue);
-            await this._wallet.update(order.userId, wallet, session);
+            await this._wallet.update(wallet.id as string, wallet, session);
+
 
             order.updateFilledQty(execution.filledQty, execution.totalValue);
             order.markFilled();
@@ -147,6 +152,13 @@ export class ExecuteLimitSellOrderUseCase implements IExecuteLimitSellOrderUseCa
 
             newTransaction.markSucess();
             await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
+
+            await this._createNotification.execute({
+                userId: order.userId,
+                type: NotificationType.INFO,
+                title: "Limit Order Executed",
+                message: `Your sell order for ${order.quantity} ${order.symbol} at Rs.${execution.totalValue} has been executed.`
+            })
 
             await session.commitTransaction();
 

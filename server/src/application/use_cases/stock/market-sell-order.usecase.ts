@@ -74,8 +74,8 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
             if (!stock.isVisible)
                 throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_AVAILABLE);
 
-            if (!stock.isTradable)
-                throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
+            // if (!stock.isTradable)
+            //     throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
 
             // if (!isIndianMarketOpen())
             //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
@@ -124,7 +124,8 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
             const wallet = await this._wallet.findByUserId(userId, session);
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
             wallet.credit(execution.totalValue);
-            await this._wallet.update(userId, wallet, session);
+            await this._wallet.update(wallet.id as string, wallet, session);
+
 
             const marketOrder = OrderEntity.create({
                 userId,
@@ -134,8 +135,6 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
                 quantity: execution.filledQty,
                 price: marketPrice,
                 status: OrderStatus.FILLED,
-                stopLoss: order.stopLoss,
-                takeProfit: order.takeProfit,
                 isAlgoTrade: order.isAlgoTrade ?? false,
             });
 
@@ -175,9 +174,6 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
                     newInvestedAmount
                 );
 
-                if (order.stopLoss || order.takeProfit) {
-                    portfolio.updateRiskLevels(order.stopLoss, order.takeProfit);
-                }
 
                 await this._portfolioRepository.update(
                     portfolio.id as string,

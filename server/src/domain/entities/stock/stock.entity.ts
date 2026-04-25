@@ -7,7 +7,6 @@ export class StockEntity {
     private readonly _logo: string | null;
     private _isTradable: boolean;
     private _isVisible: boolean;
-    private _isTracked: boolean;
     private readonly _createdAt: Date;
 
 
@@ -20,7 +19,6 @@ export class StockEntity {
         logo?: string | null;
         isTradable: boolean;
         isVisible: boolean;
-        isTracked: boolean;
         createdAt?: Date;
     }) {
         this._id = props.id ?? null;
@@ -30,7 +28,6 @@ export class StockEntity {
         this._logo = props.logo ?? null;
         this._symbol = props.symbol;
         this._isTradable = props.isTradable;
-        this._isTracked = props.isTracked;
         this._isVisible = props.isVisible;
         this._createdAt = props.createdAt ?? new Date();
     }
@@ -41,7 +38,6 @@ export class StockEntity {
         exchange: string,
         isTradable: boolean,
         isVisible: boolean,
-        isTracked: boolean,
         sector: string,
         logo?: string | null,
     }): StockEntity {
@@ -52,7 +48,6 @@ export class StockEntity {
             symbol: data.symbol,
             isTradable: data.isTradable,
             isVisible: data.isVisible,
-            isTracked: data.isTracked,
             sector: data.sector,
             logo: data.logo,
         })
@@ -68,7 +63,6 @@ export class StockEntity {
         logo: string | null;
         isTradable: boolean;
         isVisible: boolean;
-        isTracked: boolean;
         createdAt: Date;
     }): StockEntity {
         return new StockEntity({
@@ -80,7 +74,6 @@ export class StockEntity {
             logo: data.logo,
             isTradable: data.isTradable,
             isVisible: data.isVisible,
-            isTracked: data.isTracked,
             createdAt: data.createdAt,
         });
     }
@@ -117,10 +110,6 @@ export class StockEntity {
         return this._isVisible;
     }
 
-    get isTracked(): boolean {
-        return this._isTracked;
-    }
-
     get createdAt(): Date {
         return this._createdAt;
     }
@@ -137,8 +126,11 @@ export class StockEntity {
             logo: this._logo,
             isTradable: this._isTradable,
             isVisible: this._isVisible,
-            isTracked: this._isTracked,
             createdAt: this._createdAt,
         };
+    }
+
+    toJSON() {
+        return this.toPersistence();
     }
 }

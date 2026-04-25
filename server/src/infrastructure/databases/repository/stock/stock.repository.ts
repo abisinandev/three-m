@@ -22,7 +22,6 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
             sector: stock.sector,
             isTradable: stock.isTradable,
             isVisible: stock.isVisible,
-            isTracked: stock.isTracked,
         }));
 
         await this.model.insertMany(docs, {
@@ -37,7 +36,7 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
     }
 
     async findAllStocks(options: StockQueryOptions): Promise<{ data: StockEntity[], total: number }> {
-        const { page, limit, search, exchange, isTradable, isTracked, isVisible, sort } = options;
+        const { page, limit, search, exchange, isTradable, isVisible, sort } = options;
 
         const query: FilterQuery<StockDocument> = {};
 
@@ -50,7 +49,6 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
 
         if (exchange) query.exchange = exchange;
         if (isTradable !== undefined) query.isTradable = isTradable;
-        if (isTracked !== undefined) query.isTracked = isTracked;
         if (isVisible !== undefined) query.isVisible = isVisible;
 
         const skip = (page - 1) * limit;

@@ -19,12 +19,17 @@ export class OrderWorker {
         this.worker = new Worker(
             'order-queue',
             this.process.bind(this),
-            { connection: bullConnection, concurrency: 5 }
+            { 
+                connection: bullConnection, 
+                concurrency: 5,
+                lockDuration: 60000 // 60 seconds
+            }
         );
+
 
         this.worker.on('failed', (job, err) => {
             console.error(`❌ Order job ${job?.id} failed: ${err.message}`);
-        });
+        }); 
 
         this.worker.on('completed', (job) => {
             console.log(`✅ Order job ${job.id} processed successfully`);

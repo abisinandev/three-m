@@ -24,6 +24,9 @@ import { NotFoundError, ValidationError } from "@presentation/express/utils/erro
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { IExecuteLimitBuyOrderUseCase } from "./interfaces/execute-limit-buy-order.interface";
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
+import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
+import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
+import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 
 @injectable()
 export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase {
@@ -36,6 +39,7 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
+        @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotification: ICreateNotificationUseCase,
     ) { }
 
     async execute(orderId: string): Promise<void> {
@@ -52,8 +56,8 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
             return;
         }
 
-        const session = await mongoose.startSession();
 
+        const session = await mongoose.startSession();
         try {
             session.startTransaction();
 
@@ -66,8 +70,8 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
                 totalValue: currentPrice * order.quantity,
             };
 
-            const reservedValue = order.price * order.quantity;
-            const refundAmount = reservedValue - execution.totalValue;
+            const reservedValue = order.price * order.quantity;//user wallet locked amount
+            const refundAmount = reservedValue - execution.totalValue;//execution amount
 
             const transaction = TransactionEntity.create({
                 userId: order.userId,
@@ -89,7 +93,7 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
                 wallet.debit(Math.abs(refundAmount));
             }
 
-            await this._wallet.update(order.userId, wallet, session);
+            await this._wallet.update(wallet.id as string, wallet, session);
 
             order.updateFilledQty(execution.filledQty, execution.avgPrice);
             order.markFilled();
@@ -154,6 +158,13 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
 
             newTransaction.markSucess();
             await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
+
+            await this._createNotification.execute({
+                userId: order.userId,
+                type: NotificationType.INFO,
+                title: "Limit Order Executed",
+                message: `Your buy order for ${order.quantity} ${order.symbol} at Rs.${execution.totalValue} has been executed.`
+            })
 
             await session.commitTransaction();
 

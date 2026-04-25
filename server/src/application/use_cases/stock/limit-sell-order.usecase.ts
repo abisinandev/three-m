@@ -33,6 +33,7 @@ export class LimitSellOrderUseCase implements ILimitSellOrderUseCase {
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
+        
     ) { }
 
     async execute(order: LimitSellOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
@@ -97,13 +98,13 @@ export class LimitSellOrderUseCase implements ILimitSellOrderUseCase {
                 side: OrderSide.SELL,
                 orderType: OrderType.LIMIT_ORDER,
                 quantity: order.quantity,
-                price: order.price,
+                price: marketPrice,
                 limitPrice: order.price,
                 status: OrderStatus.PENDING,
-                stopLoss: order.stopLoss,
-                takeProfit: order.takeProfit,
                 isAlgoTrade: order.isAlgoTrade ?? false,
             })
+
+
 
             await this._orderRepository.create(limitOrder, session);
 

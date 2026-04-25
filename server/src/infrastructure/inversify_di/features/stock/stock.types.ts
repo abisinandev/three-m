@@ -57,6 +57,11 @@ export const STOCK_TYPES = {
     LimitOrderScheduler: Symbol.for("LimitOrderScheduler"),
 
     OrderQueue: Symbol.for("OrderQueue"),
+    SlTpOrderQueue: Symbol.for("SlTpOrderQueue"),
+    SlTpOrderWorker: Symbol.for("SlTpOrderWorker"),
+    SlTpOrderScheduler: Symbol.for("SlTpOrderScheduler"),
+    ExecuteSlTpUseCase: Symbol.for("ExecuteSlTpUseCase"),
+
 
     // EngineRunner:Symbol.for("EngineRunner")
     WatchlistRepository: Symbol.for("WatchlistRepository"),

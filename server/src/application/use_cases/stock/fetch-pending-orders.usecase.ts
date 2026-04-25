@@ -10,7 +10,25 @@ export class FetchPendingOrdersUseCase implements IFetchPendingOrdersUseCase {
         @inject(STOCK_TYPES.OrderRepository) private readonly _orderRepository: IOrderRepository,
     ) { }
 
-    async execute(userId: string, symbol?: string): Promise<OrderEntity[]> {
-        return this._orderRepository.findPendingLimitOrdersByUserId(userId, symbol);
+    async execute(userId: string, symbol?: string): Promise<any[]> {
+        const orders = await this._orderRepository.findPendingLimitOrdersByUserId(userId, symbol);
+
+        return orders.map(order => ({
+            id: order.id,
+            userId: order.userId,
+            symbol: order.symbol,
+            side: order.side,
+            orderType: order.orderType,
+            quantity: order.quantity,
+            price: order.price,
+            limitPrice: order.limitPrice,
+            status: order.status,
+            filledQty: order.filledQty,
+            executedPrice: order.executedPrice,
+            createdAt: order.createdAt,
+            updatedAt: order.updatedAt,
+            isAlgoTrade: order.isAlgoTrade,
+        }));
     }
+
 }

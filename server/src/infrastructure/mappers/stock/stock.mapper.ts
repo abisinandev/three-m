@@ -11,7 +11,6 @@ export const toDomain = (doc: StockDocument): StockEntity => {
     logo: doc.logo ?? null,
     isTradable: doc.isTradable,
     isVisible: doc.isVisible,
-    isTracked: doc.isTracked,
     createdAt: doc.createdAt,
   });
 };
@@ -25,7 +24,6 @@ export const toPersistance = (entity: StockEntity): Partial<StockDocument> => {
     logo: entity.logo ?? undefined,
     isTradable: entity.isTradable,
     isVisible: entity.isVisible,
-    isTracked: entity.isTracked,
     createdAt: entity.createdAt,
     updatedAt: new Date(),
   };

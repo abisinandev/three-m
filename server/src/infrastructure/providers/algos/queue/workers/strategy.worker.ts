@@ -16,7 +16,12 @@ export class StrategyWorker {
         this.worker = new Worker(
             'strategy-queue',
             this.process.bind(this),
-            { connection: bullConnection, concurrency: 5 }
+            { 
+                connection: bullConnection, 
+                concurrency: 5,
+                lockDuration: 60000
+            }
+
         );
 
         this.worker.on('failed', (job, err) => {

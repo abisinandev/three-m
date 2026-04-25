@@ -31,12 +31,6 @@ export const StockSchema = new Schema<StockDocument>(
             default: false
         },
 
-        isTracked: {
-            type: Boolean,
-            required: true,
-            default: true
-        },
-
         isTradable: {
             type: Boolean,
             required: true,

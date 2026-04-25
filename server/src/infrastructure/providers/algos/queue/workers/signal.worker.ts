@@ -15,7 +15,12 @@ export class SignalWorker {
         this.worker = new Worker(
             'signal-queue',
             this.process.bind(this),
-            { connection: bullConnection, concurrency: 2 }
+            { 
+                connection: bullConnection, 
+                concurrency: 2,
+                lockDuration: 60000
+            }
+
         );
 
         this.worker.on('failed', (job, err) => {

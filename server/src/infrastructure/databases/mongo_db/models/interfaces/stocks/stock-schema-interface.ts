@@ -9,7 +9,6 @@ export interface IStock extends Document {
     sector: string;
     isTradable: boolean;
     isVisible: boolean;
-    isTracked: boolean;
     createdAt: Date;
     updatedAt: Date;
 }

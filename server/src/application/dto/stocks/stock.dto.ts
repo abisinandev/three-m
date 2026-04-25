@@ -10,7 +10,6 @@ export interface StockDTO {
     price?: number | null;
     isTradable: boolean;
     isVisible: boolean;
-    isTracked: boolean;
 }
 
 export interface Trade {
