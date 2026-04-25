@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
-import { FetchAdminAlgoStats, FetchAdminSignals, FetchAdminStrategies } from '@/shared/services/admin/algo-trading/AdminAlgoTradingApi';
+import { FetchAdminAlgoStats, FetchAdminSignals, FetchAdminStrategies, FetchAdminAlgoTrades } from '@/shared/services/admin/algo-trading/AdminAlgoTradingApi';
+
 
 export const useAlgoTrading = () => {
     const [activeTab, setActiveTab] = useState('Strategies');
@@ -9,7 +10,7 @@ export const useAlgoTrading = () => {
     const [search, setSearch] = useState('');
     const [debouncedSearch] = useDebounce(search, 500);
 
-    const tabs = ['Strategies', 'Signals', 'Trades', 'User Access', 'Risk Settings', 'System Logs'];
+    const tabs = ['Strategies', 'Signals', 'Trades', 'Risk Settings', 'System Logs'];
 
     // Fetch Overall Stats
     const { 
@@ -45,6 +46,18 @@ export const useAlgoTrading = () => {
         enabled: activeTab === 'Signals',
     });
 
+    // Fetch Trades
+    const {
+        data: tradesData,
+        isLoading: isLoadingTrades,
+        refetch: refetchTrades,
+        isFetching: isFetchingTrades
+    } = useQuery({
+        queryKey: ['admin-algo-trades', page, debouncedSearch],
+        queryFn: () => FetchAdminAlgoTrades({ page, limit: 10, search: debouncedSearch }),
+        enabled: activeTab === 'Trades',
+    });
+
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
         setPage(1);
@@ -52,9 +65,10 @@ export const useAlgoTrading = () => {
     };
 
     const handleNextPage = () => {
-        const totalPages = activeTab === 'Strategies'
-            ? (strategiesData?.data?.totalPages || 1)
-            : (signalsData?.data?.totalPages || 1);
+        let totalPages = 1;
+        if (activeTab === 'Strategies') totalPages = strategiesData?.data?.totalPages || 1;
+        else if (activeTab === 'Signals') totalPages = signalsData?.data?.totalPages || 1;
+        else if (activeTab === 'Trades') totalPages = tradesData?.data?.totalPages || 1;
 
         if (page < totalPages) setPage(prev => prev + 1);
     };
@@ -67,11 +81,26 @@ export const useAlgoTrading = () => {
         refetchStats();
         if (activeTab === 'Strategies') refetchStrategies();
         if (activeTab === 'Signals') refetchSignals();
+        if (activeTab === 'Trades') refetchTrades();
     };
 
-    const currentData = activeTab === 'Strategies' ? strategiesData?.data : signalsData?.data;
-    const isLoading = activeTab === 'Strategies' ? isLoadingStrategies : isLoadingSignals;
-    const isFetching = isFetchingStats || (activeTab === 'Strategies' ? isFetchingStrategies : isFetchingSignals);
+    const currentData = activeTab === 'Strategies' 
+        ? strategiesData?.data 
+        : activeTab === 'Signals' 
+            ? signalsData?.data 
+            : tradesData?.data;
+
+    const isLoading = activeTab === 'Strategies' 
+        ? isLoadingStrategies 
+        : activeTab === 'Signals' 
+            ? isLoadingSignals 
+            : isLoadingTrades;
+
+    const isFetching = isFetchingStats || (
+        activeTab === 'Strategies' ? isFetchingStrategies : 
+        activeTab === 'Signals' ? isFetchingSignals : 
+        isFetchingTrades
+    );
 
     return {
         activeTab,
@@ -91,4 +120,5 @@ export const useAlgoTrading = () => {
         totalItems: currentData?.total || 0,
         items: currentData?.data || []
     };
+
 };

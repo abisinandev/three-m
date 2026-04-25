@@ -3,6 +3,7 @@ import { injectable, inject } from 'inversify';
 import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.types';
 import { IOrderRepository } from '@application/interfaces/repositories/stock/order-repository.interface';
 import { ISlTpOrderQueue } from '@application/interfaces/services/stocks/sl-tp-order-queue.interface';
+import { isIndianMarketOpen } from '@shared/utils/market/market-time';
 
 @injectable()
 export class SlTpOrderScheduler {
@@ -29,6 +30,7 @@ export class SlTpOrderScheduler {
     public start(): void {
         if (this.cronJob) return;
 
+                if (!isIndianMarketOpen()) return;
         // console.log("SlTp Order Scheduler started (every minute)");
 
         this.cronJob = cron.schedule('* * * * *', async () => {

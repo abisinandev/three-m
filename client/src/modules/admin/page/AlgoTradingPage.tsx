@@ -5,6 +5,8 @@ import { AlgoTabs } from '../algo-trading/components/AlgoTabs';
 import { StrategiesTable } from '../algo-trading/components/StrategiesTable';
 import { SignalsTable } from '../algo-trading/components/SignalsTable';
 import { AlgoPagination } from '../algo-trading/components/AlgoPagination';
+import { AlgoTradesTable } from '../algo-trading/components/AlgoTradesTable';
+
 
 const AlgoTradingPage = () => {
     const {
@@ -98,6 +100,13 @@ const AlgoTradingPage = () => {
                             search={search}
                             onSearchChange={setSearch}
                         />
+                    ) : activeTab === 'Trades' ? (
+                        <AlgoTradesTable
+                            items={items}
+                            isLoading={isLoading}
+                            search={search}
+                            onSearchChange={setSearch}
+                        />
                     ) : (
                         <div className="px-6 py-20 text-center">
                             <h3 style={{ fontSize: 14, fontWeight: 600, color: '#5a5f6e' }}>Module Under Development</h3>
@@ -105,7 +114,7 @@ const AlgoTradingPage = () => {
                         </div>
                     )}
 
-                    {!isLoading && (activeTab === 'Strategies' || activeTab === 'Signals') && items.length > 0 && (
+                    {!isLoading && (activeTab === 'Strategies' || activeTab === 'Signals' || activeTab === 'Trades') && items.length > 0 && (
                         <AlgoPagination
                             page={page}
                             totalPages={totalPages}

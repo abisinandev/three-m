@@ -4,6 +4,7 @@ import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.t
 import { IAlgoStrategyRepository } from '@application/interfaces/repositories/algo/algo-strategy-repository.interface';
 import { IStrategyQueue } from '@application/interfaces/services/algo-trading/strategy-queue.interface';
 import { IStrategyScheduler } from '@application/interfaces/services/algo-trading/strategy-scheduler.interface';
+import { isIndianMarketOpen } from '@shared/utils/market/market-time';
 
 @injectable()
 export class StrategyScheduler implements IStrategyScheduler {
@@ -31,6 +32,8 @@ export class StrategyScheduler implements IStrategyScheduler {
 
     public async start(): Promise<void> {
         if (this.cronJob) return;
+
+        if (!isIndianMarketOpen()) return;
 
         this.cronJob = cron.schedule('* * * * *', async () => {
             await this.execute();
