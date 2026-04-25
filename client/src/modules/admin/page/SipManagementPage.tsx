@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
-import { Search, Filter, MoreHorizontal, PauseCircle, PlayCircle, XCircle, List, DollarSign, Activity, XOctagon } from 'lucide-react';
+import { Search, Filter, List, DollarSign, Activity, XOctagon, PauseCircle } from 'lucide-react';
 import type { SIP, SipStatus } from '../types/SipTypes';
 import { SipStatusBadge } from '../components/SipStatusBadges';
 import { useNavigate } from '@tanstack/react-router';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
-import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { ROUTES } from '@shared/constants/routes';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchSipsApi, type SipFilters } from '@shared/services/admin/sip-management/SipManagementAdminApi';
@@ -27,7 +27,6 @@ const SipManagementPage = () => {
     placeholderData: keepPreviousData,
   });
 
-
   const updateFilters = (updates: Partial<SipFilters>) => {
     setFilters((prev) => ({
       ...prev,
@@ -41,38 +40,7 @@ const SipManagementPage = () => {
     400
   );
 
-  const [modal, setModal] = useState<{
-    open: boolean;
-    type: 'PAUSE' | 'RESUME' | 'CANCEL' | null;
-    sipId: string | null;
-  }>({ open: false, type: null, sipId: null });
 
-  const updateStatusMutation = useMutation({
-    // mutationFn: UpdateSipStatusApi,
-    // onSuccess: () => {
-    //   refetch();
-    //   toast.success(`SIP status updated successfully`);
-    //   setModal({ open: false, type: null, sipId: null });
-    // },
-    // onError: (error: any) => {
-    //   toast.error(error?.response?.data?.message || 'Failed to update SIP status');
-    // }
-  });
-
-  const openModal = (type: 'PAUSE' | 'RESUME' | 'CANCEL', sipId: string) => {
-    setModal({ open: true, type, sipId });
-  };
-
-  const handleConfirmAction = () => {
-    if (!modal.sipId || !modal.type) return;
-
-    let targetStatus: SipStatus = 'ACTIVE';
-    if (modal.type === 'PAUSE') targetStatus = 'PAUSED';
-    if (modal.type === 'CANCEL') targetStatus = 'CANCELLED';
-    if (modal.type === 'RESUME') targetStatus = 'ACTIVE';
-
-
-  };
 
   const sips = useMemo(() => data?.data ?? [], [data]);
   const total = data?.totalCount || 0;
@@ -250,33 +218,6 @@ const SipManagementPage = () => {
                     </td>
                     <td className="px-5 py-4 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-1">
-                        {sip.status === 'ACTIVE' && (
-                          <button
-                            className="p-1.5 hover:bg-amber-500/10 rounded text-amber-500 transition-all"
-                            title="Pause SIP"
-                            onClick={() => openModal('PAUSE', sip.id)}
-                          >
-                            <PauseCircle size={16} />
-                          </button>
-                        )}
-                        {sip.status === 'PAUSED' && (
-                          <button
-                            className="p-1.5 hover:bg-emerald-500/10 rounded text-emerald-500 transition-all"
-                            title="Resume SIP"
-                            onClick={() => openModal('RESUME', sip.id)}
-                          >
-                            <PlayCircle size={16} />
-                          </button>
-                        )}
-                        {sip.status !== 'CANCELLED' && (
-                          <button
-                            className="p-1.5 hover:bg-rose-500/10 rounded text-rose-500 transition-all"
-                            title="Cancel SIP"
-                            onClick={() => openModal('CANCEL', sip.id)}
-                          >
-                            <XCircle size={16} />
-                          </button>
-                        )}
                         <button
                           className="p-1.5 hover:bg-blue-500/10 rounded text-blue-400 transition-all"
                           title="View Details"
@@ -285,9 +226,6 @@ const SipManagementPage = () => {
                           }}
                         >
                           <List size={16} />
-                        </button>
-                        <button className="p-1.5 hover:bg-neutral-800 rounded text-neutral-500 transition-all" title="More">
-                          <MoreHorizontal size={16} />
                         </button>
                       </div>
                     </td>
@@ -322,50 +260,8 @@ const SipManagementPage = () => {
           </div>
         </div>
       </div>
-
-      {
-        modal.open && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-            <div className="bg-[#111] rounded-xl shadow-2xl border border-neutral-800 w-full max-w-md overflow-hidden">
-              <div className="p-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${modal.type === 'CANCEL' ? 'bg-rose-500/10 text-rose-500' : 'bg-amber-500/10 text-amber-500'
-                    }`}>
-                    {modal.type === 'CANCEL' ? <XCircle size={24} /> : <PauseCircle size={24} />}
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white">
-                      {modal.type === 'CANCEL' ? 'Cancel SIP' : modal.type === 'PAUSE' ? 'Pause SIP' : 'Resume SIP'}
-                    </h3>
-                    <p className="text-[11px] text-neutral-500 leading-none mt-1">ID: {modal.sipId}</p>
-                  </div>
-                </div>
-                <p className="text-sm text-neutral-400 mb-8 leading-relaxed">
-                  Are you sure you want to {modal.type?.toLowerCase()} this SIP? This action {modal.type === 'CANCEL' ? 'is irrevocable and will stop all future investment cycles.' : 'will temporarily halt future execution dates.'}
-                </p>
-                <div className="flex justify-end gap-3">
-                  <button
-                    onClick={() => setModal({ open: false, type: null, sipId: null })}
-                    className="px-5 py-2.5 text-xs font-bold text-neutral-400 hover:text-white transition-colors uppercase tracking-widest"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    disabled={updateStatusMutation.isPending}
-                    onClick={handleConfirmAction}
-                    className={`px-6 py-2.5 text-xs font-bold text-white rounded-lg shadow-lg transition-all uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed ${modal.type === 'CANCEL' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-blue-600 hover:bg-blue-700'
-                      }`}
-                  >
-                    {updateStatusMutation.isPending ? 'Processing...' : modal.type === 'CANCEL' ? 'Terminate SIP' : 'Update Status'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )
-      }
-    </div >
-  );
+    </div>
+  )
 };
 
 export default SipManagementPage;
