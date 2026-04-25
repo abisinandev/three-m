@@ -12,17 +12,15 @@ export const useAlgoTrading = () => {
 
     const tabs = ['Strategies', 'Signals', 'Trades', 'Risk Settings', 'System Logs'];
 
-    // Fetch Overall Stats
-    const { 
-        data: statsData, 
-        refetch: refetchStats, 
-        isFetching: isFetchingStats 
+    const {
+        data: statsData,
+        refetch: refetchStats,
+        isFetching: isFetchingStats
     } = useQuery({
         queryKey: ['admin-algo-stats'],
         queryFn: FetchAdminAlgoStats,
     });
 
-    // Fetch Strategies
     const {
         data: strategiesData,
         isLoading: isLoadingStrategies,
@@ -34,7 +32,6 @@ export const useAlgoTrading = () => {
         enabled: activeTab === 'Strategies',
     });
 
-    // Fetch Signals
     const {
         data: signalsData,
         isLoading: isLoadingSignals,
@@ -46,7 +43,6 @@ export const useAlgoTrading = () => {
         enabled: activeTab === 'Signals',
     });
 
-    // Fetch Trades
     const {
         data: tradesData,
         isLoading: isLoadingTrades,
@@ -84,22 +80,22 @@ export const useAlgoTrading = () => {
         if (activeTab === 'Trades') refetchTrades();
     };
 
-    const currentData = activeTab === 'Strategies' 
-        ? strategiesData?.data 
-        : activeTab === 'Signals' 
-            ? signalsData?.data 
+    const currentData = activeTab === 'Strategies'
+        ? strategiesData?.data
+        : activeTab === 'Signals'
+            ? signalsData?.data
             : tradesData?.data;
 
-    const isLoading = activeTab === 'Strategies' 
-        ? isLoadingStrategies 
-        : activeTab === 'Signals' 
-            ? isLoadingSignals 
+    const isLoading = activeTab === 'Strategies'
+        ? isLoadingStrategies
+        : activeTab === 'Signals'
+            ? isLoadingSignals
             : isLoadingTrades;
 
     const isFetching = isFetchingStats || (
-        activeTab === 'Strategies' ? isFetchingStrategies : 
-        activeTab === 'Signals' ? isFetchingSignals : 
-        isFetchingTrades
+        activeTab === 'Strategies' ? isFetchingStrategies :
+            activeTab === 'Signals' ? isFetchingSignals :
+                isFetchingTrades
     );
 
     return {

@@ -47,18 +47,21 @@ const MutualFundDetailsPage = () => {
     [investment, latestNav]
   );
 
-  const { mutate: invest, isPending: isSubmitting } = useInvestMutualFund(
-    () => {
-      setShowConfirmModal(false);
-      setShowInvestModal(false);
-      setShowSuccessModal(true);
-      setInvestment(0);
-      setErrorMsg('');
-    },
-    (msg) => {
-      alert(msg);
-    }
-  );
+  const [successData, setSuccessData] = useState<any>(null);
+ 
+   const { mutate: invest, isPending: isSubmitting } = useInvestMutualFund(
+     (data) => {
+       setSuccessData(data.data);
+       setShowConfirmModal(false);
+       setShowInvestModal(false);
+       setShowSuccessModal(true);
+       setErrorMsg('');
+     },
+     (msg) => {
+       alert(msg);
+     }
+   );
+
 
   const { mutate: startSipMutate, isPending: isSipSubmitting } = useStartSip(
     (result) => {
@@ -295,9 +298,15 @@ const MutualFundDetailsPage = () => {
         <SuccessModal
           data={data}
           investment={investment}
-          onClose={() => setShowSuccessModal(false)}
+          successData={successData}
+          onClose={() => {
+            setShowSuccessModal(false);
+            setInvestment(0);
+            setSuccessData(null);
+          }}
         />
       )}
+
 
       <PremiumPaymentModal
         isOpen={isPremiumModalOpen}

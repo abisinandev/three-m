@@ -19,6 +19,9 @@ export interface SipDto {
     userId: string;
     userCode?: string;
     schemeCode: string;
+    schemeName?: string;
+    logo?: string;
+
     amount: number;
     frequency: 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Yearly';
     startDate: string;

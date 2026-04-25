@@ -9,7 +9,8 @@ interface InvestmentPayload {
     investmentType: 'ONE_TIME';
 }
 
-export const useInvestMutualFund = (onSuccess: () => void, onError: (msg: string) => void) => {
+export const useInvestMutualFund = (onSuccess: (data: any) => void, onError: (msg: string) => void) => {
+
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -19,8 +20,9 @@ export const useInvestMutualFund = (onSuccess: () => void, onError: (msg: string
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['portfolio'] }); 
-            onSuccess();
+            onSuccess(data);
         },
+
         onError: (error: any) => {
             const msg = error?.response?.data?.message || 'Investment failed. Please try again.';
             onError(msg);
