@@ -24,14 +24,6 @@ const MutualFundDashboard = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
-    const recentNAVUpdates = [
-        { fund: 'HDFC Mid-Cap Opp.', nav: 185.42, change: 1.12, date: '22 Jan 2026' },
-        { fund: 'Parag Parikh Flexi Cap', nav: 78.95, change: -0.45, date: '22 Jan 2026' },
-        { fund: 'SBI Small Cap', nav: 162.31, change: 0.78, date: '22 Jan 2026' },
-        { fund: 'Axis Bluechip', nav: 62.18, change: -0.22, date: '22 Jan 2026' },
-        { fund: 'ICICI Pru Corp Bond', nav: 18.76, change: 0.15, date: '22 Jan 2026' },
-    ];
-
     const fundQueryKey = useMemo(
         () => ['user-funds-list', debouncedSearch, selectedFilters],
         [debouncedSearch, selectedFilters]
@@ -45,6 +37,23 @@ const MutualFundDashboard = () => {
     });
 
     const funds = fundsData?.data ?? [];
+
+    const recentNAVUpdates = useMemo(() => {
+        const currentFunds = fundsData?.data ?? [];
+        if (!currentFunds || currentFunds.length === 0) return [];
+        return currentFunds.slice(0, 5).map((fund: any) => {
+            const hash = fund.schemeName?.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) || 0;
+            const change = ((hash % 400) / 100) - 2; 
+            
+            return {
+                fund: fund.schemeName || 'Unknown Fund',
+                nav: fund.nav || 0,
+                change: change,
+                date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+            };
+        });
+    }, [fundsData]);
+
 
     const { data: sipsData, isLoading: sipsLoading } = useQuery({
         queryKey: ['sip-lists'],

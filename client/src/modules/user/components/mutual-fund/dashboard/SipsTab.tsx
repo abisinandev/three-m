@@ -169,7 +169,7 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                         )}
                                         {sip.status === 'CANCELLED' && (
                                             <span className="px-4 py-1.5 bg-red-500/10 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-500/20">
-                                                Terminated
+                                                Cancelled
                                             </span>
                                         )}
                                     </div>
