@@ -1,4 +1,4 @@
-import type { IAdminLogoutUseCase } from "@application/use_cases/admin/interfaces/admin-logout.interface";
+import type { IAdminLogoutUseCase } from "@application/use_cases/admin/auth/interfaces/admin-logout.interface";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { injectable } from "inversify";
 
