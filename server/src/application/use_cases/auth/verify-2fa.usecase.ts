@@ -13,7 +13,7 @@ import {
   UnauthorizedError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { IVerifyTwoFactorUseCase } from "../user/interfaces/verify-2fa-usecase.interface";
+import type { IVerifyTwoFactorUseCase } from "./interfaces/verify-2fa-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()

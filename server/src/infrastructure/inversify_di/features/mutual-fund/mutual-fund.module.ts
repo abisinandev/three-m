@@ -12,9 +12,9 @@ import { MutualFundsUseCase } from "@application/use_cases/mutual-fund/mutual-fu
 import { FetchAllFundUseCases } from "@application/use_cases/mutual-fund/fetch-all-funds.usecase";
 import { MutualFundNavUpdate } from "@application/use_cases/mutual-fund/mutual-fund-nav-update.usecase";
 import { ChangeStatusUseCase } from "@application/use_cases/mutual-fund/change-status.usecase";
-import { ListFundUserSideUseCase } from "@application/use_cases/user/mutual-fund/list-funds.usecase";
+import { ListFundUserSideUseCase } from "@application/use_cases/mutual-fund/list-funds.usecase";
 import { MfCagrUseCase } from "@application/use_cases/mutual-fund/mf-cagr-usecase";
-import { MutualFundDetailsUseCase } from "@application/use_cases/user/mutual-fund/mutual-fund-details.usecase";
+import { MutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/mutual-fund-details.usecase";
 import { OneTimeInvestmentUseCase } from "@application/use_cases/mutual-fund/one-time-investment.usecase";
 import { NavAllocateUseCase } from "@application/use_cases/mutual-fund/nav-allocatation-usecase";
 import { MfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/mf-investment-history.usecase";

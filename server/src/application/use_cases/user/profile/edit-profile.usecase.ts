@@ -4,7 +4,7 @@ import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.type
 import { UserRepository } from "@infrastructure/databases/repository/user/user.repository";
 import { ValidationError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
-import { IEditProfileUseCase } from "@application/use_cases/user/interfaces/edit-profile-usecase.interface";
+import { IEditProfileUseCase } from "@application/use_cases/user/profile/interfaces/edit-profile-usecase.interface";
 
 @injectable()
 export class EditProfileUseCase implements IEditProfileUseCase {

@@ -1,6 +1,6 @@
 import { StripePaymentDTO } from "@application/dto/user/stripe-payment-dto";
 import { IPaymentHandler } from "@application/interfaces/services/payment/payment-handler.interface";
-import { IAddToWalletUseCase } from "@application/use_cases/user/interfaces/add-to-wallet-usecase.interface";
+import { IAddToWalletUseCase } from "@application/use_cases/user/wallet/interfaces/add-to-wallet-usecase.interface";
 import { IUpgradePremiumUseCase } from "@application/use_cases/user/subscription/interfaces/upgrade-premium-usecase.interface";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";

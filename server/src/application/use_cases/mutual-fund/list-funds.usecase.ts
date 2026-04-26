@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IListFundsUserSideUseCase } from "../../mutual-fund/interfaces/list-fund-usecase.interface";
+import { IListFundsUserSideUseCase } from "./interfaces/list-fund-usecase.interface";
 import { FundListDTO } from "@application/dto/mutual-funds/mutual-fund-response.dto";
 import { toMutualFundResponse } from "@application/mappers/mutual-fund/mutual-fund.mapper";
 import { QueryOptions } from "mongoose";

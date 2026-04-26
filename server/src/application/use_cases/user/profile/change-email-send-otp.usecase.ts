@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IChangeEmailSendOtpUseCase } from "../interfaces/change-email-usecase.interface";
+import { IChangeEmailSendOtpUseCase } from "./interfaces/change-email-usecase.interface";
 import { ChangeEmailDTO } from "@application/dto/user/change-email.dto";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";

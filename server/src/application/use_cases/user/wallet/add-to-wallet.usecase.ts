@@ -1,5 +1,5 @@
 import type { AddToWalletDTO } from "@application/dto/user/add-to-wallet.dto";
-import type { IAddToWalletUseCase } from "../interfaces/add-to-wallet-usecase.interface";
+import type { IAddToWalletUseCase } from "./interfaces/add-to-wallet-usecase.interface";
 import { NotFoundError, UnauthorizedError, ValidationError } from "@presentation/express/utils/error-handling";
 import { toTransactionEntity } from "@application/mappers/user/transaction-mapper";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";

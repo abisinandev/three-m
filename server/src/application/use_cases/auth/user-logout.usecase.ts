@@ -1,6 +1,6 @@
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { injectable } from "inversify";
-import type { IUserLogoutUseCase } from "../user/interfaces/user-logout-usecase.interface";
+import type { IUserLogoutUseCase } from "./interfaces/user-logout-usecase.interface";
 
 @injectable()
 export class LogoutUseCase implements IUserLogoutUseCase {

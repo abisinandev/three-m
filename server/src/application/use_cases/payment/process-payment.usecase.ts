@@ -3,7 +3,7 @@ import { IProcessStripePaymentUseCase } from "./interfaces/process-payment-useca
 import Stripe from "stripe";
 import stripe from "@infrastructure/providers/stripe/stripe.client";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
-import { IAddToWalletUseCase } from "../user/interfaces/add-to-wallet-usecase.interface";
+import { IAddToWalletUseCase } from "../user/wallet/interfaces/add-to-wallet-usecase.interface";
 import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
 import { IUpgradePremiumUseCase } from "../user/subscription/interfaces/upgrade-premium-usecase.interface";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";

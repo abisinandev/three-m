@@ -8,7 +8,7 @@ import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import AppError from "@presentation/express/utils/error-handling/app.error";
 import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
-import type { ISignupResendOtpUseCase } from "../user/interfaces/singup-resend-otp-usecase.interface";
+import type { ISignupResendOtpUseCase } from "../auth/interfaces/singup-resend-otp-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()

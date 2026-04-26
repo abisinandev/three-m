@@ -8,7 +8,7 @@ import {
   ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { IForgotPasswordVerifyOtpUseCase } from "../user/interfaces/forgot-pass-verify-otp-usecase.interface";
+import type { IForgotPasswordVerifyOtpUseCase } from "../auth/interfaces/forgot-pass-verify-otp-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()

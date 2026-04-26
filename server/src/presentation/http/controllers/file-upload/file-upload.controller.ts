@@ -1,4 +1,4 @@
-import { ISignatureUploadUseCase } from "@application/use_cases/user/interfaces/signature-upload-usecase.interface";
+import { ISignatureUploadUseCase } from "@application/use_cases/auth/interfaces/signature-upload-usecase.interface";
 import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";

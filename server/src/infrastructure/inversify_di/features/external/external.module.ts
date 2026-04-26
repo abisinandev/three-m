@@ -4,7 +4,7 @@ import { SignatureUploadUseCase } from "@application/use_cases/file-upload/signa
 import { AxiosHttpClient } from "@infrastructure/providers/axios/http.client";
 import { CloudinaryStorageProvider } from "@infrastructure/providers/storage-providers/cloudinary.provider";
 import { InternalTransactionVerificationService } from "@infrastructure/providers/wallet-integrity/internal-transaction-verification.service";
-import { ISignatureUploadUseCase } from "@application/use_cases/user/interfaces/signature-upload-usecase.interface";
+import { ISignatureUploadUseCase } from "@application/use_cases/auth/interfaces/signature-upload-usecase.interface";
 import { IHttpClient } from "@application/interfaces/services/externals/http-client-interface";
 import { IStorageProvider } from "@application/interfaces/services/externals/storage-provider.interface";
 import { ICacheProvider } from "@application/interfaces/services/externals/redis-cache.provider.interface";

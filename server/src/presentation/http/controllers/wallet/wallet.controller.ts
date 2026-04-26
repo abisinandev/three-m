@@ -1,4 +1,4 @@
-import { IUserWalletUseCase } from "@application/use_cases/user/interfaces/user-wallet-usecase.interface";
+import { IUserWalletUseCase } from "@application/use_cases/user/wallet/interfaces/user-wallet-usecase.interface";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
