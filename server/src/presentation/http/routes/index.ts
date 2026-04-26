@@ -28,6 +28,7 @@ import adminAlgoTradingRoutes from '@presentation/http/routes/admin/admin-algo-t
 import adminSubscriptionsRoutes from '@presentation/http/routes/admin/admin-subscription-management.routes'
 import userSubscriptionRoutes from '@presentation/http/routes/user/user-subscription.routes';
 import { StockTradingRoutes } from "@shared/routes/stock-trading.routes";
+import userDashboardRoutes from '@presentation/http/routes/user/user-dashboard.routes';
 
 export const RegisterRoutes = (app: Application) => {
   const authMiddleware = container.get<AuthMiddleware>(AUTH_TYPES.AuthMiddleware);
@@ -42,6 +43,8 @@ export const RegisterRoutes = (app: Application) => {
   app.use("/api/user/mutual-funds", (req, res, next) => authMiddleware.handle(req, res, next), mutualFundUserRoues);
   app.use("/api/user/portfolio", (req, res, next) => authMiddleware.handle(req, res, next), userPortfoilo);
   app.use("/api/notifications", (req, res, next) => authMiddleware.handle(req, res, next), notificationRoutes);
+
+  app.use("/api/user/dashboard", (req, res, next) => authMiddleware.handle(req, res, next), userDashboardRoutes);
 
   app.use("/api/user", (req, res, next) => authMiddleware.handle(req, res, next), userRoute);
   app.use("/api/user/subscriptions", (req, res, next) => authMiddleware.handle(req, res, next), userSubscriptionRoutes);

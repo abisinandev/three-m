@@ -10,6 +10,7 @@ import { ClientSession, QueryOptions, Types, PipelineStage } from "mongoose";
 import { GroupedSchemeInvestments } from "@application/dto/portfolio/grouped-scheme-investments ";
 import { InvestmentRedeemResult } from "@domain/types/radeem-units.types";
 import { InvestmentFundDTO } from "@application/dto/portfolio/aggregated-asset.dto";
+import { PortfolioGrowthPoint } from "@application/dto/user/dashboard.dto";
 
 @injectable()
 export class InvestmentRepository extends BaseRepository<InvestmentEntity, InvestmentDocument> implements IInvestmentRepository {
@@ -408,5 +409,60 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
 
         const result = await this.model.aggregate(pipeline);
         return result.length > 0 ? result[0].total : 0;
+    }
+
+    async portfolioGrowthByMonth(userId: string): Promise<PortfolioGrowthPoint[]> {
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+        sixMonthsAgo.setDate(1);
+        sixMonthsAgo.setHours(0, 0, 0, 0);
+
+        const docs = await this.model.aggregate([
+            {
+                $match: {
+                    userId: new Types.ObjectId(userId),
+                    status: InvestmentStatus.ALLOTTED,
+                    createdAt: { $gte: sixMonthsAgo },
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" },
+                        month: { $month: "$createdAt" },
+                    },
+                    total: { $sum: "$amount" },
+                },
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1 } },
+        ]);
+
+        const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        // Build all 6 slots (fill gaps with 0)
+        const now = new Date();
+        const slots: PortfolioGrowthPoint[] = [];
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            slots.push({ month: MONTH_NAMES[d.getMonth()], amount: 0 });
+        }
+
+        // Populate with real data
+        for (const doc of docs) {
+            const d = new Date(doc._id.year, doc._id.month - 1, 1);
+            const monthName = MONTH_NAMES[d.getMonth()];
+            const slot = slots.find(s => s.month === monthName);
+            if (slot) slot.amount += doc.total;
+        }
+
+        // Make it cumulative
+        let cumulative = 0;
+        for (const slot of slots) {
+            cumulative += slot.amount;
+            slot.amount = cumulative;
+        }
+
+        return slots;
     }
 }  

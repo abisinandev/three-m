@@ -43,4 +43,32 @@ export class ExpenseTrackerRepository extends BaseRepository<ExpenseTrackerEntit
         return this.mapper.toDomain(updatedDoc);
     }
 
+    async totalExpenses(userId: string): Promise<number> {
+        const docs = await this.model.aggregate([
+            {
+                $match: { userId: userId } 
+            },
+            {
+                $unwind: "$expenses"
+            },
+            {
+                $group: {
+                    _id: "$userId",
+                    totalExpense: { $sum: "$expenses.amount" }
+                }
+            }
+        ]);
+
+        return docs.length > 0 ? docs[0].totalExpense : 0; 
+    }
+
+    async categoryBreakdown(userId: string): Promise<{ needsSpent: number; wantsSpent: number; savingsSpent: number }> {
+        const currentMonth = new Date().toISOString().slice(0, 7);
+        const doc = await this.model.findOne({ userId, month: currentMonth });
+        return {
+            needsSpent: doc?.expenseSummary?.needsSpent ?? 0,
+            wantsSpent: doc?.expenseSummary?.wantsSpent ?? 0,
+            savingsSpent: doc?.expenseSummary?.savingsSpent ?? 0,
+        };
+    }
 }

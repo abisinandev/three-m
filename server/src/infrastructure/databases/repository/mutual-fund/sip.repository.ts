@@ -132,4 +132,13 @@ export class SipRepository extends BaseRepository<SipEntity, SipDocument> implem
             { $set: { status: SipStatus.CANCELLED } }
         )
     };
+
+    async findUserActiveSips(userId: string, limit = 3): Promise<SipEntity[]> {
+        const docs = await this.model
+            .find({ userId, status: SipStatus.ACTIVE })
+            .sort({ nextExecutionDate: 1 })
+            .limit(limit)
+            .exec();
+        return docs.map(doc => this.mapper.toDomain(doc));
+    }
 }
