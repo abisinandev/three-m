@@ -36,7 +36,7 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
     }
 
     async updateStatus(id: string, status: string, session: ClientSession): Promise<void> {
-        const isVerified = (status === TransactionStatus.VERIFIED);
+        const isVerified = (status === TransactionStatus.SUCCESSFUL);
         await this.model.findByIdAndUpdate(
             id, {
             $set: {
@@ -101,7 +101,7 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
     }
 
     async findSuccessfulTransactions(): Promise<{ successfulTransactions: number; }> {
-        const successfulTransactions = await this.model.countDocuments({ status: TransactionStatus.VERIFIED });
+        const successfulTransactions = await this.model.countDocuments({ status: TransactionStatus.SUCCESSFUL });
         return { successfulTransactions };
     }
 
@@ -116,7 +116,7 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
     }
 
     async findTotalAmount(): Promise<{ totalAmount: number; }> {
-        const doc = await this.model.aggregate([{ $match: { status: TransactionStatus.VERIFIED } },
+        const doc = await this.model.aggregate([{ $match: { status: TransactionStatus.SUCCESSFUL } },
         { $group: { _id: "", totalAmount: { $sum: "$amount" } } }
         ]);
         return {
@@ -134,4 +134,60 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
 
         return this.mapper.toDomain(doc);
     }
-}
+
+    async getWeeklyCashFlow(): Promise<{ week: string; deposits: number; withdrawals: number }[]> {
+        const result = await this.model.aggregate([
+            {
+                $match: {
+                    status: TransactionStatus.SUCCESSFUL,
+                    createdAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 28)) }
+                }
+            },
+            {
+                $group: {
+                    _id: { $week: "$createdAt" },
+                    deposits: {
+                        $sum: {
+                            $cond: [{ $eq: ["$type", "DEPOSIT"] }, "$amount", 0]
+                        }
+                    },
+                    withdrawals: {
+                        $sum: {
+                            $cond: [{ $eq: ["$type", "WITHDRAWAL"] }, "$amount", 0]
+                        }
+                    }
+                }
+            },
+            { $sort: { "_id": 1 } as any }
+        ]);
+        return result.map((r, i) => ({ week: `Week ${i + 1}`, deposits: r.deposits, withdrawals: r.withdrawals }));
+    }
+
+    async getRecentTransactions(limit: number): Promise<TransactionEntity[]> {
+        const docs = await this.model.find().sort({ createdAt: -1 }).limit(limit).exec();
+        return docs.map(doc => this.mapper.toDomain(doc));
+    }
+
+    async getTotalMRR(): Promise<number> {
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const result = await this.model.aggregate([
+            {
+                $match: {
+                    status: TransactionStatus.SUCCESSFUL,
+                    type: "SUBSCRIPTION",
+                    createdAt: { $gte: startOfMonth }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: "$amount" }
+                }
+            }
+        ]);
+        return result.length > 0 ? result[0].total : 0;
+    }
+} 

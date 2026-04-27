@@ -9,4 +9,6 @@ export enum PortfolioRoutes {
     TRADES = "/trades",
     HISTORIES = "/histories",
     ASSETS = "/assets",
+    MF_ASSETS = "/assets/mf",
+    STOCK_ASSETS = "/assets/stock",
 }

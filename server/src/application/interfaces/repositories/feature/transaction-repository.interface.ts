@@ -16,4 +16,7 @@ export interface ITransactionRepository extends IBaseRepository<TransactionEntit
     findUserVerifiedTransactions(userId: string): Promise<TransactionEntity[] | null>;
     latestUserTransaction(userId: string): Promise<TransactionEntity | null>;
     createTransaction(entity: TransactionEntity, session: ClientSession): Promise<TransactionEntity>;
+    getWeeklyCashFlow(): Promise<{ week: string; deposits: number; withdrawals: number }[]>;
+    getRecentTransactions(limit: number): Promise<TransactionEntity[]>;
+    getTotalMRR(): Promise<number>;
 }

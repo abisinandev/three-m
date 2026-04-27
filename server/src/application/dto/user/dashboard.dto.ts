@@ -26,6 +26,8 @@ export interface PortfolioGrowthPoint {
 export interface DashboardSipDTO {
     id: string;
     schemeCode: string;
+    schemeName?: string;
+    logo?: string;
     amount: number;
     frequency: string;
     status: string;
@@ -37,6 +39,8 @@ export interface DashboardSipDTO {
 export interface DashboardInvestmentDTO {
     id: string;
     schemeCode: string;
+    schemeName?: string;
+    logo?: string;
     amount: number;
     units: number;
     nav: number;

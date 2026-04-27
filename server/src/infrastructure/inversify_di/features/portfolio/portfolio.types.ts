@@ -8,7 +8,7 @@ export const PORTFOLIO_TYPES = {
     PortfolioSummaryUseCase: Symbol.for("PortfolioSummaryUseCase"),
     XirrCalculationUseCase: Symbol.for("XirrCalculationUseCase"),
     PortfolioProjectionUseCase: Symbol.for("PortfolioProjectionUseCase"),
-    FetchTradeHistoryUseCase: Symbol.for("FetchTradeHistoryUseCase"),
+    FetchPortfolioHistoryUseCase: Symbol.for("FetchPortfolioHistoryUseCase"),
     FetchStockHoldingsUseCase: Symbol.for("FetchStockHoldingsUseCase"),
     FetchMutualFundHoldingsUseCase: Symbol.for("FetchMutualFundHoldingsUseCase"),
     FetchPortfolioAssetsUseCase: Symbol.for("FetchPortfolioAssetsUseCase"),

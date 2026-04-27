@@ -141,4 +141,8 @@ export class SipRepository extends BaseRepository<SipEntity, SipDocument> implem
             .exec();
         return docs.map(doc => this.mapper.toDomain(doc));
     }
+
+    async getTotalActiveSipsCount(): Promise<number> {
+        return this.model.countDocuments({ status: SipStatus.ACTIVE });
+    }
 }

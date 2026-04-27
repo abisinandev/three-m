@@ -24,6 +24,8 @@ export class MutualFundDetailsUseCase implements IMutualFundDetailsUseCase {
 
         const mfCagrs = await this._mfCagrRepository.findOne({ schemeCode });
         const navHistories = await this._mfNavRepository.findByInterval(schemeCode, interval, 300) ?? [];
+        console.log('navHis: ', navHistories);
+
         const absoluteReturn = calculateReturn(navHistories);
         return {
             id: fund.id!,

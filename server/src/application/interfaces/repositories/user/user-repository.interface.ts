@@ -13,4 +13,7 @@ export interface IUserRepository extends IBaseRepository<UserEntity> {
   CountInActiveUsers(): Promise<{ totalInActiveUsersCount: number }>;
   CountVerifiedUsers(): Promise<{ totalVerifiedUsersCount: number }>;
   findAllWithRelations(userId: string): Promise<UserEntity | null>;
+  getTotalUsersCount(): Promise<number>;
+  getPremiumUsersCount(): Promise<number>;
+  getUserRegistrationGrowthByMonth(months: number): Promise<{ month: string; users: number; premium: number }[]>;
 }

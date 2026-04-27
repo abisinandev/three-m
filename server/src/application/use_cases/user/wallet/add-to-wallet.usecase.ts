@@ -54,6 +54,9 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
             if (wallet && data.amount > 10_0000)
                 throw new ValidationError(ErrorMessages.TRANSACTIONS.MAX_TRANSACTION);
 
+            console.log("DATAL ", data);
+            
+
             const transactionEntity = toTransactionEntity({ ...data, userCode: user.userCode });
 
             const isExists = await this._transactionRepository.findByPaymentId(

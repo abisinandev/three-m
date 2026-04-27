@@ -11,6 +11,7 @@ import { EXPENSE_TRACKER_TYPE } from "@infrastructure/inversify_di/features/expe
 import { IExpenseTrackerRepository } from "@application/interfaces/repositories/feature/expense-tracker-repository.interface";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 import { ISipRepository } from "@application/interfaces/repositories/feature/sip-repository.interface";
+import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 
 
 @injectable()
@@ -22,6 +23,7 @@ export class DashboardUseCase implements IDashboardUseCase {
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
         @inject(EXPENSE_TRACKER_TYPE.ExpenseTrackerRepository) private readonly _expenseTrackerRepository: IExpenseTrackerRepository,
         @inject(SIP_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
+        @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
     ) { }
 
     async execute(userId: string): Promise<DashboardDTO> {
@@ -92,29 +94,39 @@ export class DashboardUseCase implements IDashboardUseCase {
             : [];
 
         const rawSips = recentSipsResult.status === "fulfilled" ? recentSipsResult.value : [];
-        const recentSips: DashboardSipDTO[] = rawSips.map(s => ({
-            id: s.id ?? "",
-            schemeCode: s.schemeCode,
-            amount: s.amount,
-            frequency: s.frequency,
-            status: s.status,
-            executedInstallments: s.executedInstallments,
-            totalInstallments: s.totalInstallments,
-            nextExecutionDate: s.nextExecutionDate,
+        const recentSips: DashboardSipDTO[] = await Promise.all(rawSips.map(async s => {
+            const fund = await this._mutualFundRepository.findOne({ schemeCode: s.schemeCode } as any);
+            return {
+                id: s.id ?? "",
+                schemeCode: s.schemeCode,
+                schemeName: fund?.schemeName,
+                logo: fund?.logo,
+                amount: s.amount,
+                frequency: s.frequency,
+                status: s.status,
+                executedInstallments: s.executedInstallments,
+                totalInstallments: s.totalInstallments,
+                nextExecutionDate: s.nextExecutionDate,
+            };
         }));
 
         const rawInvestments = recentInvestmentsResult.status === "fulfilled"
             ? recentInvestmentsResult.value.slice(0, 4)
             : [];
-        const recentInvestments: DashboardInvestmentDTO[] = rawInvestments.map(inv => ({
-            id: inv.id,
-            schemeCode: inv.schemeCode,
-            amount: inv.amount,
-            units: inv.units ?? 0,
-            nav: inv.nav ?? 0,
-            status: inv.status,
-            investmentType: inv.investmentType,
-            createdAt: inv.createdAt,
+        const recentInvestments: DashboardInvestmentDTO[] = await Promise.all(rawInvestments.map(async inv => {
+            const fund = await this._mutualFundRepository.findOne({ schemeCode: inv.schemeCode } as any);
+            return {
+                id: inv.id || "",
+                schemeCode: inv.schemeCode,
+                schemeName: fund?.schemeName,
+                logo: fund?.logo,
+                amount: inv.amount,
+                units: inv.units ?? 0,
+                nav: inv.nav ?? 0,
+                status: inv.status,
+                investmentType: inv.investmentType,
+                createdAt: inv.createdAt,
+            };
         }));
 
         return {

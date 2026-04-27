@@ -37,10 +37,13 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
         const data: InvestmentResponseDTO[] = [];
 
         for (const stockPf of stockPortfolios) {
-            const stockDetails = await this._stockRepository.findBySymbol(stockPf.assetId);
+            // assetId stores the ObjectId of the stock record
+            const stockDetails = await this._stockRepository.findById(stockPf.assetId);
+            const symbol = stockDetails?.symbol || stockPf.assetId;
 
             let currentPrice = stockPf.avgPrice;
-            const quote = await this._marketDataProvider.getLatestQuote(stockPf.assetId);
+            // Use the actual symbol for market data lookup
+            const quote = await this._marketDataProvider.getLatestQuote(symbol);
             if (quote) {
                 currentPrice = quote.price;
             }
@@ -52,8 +55,8 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
             data.push({
                 id: stockPf.id as string,
                 userId: stockPf.userId,
-                schemeCode: stockPf.assetId,
-                schemeName: stockDetails?.name || stockPf.assetId,
+                schemeCode: symbol,
+                schemeName: stockDetails?.name || symbol,
                 amount: stockPf.investedAmount,
                 units: stockPf.quantity || 0,
                 nav: stockPf.avgPrice,

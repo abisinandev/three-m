@@ -14,6 +14,8 @@ router.get(PortfolioRoutes.RETURN_XIRR, controller.xirrCalculation.bind(controll
 router.get(PortfolioRoutes.REDEEM_INVESTMENT, controller.redeemInvestments.bind(controller));
 router.patch(PortfolioRoutes.CONFIRM_REDEEM, validateDTO(ConfirmRedeemDTO), controller.confirmRedeem.bind(controller));
 router.get(PortfolioRoutes.ASSETS, controller.listAssets.bind(controller));
+router.get(PortfolioRoutes.MF_ASSETS, controller.listMFAssets.bind(controller));
+router.get(PortfolioRoutes.STOCK_ASSETS, controller.listStockAssets.bind(controller));
 router.get(PortfolioRoutes.TRADE_HISTORY, controller.listTradeHistory.bind(controller));
 router.get(PortfolioRoutes.HISTORIES, controller.listTradeHistory.bind(controller));
 

@@ -83,8 +83,8 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
             }
 
             const transaction = TransactionEntity.create({
-                userId: user.id!,
-                userCode: user.userCode!,
+                userId: user.id as string,
+                userCode: user.userCode,
                 amount: installment.amount,
                 currency: CurrencyTypes.INR,
                 status: TransactionStatus.PENDING,

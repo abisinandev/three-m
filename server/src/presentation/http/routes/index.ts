@@ -29,6 +29,7 @@ import adminSubscriptionsRoutes from '@presentation/http/routes/admin/admin-subs
 import userSubscriptionRoutes from '@presentation/http/routes/user/user-subscription.routes';
 import { StockTradingRoutes } from "@shared/routes/stock-trading.routes";
 import userDashboardRoutes from '@presentation/http/routes/user/user-dashboard.routes';
+import adminDashboardRoutes from '@presentation/http/routes/admin/admin-dashboard.routes';
 
 export const RegisterRoutes = (app: Application) => {
   const authMiddleware = container.get<AuthMiddleware>(AUTH_TYPES.AuthMiddleware);
@@ -54,6 +55,7 @@ export const RegisterRoutes = (app: Application) => {
   app.use('/api/admin/mutual-funds', (req, res, next) => authAdminMiddleware.handle(req, res, next), mutualFundRoutes);
   app.use("/api/admin/sip-management", (req, res, next) => authAdminMiddleware.handle(req, res, next), adminSipRoutes);
   app.use('/api/payments', (req, res, next) => authMiddleware.handle(req, res, next), paymentRoutes);
+  app.use("/api/admin/dashboard", (req, res, next) => authAdminMiddleware.handle(req, res, next), adminDashboardRoutes);
   app.use("/api/admin", (req, res, next) => authAdminMiddleware.handle(req, res, next), adminRoutes);
   app.use("/api/market-news", (req, res, next) => authMiddleware.handle(req, res, next), marketNewsRoutes);
   app.use("/api/file-upload", fileUploadRoutes);

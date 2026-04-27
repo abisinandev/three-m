@@ -1,5 +1,5 @@
 
-export interface PortfolioAssetResponseDTO {
+export interface PortfolioAssetDTO {
     id: string;
     userId: string;
     assetId: string;
@@ -9,7 +9,10 @@ export interface PortfolioAssetResponseDTO {
     schemeCode?: string;
     assetType: "MF" | "STOCK";
     quantity: number;
+    units?: number;          // MF: units held
     avgPrice: number;
+    nav?: number;            // MF: current NAV
+    navDate?: Date | string; // MF: NAV date
     investedAmount: number;
     currentPrice: number;
     currentValue: number;
@@ -23,8 +26,8 @@ export interface PortfolioAssetResponseDTO {
     createdAt: Date;
 }
 
-export interface PaginatedPortfolioAssetsResponseDTO {
-    data: PortfolioAssetResponseDTO[];
+export interface PortfolioAssetsResponseDTO {
+    data: PortfolioAssetDTO[];
     total: number;
     page: number;
     limit: number;

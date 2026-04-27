@@ -440,7 +440,6 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-        // Build all 6 slots (fill gaps with 0)
         const now = new Date();
         const slots: PortfolioGrowthPoint[] = [];
         for (let i = 5; i >= 0; i--) {
@@ -448,7 +447,6 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             slots.push({ month: MONTH_NAMES[d.getMonth()], amount: 0 });
         }
 
-        // Populate with real data
         for (const doc of docs) {
             const d = new Date(doc._id.year, doc._id.month - 1, 1);
             const monthName = MONTH_NAMES[d.getMonth()];
@@ -456,7 +454,6 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             if (slot) slot.amount += doc.total;
         }
 
-        // Make it cumulative
         let cumulative = 0;
         for (const slot of slots) {
             cumulative += slot.amount;
@@ -464,5 +461,15 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         }
 
         return slots;
+    }
+
+    async calculateTotalAUM(): Promise<{ mf: number; stocks: number; algo: number }> {
+        const mfResult = await this.model.aggregate([
+            { $match: { status: InvestmentStatus.ALLOTTED } },
+            { $group: { _id: null, total: { $sum: "$amount" } } }
+        ]);
+        const mf = mfResult.length > 0 ? mfResult[0].total : 0;
+        
+        return { mf, stocks: 0, algo: 0 };
     }
 }  

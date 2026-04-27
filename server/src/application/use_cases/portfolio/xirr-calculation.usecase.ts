@@ -3,11 +3,7 @@ import { IXirrCalculationUseCase } from "./interfaces/xirr-calculation-usecase.i
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
-
-interface CashFlow {
-    amount: number;
-    date: Date;
-}
+import { CashFlow } from "@domain/domain-services/portfolio/xirr-calculation.interface";
 
 @injectable()
 export class XirrCalculationUseCase implements IXirrCalculationUseCase {

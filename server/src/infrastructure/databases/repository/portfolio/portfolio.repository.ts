@@ -146,4 +146,27 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         const result = await this.model.deleteOne({ userId, assetId }, { session });
         return result.deletedCount > 0;
     }
+
+    async getUserAssets(userId: string): Promise<PortfolioEntity[]> {
+        const docs = await this.model.find({
+            userId: new Types.ObjectId(userId)
+        });
+
+        return docs.length ? docs.map(doc => this.mapper.toDomain(doc)) : [];
+
+    }
+
+    async countUserInvestements(userId: string): Promise<number> {
+        return this.model.countDocuments({
+            userId: new Types.ObjectId(userId),
+            assetType: AssetType.MUTUAL_FUND,
+        });
+    }
+
+    async countUserStockHoldings(userId: string): Promise<number> {
+        return this.model.countDocuments({
+            userId: new Types.ObjectId(userId),
+            assetType: AssetType.STOCK,
+        });
+    }
 }

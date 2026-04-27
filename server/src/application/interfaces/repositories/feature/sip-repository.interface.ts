@@ -11,4 +11,5 @@ export interface ISipRepository extends IBaseRepository<SipEntity> {
     pause(sipId: string): Promise<void>;
     resume(sipId: string): Promise<void>;
     cancel(sipId: string): Promise<void>;
+    getTotalActiveSipsCount(): Promise<number>;
 }

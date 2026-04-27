@@ -22,6 +22,7 @@ import { IPortfolioRepository } from "@application/interfaces/repositories/featu
 import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 import mongoose from "mongoose";
+import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 
 
 @injectable()
@@ -33,6 +34,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
+        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider
     ) { }
 
     async execute(data: InvestmentDTO, userId: string): Promise<void> {
@@ -50,6 +52,8 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
 
                 const fund = await this._mutualFundRepository.findBySchemeCode(data.schemeCode);
                 if (!fund || fund.status === FundStatus.INACTIVE) throw new ValidationError(ErrorMessages.MUTUAL_FUND.FUND_INACTIVE);
+
+                const latestNav = (await this._navUpdateProvider.fetchNavHistories(schemeCode))[0];
 
                 const transaction = TransactionEntity.create({
                     userId: user.id!,
