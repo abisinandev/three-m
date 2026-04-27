@@ -62,7 +62,24 @@ const DashboardPage = () => {
     ];
 
     return (
-        <div className="space-y-4 pb-8">
+        <div style={{
+            minHeight: '100vh',
+            background: '#0b0c0e',
+            color: '#e8eaed',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            paddingBottom: 48,
+        }}>
+            <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                            Dashboard
+                        </h1>
+                        <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+                            Overview & summary
+                        </p>
+                    </div>
+                </div>
 
             {!user?.isVerified && <VerificationAlertCard />}
             {user?.isVerified && !user?.isSubscribed && (
@@ -91,7 +108,8 @@ const DashboardPage = () => {
                 {statsRows.map((stat, i) => (
                     <div
                         key={i}
-                        className="bg-[#0f0f0f] rounded-md border border-[#1f1f1f] p-3 hover:border-[#2a2a2a] transition-colors flex flex-col justify-between h-24"
+                        style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }}
+                        className="p-4 hover:border-[#2a2a2a] transition-colors flex flex-col justify-between h-24"
                     >
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
@@ -125,7 +143,7 @@ const DashboardPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
 
                 {/* Expense Breakdown */}
-                <div className="bg-[#0f0f0f] rounded-md border border-[#1f1f1f] p-4 flex flex-col">
+                <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-5 flex flex-col">
                     <div className="flex justify-between items-center mb-3">
                         <div className="flex items-center gap-2">
                             <PieChart className="w-4 h-4 text-gray-400" />
@@ -147,7 +165,7 @@ const DashboardPage = () => {
                 </div>
 
                 {/* Portfolio Growth */}
-                <div className="bg-[#0f0f0f] rounded-md border border-[#1f1f1f] p-4 flex flex-col">
+                <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-5 flex flex-col">
                     <div className="flex justify-between items-center mb-3">
                         <div className="flex items-center gap-2">
                             <TrendingUp className="w-4 h-4 text-gray-400" />
@@ -179,6 +197,7 @@ const DashboardPage = () => {
                 isOpen={isPremiumModalOpen}
                 onClose={() => setIsPremiumModalOpen(false)}
             />
+            </div>
         </div>
     );
 };

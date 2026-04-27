@@ -54,6 +54,8 @@ export const API_ROUTES = {
             TRADES: "/user/portfolio/trades",
             HISTORIES: "/user/portfolio/histories",
             GET_ASSETS: "/user/portfolio/assets",
+            GET_MF_ASSETS: "/user/portfolio/assets/mf",
+            GET_STOCK_ASSETS: "/user/portfolio/assets/stock",
         },
         MUTUAL_FUNDS: {
             LIST: "/user/mutual-funds/lists",

@@ -7,7 +7,7 @@ export const useAdminDashboard = () => {
         queryKey: ['admin-dashboard-overview'],
         queryFn: async () => {
             const { data } = await adminApi.get('/dashboard/overview');
-            return data.data; // assuming standard success response { success: true, data: { ... } }
+            return data.data; 
         },
         staleTime: 5 * 60 * 1000, // 5 minutes
     });

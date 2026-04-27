@@ -10,18 +10,16 @@ import { useGetWatchlist, useWatchlistMutation } from '@shared/hooks/useWatchlis
 import { getStockHoldings } from '@shared/services/feature/portfolio/PortfolioApi';
 import { socket } from '@socket';
 
-// Components
-import PremiumPaymentModal from '@shared/components/modals/PremiumPaymentModal';
 import { Pagination } from '@shared/components/pagination/Pagination';
 import StockTable from '../components/stock-dashboard/StockTable';
 import StockDashboardTabs from '../components/stock-dashboard/StockDashboardTabs';
 import MarketMovers from '../components/stock-dashboard/MarketMovers';
 import RecentActivity from '../components/stock-dashboard/RecentActivity';
 
-// Types
 import type { UserStockFilters, StockListResponse } from '@shared/services/user/stocks/FetchUserStocksApi';
 import type { Stock } from '@shared/components/interfaces/IStockTable';
 import type { DashboardTab } from '../types/stock-dashboard.types';
+import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
 
 const TABS: DashboardTab[] = [
   { id: 'all', label: 'All Stocks' },
@@ -32,7 +30,6 @@ const StockDashboardPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   
-  // UI State
   const [activeTab, setActiveTab] = useState('all');
   const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
   const [filters, setFilters] = useState<UserStockFilters>({
@@ -41,7 +38,6 @@ const StockDashboardPage = () => {
     search: '',
   });
 
-  // Queries
   const { data: stocksResponse, isLoading: isStocksLoading, isError: isStocksError } = useQuery({
     queryKey: ['user-stocks', filters],
     queryFn: () => FetchUserStocksApi(filters),
@@ -55,10 +51,8 @@ const StockDashboardPage = () => {
 
   const { data: watchlistResponse, isLoading: isWatchlistLoading } = useGetWatchlist();
   
-  // Mutations
   const { add: addToWatchlist, remove: removeFromWatchlist } = useWatchlistMutation(() => setIsPremiumModalOpen(true));
 
-  // Derived State
   const stocks = useMemo(() => {
     if (activeTab === 'watchlist') {
       return watchlistResponse?.data ?? [];
@@ -75,7 +69,6 @@ const StockDashboardPage = () => {
   const total = stocksResponse?.data?.total ?? 0;
   const recentTrades = useMemo(() => tradesResponse?.data ?? [], [tradesResponse]);
 
-  // Handlers
   const updateFilters = (updates: Partial<UserStockFilters>) => {
     setFilters(prev => ({ ...prev, ...updates, page: updates.page ?? 1 }));
   };
@@ -94,7 +87,6 @@ const StockDashboardPage = () => {
     navigate({ to: '/user/trading/$symbol', params: { symbol } });
   };
 
-  // Real-time updates
   const filtersRef = useRef(filters);
   useEffect(() => { filtersRef.current = filters; }, [filters]);
 
@@ -129,7 +121,6 @@ const StockDashboardPage = () => {
       style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
     >
       
-      {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pt-6 px-6 max-w-[1600px] mx-auto">
         <div>
           <h2 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
@@ -167,7 +158,6 @@ const StockDashboardPage = () => {
 
       <div className="flex flex-col xl:flex-row gap-6 px-6 max-w-[1600px] mx-auto">
         
-        {/* Main Content Area */}
         <div className="flex-1 space-y-6">
           
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-[#1e2025] pb-4">
@@ -196,7 +186,6 @@ const StockDashboardPage = () => {
               onNavigate={handleNavigate}
             />
 
-            {/* Pagination - only for 'all' tab as watchlist is usually smaller/unpaginated in this view */}
             {!isStocksLoading && !isStocksError && activeTab === 'all' && stocks.length > 0 && (
               <div className="p-4 border-t border-[#1e2025] bg-[#0b0c0e]">
                 <Pagination
@@ -210,7 +199,6 @@ const StockDashboardPage = () => {
           </div>
         </div>
 
-        {/* Right Sidebar Section */}
         <div className="w-full xl:w-80 space-y-6">
           <MarketMovers 
             onNavigate={handleNavigate} 

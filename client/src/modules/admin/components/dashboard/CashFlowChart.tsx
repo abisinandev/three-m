@@ -1,3 +1,4 @@
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import type { AdminDashboardData } from "../../types/dashboard.types";
 
 interface CashFlowChartProps {
@@ -5,29 +6,47 @@ interface CashFlowChartProps {
 }
 
 export const CashFlowChart = ({ data }: CashFlowChartProps) => {
-    const maxCashFlow = Math.max(...data.map(cf => Math.max(cf.deposits, cf.withdrawals)), 1);
-
     return (
-        <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-md p-4">
-            <div className="flex items-center justify-between mb-3">
+        <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-md p-4 flex flex-col h-[280px]">
+             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-[11px] font-semibold text-gray-200 uppercase tracking-wider">Weekly Cash Flow</h3>
-                <span className="text-[10px] text-emerald-500 font-medium bg-emerald-500/10 px-1.5 py-0.5 rounded">Net +₹2.1M</span>
-            </div>
-            <div className="h-48 flex items-center justify-center relative">
-                <div className="flex gap-4 items-end h-32 w-full justify-center">
-                    {data.map((cf) => (
-                        <div key={cf.week} className="flex gap-1 items-end h-full group relative">
-                            <div className="w-8 bg-emerald-500 rounded-t-sm opacity-90 group-hover:opacity-100 transition-opacity" style={{ height: `${(cf.deposits / maxCashFlow) * 100}%` }}></div>
-                            <div className="w-8 bg-red-400 rounded-t-sm opacity-90 group-hover:opacity-100 transition-opacity" style={{ height: `${(cf.withdrawals / maxCashFlow) * 100}%` }}></div>
-                        </div>
-                    ))}
-                </div>
-                <div className="absolute inset-0 flex flex-col justify-end text-center pb-1 pointer-events-none">
-                    <div className="flex justify-center gap-6 mt-4 text-[9px] text-gray-500 uppercase tracking-wider font-medium">
-                        <span className="flex items-center gap-1.5"><div className="w-2 h-2 bg-emerald-500 rounded-full"></div> Deposits</span>
-                        <span className="flex items-center gap-1.5"><div className="w-2 h-2 bg-red-400 rounded-full"></div> Withdrawals</span>
+                <div className="flex gap-3 text-[10px] font-medium">
+                    <div className="flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-[#10b981]" />
+                        <span className="text-gray-400">Deposits</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-[#ef4444]" />
+                        <span className="text-gray-400">Withdrawals</span>
                     </div>
                 </div>
+            </div>
+            <div className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={data} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1f1f1f" vertical={false} />
+                        <XAxis 
+                            dataKey="week" 
+                            axisLine={false} 
+                            tickLine={false} 
+                            tick={{ fill: '#5a5f6e', fontSize: 10 }}
+                            dy={10}
+                        />
+                        <YAxis 
+                            axisLine={false} 
+                            tickLine={false} 
+                            tick={{ fill: '#5a5f6e', fontSize: 10 }}
+                            tickFormatter={(value) => `₹${value >= 1000 ? (value / 1000) + 'k' : value}`}
+                        />
+                        <Tooltip 
+                            contentStyle={{ background: '#0f0f0f', border: '1px solid #1f1f1f', borderRadius: '4px', fontSize: '10px' }}
+                            itemStyle={{ padding: '0px' }}
+                            cursor={{ fill: '#1f1f1f' }}
+                        />
+                        <Bar dataKey="deposits" fill="#10b981" radius={[2, 2, 0, 0]} barSize={12} />
+                        <Bar dataKey="withdrawals" fill="#ef4444" radius={[2, 2, 0, 0]} barSize={12} />
+                    </BarChart>
+                </ResponsiveContainer>
             </div>
         </div>
     );

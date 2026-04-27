@@ -79,26 +79,40 @@ export const getPortfolioAssets = async (
     search?: string,
     assetType: "MF" | "STOCK" | "ALL" = "ALL"
 ): Promise<IInvestmentBaseResponse> => {
-    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.GET_ASSETS, {
-        params: { page, limit, search, assetType }
+    let url = API_ROUTES.USER.PORTFOLIO.GET_ASSETS;
+    if (assetType === "MF") url = API_ROUTES.USER.PORTFOLIO.GET_MF_ASSETS;
+    if (assetType === "STOCK") url = API_ROUTES.USER.PORTFOLIO.GET_STOCK_ASSETS;
+
+    const { data } = await api.get(url, {
+        params: { page, limit, search }
     });
 
     const responseData = data?.data;
 
     return {
-        data: responseData?.data.map((item: any) => ({
-            ...item,
-            // Mapping for existing UI compatibility
-            schemeCode: item.symbol || item.assetId,
-            schemeName: item.name || item.symbol || item.assetId,
-            logo: item.logo || "",
-            amount: item.investedAmount,
-            units: item.quantity,
-            nav: item.avgPrice,
-            navDate: item.updatedAt || item.createdAt,
-            investmentType: item.assetType === "MF" ? "MUTUAL_FUND" : "STOCK",
-            paymentMethod: "WALLET", // Default as per existing logic
-        })) ?? [],
+        data: responseData?.data.map((item: any) => {
+            const isStock = item.assetType === "STOCK" || item.investmentType === "STOCK";
+            return {
+                ...item,
+                // Unified field mapping for UI compatibility
+                assetType: item.assetType || (isStock ? "STOCK" : "MF"),
+                schemeCode: item.symbol || item.schemeCode || item.assetId,
+                schemeName: item.name || item.schemeName || item.symbol || item.assetId,
+                logo: item.logo || "",
+                amount: item.investedAmount || item.amount,
+                // For stocks: quantity is shares; for MF: units are fund units
+                units: item.quantity ?? item.units,
+                // nav = LTP (Last Traded Price) for stocks; NAV for MF
+                nav: isStock ? (item.currentPrice || item.avgPrice || item.nav) : (item.nav || item.avgPrice),
+                navDate: item.navDate || item.updatedAt || item.createdAt,
+                investmentType: item.investmentType || (isStock ? "STOCK" : "MUTUAL_FUND"),
+                paymentMethod: item.paymentMethod || "WALLET",
+                currentPrice: item.currentPrice || item.avgPrice,
+                currentValue: item.currentValue,
+                profitPercentage: item.profitPercentage,
+                profit: item.profit || 0,
+            };
+        }) ?? [],
         limit: Number(responseData?.limit ?? limit),
         page: Number(responseData?.page ?? page),
         total: Number(responseData?.total ?? 0),

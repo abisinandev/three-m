@@ -5,7 +5,7 @@ import type { DashboardSip } from '../../types/dashboard.types';
 
 export const ActiveSipsPanel = ({ recentSips, isLoading }: { recentSips: DashboardSip[]; isLoading: boolean }) => {
     return (
-        <div className="bg-[#0f0f0f] rounded-md border border-[#1f1f1f] p-4">
+        <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-5">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-gray-400" />
@@ -19,19 +19,23 @@ export const ActiveSipsPanel = ({ recentSips, isLoading }: { recentSips: Dashboa
             <div className="space-y-2">
                 {isLoading
                     ? Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="p-3 rounded bg-[#161616] border border-[#1f1f1f]">
+                        <div key={i} style={{ background: '#141517', border: '1px solid #1e2025', borderRadius: 6 }} className="p-3">
                             <Skeleton className="h-3 w-40 mb-2" />
                             <Skeleton className="h-2 w-24" />
                         </div>
                     ))
                     : recentSips.length > 0 ? recentSips.map((sip) => (
-                        <div key={sip.id} className="flex items-center justify-between p-3 rounded bg-[#161616] border border-[#1f1f1f] hover:border-[#2a2a2a] transition-colors group cursor-pointer">
+                        <div key={sip.id} style={{ background: '#141517', border: '1px solid #1e2025', borderRadius: 6 }} className="flex items-center justify-between p-3 hover:border-[#2a2a2a] transition-colors group cursor-pointer">
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded bg-blue-500/10 flex items-center justify-center text-blue-400">
-                                    <Calendar className="w-4 h-4" />
-                                </div>
+                                {sip.logo ? (
+                                    <img src={sip.logo} alt={sip.schemeName || sip.schemeCode} className="w-8 h-8 rounded object-contain bg-white" />
+                                ) : (
+                                    <div className="w-8 h-8 rounded bg-blue-500/10 flex items-center justify-center text-blue-400">
+                                        <Calendar className="w-4 h-4" />
+                                    </div>
+                                )}
                                 <div>
-                                    <p className="text-[11px] text-gray-200 font-semibold">{sip.schemeCode}</p>
+                                    <p className="text-[11px] text-gray-200 font-semibold line-clamp-1">{sip.schemeName || sip.schemeCode}</p>
                                     <p className="text-[9px] text-gray-500 mt-0.5">
                                         {sip.frequency} • Next: {new Date(sip.nextExecutionDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                                     </p>

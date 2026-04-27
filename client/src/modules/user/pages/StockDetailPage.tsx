@@ -5,10 +5,10 @@ import { finnhubService } from "@shared/services/finnhub.service";
 import { StockChart } from "@modules/user/components/StockChart";
 import { socketService } from "@shared/services/socket";
 import TradeModal from "@shared/components/modals/TradeModal";
-import PremiumPaymentModal from "@shared/components/modals/PremiumPaymentModal";
 import type { TradeData } from "@shared/components/modals/TradeModal";
 import { useTradeMutation } from "@shared/hooks/useTradeMutation";
 import { getStockHoldings } from "@shared/services/feature/portfolio/PortfolioApi";
+import { useUserStore } from "@stores/user/UserStore";
 
 import { StockDetailHeader } from "../components/stock-detail/StockDetailHeader";
 import { AlgoConsole } from "../components/stock-detail/AlgoConsole";
@@ -16,8 +16,10 @@ import { MarketStatCard } from "../components/stock-detail/MarketStatCard";
 import { MarketDepthCard } from "../components/stock-detail/MarketDepthCard";
 import { CompanyInfoCard } from "../components/stock-detail/CompanyInfoCard";
 import PendingOrdersTable from "../components/stock-detail/PendingOrdersTable";
+import PremiumPaymentModal from "@/shared/components/modals/premium-payment/PremiumPaymentModal";
 
 const StockDetailPage = () => {
+  const user = useUserStore((state) => state.user);
   const { symbol } = useParams({ strict: false }) as { symbol: string };
   const [realtimePrice, setRealtimePrice] = useState<number | null>(null);
 
@@ -84,6 +86,10 @@ const StockDetailPage = () => {
   const { buy, sell, limitBuy, limitSell, isTrading } = useTradeMutation();
 
   const handleTradeClick = (type: "buy" | "sell") => {
+    if (!user?.isSubscribed) {
+      setIsPremiumModalOpen(true);
+      return;
+    }
     setTradeType(type);
     setIsTradeModalOpen(true);
   };

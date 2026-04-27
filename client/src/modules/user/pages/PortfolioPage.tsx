@@ -23,8 +23,8 @@ const PortfolioDashboard = () => {
     const {
         page, setPage, search, setSearch, status, setStatus,
         activeTab, setActiveTab, returnType, setReturnType, limit,
-        summaryData, investments, totalCount, tradeHistoryData,
-        isLoading, isHistoryLoading, isError, error, handlePageChange
+        summaryData, investments, totalCount, historyData,
+        isLoading, isAssetsLoading, isHistoryLoading, isError, error, handlePageChange
     } = usePortfolio();
 
     const xirrValue = summaryData?.xirr ? Number(summaryData.xirr).toFixed(2) : '0.00';
@@ -141,8 +141,8 @@ const PortfolioDashboard = () => {
 
                         {activeTab === 'history' ? (
                             <TradeHistoryTable 
-                                data={tradeHistoryData?.data || []}
-                                total={tradeHistoryData?.total || 0}
+                                data={historyData?.data || []}
+                                total={historyData?.total || 0}
                                 page={page}
                                 limit={limit}
                                 onPageChange={handlePageChange}
@@ -159,7 +159,7 @@ const PortfolioDashboard = () => {
                                 onPageChange={handlePageChange}
                                 activeTab={activeTab}
                                 returnType={returnType}
-                                isLoading={isLoading}
+                                isLoading={isAssetsLoading}
                                 isError={isError}
                                 error={error}
                                 search={search}
