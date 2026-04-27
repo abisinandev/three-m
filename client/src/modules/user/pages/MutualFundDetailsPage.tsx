@@ -40,7 +40,7 @@ const MutualFundDetailsPage = () => {
     staleTime: 60000,
   });
 
-  const latestNav = data?.navHistory?.[0]?.nav ?? 0;
+  const latestNav = data?.nav ?? 0;
 
   const units = useMemo(
     () => (investment > 0 && latestNav > 0 ? calculateUnitPrice(investment, latestNav) : 0),

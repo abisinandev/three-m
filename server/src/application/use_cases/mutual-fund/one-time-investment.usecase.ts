@@ -53,7 +53,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                 const fund = await this._mutualFundRepository.findBySchemeCode(data.schemeCode);
                 if (!fund || fund.status === FundStatus.INACTIVE) throw new ValidationError(ErrorMessages.MUTUAL_FUND.FUND_INACTIVE);
 
-                const latestNav = (await this._navUpdateProvider.fetchNavHistories(schemeCode))[0];
+                const latestNav = (await this._navUpdateProvider.fetchNavHistories(schemeCode))[0].nav;
 
                 const transaction = TransactionEntity.create({
                     userId: user.id!,
@@ -97,14 +97,14 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                         assetId: fund.id as string,
                         assetType: AssetType.MUTUAL_FUND,
                         units: data.units,
-                        avgPrice: amount / (data.units || 1),
+                        avgPrice: latestNav,
                         investedAmount: amount,
                     });
                     await this._portfolioRepository.create(portfolio, session);
                 } else {
                     const newTotalInvested = portfolio.investedAmount + amount;
                     const newQuantity = (portfolio.quantity ?? 0) + (data.units || 0);
-                    const newAvgPrice = newTotalInvested / (newQuantity || 1);
+                    const newAvgPrice = latestNav;
 
                     portfolio.updateQuantityAndPrice(newQuantity, newAvgPrice, newTotalInvested);
 
