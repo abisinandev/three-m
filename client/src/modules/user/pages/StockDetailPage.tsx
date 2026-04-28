@@ -16,7 +16,7 @@ import { MarketStatCard } from "../components/stock-detail/MarketStatCard";
 import { MarketDepthCard } from "../components/stock-detail/MarketDepthCard";
 import { CompanyInfoCard } from "../components/stock-detail/CompanyInfoCard";
 import PendingOrdersTable from "../components/stock-detail/PendingOrdersTable";
-import PremiumPaymentModal from "@/shared/components/modals/premium-payment/PremiumPaymentModal";
+import { usePremiumModalStore } from "@stores/user/PremiumModalStore";
 
 const StockDetailPage = () => {
   const user = useUserStore((state) => state.user);
@@ -25,7 +25,7 @@ const StockDetailPage = () => {
 
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
-  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
+  const { onOpen: openPremiumModal } = usePremiumModalStore();
 
   const {
     data: queryData,
@@ -87,7 +87,7 @@ const StockDetailPage = () => {
 
   const handleTradeClick = (type: "buy" | "sell") => {
     if (!user?.isSubscribed) {
-      setIsPremiumModalOpen(true);
+      openPremiumModal();
       return;
     }
     setTradeType(type);
@@ -205,7 +205,7 @@ const StockDetailPage = () => {
           <div className="col-span-12 lg:col-span-3 space-y-6">
             <AlgoConsole
               symbol={symbol}
-              onPremiumModalOpen={() => setIsPremiumModalOpen(true)}
+              onPremiumModalOpen={openPremiumModal}
             />
 
             <MarketDepthCard
@@ -233,11 +233,6 @@ const StockDetailPage = () => {
         isLoading={isTrading}
         onConfirm={handleTradeConfirm}
         availableQuantity={position?.units || position?.quantity}
-      />
-
-      <PremiumPaymentModal
-        isOpen={isPremiumModalOpen}
-        onClose={() => setIsPremiumModalOpen(false)}
       />
     </div>
   );

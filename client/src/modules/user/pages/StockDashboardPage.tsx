@@ -19,7 +19,7 @@ import RecentActivity from '../components/stock-dashboard/RecentActivity';
 import type { UserStockFilters, StockListResponse } from '@shared/services/user/stocks/FetchUserStocksApi';
 import type { Stock } from '@shared/components/interfaces/IStockTable';
 import type { DashboardTab } from '../types/stock-dashboard.types';
-import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
+import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 
 const TABS: DashboardTab[] = [
   { id: 'all', label: 'All Stocks' },
@@ -31,7 +31,7 @@ const StockDashboardPage = () => {
   const queryClient = useQueryClient();
   
   const [activeTab, setActiveTab] = useState('all');
-  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
+  const { onOpen: openPremiumModal } = usePremiumModalStore();
   const [filters, setFilters] = useState<UserStockFilters>({
     page: 1,
     limit: 20,
@@ -51,7 +51,7 @@ const StockDashboardPage = () => {
 
   const { data: watchlistResponse, isLoading: isWatchlistLoading } = useGetWatchlist();
   
-  const { add: addToWatchlist, remove: removeFromWatchlist } = useWatchlistMutation(() => setIsPremiumModalOpen(true));
+  const { add: addToWatchlist, remove: removeFromWatchlist } = useWatchlistMutation(openPremiumModal);
 
   const stocks = useMemo(() => {
     if (activeTab === 'watchlist') {
@@ -211,10 +211,6 @@ const StockDashboardPage = () => {
         </div>
       </div>
       
-      <PremiumPaymentModal 
-        isOpen={isPremiumModalOpen} 
-        onClose={() => setIsPremiumModalOpen(false)} 
-      />
     </div>
   );
 };

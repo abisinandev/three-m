@@ -16,7 +16,7 @@ import MutualFundChart from '../components/mutual-fund/details/MutualFundChart';
 import PortfolioAllocation from '../components/mutual-fund/details/PortfolioAllocation';
 import NavHistoryList from '../components/mutual-fund/details/NavHistoryList';
 import { useInvestMutualFund } from '../hooks/useInvestMutualFund';
-import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
+import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 import { toast } from 'sonner';
 import { useUserStore } from '@stores/user/UserStore';
 
@@ -30,7 +30,8 @@ const MutualFundDetailsPage = () => {
   const [showInvestModal, setShowInvestModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
+  const { onOpen: openPremiumModal } = usePremiumModalStore();
+  const user = useUserStore((state) => state.user);
   const [investment, setInvestment] = useState<number>(0);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
@@ -65,19 +66,17 @@ const MutualFundDetailsPage = () => {
 
   const { mutate: startSipMutate, isPending: isSipSubmitting } = useStartSip(
     (result) => {
-      const data = result?.data;
-      if (data?.upgrade) {
-        toast.warning(data.message || "Upgrade to Premium to use this feature");
-        setIsPremiumModalOpen(true);
-        setShowSipModal(false);
-      } else {
         setShowSipModal(false);
         setShowSuccessModal(true);
         setErrorMsg('');
-      }
     },
-    (msg) => {
-      alert(msg);
+    (msg, error: any) => {
+      if (error?.response?.status === 402) {
+        setShowSipModal(false);
+        openPremiumModal();
+      } else {
+        alert(msg);
+      }
     }
   );
 
@@ -202,10 +201,9 @@ const MutualFundDetailsPage = () => {
                 </button>
                 <button
                   onClick={() => {
-                    const { user } = useUserStore.getState();
                     if (!user?.isSubscribed) {
                       toast.warning("Upgrade to Premium to use SIP investment feature");
-                      setIsPremiumModalOpen(true);
+                      openPremiumModal();
                     } else {
                       setShowSipModal(true);
                     }
@@ -308,10 +306,6 @@ const MutualFundDetailsPage = () => {
       )}
 
 
-      <PremiumPaymentModal
-        isOpen={isPremiumModalOpen}
-        onClose={() => setIsPremiumModalOpen(false)}
-      />
     </div>
   );
 };

@@ -5,7 +5,7 @@ import {
     BarChart3, Activity, Zap, PieChart, TrendingUp
 } from 'lucide-react';
 import { useState } from 'react';
-import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
+import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 import { useDashboard } from '../hooks/useDashboard';
 
 import { formatCurrency, formatCompact } from '../helpers/format';
@@ -17,7 +17,7 @@ import { RecentInvestmentsPanel } from '../components/dashboard/RecentInvestment
 
 const DashboardPage = () => {
     const user = useUserStore((state) => state.user);
-    const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
+    const { onOpen: openPremiumModal } = usePremiumModalStore();
     const { data, isLoading } = useDashboard();
 
     const walletBalance = data?.wallet?.balance ?? 0;
@@ -83,7 +83,7 @@ const DashboardPage = () => {
 
             {!user?.isVerified && <VerificationAlertCard />}
             {user?.isVerified && !user?.isSubscribed && (
-                <PremiumUpgradeCard onUpgrade={() => setIsPremiumModalOpen(true)} />
+                <PremiumUpgradeCard onUpgrade={openPremiumModal} />
             )}
             {user?.isSubscribed && (
                 <div className="bg-amber-500/5 border border-amber-500/20 rounded-md p-2.5 flex items-center justify-between">
@@ -193,10 +193,6 @@ const DashboardPage = () => {
                 <RecentInvestmentsPanel recentInvestments={recentInvestments} isLoading={isLoading} />
             </div>
 
-            <PremiumPaymentModal
-                isOpen={isPremiumModalOpen}
-                onClose={() => setIsPremiumModalOpen(false)}
-            />
             </div>
         </div>
     );

@@ -11,6 +11,8 @@ import { NotificationDropdown } from '@modules/user/notifications/components/Not
 import { useProfileQuery } from '@shared/services/user/ProfileApi';
 import AiAssistantPanel from '@shared/components/ai-chatbot/AiChatbot';
 import { ROUTES } from '@shared/constants/routes';
+import PremiumPaymentModal from '@shared/components/modals/premium-payment/PremiumPaymentModal';
+import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 
 const UserLayout = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -18,6 +20,7 @@ const UserLayout = () => {
     const [loggingOut, setLoggingOut] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { user, logout, setUser } = useUserStore();
+    const { isOpen: isPremiumModalOpen, onClose: closePremiumModal } = usePremiumModalStore();
     const navigate = useNavigate();
 
     const { data } = useProfileQuery()
@@ -161,6 +164,11 @@ const UserLayout = () => {
             </main>
             <AiAssistantPanel />
             <Footer />
+
+            <PremiumPaymentModal 
+                isOpen={isPremiumModalOpen} 
+                onClose={closePremiumModal} 
+            />
 
             <ConfirmModal
                 isOpen={showLogoutModal}

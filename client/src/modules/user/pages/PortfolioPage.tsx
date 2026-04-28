@@ -10,7 +10,7 @@ import { HoldingsTable } from '../portfolio/components/HoldingsTable';
 import { TradeHistoryTable } from '../portfolio/components/TradeHistoryTable';
 import { AssetAllocationDonut } from '../portfolio/components/AssetAllocationDonut';
 import { PortfolioXirrCard } from '../portfolio/components/StatsSidebar';
-import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
+import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 import { usePortfolio } from '../portfolio/hooks/usePortfolio';
 import PendingOrdersTable from '../components/stock-detail/PendingOrdersTable';
 
@@ -18,7 +18,7 @@ import PendingOrdersTable from '../components/stock-detail/PendingOrdersTable';
 const PortfolioDashboard = () => {
     const user = useUserStore((state) => state.user);
     const navigate = useNavigate();
-    const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
+    const { onOpen: openPremiumModal } = usePremiumModalStore();
 
     const {
         page, setPage, search, setSearch, status, setStatus,
@@ -105,7 +105,7 @@ const PortfolioDashboard = () => {
                             </div>
                         </div>
                         <button 
-                            onClick={() => setIsPremiumModalOpen(true)}
+                            onClick={openPremiumModal}
                             style={{
                                 padding: '6px 14px', borderRadius: 6,
                                 background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.2)',
@@ -194,10 +194,6 @@ const PortfolioDashboard = () => {
                 </div>
             </div>
 
-            <PremiumPaymentModal
-                isOpen={isPremiumModalOpen}
-                onClose={() => setIsPremiumModalOpen(false)}
-            />
         </div>
     );
 };
