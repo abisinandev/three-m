@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { HttpStatus } from "@domain/enum/express/status-code";
 import { inject, injectable } from "inversify";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { GetStrategiesUseCase } from "@application/use_cases/algo-trading/get-strategies.usecase";
@@ -49,8 +50,18 @@ export class AlgoTradingController {
             if (!symbol || !strategyName || !config) {
                 return ResponseHelper.failure(res, "Missing required fields", 400);
             }
-            await this._saveAlgoStrategyUseCase.execute({ userId, symbol, strategyName, config });
-            return ResponseHelper.success(res, SuccessMessages.ALGO.STRATEGY_SAVED, null, 201);
+            const result = await this._saveAlgoStrategyUseCase.execute({ userId, symbol, strategyName, config });
+            
+            if (result && result.upgrade) {
+                return ResponseHelper.success(
+                    res,
+                    result.message,
+                    null,
+                    HttpStatus.PAYMENT_REQUIRED
+                )
+            }
+
+            return ResponseHelper.success(res, SuccessMessages.ALGO.STRATEGY_SAVED, result, HttpStatus.CREATED);
         } catch (error) {
             next(error);
         }
@@ -62,6 +73,16 @@ export class AlgoTradingController {
             const { strategyId } = req.params as { strategyId: string };
             const { isActive } = req.body;
             const result = await this._turnAlgoTradingUseCase.execute(userId, strategyId, isActive);
+            
+            if (result && result.upgrade) {
+                return ResponseHelper.success(
+                    res,
+                    result.message,
+                    null,
+                    HttpStatus.PAYMENT_REQUIRED
+                )
+            }
+
             const message = isActive
                 ? SuccessMessages.ALGO.STRATEGY_ACTIVATED
                 : SuccessMessages.ALGO.STRATEGY_DEACTIVATED;

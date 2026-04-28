@@ -33,6 +33,8 @@ import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { OrderStatus } from "@domain/entities/stock/enum/order-status.enum";
+import { ISubscription } from "@infrastructure/databases/mongo_db/models/interfaces/subscriptions/subscription-schema.interface";
+import { ISubscriptionRepository } from "@application/interfaces/repositories/subscriptions/subscriptions-repository.interface";
 
 @injectable()
 export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
@@ -47,15 +49,16 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
+        @inject(SUBSCRIPTION_TYPES.SubscriptionRepository) private readonly _subscriptionRepository: ISubscriptionRepository,
     ) { }
 
     async execute(order: BuyOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
 
         const hasAccess = await this._featureAccess.hasAccess(
             userId,
-            Features.STOCK_TRADING
+            Features.STOCK_TRADING,
         );
-
+        
         if (!hasAccess) {
             return {
                 message: SuccessMessages.SUBSCRIPTION.UPGRADE_PREMIUM,

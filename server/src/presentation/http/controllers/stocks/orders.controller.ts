@@ -32,6 +32,15 @@ export class OrdersController {
             const userId = req.user?.id as string;
 
             const result = await this._buyOrderUseCase.execute(buyOrderDto, userId);
+            
+            if (result && result.upgrade) {
+                return ResponseHelper.success(
+                    res,
+                    result.message,
+                    null,
+                    HttpStatus.PAYMENT_REQUIRED
+                )
+            }
 
             return ResponseHelper.success(
                 res,
@@ -51,6 +60,15 @@ export class OrdersController {
 
             const result = await this._sellOrderUseCase.execute(sellOrderDto, userId);
 
+            if (result && result.upgrade) {
+                return ResponseHelper.success(
+                    res,
+                    result.message,
+                    null,
+                    HttpStatus.PAYMENT_REQUIRED
+                )
+            }
+
             return ResponseHelper.success(
                 res,
                 SuccessMessages.STOCK.SELL_ORDER,
@@ -68,6 +86,15 @@ export class OrdersController {
             const userId = req.user?.id as string;
 
             const result = await this._limitBuyOrderUseCase.execute(limitBuyOrderDto, userId);
+
+            if (result && result.upgrade) {
+                return ResponseHelper.success(
+                    res,
+                    result.message,
+                    null,
+                    HttpStatus.PAYMENT_REQUIRED
+                )
+            }
 
             return ResponseHelper.success(
                 res,

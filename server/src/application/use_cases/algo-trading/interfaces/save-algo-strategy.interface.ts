@@ -6,5 +6,5 @@ export interface AlgoStrategyDTO {
 }
 
 export interface ISaveAlgoStrategyUseCase {
-    execute(data: AlgoStrategyDTO): Promise<void>;
+    execute(data: AlgoStrategyDTO): Promise<any>;
 }

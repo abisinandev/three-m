@@ -104,17 +104,20 @@ export class SubscriptionEntity {
     }
 
     isActive(): boolean {
-        return this._status === SubscriptionStatus.ACTIVE && this._endDate > new Date();
+        const now = new Date()
+        return this._status === SubscriptionStatus.ACTIVE &&
+            this.startDate <= now &&
+            this._endDate > now;
     }
 
     renew(planCode: SubscriptionPlans, durationInDays: number) {
         const now = new Date();
         this._planCode = planCode;
         if (this.isActive()) {
-       
+
             this._endDate.setDate(this._endDate.getDate() + durationInDays);
         } else {
- 
+
             this._startDate = now;
             this._endDate = new Date(now);
             this._endDate.setDate(now.getDate() + durationInDays);
