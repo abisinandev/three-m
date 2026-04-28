@@ -2,7 +2,7 @@ import { Worker, Job } from 'bullmq';
 import { injectable, inject } from 'inversify';
 import { bullConnection } from '../../../bullmq/queue.config';
 import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.types';
-import { ISignalService } from '@application/interfaces/services/algo-trading/signal.service.interface';
+import { IProcessSignalUseCase } from '@application/use_cases/algo-trading/interfaces/process-signal.interface';
 import { SignalJobData } from '@application/interfaces/services/algo-trading/signal-queue.interface';
 
 @injectable()
@@ -10,7 +10,7 @@ export class SignalWorker {
     private worker: Worker;
 
     constructor(
-        @inject(STOCK_TYPES.SignalService) private readonly _signalService: ISignalService
+        @inject(STOCK_TYPES.ProcessSignalUseCase) private readonly _processSignalUseCase: IProcessSignalUseCase
     ) {
         this.worker = new Worker(
             'signal-queue',
@@ -36,7 +36,7 @@ export class SignalWorker {
         console.log(`Processing signal for ${job.data.symbol}`);
 
         try {
-            await this._signalService.processSignal(job.data);
+            await this._processSignalUseCase.execute(job.data);
         } catch (error) {
             console.error(`Error in SignalWorker for signal ${job.id}:`, error);
             throw error;

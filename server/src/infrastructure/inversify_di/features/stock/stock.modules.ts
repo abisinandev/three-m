@@ -46,10 +46,8 @@ import { GetActiveStrategyUseCase } from "@application/use_cases/algo-trading/ge
 import { TurnOnAlgoTradingUseCase } from "@application/use_cases/algo-trading/turn-on-algo-trading.usecase";
 import { IAlgoSignalRepository } from "@application/interfaces/repositories/algo/algo-signal-repository.interface";
 import { AlgoSignalRepository } from "@infrastructure/databases/repository/algo-trading/algo-signal.repository";
-import { SignalService } from "@infrastructure/providers/algos/queue/signal/signal.service";
-import { ISignalService } from "@application/interfaces/services/algo-trading/signal.service.interface";
-import { IStrategyService } from "@application/interfaces/services/algo-trading/strategy-service.interface";
-import { StrategyService } from "@infrastructure/providers/algos/queue/strategy/strategy.service";
+import { IProcessSignalUseCase } from "@application/use_cases/algo-trading/interfaces/process-signal.interface";
+import { ProcessSignalUseCase } from "@application/use_cases/algo-trading/process-signal.usecase";
 import { IConfirmBuySignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-buy-signal.interface";
 import { ConfirmBuySignalUseCase } from "@application/use_cases/algo-trading/confirm-buy-signal.usecase";
 import { IConfirmSellSignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-sell-signal.interface";
@@ -81,12 +79,16 @@ import { SlTpOrderWorker } from "@infrastructure/providers/stocks/queue/workers/
 import { SlTpOrderScheduler } from "@infrastructure/providers/stocks/queue/sl-tp-order.scheduler";
 import { IGetMarketMoversUseCase } from "@application/use_cases/stock/interfaces/get-market-movers.interface";
 import { GetMarketMoversUseCase } from "@application/use_cases/stock/get-market-movers.usecase";
+import { IGetValidStrategiesUseCase } from "@application/use_cases/algo-trading/interfaces/get-valid-strategies.interface";
+import { GetValidStrategiesUseCase } from "@application/use_cases/algo-trading/get-valid-strategies.usecase";
+import { IEvaluateStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/evaluate-strategy.interface";
+import { EvaluateStrategyUseCase } from "@application/use_cases/algo-trading/evaluate-strategy.usecase";
 
 // BullMQ & Queues
 import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy/strategy.queue";
 import { StrategyWorker } from "@infrastructure/providers/algos/queue/workers/strategy.worker";
 import { SignalWorker } from "@infrastructure/providers/algos/queue/workers/signal.worker";
-import { StrategyScheduler } from "@infrastructure/providers/algos/queue/strategy-scheduler";
+import { StrategyScheduler } from "@infrastructure/providers/algos/strategy-scheduler";
 import { IStrategyQueue } from "@application/interfaces/services/algo-trading/strategy-queue.interface";
 import { ISignalQueue } from "@application/interfaces/services/algo-trading/signal-queue.interface";
 import { IStrategyScheduler } from "@application/interfaces/services/algo-trading/strategy-scheduler.interface";
@@ -137,11 +139,12 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<ITurnOnAlgoTradingUseCase>(STOCK_TYPES.TurnOnAlgoTradingUseCase).to(TurnOnAlgoTradingUseCase);
     bind<IAlgoStrategyRepository>(STOCK_TYPES.AlgoStrategyRepository).to(AlgoStrategyRepository);
     bind<IAlgoSignalRepository>(STOCK_TYPES.AlgoSignalRepository).to(AlgoSignalRepository);
-    bind<ISignalService>(STOCK_TYPES.SignalService).to(SignalService);
+    bind<IProcessSignalUseCase>(STOCK_TYPES.ProcessSignalUseCase).to(ProcessSignalUseCase);
     bind<IConfirmBuySignalUseCase>(STOCK_TYPES.ConfirmBuySignalUseCase).to(ConfirmBuySignalUseCase);
     bind<IConfirmSellSignalUseCase>(STOCK_TYPES.ConfirmSellSignalUseCase).to(ConfirmSellSignalUseCase);
-    bind<IStrategyService>(STOCK_TYPES.StrategyService).to(StrategyService);
     bind<ISignalManager>(STOCK_TYPES.SignalManager).to(SignalManager);
+    bind<IGetValidStrategiesUseCase>(STOCK_TYPES.GetValidStrategiesUseCase).to(GetValidStrategiesUseCase);
+    bind<IEvaluateStrategyUseCase>(STOCK_TYPES.EvaluateStrategyUseCase).to(EvaluateStrategyUseCase);
 
     // BullMQ & Queues
     bind<IStrategyQueue>(STOCK_TYPES.StrategyQueue).to(StrategyQueue);

@@ -37,12 +37,12 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
         const data: InvestmentResponseDTO[] = [];
 
         for (const stockPf of stockPortfolios) {
-            // assetId stores the ObjectId of the stock record
+     
             const stockDetails = await this._stockRepository.findById(stockPf.assetId);
             const symbol = stockDetails?.symbol || stockPf.assetId;
 
             let currentPrice = stockPf.avgPrice;
-            // Use the actual symbol for market data lookup
+        
             const quote = await this._marketDataProvider.getLatestQuote(symbol);
             if (quote) {
                 currentPrice = quote.price;

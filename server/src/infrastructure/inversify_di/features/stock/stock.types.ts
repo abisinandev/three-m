@@ -41,11 +41,12 @@ export const STOCK_TYPES = {
     TurnOnAlgoTradingUseCase: Symbol.for("TurnOnAlgoTradingUseCase"),
     AlgoStrategyRepository: Symbol.for("AlgoStrategyRepository"),
     AlgoSignalRepository: Symbol.for("AlgoSignalRepository"),
-    SignalService: Symbol.for("SignalService"),
+    ProcessSignalUseCase: Symbol.for("ProcessSignalUseCase"),
     ConfirmBuySignalUseCase: Symbol.for("ConfirmBuySignalUseCase"),
     ConfirmSellSignalUseCase: Symbol.for("ConfirmSellSignalUseCase"),
-    StrategyService: Symbol.for("StrategyService"),
     SignalManager: Symbol.for("SignalManager"),
+    GetValidStrategiesUseCase: Symbol.for("GetValidStrategiesUseCase"),
+    EvaluateStrategyUseCase: Symbol.for("EvaluateStrategyUseCase"),
 
     // Queue & BullMQ
     StrategyQueue: Symbol.for("StrategyQueue"),

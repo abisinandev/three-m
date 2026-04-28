@@ -92,11 +92,6 @@ export class AlgoTradingController {
         }
     }
 
-    /**
-     * Dispatches to the correct use case based on the `action` field in the request body.
-     * BUY → ConfirmBuySignalUseCase
-     * SELL → ConfirmSellSignalUseCase
-     */
     async confirmSignal(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.user?.id as string;
