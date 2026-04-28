@@ -40,7 +40,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
   const [limitPrice, setLimitPrice] = useState<string>('');
   const [stopLoss, setStopLoss] = useState<string>('');
   const [takeProfit, setTakeProfit] = useState<string>('');
-  
+
   const balance = 100000;
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
       setStopLoss('');
       setTakeProfit('');
     }
-  }, [isOpen, symbol, initialType]);
+  }, [isOpen, symbol, initialType, currentPrice]);
 
   if (!isOpen) return null;
 
@@ -66,7 +66,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) return;
-    
+
     onConfirm({
       symbol,
       type,
@@ -80,80 +80,84 @@ const TradeModal: React.FC<TradeModalProps> = ({
   };
 
   const isBuy = type === 'buy';
+  const themeColor = isBuy ? '#00C853' : '#FF1744';
   const themeBg = isBuy ? 'bg-[#00C853]' : 'bg-[#FF1744]';
   const textColor = isBuy ? 'text-[#00C853]' : 'text-[#FF1744]';
   const borderColor = isBuy ? 'border-[#00C853]' : 'border-[#FF1744]';
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-      <div 
+      <div
         className="fixed inset-0 bg-black/80"
         onClick={onClose}
       />
 
-      <div className="relative bg-[#0f0f0f] text-gray-100 rounded-[10px] shadow-2xl w-full max-w-md overflow-hidden font-inter border border-[#1f1f1f]">
-        
-        <div className={`${themeBg} px-5 py-3 flex items-center justify-between`}>
-          <div className="flex items-center gap-2">
-            <span className="text-white font-bold text-sm tracking-wide">
-              {type.toUpperCase()} {symbol} <span className="font-normal opacity-80">x {quantity || '0'} Qty</span>
+      <div className="relative bg-[#0b0c0e] text-[#e8eaed] rounded-2xl shadow-2xl w-full max-w-[360px] overflow-hidden border border-[#1e2025]">
+
+        <div className={`px-5 py-4 flex items-center justify-between ${themeBg}`}>
+          <div className="flex items-center gap-3">
+            <span className="text-[12px] font-black text-black uppercase tracking-widest">
+              {type} {symbol}
             </span>
           </div>
-          <button 
+          <button
             onClick={onClose}
-            className="text-white/80 hover:text-white transition-colors"
+            className="text-black/60 hover:text-black transition-colors"
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          
-          <div className="px-5 py-3 border-b border-[#1f1f1f] bg-[#161616] flex justify-between items-center text-[11px] font-medium text-gray-400">
+
+          <div className="px-5 py-3 bg-[#111214] border-b border-[#1e2025] flex justify-between items-center">
             <div className="flex gap-4">
-              <span>EXCHANGE: <span className="text-gray-100 uppercase">NSE</span></span>
-              <span>LTP: <span className="text-gray-100">₹{currentPrice.toLocaleString('en-IN')}</span></span>
+              <div className="flex flex-col">
+                <span className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-wider">Exchange</span>
+                <span className="text-[11px] font-bold text-white uppercase">NSE</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-wider">LTP</span>
+                <span className="text-[11px] font-bold text-white">₹{currentPrice.toLocaleString('en-IN')}</span>
+              </div>
             </div>
-            <div className={`flex items-center gap-1 ${textColor}`}>
-              <Info size={10} />
-              Balance: ₹{balance.toLocaleString('en-IN')}
+            <div className="flex flex-col items-end">
+              <span className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-wider">Balance</span>
+              <span className="text-[11px] font-bold text-[#00C853]">₹{balance.toLocaleString('en-IN')}</span>
             </div>
           </div>
 
-          <div className="p-5 space-y-6">
-            
-            <div className="flex items-center gap-6">
-              <div className="flex-1">
-                <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-2">Order Type</label>
-                <div className="flex gap-2">
-                  {[
-                    { label: 'MARKET', value: 'MARKET_ORDER' },
-                    { label: 'LIMIT', value: 'LIMIT_ORDER' }
-                  ].map((mode) => (
-                    <button
-                      key={mode.value}
-                      type="button"
-                      onClick={() => setOrderType(mode.value as any)}
-                      className={`flex-1 py-1.5 px-3 text-xs font-bold border transition-all rounded-[4px] ${
-                        orderType === mode.value 
-                          ? `${borderColor} ${textColor} bg-white/5` 
-                          : 'border-[#2a2a2a] text-gray-500 hover:border-[#444]'
+          <div className="p-5 space-y-5">
+
+            <div>
+              <label className="block text-[10px] text-[#5a5f6e] font-bold uppercase tracking-wider mb-2.5">Order Type</label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { label: 'MARKET', value: 'MARKET_ORDER' },
+                  { label: 'LIMIT', value: 'LIMIT_ORDER' }
+                ].map((mode) => (
+                  <button
+                    key={mode.value}
+                    type="button"
+                    onClick={() => setOrderType(mode.value as any)}
+                    className={`py-2 px-3 text-[10px] font-black border transition-all rounded-xl ${orderType === mode.value
+                      ? `${borderColor} ${textColor} bg-[#111214]`
+                      : 'border-[#1e2025] text-[#5a5f6e] hover:border-[#333]'
                       }`}
-                    >
-                      {mode.label}
-                    </button>
-                  ))}
-                </div>
+                  >
+                    {mode.label}
+                  </button>
+                ))}
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <div className="flex justify-between items-end mb-2">
-                  <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider">Qty</label>
+                  <label className="block text-[10px] text-[#5a5f6e] font-bold uppercase tracking-wider">Quantity</label>
                   {type === 'sell' && availableQuantity !== undefined && (
-                    <span 
-                      className="text-[10px] text-gray-400 font-bold cursor-pointer hover:text-white transition-colors border-b border-gray-400 border-dashed"
+                    <span
+                      className="text-[9px] text-[#00C853] font-bold cursor-pointer hover:underline"
                       onClick={() => setQuantity(availableQuantity.toString())}
                     >
                       Max: {availableQuantity}
@@ -165,7 +169,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
                   placeholder="0"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className={`w-full bg-[#1a1a1a] border rounded-[4px] px-3 py-2 text-sm text-white focus:outline-none font-medium placeholder:text-gray-600 ${isInsufficientShares ? 'border-red-500 focus:border-red-500' : 'border-[#2a2a2a] focus:border-blue-500'}`}
+                  className={`w-full bg-[#111214] border rounded-xl px-3 py-2.5 text-[12px] text-white focus:outline-none font-bold placeholder:text-[#333] transition-all ${isInsufficientShares ? 'border-red-500/50 focus:border-red-500' : 'border-[#1e2025] focus:border-[#00C853]'}`}
                   required
                 />
                 {isInsufficientShares && (
@@ -173,82 +177,64 @@ const TradeModal: React.FC<TradeModalProps> = ({
                 )}
               </div>
               <div>
-                <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-2">Price</label>
+                <label className="block text-[10px] text-[#5a5f6e] font-bold uppercase tracking-wider mb-2">Price</label>
                 <input
                   type="number"
                   placeholder="0.00"
                   disabled={orderType === 'MARKET_ORDER'}
                   value={orderType === 'MARKET_ORDER' ? currentPrice : limitPrice}
                   onChange={(e) => setLimitPrice(e.target.value)}
-                  className={`w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-[4px] px-3 py-2 text-sm font-medium focus:outline-none focus:border-blue-500 text-white disabled:bg-[#0a0a0a] disabled:text-gray-600 disabled:border-[#1a1a1a]`}
+                  className={`w-full bg-[#111214] border border-[#1e2025] rounded-xl px-3 py-2.5 text-[12px] font-bold focus:outline-none focus:border-[#00C853] text-white disabled:opacity-40 disabled:cursor-not-allowed`}
                 />
               </div>
             </div>
 
             {type === 'buy' && (
-              <div className="pt-2 border-t border-[#1f1f1f]">
-                   <label className="block text-[11px] text-gray-500 font-bold uppercase tracking-wider mb-3">Risk Management (Optional)</label>
-                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] text-gray-500 mb-1">Stop Loss</label>
-                      <input
-                        type="number"
-                        placeholder="SL Price"
-                        value={stopLoss}
-                        onChange={(e) => setStopLoss(e.target.value)}
-                        className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-[4px] px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder:text-gray-600"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] text-gray-500 mb-1">Take Profit</label>
-                      <input
-                        type="number"
-                        placeholder="TP Price"
-                        value={takeProfit}
-                        onChange={(e) => setTakeProfit(e.target.value)}
-                        className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-[4px] px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder:text-gray-600"
-                      />
-                    </div>
+              <div className="pt-4 border-t border-[#1e2025]">
+                <label className="block text-[10px] text-[#5a5f6e] font-bold uppercase tracking-wider mb-3">Risk Management</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[9px] text-[#5a5f6e] font-bold mb-1.5 uppercase">Stop Loss</label>
+                    <input
+                      type="number"
+                      placeholder="SL Price"
+                      value={stopLoss}
+                      onChange={(e) => setStopLoss(e.target.value)}
+                      className="w-full bg-[#111214] border border-[#1e2025] rounded-xl px-3 py-2 text-[11px] text-white focus:outline-none focus:border-red-500/50 placeholder:text-[#333]"
+                    />
                   </div>
+                  <div>
+                    <label className="block text-[9px] text-[#5a5f6e] font-bold mb-1.5 uppercase">Take Profit</label>
+                    <input
+                      type="number"
+                      placeholder="TP Price"
+                      value={takeProfit}
+                      onChange={(e) => setTakeProfit(e.target.value)}
+                      className="w-full bg-[#111214] border border-[#1e2025] rounded-xl px-3 py-2 text-[11px] text-white focus:outline-none focus:border-green-500/50 placeholder:text-[#333]"
+                    />
+                  </div>
+                </div>
               </div>
             )}
           </div>
 
-          <div className="px-5 py-4 bg-[#161616] flex items-center justify-between border-t border-[#1f1f1f]">
-            <div className="space-y-0.5">
-              {type === 'buy' ? (
-                <>
-                  <p className="text-[10px] text-gray-500 font-medium uppercase tracking-tight">Margin required:</p>
-                  <p className={`text-sm font-bold ${isInsufficientFunds ? 'text-red-500' : 'text-gray-100'}`}>
-                    ₹{total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="text-[10px] text-gray-500 font-medium uppercase tracking-tight">Available Qty:</p>
-                  <p className={`text-sm font-bold ${isInsufficientShares ? 'text-red-500' : 'text-gray-100'}`}>
-                    {availableQuantity ?? 0}
-                  </p>
-                </>
-              )}
+          <div className="px-5 py-4 bg-[#111214] flex items-center justify-between border-t border-[#1e2025]">
+            <div className="flex flex-col">
+              <span className="text-[10px] text-[#5a5f6e] font-bold uppercase tracking-wider">
+                {type === 'buy' ? 'Required' : 'Receivable'}
+              </span>
+              <span className={`text-[15px] font-black ${isInsufficientFunds ? 'text-red-500' : 'text-white'}`}>
+                ₹{total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+              </span>
             </div>
-            
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-6 py-2 text-xs font-bold text-gray-500 hover:text-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={!isValid || isLoading}
-                className={`px-8 py-2 min-w-[120px] rounded-[4px] text-xs font-bold text-white shadow-sm transition-all flex items-center justify-center gap-2 ${themeBg} hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed`}
-              >
-                {isLoading ? <Loader2 size={14} className="animate-spin" /> : type.toUpperCase()}
-              </button>
-            </div>
+
+            <button
+              type="submit"
+              disabled={!isValid || isLoading}
+              className={`px-8 py-3 rounded-xl text-[11px] font-black text-black uppercase tracking-widest shadow-lg transition-all flex items-center justify-center gap-2 ${themeBg} hover:scale-[1.02] active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed`}
+            >
+              {isLoading ? <Loader2 size={14} className="animate-spin" /> : type}
+            </button>
           </div>
         </form>
       </div>

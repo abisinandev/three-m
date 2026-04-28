@@ -1,4 +1,4 @@
-import { X, CheckCircle, Send } from 'lucide-react';
+import { X, CheckCircle, Send, Loader2 } from 'lucide-react';
 import { useState, useEffect, type FormEvent } from 'react';
 import { useUserStore } from '@stores/user/UserStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -110,139 +110,141 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
         : 'Not added';
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/80" onClick={onClose} />
 
-            <div className="relative w-full max-w-md rounded-2xl bg-[#0a0a0a] border border-[#1f1f1f] p-6 shadow-2xl max-h-screen overflow-y-auto">
-                <div className="flex items-center justify-between mb-5">
-                    <h2 className="text-lg font-semibold text-white">Edit Profile</h2>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-300">
-                        <X className="w-5 h-5" />
+            <div className="relative w-full max-w-[380px] rounded-2xl bg-[#0b0c0e] border border-[#1e2025] shadow-2xl max-h-[90vh] overflow-y-auto">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-[#1e2025] sticky top-0 bg-[#0b0c0e] z-10">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-[#00C853] animate-pulse" />
+                        <span className="text-[12px] font-black text-[#e8eaed] uppercase tracking-widest">Edit Profile</span>
+                    </div>
+                    <button onClick={onClose} className="text-[#5a5f6e] hover:text-white transition-colors">
+                        <X className="w-4 h-4" />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="p-5 space-y-5">
                     <div>
-                        <label className="block text-xs font-medium text-gray-400 mb-1.5">Full Name</label>
+                        <label className="block text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2">Full Name</label>
                         <input
                             type="text"
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
-                            className="w-full px-3 py-2 bg-[#111111] border border-[#333] rounded-lg text-white text-xs placeholder-gray-500 focus:outline-none focus:border-[#22C55E]"
+                            className="w-full px-3 py-2.5 bg-[#111214] border border-[#1e2025] rounded-xl text-white text-[12px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-bold transition-all"
                             placeholder="Enter full name"
                         />
-                        {errors.fullName && <p className="text-red-400 text-xs mt-1">{errors.fullName}</p>}
+                        {errors.fullName && <p className="text-red-500 text-[9px] font-bold mt-1 uppercase tracking-tight">{errors.fullName}</p>}
                     </div>
 
                     <div>
-                        <label className="block text-xs font-medium text-gray-400 mb-1.5">Phone Number</label>
+                        <label className="block text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2">Phone Number</label>
                         <div className="flex">
-                            <span className="inline-flex items-center px-3 text-gray-500 bg-[#111111] border border-r-0 border-[#333] rounded-l-lg text-xs">+91</span>
+                            <span className="inline-flex items-center px-3 text-[#5a5f6e] bg-[#111214] border border-r-0 border-[#1e2025] rounded-l-xl text-[11px] font-bold">+91</span>
                             <input
                                 type="tel"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                                 maxLength={10}
-                                className="w-full px-3 py-2 bg-[#111111] border border-[#333] rounded-r-lg text-white text-xs placeholder-gray-500 focus:outline-none focus:border-[#22C55E]"
+                                className="w-full px-3 py-2.5 bg-[#111214] border border-[#1e2025] rounded-r-xl text-white text-[12px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-black tracking-widest"
                                 placeholder="10-digit mobile"
                             />
                         </div>
-                        {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
+                        {errors.phone && <p className="text-red-500 text-[9px] font-bold mt-1 uppercase tracking-tight">{errors.phone}</p>}
                     </div>
 
                     <div>
-                        <label className="block text-xs font-medium text-gray-400 mb-1.5">Email Address</label>
+                        <label className="block text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2">Email Address</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 bg-[#111111] border border-[#333] rounded-lg text-white text-xs placeholder-gray-500 focus:outline-none focus:border-[#22C55E]"
+                            className="w-full px-3 py-2.5 bg-[#111214] border border-[#1e2025] rounded-xl text-white text-[12px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-bold transition-all"
                             placeholder="name@example.com"
                         />
-                        {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+                        {errors.email && <p className="text-red-500 text-[9px] font-bold mt-1 uppercase tracking-tight">{errors.email}</p>}
 
                         {isEmailChanged && !isEmailVerified && !showOtpField && (
                             <button
                                 type="button"
                                 onClick={() => sendOtpMutation.mutate()}
                                 disabled={sendOtpMutation.isPending}
-                                className="mt-2 flex items-center gap-1.5 text-xs font-medium text-[#22C55E] hover:text-[#1ea853]"
+                                className="mt-2.5 flex items-center gap-2 text-[10px] font-black text-[#00C853] hover:text-[#00E676] uppercase tracking-widest"
                             >
-                                <Send className="w-3.5 h-3.5" />
-                                {sendOtpMutation.isPending ? 'Sending...' : 'Verify Email'}
+                                <Send className="w-3 h-3" />
+                                {sendOtpMutation.isPending ? 'Sending OTP...' : 'Verify Email'}
                             </button>
                         )}
 
                         {showOtpField && (
-                            <div className="mt-2 space-y-2">
+                            <div className="mt-3 space-y-3 animate-in fade-in duration-200">
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
                                         value={otp}
                                         onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                                         maxLength={6}
-                                        placeholder="Enter 6-digit OTP"
-                                        className="flex-1 px-3 py-2 bg-[#111111] border border-[#333] rounded-lg text-white text-xs placeholder-gray-500 focus:outline-none focus:border-[#22C55E]"
+                                        placeholder="OTP"
+                                        className="flex-1 px-3 py-2 bg-[#111214] border border-[#1e2025] rounded-xl text-white text-[12px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-black tracking-[0.3em] text-center"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => verifyOtpMutation.mutate()}
                                         disabled={verifyOtpMutation.isPending || otp.length !== 6}
-                                        className="px-3 py-2 bg-[#22C55E] hover:bg-[#1ea853] disabled:opacity-60 text-white text-xs font-medium rounded-lg transition"
+                                        className="px-4 py-2 bg-[#00C853] hover:bg-[#00E676] disabled:opacity-30 text-black text-[10px] font-black rounded-xl transition uppercase tracking-widest"
                                     >
                                         {verifyOtpMutation.isPending ? '...' : 'Verify'}
                                     </button>
                                 </div>
-                                {errors.otp && <p className="text-red-400 text-xs">{errors.otp}</p>}
-                                <p className="text-xs text-gray-500">Check spam folder if not received</p>
+                                {errors.otp && <p className="text-red-500 text-[9px] font-bold uppercase tracking-tight">{errors.otp}</p>}
                             </div>
                         )}
 
                         {isEmailVerified && (
-                            <div className="mt-2 flex items-center gap-1.5 text-green-400 text-xs font-medium">
-                                <CheckCircle className="w-4 h-4" />
-                                Email verified
+                            <div className="mt-2.5 flex items-center gap-1.5 text-[#00C853] text-[10px] font-black uppercase tracking-widest">
+                                <CheckCircle className="w-3.5 h-3.5" />
+                                Verified
                             </div>
                         )}
                     </div>
 
                     {isKycVerified && (
-                        <div className="pt-4 border-t border-[#222] space-y-3">
-                            <div className="flex justify-between text-xs">
-                                <span className="text-gray-500">PAN</span>
-                                <span className="text-white font-medium flex items-center gap-1.5">
+                        <div className="pt-5 border-t border-[#1e2025] space-y-3">
+                            <div className="flex justify-between items-center">
+                                <span className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-widest">PAN Card</span>
+                                <span className="text-white text-[11px] font-black flex items-center gap-1.5 tracking-wider">
                                     {user?.panNumber}
-                                    <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                                    <CheckCircle className="w-3 h-3 text-[#00C853]" />
                                 </span>
                             </div>
-                            <div className="flex justify-between text-xs">
-                                <span className="text-gray-500">Aadhaar</span>
-                                <span className="text-white font-medium flex items-center gap-1.5">
+                            <div className="flex justify-between items-center">
+                                <span className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-widest">Aadhaar</span>
+                                <span className="text-white text-[11px] font-black flex items-center gap-1.5 tracking-wider">
                                     {maskedAadhaar}
-                                    <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                                    <CheckCircle className="w-3 h-3 text-[#00C853]" />
                                 </span>
                             </div>
-                            <p className="text-xs text-gray-500">KYC verified • These details cannot be changed</p>
+                            <p className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-tight text-center bg-[#111214] py-2 rounded-lg">KYC Verified • Read-Only</p>
                         </div>
                     )}
 
-                    {errors.submit && <p className="text-red-400 text-xs">{errors.submit}</p>}
+                    {errors.submit && <p className="text-red-500 text-[10px] font-bold uppercase text-center">{errors.submit}</p>}
 
                     <div className="flex gap-3 pt-5">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 px-4 py-2.5 bg-[#1f1f1f] hover:bg-[#252525] text-white text-xs font-medium rounded-lg transition"
+                            className="flex-1 px-4 py-3 bg-[#111214] hover:bg-[#1a1b1e] text-[#5a5f6e] hover:text-[#e8eaed] text-[11px] font-black uppercase tracking-widest rounded-xl transition-all"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={updateProfileMutation.isPending || (isEmailChanged && !isEmailVerified)}
-                            className="flex-1 px-4 py-2.5 bg-[#22C55E] hover:bg-[#1ea853] disabled:opacity-60 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2"
+                            className="flex-1 px-4 py-3 bg-[#00C853] hover:bg-[#00E676] disabled:opacity-30 text-black text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/10 flex items-center justify-center gap-2"
                         >
                             {updateProfileMutation.isPending ? (
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <Loader2 size={14} className="animate-spin" />
                             ) : (
                                 'Save Changes'
                             )}

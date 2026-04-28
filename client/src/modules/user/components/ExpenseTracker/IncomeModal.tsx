@@ -61,34 +61,28 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
     };
 
     return (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
             <div
-                style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}
+                className="absolute inset-0 bg-black/80"
                 onClick={onClose}
             />
 
-            <div style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: 420,
-                background: '#0b0c0e',
-                border: '1px solid #1e2025',
-                borderRadius: 12,
-                overflow: 'hidden',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
-            }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid #1e2025' }}>
-                    <h2 style={{ fontSize: 13, fontWeight: 700, color: '#e8eaed', margin: 0, letterSpacing: '0.02em' }}>ADD INCOME SOURCE</h2>
-                    <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#5a5f6e', cursor: 'pointer', padding: 4 }}>
-                        <X size={18} />
+            <div className="relative w-full max-w-[360px] bg-[#0b0c0e] border border-[#1e2025] rounded-2xl overflow-hidden shadow-2xl">
+                <div className="flex justify-between items-center px-5 py-4 border-b border-[#1e2025]">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-[#00C853] animate-pulse" />
+                        <span className="text-[12px] font-black text-[#e8eaed] uppercase tracking-widest">Add Income</span>
+                    </div>
+                    <button onClick={onClose} className="text-[#5a5f6e] hover:text-white transition-colors">
+                        <X size={16} />
                     </button>
                 </div>
 
-                <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div className="p-5 space-y-5">
                     <div>
-                        <label style={labelStyle}>Source Name</label>
+                        <label className="text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Source Name</label>
                         <input
-                            style={inputStyle}
+                            className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-[12px] text-white outline-none focus:border-[#00C853]/50 transition-all font-bold placeholder:text-[#333]"
                             placeholder="e.g. Primary Salary"
                             value={newSourceName}
                             onChange={(e) => setNewSourceName(e.target.value)}
@@ -96,9 +90,9 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
                     </div>
 
                     <div>
-                        <label style={labelStyle}>Amount (₹)</label>
+                        <label className="text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Amount (₹)</label>
                         <input
-                            style={inputStyle}
+                            className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-[12px] text-white outline-none focus:border-[#00C853]/50 transition-all font-black placeholder:text-[#333]"
                             type="number"
                             placeholder="0.00"
                             value={newSourceAmount}
@@ -106,48 +100,29 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
                         />
                     </div>
 
-                    <div style={{ marginTop: 8 }}>
+                    <div className="pt-2">
                         <button
                             onClick={handleAddIncomeSource}
                             disabled={isAddingIncome}
-                            style={{
-                                width: '100%',
-                                padding: '12px 0',
-                                background: '#e8eaed',
-                                border: 'none',
-                                borderRadius: 6,
-                                color: '#0b0c0e',
-                                fontSize: 11,
-                                fontWeight: 800,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.1em',
-                                cursor: 'pointer',
-                                transition: 'all 0.15s',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: 8
-                            }}
-                            onMouseEnter={e => e.currentTarget.style.background = '#fff'}
-                            onMouseLeave={e => e.currentTarget.style.background = '#e8eaed'}
+                            className="w-full py-3.5 bg-[#00C853] hover:bg-[#00E676] text-black text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/10 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                             {isAddingIncome ? <Loader2 size={14} className="animate-spin" /> : 'Confirm Income'}
                         </button>
                     </div>
 
-                    <div style={{ marginTop: 12, borderTop: '1px solid #1e2025', paddingTop: 16 }}>
-                        <p style={labelStyle}>Current Monthly Sources</p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 120, overflowY: 'auto' }}>
+                    <div className="pt-5 border-t border-[#1e2025]">
+                        <p className="text-[9px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-3">Current Monthly Sources</p>
+                        <div className="space-y-2 max-h-[120px] overflow-y-auto pr-1 custom-scrollbar">
                             {incomeSources.length === 0 ? (
-                                <p style={{ fontSize: 10, color: '#3a3d45', fontStyle: 'italic', margin: 0 }}>No income recorded for this month.</p>
+                                <p className="text-[10px] text-[#3a3d45] font-bold uppercase italic">No income recorded.</p>
                             ) : (
                                 incomeSources.map((source, i) => (
-                                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#111214', padding: '8px 12px', borderRadius: 6, border: '1px solid #1e2025' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                            <DollarSign size={10} color="#00C853" />
-                                            <span style={{ fontSize: 11, fontWeight: 600, color: '#e8eaed' }}>{source.source}</span>
+                                    <div key={i} className="flex justify-between items-center bg-[#111214] p-3 rounded-xl border border-[#1e2025]">
+                                        <div className="flex items-center gap-2">
+                                            <DollarSign size={12} className="text-[#00C853]" />
+                                            <span className="text-[11px] font-bold text-[#e8eaed] uppercase tracking-tight">{source.source}</span>
                                         </div>
-                                        <span style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af' }}>{formatCurrency(source.amount)}</span>
+                                        <span className="text-[11px] font-black text-white">{formatCurrency(source.amount)}</span>
                                     </div>
                                 ))
                             )}
