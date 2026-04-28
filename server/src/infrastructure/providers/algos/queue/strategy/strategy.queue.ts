@@ -24,7 +24,7 @@ export class StrategyQueue implements IStrategyQueue {
 
     async addStrategyJob(strategyId: string): Promise<void> {
         await this.queue.add('evaluate-strategy', { strategyId }, {
-            jobId: strategyId, 
+            jobId: strategyId,
         });
     }
 }

@@ -18,12 +18,12 @@ export class AlgoSignalRepository extends
         return this.mapper.toDomain(doc)
     }
 
-    async existsRecentSignal(userId: string, symbol: string, algoId: string, action: string, cooldownMinutes: number = 30): Promise<boolean> {
+    async existsRecentSignal(userId: string, symbol: string, action: string, cooldownMinutes: number = 30): Promise<boolean> {
         const lookback = new Date(Date.now() - cooldownMinutes * 60 * 1000);
         const latestSignal = await AlgoSignalModel.findOne({
             userId,
             symbol,
-            algoId,
+            // algoId,
             createdAt: { $gte: lookback }
         }).sort({ createdAt: -1 });
 
@@ -31,6 +31,15 @@ export class AlgoSignalRepository extends
             return true;
         }
         return false;
+    }
+
+    async getLastSignalAction(userId: string, symbol: string): Promise<string | null> {
+        const latestSignal = await AlgoSignalModel.findOne({
+            userId,
+            symbol,
+        }).sort({ createdAt: -1 });
+
+        return latestSignal ? latestSignal.action : null;
     }
 
     async findAllSignalsWithFilter(query: QueryOptions): Promise<AlgoSignalEntity[]> {

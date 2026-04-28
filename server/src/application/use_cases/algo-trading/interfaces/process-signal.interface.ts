@@ -3,7 +3,7 @@ import { SignalAction } from "@domain/entities/algo/enum/signal-enums";
 export interface ProcessSignalDTO {
     userId: string;
     symbol: string;
-    algoId: string;
+    // algoId: string;
     action: SignalAction;
     strategyName: string;
     price: number;

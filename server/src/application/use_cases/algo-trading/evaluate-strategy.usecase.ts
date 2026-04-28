@@ -54,7 +54,7 @@ export class EvaluateStrategyUseCase implements IEvaluateStrategyUseCase {
             action: result.action,
             price: currentPrice,
             reason: result.reason,
-            algoId: strategyId
+            // algoId: strategyId
         };
     }
 }

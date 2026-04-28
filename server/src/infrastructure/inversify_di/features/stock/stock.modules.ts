@@ -54,8 +54,6 @@ import { IConfirmSellSignalUseCase } from "@application/use_cases/algo-trading/i
 import { ConfirmSellSignalUseCase } from "@application/use_cases/algo-trading/confirm-sell-signal.usecase";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { YahooProvider } from "@infrastructure/providers/stocks/market-data/providers/yahoo.provider";
-import { SignalManager } from "@infrastructure/providers/algos/signal-manager";
-import { ISignalManager } from "@application/interfaces/repositories/algo/signal-manager.interface";
 import { ITurnOnAlgoTradingUseCase } from "@application/use_cases/algo-trading/interfaces/turn-on-algo-trading.interface";
 import { ILimitBuyOrderUseCase } from "@application/use_cases/stock/interfaces/limit-buy-order-usecase.interface";
 import { LimitBuyOrderUseCase } from "@application/use_cases/stock/limit-buy-order.usecase";
@@ -83,6 +81,8 @@ import { IGetValidStrategiesUseCase } from "@application/use_cases/algo-trading/
 import { GetValidStrategiesUseCase } from "@application/use_cases/algo-trading/get-valid-strategies.usecase";
 import { IEvaluateStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/evaluate-strategy.interface";
 import { EvaluateStrategyUseCase } from "@application/use_cases/algo-trading/evaluate-strategy.usecase";
+import { IShouldEmitSignalUseCase } from "@application/use_cases/algo-trading/interfaces/should-emit-signal.interface";
+import { ShouldEmitSignalUseCase } from "@application/use_cases/algo-trading/should-emit-signal.usecase";
 
 // BullMQ & Queues
 import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy/strategy.queue";
@@ -140,9 +140,9 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IAlgoStrategyRepository>(STOCK_TYPES.AlgoStrategyRepository).to(AlgoStrategyRepository);
     bind<IAlgoSignalRepository>(STOCK_TYPES.AlgoSignalRepository).to(AlgoSignalRepository);
     bind<IProcessSignalUseCase>(STOCK_TYPES.ProcessSignalUseCase).to(ProcessSignalUseCase);
+    bind<IShouldEmitSignalUseCase>(STOCK_TYPES.ShouldEmitSignalUseCase).to(ShouldEmitSignalUseCase);
     bind<IConfirmBuySignalUseCase>(STOCK_TYPES.ConfirmBuySignalUseCase).to(ConfirmBuySignalUseCase);
     bind<IConfirmSellSignalUseCase>(STOCK_TYPES.ConfirmSellSignalUseCase).to(ConfirmSellSignalUseCase);
-    bind<ISignalManager>(STOCK_TYPES.SignalManager).to(SignalManager);
     bind<IGetValidStrategiesUseCase>(STOCK_TYPES.GetValidStrategiesUseCase).to(GetValidStrategiesUseCase);
     bind<IEvaluateStrategyUseCase>(STOCK_TYPES.EvaluateStrategyUseCase).to(EvaluateStrategyUseCase);
 

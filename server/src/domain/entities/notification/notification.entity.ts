@@ -94,15 +94,16 @@ export class NotificationEntity {
         return this._data;
     }
 
-    // toJSON() {
-    //     return {
-    //         id: this._id,
-    //         userId: this._userId,
-    //         type: this._type,
-    //         title: this._title,
-    //         message: this._message,
-    //         read: this._read,
-    //         createdAt: this._createdAt,
-    //     };
-    // }
+    toJSON() {
+        return {
+            id: this._id,
+            userId: this._userId,
+            type: this._type,
+            title: this._title,
+            message: this._message,
+            read: this._read,
+            createdAt: this._createdAt,
+            data: this._data
+        };
+    }
 }

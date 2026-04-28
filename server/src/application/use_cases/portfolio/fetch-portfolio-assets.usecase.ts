@@ -122,7 +122,7 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                 };
             }
         });
-
+ 
         const allResults = (await Promise.all(assetProcessingPromises)).filter(a => a !== null) as PortfolioAssetDTO[];
 
         const totalCount = allResults.length;
@@ -138,3 +138,4 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
         };
     }
 }
+  

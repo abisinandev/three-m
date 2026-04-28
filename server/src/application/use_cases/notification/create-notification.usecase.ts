@@ -22,7 +22,7 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
     }): Promise<void> {
 
         if (!input.userId || !input.message) {
-            throw new Error("Invalid notification input");
+            return
         }
 
         const notification = NotificationEntity.create({
@@ -35,13 +35,13 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
 
         const notfify = await this.notificationRepository.save(notification);
 
+        const payload = notfify.toJSON();
+
         this.notificationService.send(input.userId, {
-            id: notfify.id as string,
-            type: input.type,
-            title: input.title,
-            message: input.message,
-            createdAt: new Date(notification.createdAt),
-            data: input.data
+            ...payload,
+            createdAt: new Date(payload.createdAt),
+            id: payload.id || '',
+            data: payload.data || {}
         });
     }
 }

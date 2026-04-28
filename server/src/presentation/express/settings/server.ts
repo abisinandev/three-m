@@ -31,7 +31,7 @@ const bootstrap = async () => {
     //cron-scheduler 
     NavDailyScheduler();
     CagrUpdateScheduler();
-    NavAllocationScheduler();
+    NavAllocationScheduler(); 
 
     // Algo Trading BullMQ system
     container.get<StrategyWorker>(STOCK_TYPES.StrategyWorker);
@@ -52,7 +52,7 @@ const bootstrap = async () => {
     // SIP BullMQ system
     container.get<SipWorker>(SIP_TYPES.SipWorker);
     const sipScheduler = container.get<SipScheduler>(SIP_TYPES.SipScheduler);
-    sipScheduler.start();
+    sipScheduler.start();    
 
     const server = http.createServer(app);
     
