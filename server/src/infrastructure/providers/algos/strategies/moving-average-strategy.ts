@@ -3,11 +3,11 @@ import { Strategy, StrategyResult } from "@application/interfaces/services/algo-
 export class MovingAverageStrategy implements Strategy {
     name = "MA";
 
-    evaluate({ symbol, priceHistory, config }: {
+    async evaluate({ symbol, priceHistory, config }: {
         symbol: string;
         priceHistory: number[];
         config: any;
-    }): StrategyResult | null {
+    }): Promise<StrategyResult | null> {
 
         const { shortPeriod, longPeriod } = config;
 

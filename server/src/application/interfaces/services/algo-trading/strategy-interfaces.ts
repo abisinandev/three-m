@@ -10,5 +10,5 @@ export interface Strategy {
         symbol: string;
         priceHistory: number[];
         config: any;
-    }): StrategyResult | null;
+    }): Promise<StrategyResult | null>;
 }

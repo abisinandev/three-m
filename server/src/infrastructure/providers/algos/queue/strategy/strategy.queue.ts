@@ -8,17 +8,23 @@ export class StrategyQueue implements IStrategyQueue {
     private queue: Queue;
 
     constructor() {
-        this.queue = new Queue("strategy-queue", { connection: bullConnection });
+        this.queue = new Queue("strategy-queue", {
+            connection: bullConnection,
+            defaultJobOptions: {
+                removeOnComplete: true,
+                removeOnFail: true,
+                attempts: 3,
+                backoff: {
+                    type: 'exponential',
+                    delay: 1000,
+                },
+            }
+        });
     }
 
     async addStrategyJob(strategyId: string): Promise<void> {
         await this.queue.add('evaluate-strategy', { strategyId }, {
-            removeOnComplete: true,
-            attempts: 3,
-            backoff: {
-                type: 'exponential',
-                delay: 1000,
-            },
+            jobId: strategyId, 
         });
     }
 }

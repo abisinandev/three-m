@@ -18,6 +18,7 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
         type: NotificationType;
         title: string;
         message: string;
+        data?: Record<string, string | number | boolean | undefined>;
     }): Promise<void> {
 
         if (!input.userId || !input.message) {
@@ -28,7 +29,8 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
             userId: input.userId,
             type: input.type,
             title: input.title,
-            message: input.message
+            message: input.message,
+            data: input.data
         });
 
         const notfify = await this.notificationRepository.save(notification);
@@ -38,7 +40,8 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
             type: input.type,
             title: input.title,
             message: input.message,
-            createdAt: new Date(notification.createdAt)
+            createdAt: new Date(notification.createdAt),
+            data: input.data
         });
     }
 }

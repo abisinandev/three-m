@@ -1,27 +1,43 @@
 import { Strategy, StrategyResult } from "@application/interfaces/services/algo-trading/strategy-interfaces";
+import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 
 export class RSIStrategy implements Strategy {
     name = "RSI";
 
-    private lastRsiMap = new Map<string, number>();
+    private readonly REDIS_PREFIX = "rsi_state:";
+    private readonly TTL = 24 * 60 * 60; // 24 hours
 
-    evaluate({ symbol, priceHistory, config }: {
+    async evaluate({ symbol, priceHistory, config }: {
         symbol: string;
         priceHistory: number[];
         config: any;
-    }): StrategyResult | null {
+    }): Promise<StrategyResult | null> {
 
         const { period } = config;
 
         if (priceHistory.length < period + 1) return null;
 
-        const currentRSI = this.calculateRSI(priceHistory, period) + 20;
-        let prevRSI = this.lastRsiMap.get(symbol);
-        prevRSI = Number(prevRSI) - 20;
+        // const currentRSI = this.calculateRSI(priceHistory, period);
+        
+        const key = `${this.REDIS_PREFIX}${symbol}`;
+        const prevDataRaw = await redisClient.get(key);
+        const prevData = prevDataRaw ? JSON.parse(prevDataRaw) : null;
+        // const prevRSI = prevData?.rsi;
+        const prevRSI = 40
+        const currentRSI = 25
 
-        this.lastRsiMap.set(symbol, currentRSI);
+        console.log(currentRSI, prevRSI); 
 
-        if (prevRSI === undefined) return null;
+         
+        // Store new state
+        await redisClient.set(
+            key,
+            JSON.stringify({ rsi: currentRSI, timestamp: Date.now() }),
+            "EX", 
+            this.TTL 
+        );
+
+        if (prevRSI === undefined || prevRSI === null) return null;
 
         if (prevRSI >= 30 && currentRSI < 30) {
             return {

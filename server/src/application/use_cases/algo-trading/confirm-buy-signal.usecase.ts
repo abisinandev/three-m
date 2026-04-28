@@ -33,6 +33,9 @@ import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 import AppError from "@presentation/express/utils/error-handling/app.error";
 import { SignalStatus } from "@domain/entities/algo/enum/signal-enums";
+import { ICreateNotificationUseCase } from "@application/use_cases/notification/interfaces/create-notification-usecase.interface";
+import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
+import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 
 @injectable()
 export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
@@ -47,6 +50,7 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
+        @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotification: ICreateNotificationUseCase,
     ) { }
 
     async execute(order: ConfirmSignalDTO): Promise<void> {
@@ -103,8 +107,15 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
             const wallet = await this._wallet.findByUserId(userId, session);
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
 
-            if (wallet.availableBalance < execution.totalValue)
+            if (wallet.availableBalance < execution.totalValue) {
+                await this._createNotification.execute({
+                    userId,
+                    type: NotificationType.WARNING,
+                    title: 'Insufficient Balance',
+                    message: `Algo trade failed for ${order.symbol}. Required: ₹${execution.totalValue.toFixed(2)}, Available: ₹${wallet.availableBalance.toFixed(2)}`
+                });
                 throw new ValidationError(ErrorMessages.WALLET.INSUFFICIENT_BALANCE);
+            }
 
 
             const transaction = TransactionEntity.create({

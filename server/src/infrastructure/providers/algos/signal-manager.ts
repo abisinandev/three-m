@@ -1,39 +1,32 @@
-import { ISignalManager, SignalState } from "@application/interfaces/repositories/algo/signal-manager.interface";
+import { ISignalManager } from "@application/interfaces/repositories/algo/signal-manager.interface";
 import { SignalAction } from "@domain/entities/algo/enum/signal-enums";
 import { injectable } from "inversify";
-import { redisClient } from "@infrastructure/providers/redis/redis.provider";
+import { SignalStateModel } from "@infrastructure/databases/mongo_db/models/schemas/algo-trading/algo-signal-state.schema";
 
 @injectable()
 export class SignalManager implements ISignalManager {
-    private readonly PREFIX = "algo_signal_state:";
-    private readonly TTL = 24 * 60 * 60;
 
     public async shouldEmitSignal(
         algoId: string,
         symbol: string,
         action: SignalAction | null
     ): Promise<boolean> {
-        const key = `${this.PREFIX}${algoId}_${symbol}`;
 
         if (action === null) {
-            await redisClient.del(key);
+            await SignalStateModel.deleteOne({ algoId, symbol });
             return false;
         }
 
-        const prevRaw = await redisClient.get(key);
-        const prev: SignalState | null = prevRaw ? JSON.parse(prevRaw) : null;
+        const prev = await SignalStateModel.findOne({ algoId, symbol });
 
         if (!prev || prev.lastAction !== action) {
-            const newState: SignalState = {
-                lastAction: action,
-                timestamp: Date.now()
-            };
-            
-            await redisClient.set(
-                key, 
-                JSON.stringify(newState), 
-                "EX", 
-                this.TTL
+            await SignalStateModel.findOneAndUpdate(
+                { algoId, symbol },
+                { 
+                    lastAction: action, 
+                    timestamp: Date.now() 
+                },
+                { upsert: true, new: true }
             );
             return true;
         }

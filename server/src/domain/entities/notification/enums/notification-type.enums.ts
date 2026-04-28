@@ -7,3 +7,5 @@ export enum NotificationType {
     WARNING = "WARNING",
     ALGO_SIGNAL = 'ALGO_SIGNAL'
 }
+
+export type NotificationData = Record<string, string | number | boolean | undefined>;

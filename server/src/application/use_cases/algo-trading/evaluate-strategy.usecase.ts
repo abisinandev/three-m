@@ -20,7 +20,7 @@ export class EvaluateStrategyUseCase implements IEvaluateStrategyUseCase {
 
         const { symbol, strategyName, config } = s;
 
-        const now = Math.floor(Date.now() / 1000);
+        const now =  Math.floor(Date.now() / 1000);
         const thirtyDaysAgo = now - 30 * 24 * 60 * 60;
 
         const candles = await this._marketData.getHistoricalData({
@@ -39,7 +39,7 @@ export class EvaluateStrategyUseCase implements IEvaluateStrategyUseCase {
         const strategy = StrategyRegistry[strategyName as StrategyName];
         if (!strategy) return null;
 
-        const result = strategy.evaluate({
+        const result = await strategy.evaluate({
             symbol,
             priceHistory,
             config

@@ -20,7 +20,8 @@ export class StrategyWorker {
             { 
                 connection: bullConnection, 
                 concurrency: 5,
-                lockDuration: 60000
+                lockDuration: 60000,
+                maxStalledCount: 5,
             }
 
         );
@@ -40,6 +41,7 @@ export class StrategyWorker {
 
         try {
             const result = await this._evaluateStrategyUseCase.execute(strategyId);
+            console.log('algo ------------: ', result);
 
             if (result) {
                 console.log(`✨ Signal generated for ${result.symbol}: ${result.action}`);
@@ -51,3 +53,4 @@ export class StrategyWorker {
         }
     }
 }
+ 

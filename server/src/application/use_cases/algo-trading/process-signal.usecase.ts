@@ -12,7 +12,7 @@ import { NotificationType } from "@domain/entities/notification/enums/notificati
 export class ProcessSignalUseCase implements IProcessSignalUseCase {
     constructor(
         @inject(STOCK_TYPES.AlgoSignalRepository) private readonly _signalRepository: IAlgoSignalRepository,
-        @inject(NOTIFICATION_TYEPS.NotificationService) private readonly _createNotification: ICreateNotificationUseCase,
+        @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotification: ICreateNotificationUseCase,
         @inject(STOCK_TYPES.SignalManager) private readonly _signalManager: ISignalManager,
     ) { }
 
@@ -51,7 +51,7 @@ export class ProcessSignalUseCase implements IProcessSignalUseCase {
             expiresAt,
         });
 
-        await this._signalRepository.create(signal);
+        const createdSignal = await this._signalRepository.create(signal);
 
         const message = `${input.action} signal for ${input.symbol}: ${input.reason}`;
         await this._createNotification.execute({
@@ -59,6 +59,9 @@ export class ProcessSignalUseCase implements IProcessSignalUseCase {
             type: NotificationType.ALGO_SIGNAL,
             title: 'Algo signal',
             message: message,
+            data: {
+                signalId: createdSignal.id as string
+            }
         });
     }
 }

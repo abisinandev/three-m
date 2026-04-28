@@ -55,8 +55,7 @@ const bootstrap = async () => {
     sipScheduler.start();
 
     const server = http.createServer(app);
-
-
+    
     // Initialize SocketService
     const socketService = container.get<ISocketService>(NOTIFICATION_TYEPS.SocketService);
     socketService.init(server);
