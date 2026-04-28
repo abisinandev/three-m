@@ -47,3 +47,27 @@ export const FetchAdminAlgoTrades = async (filters: StrategyFilters) => {
 
     return response.data;
 };
+
+export const FetchAdminBaseStrategies = async () => {
+    const response = await adminApi.get(`${API_ROUTES.ADMIN.ALGO_TRADING.BASE}/base-strategies`, {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+    });
+
+    return response.data;
+};
+
+export const UpdateAdminStrategyRiskConfig = async (data: {
+    strategyName: string;
+    riskAmount: number;
+    maxTradesPerDay: number;
+    stopLoss: number;
+    takeProfit: number;
+}) => {
+    const response = await adminApi.put(`${API_ROUTES.ADMIN.ALGO_TRADING.BASE}/risk-config`, data, {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+    });
+
+    return response.data;
+};

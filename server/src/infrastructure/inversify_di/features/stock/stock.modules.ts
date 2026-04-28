@@ -33,6 +33,11 @@ import { IMarketSellOrderUseCase } from "@application/use_cases/stock/interfaces
 import { MarketSellOrderUseCase } from "@application/use_cases/stock/market-sell-order.usecase";
 import { IOrderRepository } from "@application/interfaces/repositories/stock/order-repository.interface";
 import { OrderRepository } from "@infrastructure/databases/repository/stock/order.repository";
+import { IAlgoStrategyConfigRepository } from "@application/interfaces/repositories/algo/algo-strategy-config-repository.interface";
+import { AlgoStrategyConfigRepository } from "@infrastructure/databases/repository/algo-trading/algo-strategy-config.repository";
+import { IAdminGetBaseStrategiesUseCase, IAdminUpdateStrategyRiskConfigUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-base-strategy-risk.interface";
+import { AdminGetBaseStrategiesUseCase } from "@application/use_cases/admin/algo-trading/admin-get-base-strategies.usecase";
+import { AdminUpdateStrategyRiskConfigUseCase } from "@application/use_cases/admin/algo-trading/admin-update-strategy-risk-config.usecase";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
 import { TradeRepository } from "@infrastructure/databases/repository/stock/trade.repository";
 import { AlgoTradingController } from "@presentation/http/controllers/algo-trading/algo-trading.controller";
@@ -138,6 +143,9 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IGetActiveStrategyUseCase>(STOCK_TYPES.GetActiveStrategyUseCase).to(GetActiveStrategyUseCase);
     bind<ITurnOnAlgoTradingUseCase>(STOCK_TYPES.TurnOnAlgoTradingUseCase).to(TurnOnAlgoTradingUseCase);
     bind<IAlgoStrategyRepository>(STOCK_TYPES.AlgoStrategyRepository).to(AlgoStrategyRepository);
+    bind<IAlgoStrategyConfigRepository>(STOCK_TYPES.AlgoStrategyConfigRepository).to(AlgoStrategyConfigRepository);
+    bind<IAdminGetBaseStrategiesUseCase>(STOCK_TYPES.AdminGetBaseStrategiesUseCase).to(AdminGetBaseStrategiesUseCase);
+    bind<IAdminUpdateStrategyRiskConfigUseCase>(STOCK_TYPES.AdminUpdateStrategyRiskConfigUseCase).to(AdminUpdateStrategyRiskConfigUseCase);
     bind<IAlgoSignalRepository>(STOCK_TYPES.AlgoSignalRepository).to(AlgoSignalRepository);
     bind<IProcessSignalUseCase>(STOCK_TYPES.ProcessSignalUseCase).to(ProcessSignalUseCase);
     bind<IShouldEmitSignalUseCase>(STOCK_TYPES.ShouldEmitSignalUseCase).to(ShouldEmitSignalUseCase);

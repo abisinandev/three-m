@@ -8,4 +8,5 @@ export interface IAlgoSignalRepository extends IBaseRepository<AlgoSignalEntity>
     getLastSignalAction(userId: string, symbol: string): Promise<string | null>;
     findAllSignalsWithFilter(query: QueryOptions): Promise<AlgoSignalEntity[]>;
     countSignals(): Promise<number>;
+    countApprovedDailySignalsByStrategy(strategyName: string): Promise<number>;
 }

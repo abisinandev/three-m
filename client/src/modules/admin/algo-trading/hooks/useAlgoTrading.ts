@@ -10,7 +10,7 @@ export const useAlgoTrading = () => {
     const [search, setSearch] = useState('');
     const [debouncedSearch] = useDebounce(search, 500);
 
-    const tabs = ['Strategies', 'Signals', 'Trades', 'Risk Settings', 'System Logs'];
+    const tabs = ['Strategies', 'Signals', 'Trades', 'Risk Settings'];
 
     const {
         data: statsData,

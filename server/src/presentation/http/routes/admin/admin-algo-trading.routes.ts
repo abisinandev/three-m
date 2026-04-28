@@ -7,6 +7,8 @@ const router = Router();
 const controller = container.get<AdminAlgoTradingController>(ALGO_TRADING_TYPES.AdminAlgoTradingController);
 
 router.get("/", controller.getAlgoTrading.bind(controller));
+router.get("/base-strategies", controller.getBaseStrategies.bind(controller));
+router.put("/risk-config", controller.updateRiskConfig.bind(controller));
 router.get("/strategies", controller.getStrategies.bind(controller));
 router.get("/signals", controller.getSignals.bind(controller));
 router.get("/trades", controller.getAlgoTrades.bind(controller));

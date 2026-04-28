@@ -36,6 +36,7 @@ import { SignalStatus } from "@domain/entities/algo/enum/signal-enums";
 import { ICreateNotificationUseCase } from "@application/use_cases/notification/interfaces/create-notification-usecase.interface";
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
+import { IAlgoStrategyConfigRepository } from "@application/interfaces/repositories/algo/algo-strategy-config-repository.interface";
 
 @injectable()
 export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
@@ -51,6 +52,7 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotification: ICreateNotificationUseCase,
+        @inject(STOCK_TYPES.AlgoStrategyConfigRepository) private readonly _riskConfigRepository: IAlgoStrategyConfigRepository,
     ) { }
 
     async execute(order: ConfirmSignalDTO): Promise<void> {
@@ -60,6 +62,16 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
 
         if (signal.status !== SignalStatus.PENDING) {
             throw new ValidationError("This signal has already been processed.");
+        }
+
+        // Risk Validation
+        const riskConfig = await this._riskConfigRepository.findByStrategyName(signal.strategyName);
+        if (riskConfig) {
+            // 1. Check Daily Trade Limit
+            const dailyTrades = await this._signalRepository.countApprovedDailySignalsByStrategy(signal.strategyName);
+            if (dailyTrades >= riskConfig.maxTradesPerDay) {
+                throw new ValidationError(`Risk Limit Reached: ${signal.strategyName} has reached its daily limit of ${riskConfig.maxTradesPerDay} trades.`);
+            }
         }
 
         const now = new Date();

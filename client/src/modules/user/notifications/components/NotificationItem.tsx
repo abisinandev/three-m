@@ -38,8 +38,8 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
 
     const handleConfirm = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        const action = extractAction(notif.message);
-        const symbol = extractSymbol(notif.message);
+        const action = notif.data?.action || extractAction(notif.message);
+        const symbol = notif.data?.symbol || extractSymbol(notif.message);
 
         if (!action || !symbol) { setError('Cannot parse signal details'); return; }
         if (quantity <= 0) { setError('Enter a valid quantity'); return; }
@@ -50,7 +50,7 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
         try {
             await AlgoTradingApiService.confirmSignal({
                 notificationId: notif.id,
-                signalId: notif.signalId!,
+                signalId: (notif.signalId || notif.data?.signalId)!,
                 symbol,
                 action,
                 quantity,
@@ -104,24 +104,24 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
 
                     {isAlgo && !notif.read && !confirmed && (
                         <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
-                            {notif.signalId ? (
-                                <>
-                                    <input
-                                        type="number"
-                                        min={1}
-                                        value={quantity}
-                                        onChange={e => { setQuantity(Number(e.target.value)); setError(null); }}
-                                        className="w-14 text-[10px] bg-neutral-800 border border-neutral-700 text-white rounded-md px-2 py-1 focus:outline-none focus:border-purple-500/50"
-                                        placeholder="Qty"
-                                    />
-                                    <button
-                                        onClick={handleConfirm}
-                                        disabled={confirming}
-                                        className="text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 px-3 py-1 rounded-md transition-all disabled:opacity-50"
-                                    >
-                                        {confirming ? '...' : 'Confirm'}
-                                    </button>
-                                </>
+                            {(notif.signalId || notif.data?.signalId) ? (
+                                <button
+                                    onClick={handleConfirm}
+                                    disabled={confirming}
+                                    className="text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 px-4 py-1.5 rounded-md transition-all disabled:opacity-50 flex items-center gap-2"
+                                >
+                                    {confirming ? (
+                                        <>
+                                            <div className="w-2 h-2 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
+                                            Executing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Zap size={10} />
+                                            Execute
+                                        </>
+                                    )}
+                                </button>
                             ) : (
                                 <span className="text-[9px] text-neutral-600 uppercase tracking-widest">Signal expired</span>
                             )}

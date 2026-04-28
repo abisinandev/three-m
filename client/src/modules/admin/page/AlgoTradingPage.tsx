@@ -1,4 +1,5 @@
 import { RefreshCw } from 'lucide-react';
+import BaseStrategiesRiskTable from '../algo-trading/components/BaseStrategiesRiskTable';
 import { useAlgoTrading } from '../algo-trading/hooks/useAlgoTrading';
 import { AlgoStats } from '../algo-trading/components/AlgoStats';
 import { AlgoTabs } from '../algo-trading/components/AlgoTabs';
@@ -107,10 +108,12 @@ const AlgoTradingPage = () => {
                             search={search}
                             onSearchChange={setSearch}
                         />
+                    ) : activeTab === 'Risk Settings' ? (
+                        <BaseStrategiesRiskTable />
                     ) : (
                         <div className="px-6 py-20 text-center">
-                            <h3 style={{ fontSize: 14, fontWeight: 600, color: '#5a5f6e' }}>Module Under Development</h3>
-                            <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 4 }}>This management tab is currently being finalized.</p>
+                            <h3 style={{ fontSize: 14, fontWeight: 600, color: '#5a5f6e' }}>System Logs</h3>
+                            <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 4 }}>System logs module is currently being finalized.</p>
                         </div>
                     )}
 

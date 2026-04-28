@@ -109,6 +109,7 @@ export const API_ROUTES = {
             UPDATE_STATUS: (symbol: string) => `/stocks/${symbol}/status`,
         },
         ALGO_TRADING: {
+            BASE: "/algo-trading",
             GET_STATS: "/algo-trading",
             GET_STRATEGIES: "/algo-trading/strategies",
             GET_SIGNALS: "/algo-trading/signals",

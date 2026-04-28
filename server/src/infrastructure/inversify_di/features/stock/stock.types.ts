@@ -47,6 +47,9 @@ export const STOCK_TYPES = {
     SignalManager: Symbol.for("SignalManager"),
     ShouldEmitSignalUseCase: Symbol.for("ShouldEmitSignalUseCase"),
     GetValidStrategiesUseCase: Symbol.for("GetValidStrategiesUseCase"),
+    AlgoStrategyConfigRepository: Symbol.for("AlgoStrategyConfigRepository"),
+    AdminGetBaseStrategiesUseCase: Symbol.for("AdminGetBaseStrategiesUseCase"),
+    AdminUpdateStrategyRiskConfigUseCase: Symbol.for("AdminUpdateStrategyRiskConfigUseCase"),
     EvaluateStrategyUseCase: Symbol.for("EvaluateStrategyUseCase"),
 
     // Queue & BullMQ

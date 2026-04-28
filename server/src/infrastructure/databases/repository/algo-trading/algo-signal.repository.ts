@@ -86,4 +86,15 @@ export class AlgoSignalRepository extends
         return this.model.countDocuments().exec();
     }
 
+    async countApprovedDailySignalsByStrategy(strategyName: string): Promise<number> {
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        return await this.model.countDocuments({
+            strategyName,
+            status: 'APPROVED',
+            createdAt: { $gte: startOfToday }
+        }).exec();
+    }
+
 } 

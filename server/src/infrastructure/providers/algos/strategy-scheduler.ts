@@ -33,7 +33,7 @@ export class StrategyScheduler implements IStrategyScheduler {
     public async start(): Promise<void> {
         if (this.cronJob) return;
 
-        // if (!isIndianMarketOpen()) return;
+        if (!isIndianMarketOpen()) return;
 
         this.cronJob = cron.schedule('* * * * *', async () => {
             await this.execute();

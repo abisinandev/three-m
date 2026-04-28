@@ -9,6 +9,7 @@ import { AlgoSignalEntity } from "@domain/entities/algo/algo-signal.entity";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { IShouldEmitSignalUseCase } from "./interfaces/should-emit-signal.interface";
 import { NotificationEntity } from "@domain/entities/notification/notification.entity";
+import { IAlgoStrategyConfigRepository } from "@application/interfaces/repositories/algo/algo-strategy-config-repository.interface";
 
 @injectable()
 export class ProcessSignalUseCase implements IProcessSignalUseCase {
@@ -17,6 +18,7 @@ export class ProcessSignalUseCase implements IProcessSignalUseCase {
         @inject(NOTIFICATION_TYEPS.NotificationRepository) private readonly _notificationRepository: INotificationRepository,
         @inject(NOTIFICATION_TYEPS.NotificationService) private readonly _notificationService: INotificationService,
         @inject(STOCK_TYPES.ShouldEmitSignalUseCase) private readonly _shouldEmitSignal: IShouldEmitSignalUseCase,
+        @inject(STOCK_TYPES.AlgoStrategyConfigRepository) private readonly _riskConfigRepository: IAlgoStrategyConfigRepository,
     ) { }
 
     async execute(input: ProcessSignalDTO): Promise<void> {
@@ -31,7 +33,7 @@ export class ProcessSignalUseCase implements IProcessSignalUseCase {
         if (!shouldEmit) {
             console.log(`[ProcessSignalUseCase] Signal (Duplicate/Non-crossover) for ${input.symbol}`);
             return;
-        }      
+        }
 
         const exists = await this._signalRepository.existsRecentSignal(
             input.userId,
@@ -41,7 +43,7 @@ export class ProcessSignalUseCase implements IProcessSignalUseCase {
             5
         );
         console.log('existi: ', exists);
- 
+
 
         if (exists) {
             console.log(`[ProcessSignalUseCase] Duplicate signal skipped (5-min cooldown) for ${input.symbol}`);
@@ -57,16 +59,22 @@ export class ProcessSignalUseCase implements IProcessSignalUseCase {
             reason: input.reason,
             action: input.action,
             expiresAt,
-        });   
+        });
 
         const createdSignal = await this._signalRepository.create(signal);
 
         await this._handleNotification(input, createdSignal);
     }
- 
-    private async _handleNotification(input: ProcessSignalDTO, signal: AlgoSignalEntity): Promise<void> {
 
-        const message = `${input.action} signal for ${input.symbol}: ${input.reason}`;
+    private async _handleNotification(input: ProcessSignalDTO, signal: AlgoSignalEntity): Promise<void> {
+        const riskConfig = await this._riskConfigRepository.findByStrategyName(input.strategyName);
+
+        let riskDetails = "";
+        if (riskConfig) {
+            riskDetails = ` [Risk: ₹${riskConfig.riskAmount}, SL: ₹${riskConfig.stopLoss}, TP: ₹${riskConfig.takeProfit}]`;
+        }
+
+        const message = `${input.action} signal for ${input.symbol}: ${input.reason}.${riskDetails}`;
 
         const notification = NotificationEntity.create({
             userId: input.userId,
@@ -84,10 +92,12 @@ export class ProcessSignalUseCase implements IProcessSignalUseCase {
         const savedNotification = await this._notificationRepository.save(notification);
         const payload = savedNotification.toJSON();
 
+        const notificationId = savedNotification.id || payload.id || "";
+
         this._notificationService.send(input.userId, {
             ...payload,
+            id: notificationId,
             createdAt: new Date(payload.createdAt),
-            id: payload.id || '',
             data: payload.data || {}
         });
 
