@@ -45,7 +45,6 @@ export const STOCK_TYPES = {
     ConfirmBuySignalUseCase: Symbol.for("ConfirmBuySignalUseCase"),
     ConfirmSellSignalUseCase: Symbol.for("ConfirmSellSignalUseCase"),
     SignalManager: Symbol.for("SignalManager"),
-    ShouldEmitSignalUseCase: Symbol.for("ShouldEmitSignalUseCase"),
     GetValidStrategiesUseCase: Symbol.for("GetValidStrategiesUseCase"),
     AlgoStrategyConfigRepository: Symbol.for("AlgoStrategyConfigRepository"),
     AdminGetBaseStrategiesUseCase: Symbol.for("AdminGetBaseStrategiesUseCase"),

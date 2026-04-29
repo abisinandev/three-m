@@ -12,6 +12,7 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
         super(TradeModel, TradeMapper);
     }
 
+
     async findByUserId(userId: string, session?: ClientSession): Promise<TradeEntity[]> {
         const query = this.model.find({ userId }).sort({ createdAt: -1 });
         if (session) query.session(session);
@@ -38,9 +39,9 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
 
         const skip = (Number(page) - 1) * Number(limit);
 
-        const finalFilter: Record<string, unknown> = { 
-            ...filter, 
-            userId: userId as any 
+        const finalFilter: Record<string, unknown> = {
+            ...filter,
+            userId: userId as any
         };
 
         if (search.trim()) {
@@ -65,9 +66,9 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
     }
 
     async countWithFilters(userId: string, filter: Record<string, unknown>, search: string): Promise<number> {
-        const finalFilter: Record<string, unknown> = { 
-            ...filter, 
-            userId: userId as any 
+        const finalFilter: Record<string, unknown> = {
+            ...filter,
+            userId: userId as any
         };
 
         if (search.trim()) {
@@ -130,5 +131,10 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
         }
 
         return this.model.countDocuments(matchStage).exec();
+    }
+
+
+    async countDailyAlgoTradesByStrategy(strategyName: string): Promise<number> {
+        return 0
     }
 }

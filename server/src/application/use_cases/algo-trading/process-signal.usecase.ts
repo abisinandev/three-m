@@ -7,7 +7,6 @@ import { INotificationRepository } from "@application/interfaces/repositories/fe
 import { INotificationService } from "@application/interfaces/services/notification/notification-service.interface";
 import { AlgoSignalEntity } from "@domain/entities/algo/algo-signal.entity";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
-import { IShouldEmitSignalUseCase } from "./interfaces/should-emit-signal.interface";
 import { NotificationEntity } from "@domain/entities/notification/notification.entity";
 import { IAlgoStrategyConfigRepository } from "@application/interfaces/repositories/algo/algo-strategy-config-repository.interface";
 
@@ -17,20 +16,25 @@ export class ProcessSignalUseCase implements IProcessSignalUseCase {
         @inject(STOCK_TYPES.AlgoSignalRepository) private readonly _signalRepository: IAlgoSignalRepository,
         @inject(NOTIFICATION_TYEPS.NotificationRepository) private readonly _notificationRepository: INotificationRepository,
         @inject(NOTIFICATION_TYEPS.NotificationService) private readonly _notificationService: INotificationService,
-        @inject(STOCK_TYPES.ShouldEmitSignalUseCase) private readonly _shouldEmitSignal: IShouldEmitSignalUseCase,
         @inject(STOCK_TYPES.AlgoStrategyConfigRepository) private readonly _riskConfigRepository: IAlgoStrategyConfigRepository,
     ) { }
 
     async execute(input: ProcessSignalDTO): Promise<void> {
 
-        const shouldEmit = await this._shouldEmitSignal.execute({
-            userId: input.userId,
-            // algoId: input.algoId,
-            symbol: input.symbol,
-            action: input.action,
-        });
+        const {
+            userId,
+            // algoId,
+            symbol,
+            action
+        } = input;
 
-        if (!shouldEmit) {
+        const lastAction = await this._signalRepository.getLastSignalAction(
+            userId, 
+            // algoId,
+            symbol
+        );
+
+        if (action === null || !lastAction || lastAction !== action) {
             console.log(`[ProcessSignalUseCase] Signal (Duplicate/Non-crossover) for ${input.symbol}`);
             return;
         }

@@ -60,10 +60,8 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
             throw new ValidationError("This signal has already been processed.");
         }
 
-        // Risk Validation
         const riskConfig = await this._riskConfigRepository.findByStrategyName(signal.strategyName);
         if (riskConfig) {
-            // 1. Check Daily Trade Limit
             const dailyTrades = await this._signalRepository.countApprovedDailySignalsByStrategy(signal.strategyName);
             if (dailyTrades >= riskConfig.maxTradesPerDay) {
                 throw new ValidationError(`Risk Limit Reached: ${signal.strategyName} has reached its daily limit of ${riskConfig.maxTradesPerDay} trades.`);
@@ -95,15 +93,18 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
 
             // if (!isIndianMarketOpen())
             //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
-
-            if (!order.quantity || order.quantity <= 0)
-                throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);
-
+            
             const latestQuote = await this._marketDataProvider.getLatestQuote(order.symbol);
             const marketPrice = latestQuote?.price ?? 0;
 
             if (!marketPrice || marketPrice <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.INVALID_MARKET_PRICE);
+
+            const orderQty = Math.floor(Number(riskConfig?.riskAmount) / marketPrice);
+
+            if (!orderQty|| orderQty <= 0)
+                throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);
+
 
             const portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
                 userId,
@@ -113,12 +114,12 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
             if (!portfolio) throw new ValidationError(ErrorMessages.PORTFOLIO.NOT_HOLDING);
 
             const availableQty = portfolio.quantity ?? 0;
-            if (availableQty < order.quantity) {
+            if (availableQty < orderQty) {
 
                 await this._createNotification.execute({
                     userId,
                     title: "Algo trading execution",
-                    message: `${ErrorMessages.PORTFOLIO.INSUFFICIENT_SHARES}: ${order.quantity}, Holding quantity: ${availableQty}`,
+                    message: `${ErrorMessages.PORTFOLIO.INSUFFICIENT_SHARES}: ${orderQty}, Holding quantity: ${availableQty}`,
                     type: NotificationType.WARNING,
                 })
 
@@ -127,10 +128,10 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
             }
 
             const execution = {
-                filledQty: order.quantity,
+                filledQty: orderQty,
                 avgPrice: marketPrice,
-                totalValue: marketPrice * order.quantity,
-                profit: (marketPrice - portfolio.avgPrice) * order.quantity,
+                totalValue: marketPrice * orderQty,
+                profit: (marketPrice - portfolio.avgPrice) * orderQty,
             };
 
             const transaction = TransactionEntity.create({

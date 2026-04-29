@@ -39,7 +39,6 @@ import { IAdminGetBaseStrategiesUseCase, IAdminUpdateStrategyRiskConfigUseCase }
 import { AdminGetBaseStrategiesUseCase } from "@application/use_cases/admin/algo-trading/admin-get-base-strategies.usecase";
 import { AdminUpdateStrategyRiskConfigUseCase } from "@application/use_cases/admin/algo-trading/admin-update-strategy-risk-config.usecase";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
-import { TradeRepository } from "@infrastructure/databases/repository/stock/trade.repository";
 import { AlgoTradingController } from "@presentation/http/controllers/algo-trading/algo-trading.controller";
 import { GetStrategiesUseCase } from "@application/use_cases/algo-trading/get-strategies.usecase";
 import { IAlgoStrategyRepository } from "@application/interfaces/repositories/algo/algo-strategy-repository.interface";
@@ -86,8 +85,6 @@ import { IGetValidStrategiesUseCase } from "@application/use_cases/algo-trading/
 import { GetValidStrategiesUseCase } from "@application/use_cases/algo-trading/get-valid-strategies.usecase";
 import { IEvaluateStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/evaluate-strategy.interface";
 import { EvaluateStrategyUseCase } from "@application/use_cases/algo-trading/evaluate-strategy.usecase";
-import { IShouldEmitSignalUseCase } from "@application/use_cases/algo-trading/interfaces/should-emit-signal.interface";
-import { ShouldEmitSignalUseCase } from "@application/use_cases/algo-trading/should-emit-signal.usecase";
 
 // BullMQ & Queues
 import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy/strategy.queue";
@@ -105,6 +102,7 @@ import { IWsGateway } from "@application/interfaces/services/stocks/ws-gateway.i
 import { ISlTpOrderQueue } from "@application/interfaces/services/stocks/sl-tp-order-queue.interface";
 import { SlTpOrderQueue } from "@infrastructure/providers/stocks/queue/sl-tp-order-queue";
 import { SignalQueue } from "@infrastructure/providers/algos/queue/signal/signal.queue";
+import { TradeRepository } from "@infrastructure/databases/repository/stock/trade.repository";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
@@ -148,7 +146,6 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IAdminUpdateStrategyRiskConfigUseCase>(STOCK_TYPES.AdminUpdateStrategyRiskConfigUseCase).to(AdminUpdateStrategyRiskConfigUseCase);
     bind<IAlgoSignalRepository>(STOCK_TYPES.AlgoSignalRepository).to(AlgoSignalRepository);
     bind<IProcessSignalUseCase>(STOCK_TYPES.ProcessSignalUseCase).to(ProcessSignalUseCase);
-    bind<IShouldEmitSignalUseCase>(STOCK_TYPES.ShouldEmitSignalUseCase).to(ShouldEmitSignalUseCase);
     bind<IConfirmBuySignalUseCase>(STOCK_TYPES.ConfirmBuySignalUseCase).to(ConfirmBuySignalUseCase);
     bind<IConfirmSellSignalUseCase>(STOCK_TYPES.ConfirmSellSignalUseCase).to(ConfirmSellSignalUseCase);
     bind<IGetValidStrategiesUseCase>(STOCK_TYPES.GetValidStrategiesUseCase).to(GetValidStrategiesUseCase);
