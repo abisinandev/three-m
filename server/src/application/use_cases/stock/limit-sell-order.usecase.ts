@@ -33,7 +33,7 @@ export class LimitSellOrderUseCase implements ILimitSellOrderUseCase {
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
-        
+
     ) { }
 
     async execute(order: LimitSellOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
@@ -42,12 +42,15 @@ export class LimitSellOrderUseCase implements ILimitSellOrderUseCase {
             Features.STOCK_TRADING
         );
 
-        if (!hasAccess) { 
+        if (!hasAccess) {
             return {
                 message: SuccessMessages.SUBSCRIPTION.UPGRADE_PREMIUM,
                 upgrade: true
             };
         }
+
+        // if (!isIndianMarketOpen())
+        //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
         const session = await mongoose.startSession();
         try {
@@ -65,9 +68,6 @@ export class LimitSellOrderUseCase implements ILimitSellOrderUseCase {
             if (!stock.isTradable)
                 throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
 
-            // if (!isIndianMarketOpen())
-            //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
-
             if (!order.quantity || order.quantity <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);
 
@@ -82,7 +82,7 @@ export class LimitSellOrderUseCase implements ILimitSellOrderUseCase {
                 stock.id as string,
                 session
             );
-            
+
             if (!portfolio) throw new ValidationError(ErrorMessages.PORTFOLIO.NOT_HOLDING);
 
             const availableQty = portfolio.quantity ?? 0;

@@ -19,6 +19,9 @@ import { ChatHistoryService } from "@infrastructure/providers/ai-agents/store/ch
 import { ISemanticCacheService } from "@application/interfaces/services/ai-chatbot/semantic-cache-service.interface";
 import { SemanticCacheService } from "@infrastructure/providers/ai-agents/semantic-cache/semantic-cache.service";
 
+import { ConfirmBotBuyOrderUseCase } from "@application/use_cases/ai-chatbot/trade-agent/confirm-bot-buy-order-usecase";
+import { IConfirmBotBuyOrderUseCase } from "@application/use_cases/ai-chatbot/interface/confirm-bot-order-usecase.interface";
+
 export const AiSystemModules = new ContainerModule(({ bind }) => {
 
     bind<IDetectAgent>(AI_SYSTEM_TYPES.DetectAgent).to(DetectAgent);
@@ -37,4 +40,5 @@ export const AiSystemModules = new ContainerModule(({ bind }) => {
     bind<IPortfolioAgent>(AI_SYSTEM_TYPES.TradeAgent).to(TradeAgentProvider);
     bind<IListBestStocksUseCase>(AI_SYSTEM_TYPES.ListBestStockUseCase).to(ListBestStockUseCase);
     bind<IBotStockDetailsUseCase>(AI_SYSTEM_TYPES.BotStockDetailsUseCase).to(BotStockDetailsUseCase);
+    bind<IConfirmBotBuyOrderUseCase>(AI_SYSTEM_TYPES.ConfirmBotBuyOrderUseCase).to(ConfirmBotBuyOrderUseCase);
 })

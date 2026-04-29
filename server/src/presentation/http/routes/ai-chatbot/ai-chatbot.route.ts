@@ -9,5 +9,6 @@ const controller = container.get<AiChatbotController>(AI_SYSTEM_TYPES.AiChatbotC
 
 router.post(ChatbotRoutes.CHAT, controller.chat.bind(controller));
 router.get(ChatbotRoutes.HISTORY, controller.getHistory.bind(controller));
+router.post(ChatbotRoutes.CONFIRM_ORDER, controller.confirmOrder.bind(controller));
 
 export default router;

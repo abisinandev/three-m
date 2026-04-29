@@ -97,12 +97,22 @@ export class AlgoTradingController {
             const userId = req.user?.id as string;
             const { action } = req.body;
 
+            let result;
             if (action === "BUY") {
-                await this._confirmBuySignalUseCase.execute({ ...req.body, userId });
+                result = await this._confirmBuySignalUseCase.execute({ ...req.body, userId });
             } else if (action === "SELL") {
-                await this._confirmSellSignalUseCase.execute({ ...req.body, userId });
+                result = await this._confirmSellSignalUseCase.execute({ ...req.body, userId });
             } else {
                 throw new AppError("Invalid signal action. Must be BUY or SELL.");
+            }
+
+            if (result && result.upgrade) {
+                return ResponseHelper.success(
+                    res,
+                    result.message,
+                    null,
+                    HttpStatus.PAYMENT_REQUIRED
+                )
             }
 
             return ResponseHelper.success(res, SuccessMessages.ALGO.SIGNAL_CONFIRMED, null);

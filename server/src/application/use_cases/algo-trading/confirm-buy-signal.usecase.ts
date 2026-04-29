@@ -37,6 +37,7 @@ import { ICreateNotificationUseCase } from "@application/use_cases/notification/
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { IAlgoStrategyConfigRepository } from "@application/interfaces/repositories/algo/algo-strategy-config-repository.interface";
+import { Features } from "@domain/entities/subscription/enums/features.enum";
 
 @injectable()
 export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
@@ -55,7 +56,20 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
         @inject(STOCK_TYPES.AlgoStrategyConfigRepository) private readonly _riskConfigRepository: IAlgoStrategyConfigRepository,
     ) { }
 
-    async execute(order: ConfirmSignalDTO): Promise<void> {
+    async execute(order: ConfirmSignalDTO): Promise<void | { message: string, upgrade: boolean }> {
+
+        const hasAccess = await this._featureAccess.hasAccess(
+            order.userId,
+            Features.STOCK_TRADING,
+        );
+
+        if (!hasAccess) {
+            return {
+                message: SuccessMessages.SUBSCRIPTION.UPGRADE_PREMIUM,
+                upgrade: true
+            };
+        }
+
         const { userId } = order;
         const signal = await this._signalRepository.findById(order.signalId);
         if (!signal) throw new NotFoundError(SuccessMessages.ALGO.SIGNAL_NOT_FOUND);

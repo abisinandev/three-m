@@ -33,6 +33,9 @@ import { ICreateNotificationUseCase } from "../notification/interfaces/create-no
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { SignalStatus } from "@domain/entities/algo/enum/signal-enums";
 import { IAlgoStrategyConfigRepository } from "@application/interfaces/repositories/algo/algo-strategy-config-repository.interface";
+import { IFeatureAccessService } from "@application/interfaces/services/subscription/feature-access-service.interface";
+import { Features } from "@domain/entities/subscription/enums/features.enum";
+import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
 
 @injectable()
 export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
@@ -48,10 +51,26 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotification: ICreateNotificationUseCase,
         @inject(STOCK_TYPES.AlgoStrategyConfigRepository) private readonly _riskConfigRepository: IAlgoStrategyConfigRepository,
+        @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
 
     ) { }
 
-    async execute(order: ConfirmSignalDTO): Promise<void> {
+    async execute(order: ConfirmSignalDTO): Promise<void | { message: string, upgrade: boolean }> {
+        const hasAccess = await this._featureAccess.hasAccess(
+            order.userId,
+            Features.STOCK_TRADING,
+        );
+
+        if (!hasAccess) {
+            return {
+                message: SuccessMessages.SUBSCRIPTION.UPGRADE_PREMIUM,
+                upgrade: true
+            };
+        }
+
+        // if (!isIndianMarketOpen())
+        //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+
         const { userId } = order;
         const signal = await this._signalRepository.findById(order.signalId);
         if (!signal) throw new NotFoundError(SuccessMessages.ALGO.SIGNAL_NOT_FOUND);
@@ -79,6 +98,7 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
         try {
             session.startTransaction();
 
+
             const user = await this._userRepository.findById(userId);
             if (!user) throw new NotFoundError(ErrorMessages.USER.NOT_FOUND);
 
@@ -91,9 +111,7 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
             // if (!stock.isTradable)
             //     throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
 
-            // if (!isIndianMarketOpen())
-            //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
-            
+
             const latestQuote = await this._marketDataProvider.getLatestQuote(order.symbol);
             const marketPrice = latestQuote?.price ?? 0;
 
@@ -102,7 +120,7 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
 
             const orderQty = Math.floor(Number(riskConfig?.riskAmount) / marketPrice);
 
-            if (!orderQty|| orderQty <= 0)
+            if (!orderQty || orderQty <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);
 
 

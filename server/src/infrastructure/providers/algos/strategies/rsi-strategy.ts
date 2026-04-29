@@ -17,14 +17,15 @@ export class RSIStrategy implements Strategy {
 
         if (priceHistory.length < period + 1) return null;
 
-        // const currentRSI = this.calculateRSI(priceHistory, period);
+        const currentRSI = this.calculateRSI(priceHistory, period);
         
         const key = `${this.REDIS_PREFIX}${symbol}`;
         const prevDataRaw = await redisClient.get(key);
         const prevData = prevDataRaw ? JSON.parse(prevDataRaw) : null;
-        // const prevRSI = prevData?.rsi;
-        const prevRSI = 40
-        const currentRSI = 25
+        const prevRSI = prevData?.rsi;
+
+        // const prevRSI = 40
+        // const currentRSI = 25
 
         console.log(currentRSI, prevRSI); 
 
@@ -41,7 +42,7 @@ export class RSIStrategy implements Strategy {
 
         if (prevRSI >= 30 && currentRSI < 30) {
             return {
-                action: "BUY",
+                action: "BUY", 
                 reason: `RSI crossed below 30 (${currentRSI.toFixed(2)})`
             };
         }

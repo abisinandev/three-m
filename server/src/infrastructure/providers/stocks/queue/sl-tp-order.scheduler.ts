@@ -30,7 +30,7 @@ export class SlTpOrderScheduler {
     public start(): void {
         if (this.cronJob) return;
 
-                if (!isIndianMarketOpen()) return;
+        if (!isIndianMarketOpen()) return;
         // console.log("SlTp Order Scheduler started (every minute)");
 
         this.cronJob = cron.schedule('* * * * *', async () => {

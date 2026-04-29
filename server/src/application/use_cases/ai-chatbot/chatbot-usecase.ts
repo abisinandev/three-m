@@ -12,6 +12,7 @@ import { Features } from "@domain/entities/subscription/enums/features.enum";
 import { ISemanticCacheService } from "@application/interfaces/services/ai-chatbot/semantic-cache-service.interface";
 import { ICacheProvider } from "@application/interfaces/services/externals/redis-cache.provider.interface";
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
+import { ITradeBotAgent } from "@application/interfaces/services/ai-chatbot/trade-bot-agent.interface";
 
 @injectable()
 export class ChatbotUseCase implements IChatbotUseCase {
@@ -19,7 +20,7 @@ export class ChatbotUseCase implements IChatbotUseCase {
         @inject(AI_SYSTEM_TYPES.ChatHistoryService) private readonly _chatHistoryService: IChatHistoryService,
         @inject(AI_SYSTEM_TYPES.EducationAgent) private readonly _educationAgent: IEducationAgent,
         @inject(AI_SYSTEM_TYPES.PortfolioAgent) private readonly _portfolioAgent: IPortfolioAgent,
-        @inject(AI_SYSTEM_TYPES.TradeAgent) private readonly _tradeAgent: IPortfolioAgent,
+        @inject(AI_SYSTEM_TYPES.TradeAgent) private readonly _tradeAgent: ITradeBotAgent,
         @inject(AI_SYSTEM_TYPES.DetectAgent) private readonly _detectAgent: IDetectAgent,
         @inject(AI_SYSTEM_TYPES.SemanticCacheService) private readonly _semanticCache: ISemanticCacheService,
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
@@ -44,6 +45,7 @@ export class ChatbotUseCase implements IChatbotUseCase {
                 await this._chatHistoryService.saveMessage(userId, "assistant", cachedResponse);
                 return { message: cachedResponse };
             }
+
         } else {
 
             const cacheKey = `ai-cache:personal:${userId}:${inputQuery}`;
@@ -91,8 +93,8 @@ export class ChatbotUseCase implements IChatbotUseCase {
 
         } else if (intent === "trade") {
 
-            const history = await this._chatHistoryService.getConversationHistory(userId);
-            response = await this._tradeAgent.handle(userInput, history, userId);
+            const history = await this._chatHistoryService.getConversationHistory(userId) as any;
+            response = await this._tradeAgent.handle(userInput, history, userId as string);
 
         } else {
 
@@ -124,7 +126,7 @@ export class ChatbotUseCase implements IChatbotUseCase {
 
         await Promise.all(savePromises);
 
-        return { 
+        return {
             message: response,
             type: isConfirmation ? "confirmation" : "text"
         };

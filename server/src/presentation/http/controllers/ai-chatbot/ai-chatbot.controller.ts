@@ -6,10 +6,13 @@ import { SuccessMessages } from "@shared/constants/success.messages";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
+import { IConfirmBotBuyOrderUseCase } from "@application/use_cases/ai-chatbot/interface/confirm-bot-order-usecase.interface";
+
 @injectable()
 export class AiChatbotController {
     constructor(
         @inject(AI_SYSTEM_TYPES.ChatbotUseCase) private readonly _chatbotUseCase: IChatbotUseCase,
+        @inject(AI_SYSTEM_TYPES.ConfirmBotBuyOrderUseCase) private readonly _confirmBotBuyOrderUseCase: IConfirmBotBuyOrderUseCase,
     ) { }
 
     async chat(req: Request, res: Response, next: NextFunction) {
@@ -22,7 +25,7 @@ export class AiChatbotController {
             if (result?.upgradeRequired) {
                 return ResponseHelper.success(
                     res,
-                    SuccessMessages.AI_CHATBOT.UPGRADE_PLAN,
+                    SuccessMessages.AI_CHAT_BOT.UPGRADE_PLAN,
                     result,
                     HttpStatus.OK
                 );
@@ -30,8 +33,35 @@ export class AiChatbotController {
 
             return ResponseHelper.success(
                 res,
-                SuccessMessages.AI_CHATBOT.DATA,
+                SuccessMessages.AI_CHAT_BOT.DATA,
                 result,
+                HttpStatus.OK
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async confirmOrder(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.id as string;
+            const { symbol, quantity } = req.body;
+
+            const result = await this._confirmBotBuyOrderUseCase.execute({ userId, symbol, quantity });
+
+            if (result && result.upgrade) {
+                return ResponseHelper.success(
+                    res,
+                    result.message,
+                    null,
+                    HttpStatus.PAYMENT_REQUIRED
+                )
+            }
+
+            return ResponseHelper.success(
+                res,
+                "Order executed successfully via Chatbot",
+                null,
                 HttpStatus.OK
             );
         } catch (error) {
