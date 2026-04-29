@@ -37,4 +37,19 @@ export class ChatHistoryService implements IChatHistoryService {
         const key = this.getKey(userId);
         await redisClient.del(key);
     }
+
+    async findLastAnswer(userId: string, query: string): Promise<string | null> {
+        const history = await this.getConversationHistory(userId);
+        const normalizedQuery = query.trim().toLowerCase();
+
+
+        for (let i = history.length - 2; i >= 0; i--) {
+            if (history[i].role === "user" && history[i].content.trim().toLowerCase() === normalizedQuery) {
+                if (history[i + 1] && history[i + 1].role === "assistant") {
+                    return history[i + 1].content;
+                }
+            }
+        }
+        return null;
+    }
 }

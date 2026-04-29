@@ -25,7 +25,7 @@ export class AiChatbotController {
             if (result?.upgradeRequired) {
                 return ResponseHelper.success(
                     res,
-                    SuccessMessages.AI_CHAT_BOT.UPGRADE_PLAN,
+                    SuccessMessages.AI_CHATBOT.UPGRADE_PLAN,
                     result,
                     HttpStatus.OK
                 );
@@ -33,7 +33,7 @@ export class AiChatbotController {
 
             return ResponseHelper.success(
                 res,
-                SuccessMessages.AI_CHAT_BOT.DATA,
+                SuccessMessages.AI_CHATBOT.DATA,
                 result,
                 HttpStatus.OK
             );

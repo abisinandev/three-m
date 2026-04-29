@@ -11,16 +11,17 @@ import { AiChatbotController } from "@presentation/http/controllers/ai-chatbot/a
 import { IChatbotUseCase } from "@application/use_cases/ai-chatbot/interface/chatbot-usecase.interface";
 import { ListBestStockUseCase } from "@application/use_cases/ai-chatbot/trade-agent/list-best-stocks.usecase";
 import { IListBestStocksUseCase } from "@application/use_cases/ai-chatbot/interface/list-best-stocks.usecase.interface";
-import { TradeAgentProvider } from "@infrastructure/providers/ai-agents/agents/trade/trade-agent.provider";
+import { TradeAgent } from "@infrastructure/providers/ai-agents/agents/trade/trade-agent.provider";
 import { BotStockDetailsUseCase } from "@application/use_cases/ai-chatbot/trade-agent/bot-stock-details.usecase";
 import { IBotStockDetailsUseCase } from "@application/use_cases/ai-chatbot/interface/bot-stock-details.usecase.interface";
 import { ChatbotUseCase } from "@application/use_cases/ai-chatbot/chatbot-usecase";
 import { ChatHistoryService } from "@infrastructure/providers/ai-agents/store/chat-histroy.service";
 import { ISemanticCacheService } from "@application/interfaces/services/ai-chatbot/semantic-cache-service.interface";
 import { SemanticCacheService } from "@infrastructure/providers/ai-agents/semantic-cache/semantic-cache.service";
-
+import { AgentRouter } from "@infrastructure/providers/ai-agents/router/agent-router";
 import { ConfirmBotBuyOrderUseCase } from "@application/use_cases/ai-chatbot/trade-agent/confirm-bot-buy-order-usecase";
 import { IConfirmBotBuyOrderUseCase } from "@application/use_cases/ai-chatbot/interface/confirm-bot-order-usecase.interface";
+import { ITradeBotAgent } from "@application/interfaces/services/ai-chatbot/trade-bot-agent.interface";
 
 export const AiSystemModules = new ContainerModule(({ bind }) => {
 
@@ -37,8 +38,14 @@ export const AiSystemModules = new ContainerModule(({ bind }) => {
     bind<AiChatbotController>(AI_SYSTEM_TYPES.AiChatbotController).to(AiChatbotController);
 
     bind<ISemanticCacheService>(AI_SYSTEM_TYPES.SemanticCacheService).to(SemanticCacheService);
-    bind<IPortfolioAgent>(AI_SYSTEM_TYPES.TradeAgent).to(TradeAgentProvider);
+    
+    bind<ITradeBotAgent>(AI_SYSTEM_TYPES.TradeAgent).to(TradeAgent);
+    
     bind<IListBestStocksUseCase>(AI_SYSTEM_TYPES.ListBestStockUseCase).to(ListBestStockUseCase);
+    
     bind<IBotStockDetailsUseCase>(AI_SYSTEM_TYPES.BotStockDetailsUseCase).to(BotStockDetailsUseCase);
+    
     bind<IConfirmBotBuyOrderUseCase>(AI_SYSTEM_TYPES.ConfirmBotBuyOrderUseCase).to(ConfirmBotBuyOrderUseCase);
-})
+
+    bind<AgentRouter>(AI_SYSTEM_TYPES.AgentRouter).to(AgentRouter);
+})

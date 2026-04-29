@@ -11,7 +11,7 @@ export class AdminStocksUseCase implements IAdminStocksUseCase {
         @inject(STOCK_TYPES.StockRepository) private stockRepository: IStockRepository
     ) { }
 
-    async execute(query: any): Promise<{ data: StockEntity[], total: number }> {
+    async execute(query: QueryOptions): Promise<{ data: StockEntity[], total: number }> {
         return await this.stockRepository.findWithFiltersAdmin(query);
     }
 }

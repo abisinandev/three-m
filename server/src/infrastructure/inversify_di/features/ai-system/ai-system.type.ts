@@ -17,5 +17,5 @@ export const AI_SYSTEM_TYPES = {
     TradeAgent: Symbol.for("TradeAgent"),
     ListBestStockUseCase: Symbol.for("ListBestStockUseCase"),
     BotStockDetailsUseCase: Symbol.for("BotStockDetailsUseCase"),
-    ConfirmBotBuyOrderUseCase: Symbol.for("ConfirmBotBuyOrderUseCase"),
+    ConfirmBotBuyOrderUseCase: Symbol.for("ConfirmBotBuyOrderUseCase")
 }

@@ -1,31 +1,43 @@
 import { injectable } from "inversify";
 import { IEducationAgent } from "@application/interfaces/services/ai-chatbot/education-agent.interface";
 import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
-import { HumanMessage, AIMessage } from "@langchain/core/messages";
-import { normalizeAIResponse } from "../../utils/normalize-response";
-import { EducationAgentGraph } from "./education.agent-graph";
+import { model } from "../../ollama.config";
+import { FinancialIntelligentTool } from "../../langchain/tools/financial-intelligent";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { AgentResponse } from "@application/interfaces/services/ai-chatbot/agent-response.interface";
 
 @injectable()
 export class EducationAgent implements IEducationAgent {
 
-    readonly name = "education" as const;
+    async handle(input: string, history: ChatMessage[]): Promise<AgentResponse> {
+        console.log(`[EducationAgent] Querying Knowledge Base for: ${input}`);
 
-    async handle(input: string, history: ChatMessage[]): Promise<string> {
+        const context = await FinancialIntelligentTool.invoke({ query: input });
 
-        const chatHistory = history.map((msg) =>
-            msg.role === "user"
-                ? new HumanMessage(msg.content)
-                : new AIMessage(msg.content)
-        );
+        const prompt = `
+            You are a professional financial educator for the Indian market.
+            
+            STRICT RULES:
+            - ANSWER ONLY based on the provided CONTEXT.
+            - If context is missing, say you don't know.
+            
+            CONTEXT:
+            ${context}
+            
+            USER QUESTION:
+            ${input}
+            
+            YOUR RESPONSE:
+        `;
 
-        const result = await EducationAgentGraph.invoke({
-            messages: [
-                ...chatHistory,
-                new HumanMessage(input),
-            ],
-        });
+        const response = await model.invoke([
+            new SystemMessage("You are a strict context-based financial assistant."),
+            new HumanMessage(prompt)
+        ]);
 
-        const finalMessage = result.messages[result.messages.length - 1]
-        return normalizeAIResponse(finalMessage?.content || "");
+        return {
+            message: String(response.content),
+            type: 'text'
+        };
     }
-} 
+}

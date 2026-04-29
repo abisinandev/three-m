@@ -1,0 +1,8 @@
+RBI Micro-Savings Optimization Guideline (Internal Simulation)
+
+If a user's savings account balance exceeds ₹35,000 continuously for 5 days,
+the system will automatically sweep the excess amount into a liquid fund.
+
+If the balance falls below ₹20,000, a reverse sweep will be triggered.
+
+This rule applies only to Tier-1 banks with digital compliance score above 80%.

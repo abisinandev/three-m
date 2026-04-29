@@ -28,15 +28,15 @@ import { ROUTES } from '@shared/constants/routes';
 
 const navItems = [
   { to: ROUTES.ADMIN.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
-  { to: ROUTES.ADMIN.SIP_MANAGEMENT.ROOT, label: 'SIP Management', icon: DollarSign },
   // { to: ROUTES.ADMIN.INSTALLMENTS, label: 'Installments', icon: Receipt },
   { to: ROUTES.ADMIN.USERS_MANAGEMENT, label: 'Users', icon: Users },
   { to: ROUTES.ADMIN.KYC_MANAGEMENT.ROOT, label: 'KYC Verification', icon: BadgeCheck },
   { to: ROUTES.ADMIN.MUTUAL_FUNDS_MANAGEMENT.ROOT, label: 'Mutual Funds', icon: TrendingUp },
+  { to: ROUTES.ADMIN.SIP_MANAGEMENT.ROOT, label: 'SIP Management', icon: DollarSign },
   { to: ROUTES.ADMIN.STOCK_MANAGEMENT, label: 'Stocks Management', icon: AlignHorizontalDistributeCenter },
-  { to: ROUTES.ADMIN.TRANSACTIONS_MANAGEMENT, label: 'Transactions', icon: Receipt },
   { to: ROUTES.ADMIN.ALGO_TRADING, label: 'Algo Trading', icon: Cpu },
   { to: ROUTES.ADMIN.SUBSCRIPTIONS, label: 'Subscriptions', icon: CreditCard },
+  { to: ROUTES.ADMIN.TRANSACTIONS_MANAGEMENT, label: 'Transactions', icon: Receipt },
 ];
 
 interface AdminLayoutProps {

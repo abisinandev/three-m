@@ -1,9 +1,16 @@
+import { IConfirmBotBuyOrderUseCase } from "@application/use_cases/ai-chatbot/interface/confirm-bot-order-usecase.interface";
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 
-export const TradeExecutionTool = () =>
+export const TradeExecutionTool = (confirmUseCase: IConfirmBotBuyOrderUseCase, userId: string) =>
     tool(
         async ({ symbol, quantity }) => {
+            const result = await confirmUseCase.execute({ userId, symbol, quantity });
+            
+            if (result && result.upgrade) {
+                return result.message;
+            }
+
             return `CONFIRM_TRADE:${symbol}:${quantity}`;
         },
         {

@@ -9,12 +9,13 @@ export const getNotifications = async (
         params: filter ? { filter } : undefined,
     });
 
-    return response.data.data.map((item: { _id: string, _type: string, _message: string, _read: boolean, _createdAt: string }) => ({
-        id: item._id,
-        type: item._type,
-        message: item._message,
-        read: item._read,
-        createdAt: item._createdAt,
+    return response.data.data.map((item: any) => ({
+        id: item.id,
+        type: item.type,
+        title: item.title,
+        message: item.message,
+        read: item.read,
+        createdAt: item.createdAt,
     }));
 };
 

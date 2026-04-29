@@ -4,6 +4,7 @@ import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { embeddings } from "./ollama.embedded";
 import { pineconeIndex } from "../pinecone-vector-db";
+import { loadTxtFiles } from "./text.loader";
 
 
 const BATCH_SIZE = 50;
@@ -16,6 +17,7 @@ async function upsertBatch(docs: any[]) {
         id: crypto.randomUUID(),
         values: vector,
         metadata: {
+            text: docs[i].pageContent,
             source: docs[i].metadata?.source || "",
             page: docs[i].metadata?.loc?.pageNumber || 0
         }
@@ -42,11 +44,18 @@ export async function IngestDocuments() {
         "src/infrastructure/providers/ai-agents/langchain/datas"
     );
 
-    const loader = new DirectoryLoader(folderPath, {
-        ".pdf": (path: any) => new PDFLoader(path),
-    });
+    // const loader = new DirectoryLoader(folderPath, {
+    //     ".pdf": (path: string) => new PDFLoader(path),
+    // });
 
-    const docs = await loader.load();
+    // const pdfDocs = await loader.load();
+
+    const txtDocs = await loadTxtFiles(folderPath);
+
+    const docs = [
+        // ...pdfDocs, 
+        ...txtDocs];
+
     console.log(`Loaded ${docs.length} documents`);
 
     const splitter = new RecursiveCharacterTextSplitter({
@@ -60,5 +69,6 @@ export async function IngestDocuments() {
     console.log("Embedding + uploading to Pinecone...");
 
     await processInBatches(splitDocs);
+
     console.log("✅ Documents successfully stored in Pinecone");
 }

@@ -11,7 +11,6 @@ import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notifi
 import http from "http";
 import app from "./app";
 import { container } from "@infrastructure/inversify_di/container";
-// import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/RAG/ingest-docs";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { StrategyWorker } from "@infrastructure/providers/algos/queue/workers/strategy.worker";
 import { SignalWorker } from "@infrastructure/providers/algos/queue/workers/signal.worker";
@@ -53,6 +52,7 @@ const bootstrap = async () => {
     container.get<SipWorker>(SIP_TYPES.SipWorker);
     const sipScheduler = container.get<SipScheduler>(SIP_TYPES.SipScheduler);
     sipScheduler.start();    
+
 
     const server = http.createServer(app);
     
