@@ -68,7 +68,7 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
                 },
             },
         ]);
-        return result.length > 0 ? result[0] : 0;
+        return result.length > 0 ? result[0].total : 0;
     };
 
     async getUserInvestments(userId: string, options: QueryOptions): Promise<InvestmentFundDTO[]> {

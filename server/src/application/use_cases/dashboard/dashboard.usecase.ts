@@ -13,7 +13,6 @@ import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 import { ISipRepository } from "@application/interfaces/repositories/feature/sip-repository.interface";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 
-
 @injectable()
 export class DashboardUseCase implements IDashboardUseCase {
 
@@ -87,7 +86,7 @@ export class DashboardUseCase implements IDashboardUseCase {
         };
 
         const totalMutualFundInvestment =
-            totalInvestmentResult.status === "fulfilled" ? (totalInvestmentResult.value as any)?.total ?? 0 : 0;
+            totalInvestmentResult.status === "fulfilled" ? totalInvestmentResult.value : 0;
 
         const portfolioGrowth = portfolioGrowthResult.status === "fulfilled"
             ? portfolioGrowthResult.value
@@ -95,7 +94,7 @@ export class DashboardUseCase implements IDashboardUseCase {
 
         const rawSips = recentSipsResult.status === "fulfilled" ? recentSipsResult.value : [];
         const recentSips: DashboardSipDTO[] = await Promise.all(rawSips.map(async s => {
-            const fund = await this._mutualFundRepository.findOne({ schemeCode: s.schemeCode } as any);
+            const fund = await this._mutualFundRepository.findBySchemeCode(s.schemeCode);
             return {
                 id: s.id ?? "",
                 schemeCode: s.schemeCode,
@@ -114,7 +113,7 @@ export class DashboardUseCase implements IDashboardUseCase {
             ? recentInvestmentsResult.value.slice(0, 4)
             : [];
         const recentInvestments: DashboardInvestmentDTO[] = await Promise.all(rawInvestments.map(async inv => {
-            const fund = await this._mutualFundRepository.findOne({ schemeCode: inv.schemeCode } as any);
+            const fund = await this._mutualFundRepository.findBySchemeCode(inv.schemeCode);
             return {
                 id: inv.id || "",
                 schemeCode: inv.schemeCode,

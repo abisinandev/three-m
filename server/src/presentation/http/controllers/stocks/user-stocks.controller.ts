@@ -57,7 +57,7 @@ export class UserStocksController {
         try {
             const symbol = String(req.params.symbol);
             const result = await this._stockDetailsUseCase.execute(symbol);
-            
+
             return ResponseHelper.success(
                 res,
                 SuccessMessages.STOCK.STOCK_FETCHED,
@@ -94,7 +94,7 @@ export class UserStocksController {
 
     async getWatchlist(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = (req as any).user.id;
+            const userId = req.user?.id as string;
             const result = await this._fetchWatchlistUseCase.execute(userId);
 
             return ResponseHelper.success(
@@ -110,7 +110,7 @@ export class UserStocksController {
 
     async addToWatchlist(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = (req as any).user.id;
+            const userId = req.user?.id as string;
             const data: WatchlistDTO = req.body;
 
             const result = await this._addToWatchlistUseCase.execute(data, userId);
@@ -132,7 +132,7 @@ export class UserStocksController {
 
     async removeFromWatchlist(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = (req as any).user.id;
+            const userId = req.user?.id as string;
             const data: WatchlistDTO = req.body;
 
             await this._removeFromWatchlistUseCase.execute(data, userId);

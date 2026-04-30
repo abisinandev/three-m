@@ -3,7 +3,7 @@ import { IInvestmentRepository } from "@application/interfaces/repositories/feat
 import { IPortfolioProjectionUseCase } from "./interfaces/portfolio-projection-usecase.interface";
 import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
-import { PortfolioProjectionDTO } from "@application/dto/portfolio/portfolio-projection.dto";
+import { PortfolioProjectionDTO, PortfolioProjectionResponseDTO } from "@application/dto/portfolio/portfolio-projection.dto";
 import { ValidationError } from "@presentation/express/utils/error-handling";
 
 @injectable()
@@ -14,7 +14,7 @@ export class PortfolioProjectionUseCase implements IPortfolioProjectionUseCase {
         @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
     ) { }
 
-    async execute(data: PortfolioProjectionDTO, userId: string): Promise<any> {
+    async execute(data: PortfolioProjectionDTO, userId: string): Promise<PortfolioProjectionResponseDTO> {
         const { expectedReturnRate, years } = data;
 
         if (years < 1 || years > 30) {

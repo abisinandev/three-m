@@ -1,7 +1,7 @@
 import { MarketNewsArticle } from "@application/dto/market-news/market-news.dto";
 import { ICacheProvider } from "@application/interfaces/services/externals/redis-cache.provider.interface";
 import { IMarketNewsServices } from "@application/interfaces/services/market-news/market-news.service.interface";
-import { INewsApiProvider } from "@application/interfaces/services/market-news/news-api-provider.interface";
+import { INewsApiProvider, RawNewsArticle } from "@application/interfaces/services/market-news/news-api-provider.interface";
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 import { MARKET_NEWS_TYPES } from "@infrastructure/inversify_di/features/market-news/market-news.types";
 import { inject, injectable } from "inversify";
@@ -52,7 +52,7 @@ export class MarketNewsServices implements IMarketNewsServices {
 
 
 export class NewsNormalizer {
-    static normalize(rawArticles: any[]): MarketNewsArticle[] {
+    static normalize(rawArticles: RawNewsArticle[]): MarketNewsArticle[] {
         return rawArticles.map(article => ({
             title: article.title,
             description: article.description ?? null,

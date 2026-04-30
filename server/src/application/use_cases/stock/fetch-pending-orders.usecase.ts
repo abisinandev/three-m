@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { IOrderRepository } from "@application/interfaces/repositories/stock/order-repository.interface";
+import { PendingOrderResponseDTO } from "@application/dto/stock/pending-order.dto";
 import { IFetchPendingOrdersUseCase } from "./interfaces/fetch-pending-orders-usecase.interface";
-import { OrderEntity } from "@domain/entities/stock/order.entity";
 
 @injectable()
 export class FetchPendingOrdersUseCase implements IFetchPendingOrdersUseCase {
@@ -10,7 +10,7 @@ export class FetchPendingOrdersUseCase implements IFetchPendingOrdersUseCase {
         @inject(STOCK_TYPES.OrderRepository) private readonly _orderRepository: IOrderRepository,
     ) { }
 
-    async execute(userId: string, symbol?: string): Promise<any[]> {
+    async execute(userId: string, symbol?: string): Promise<PendingOrderResponseDTO[]> {
         const orders = await this._orderRepository.findPendingLimitOrdersByUserId(userId, symbol);
 
         return orders.map(order => ({

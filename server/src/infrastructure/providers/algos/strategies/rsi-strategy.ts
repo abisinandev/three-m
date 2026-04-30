@@ -1,4 +1,4 @@
-import { Strategy, StrategyResult } from "@application/interfaces/services/algo-trading/strategy-interfaces";
+import { Strategy, StrategyResult, RSISettings } from "@application/interfaces/services/algo-trading/strategy-interfaces";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 
 export class RSIStrategy implements Strategy {
@@ -10,7 +10,7 @@ export class RSIStrategy implements Strategy {
     async evaluate({ symbol, priceHistory, config }: {
         symbol: string;
         priceHistory: number[];
-        config: any;
+        config: RSISettings;
     }): Promise<StrategyResult | null> {
 
         const { period } = config;

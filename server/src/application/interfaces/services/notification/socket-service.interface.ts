@@ -1,5 +1,6 @@
 import http from "http";
 import { NotificationPayload } from "./notification-service.interface";
+import { Trade } from "@application/dto/stocks/stock.dto";
 
 export interface ISocketService {
 
@@ -7,5 +8,5 @@ export interface ISocketService {
 
     emitNotificationToUser(userId: string, payload: NotificationPayload): void;
 
-    emitStockUpdate(trade: any): void;
+    emitStockUpdate(trade: Trade): void;
 }

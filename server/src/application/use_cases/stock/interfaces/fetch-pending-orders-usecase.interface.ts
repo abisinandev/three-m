@@ -1,6 +1,5 @@
-import { OrderEntity } from "@domain/entities/stock/order.entity";
+import { PendingOrderResponseDTO } from "@application/dto/stock/pending-order.dto";
 
 export interface IFetchPendingOrdersUseCase {
-    execute(userId: string, symbol?: string): Promise<any[]>;
-
+    execute(userId: string, symbol?: string): Promise<PendingOrderResponseDTO[]>;
 }
