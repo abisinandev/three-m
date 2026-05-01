@@ -58,8 +58,9 @@ export const env = {
   PINECONE_API_KEY: requireEnv("PINECONE_API_KEY"),
   PINECONE_INDEX_NAME: requireEnv("PINECONE_INDEX_NAME"),
 
-  ALPHA_VANTAGE_API_KEY: requireEnv("ALPHA_VANTAGE_API_KEY"),
-  ALPHA_VANTAGE_BASE_URL: requireEnv("ALPHA_VANTAGE_BASE_URL"),
+  // ALPHA_VANTAGE_API_KEY: requireEnv("ALPHA_VANTAGE_API_KEY"),
+  // ALPHA_VANTAGE_BASE_URL: requireEnv("ALPHA_VANTAGE_BASE_URL"),
+
   FINNHUB_API_KEY_SECRET: requireEnv('FINNHUB_API_KEY_SECRET'),
   FINNHUB_LOGO_URL: requireEnv("FINNHUB_LOGO_URL"),
   FINNHUB_BASE_URL: requireEnv("FINNHUB_BASE_URL"),
@@ -67,9 +68,13 @@ export const env = {
   FINNHUB_QUOTE_PRICE: requireEnv("FINNHUB_QUOTE_PRICE"),
   FINNHUB_CANDLE: requireEnv("FINNHUB_CANDLE"),
 
-  POLYGON_API_KEY: requireEnv("POLYGON_API_KEY"),
+  // POLYGON_API_KEY: requireEnv("POLYGON_API_KEY"),
 
-  ALPACA_API_KEY: requireEnv("ALPACA_API_KEY"),
-  ALPACA_API_SECRET: requireEnv("ALPACA_API_SECRET"),
-  ALPACA_BASE_URL: requireEnv("ALPACA_BASE_URL"),
+  // ALPACA_API_KEY: requireEnv("ALPACA_API_KEY"),
+  // ALPACA_API_SECRET: requireEnv("ALPACA_API_SECRET"),
+  // ALPACA_BASE_URL: requireEnv("ALPACA_BASE_URL"),
+
+  YAHOO_FINANCE_RSS_STOCKS: process.env.YAHOO_FINANCE_RSS_STOCKS || "https://finance.yahoo.com/topic/stock-market-news/rss/",
+  YAHOO_FINANCE_RSS_CRYPTO: process.env.YAHOO_FINANCE_RSS_CRYPTO || "https://finance.yahoo.com/topic/crypto/rss/",
+  YAHOO_FINANCE_RSS_DEFAULT: process.env.YAHOO_FINANCE_RSS_DEFAULT || "https://finance.yahoo.com/rss/",
 };

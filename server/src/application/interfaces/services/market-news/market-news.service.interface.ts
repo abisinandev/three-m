@@ -1,6 +1,6 @@
-import { MarketNewsArticle } from "@application/dto/market-news/market-news.dto";
+import { MarketNewsResponse } from "@application/dto/market-news/market-news.dto";
 
 export interface IMarketNewsServices {
-    getTopMarketNews(category?: string): Promise<MarketNewsArticle[]>;
-    searchMarketNews(query: string, category?: string): Promise<MarketNewsArticle[]>;
+    getTopMarketNews(category?: string, page?: number, pageSize?: number): Promise<MarketNewsResponse>;
+    searchMarketNews(query: string, category?: string, page?: number, pageSize?: number): Promise<MarketNewsResponse>;
 }

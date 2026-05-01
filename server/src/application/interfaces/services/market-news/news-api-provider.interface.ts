@@ -14,7 +14,7 @@ export interface RawNewsArticle {
     author?: string | null;
 }
 
-export interface INewsApiProvider {
+export interface IMarketNewsProvider {
     getTopHeadlines(category?: string): Promise<RawNewsArticle[]>;
     searchNews(query: string, category?: string): Promise<RawNewsArticle[]>;
 }

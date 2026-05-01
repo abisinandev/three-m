@@ -29,7 +29,7 @@ const bootstrap = async () => {
 
     //cron-scheduler 
     NavDailyScheduler();
-    CagrUpdateScheduler();
+    CagrUpdateScheduler(); 
     NavAllocationScheduler(); 
 
     // Algo Trading BullMQ system

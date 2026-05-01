@@ -1,65 +1,153 @@
-import { MarketNewsArticle } from "@application/dto/market-news/market-news.dto";
+import { MarketNewsArticle, MarketNewsResponse } from "@application/dto/market-news/market-news.dto";
 import { ICacheProvider } from "@application/interfaces/services/externals/redis-cache.provider.interface";
 import { IMarketNewsServices } from "@application/interfaces/services/market-news/market-news.service.interface";
-import { INewsApiProvider, RawNewsArticle } from "@application/interfaces/services/market-news/news-api-provider.interface";
+import { IMarketNewsProvider, RawNewsArticle } from "@application/interfaces/services/market-news/news-api-provider.interface";
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 import { MARKET_NEWS_TYPES } from "@infrastructure/inversify_di/features/market-news/market-news.types";
-import { inject, injectable } from "inversify";
+import { inject, injectable, multiInject } from "inversify";
+import crypto from "crypto";
 
 @injectable()
 export class MarketNewsServices implements IMarketNewsServices {
 
     constructor(
-        @inject(MARKET_NEWS_TYPES.NewsApiProvider) private readonly _newApiProvider: INewsApiProvider,
+        @multiInject(MARKET_NEWS_TYPES.NewsApiProvider) private readonly _providers: IMarketNewsProvider[],
         @inject(EXTERNAL_TYPES.RedisCacheProvider) private readonly _cacheProvider: ICacheProvider,
     ) { }
 
-    async getTopMarketNews(category?: string): Promise<MarketNewsArticle[]> {
-        const categoryKey = category ? category.toLowerCase() : "business";
-        const cacheKey = `market_news:top:${categoryKey}`;
+    async getTopMarketNews(category?: string, page = 1, pageSize = 10): Promise<MarketNewsResponse> {
+        const categoryKey = category ? category.toLowerCase().trim() : "all";
+        const cacheKey = `news:${categoryKey}:top`;
 
+        let processed: MarketNewsArticle[];
         const cached = await this._cacheProvider.get(cacheKey);
+
         if (cached) {
-            return JSON.parse(cached);
+            processed = JSON.parse(cached);
+        } else {
+            const results = await Promise.allSettled(
+                this._providers.map(p => p.getTopHeadlines(category))
+            );
+
+            const allArticles = results
+                .filter((r): r is PromiseFulfilledResult<RawNewsArticle[]> => r.status === "fulfilled")
+                .flatMap(r => r.value);
+
+            processed = this.processArticles(allArticles);
+            await this._cacheProvider.set(cacheKey, JSON.stringify(processed), 600);
         }
 
-        const rawArticles = await this._newApiProvider.getTopHeadlines(category);
-        const articles = NewsNormalizer.normalize(rawArticles);
-
-        await this._cacheProvider.set(cacheKey, JSON.stringify(articles), 600);
-
-        return articles;
+        return this.paginate(processed, page, pageSize);
     }
 
-    async searchMarketNews(query: string, category?: string): Promise<MarketNewsArticle[]> {
-        const categoryKey = category ? category.toLowerCase() : "all";
-        const cacheKey = `market_news:search:${query.toLowerCase()}:${categoryKey}`;
+    async searchMarketNews(query: string, category?: string, page = 1, pageSize = 10): Promise<MarketNewsResponse> {
+        const categoryKey = category ? category.toLowerCase().trim() : "all";
+        const queryKey = query.toLowerCase().trim();
+        const cacheKey = `news:${categoryKey}:${queryKey}`;
 
+        let processed: MarketNewsArticle[];
         const cached = await this._cacheProvider.get(cacheKey);
+
         if (cached) {
-            return JSON.parse(cached);
+            processed = JSON.parse(cached);
+        } else {
+            const results = await Promise.allSettled(
+                this._providers.map(p => p.searchNews(query, category))
+            );
+
+            const allArticles = results
+                .filter((r): r is PromiseFulfilledResult<RawNewsArticle[]> => r.status === "fulfilled")
+                .flatMap(r => r.value);
+
+            processed = this.processArticles(allArticles);
+            await this._cacheProvider.set(cacheKey, JSON.stringify(processed), 300);
         }
 
-        const rawArticles = await this._newApiProvider.searchNews(query, category);
-        const articles = NewsNormalizer.normalize(rawArticles);
+        return this.paginate(processed, page, pageSize);
+    }
 
-        await this._cacheProvider.set(cacheKey, JSON.stringify(articles), 300);
+    private paginate(articles: MarketNewsArticle[], page: number, pageSize: number): MarketNewsResponse {
+        const total = articles.length;
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+        const paginatedArticles = articles.slice(start, end);
 
-        return articles;
+        return {
+            articles: paginatedArticles,
+            total,
+            page,
+            pageSize
+        };
+    }
+
+    private processArticles(rawArticles: RawNewsArticle[]): MarketNewsArticle[] {
+        let articles = NewsNormalizer.normalize(rawArticles);
+        articles = this.deduplicate(articles);
+        return this.rankAndSort(articles);
+    }
+
+    private deduplicate(articles: MarketNewsArticle[]): MarketNewsArticle[] {
+        const seen = new Set<string>();
+        return articles.filter(article => {
+            // URL Hash
+            const urlHash = crypto.createHash("md5").update(article.url).digest("hex");
+            // Title slug (simple)
+            const titleSlug = article.title.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 50);
+            
+            if (seen.has(urlHash) || seen.has(titleSlug)) return false;
+            
+            seen.add(urlHash);
+            seen.add(titleSlug);
+            return true;
+        });
+    }
+
+    private rankAndSort(articles: MarketNewsArticle[]): MarketNewsArticle[] {
+        const sourceReliability: Record<string, number> = {
+            "Reuters": 100,
+            "Bloomberg": 95,
+            "The Economic Times": 90,
+            "Yahoo Finance": 80,
+            "Business Standard": 85,
+            "Livemint": 85
+        };
+
+        const highValueKeywords = ["rbi", "nse", "bse", "india", "sensex", "nifty", "economy"];
+
+        return articles
+            .map(article => {
+                let score = sourceReliability[article.source] || 50;
+
+                // Keyword relevance
+                const content = (article.title + " " + (article.description || "")).toLowerCase();
+                highValueKeywords.forEach(kw => {
+                    if (content.includes(kw)) score += 10;
+                });
+
+                // Recency bonus (within last 24h)
+                const hoursOld = (Date.now() - new Date(article.publishedAt).getTime()) / (1000 * 60 * 60);
+                if (hoursOld < 24) score += (24 - hoursOld) * 2;
+
+                return { ...article, score };
+            })
+            .sort((a, b) => (b.score || 0) - (a.score || 0))
+            .map(({ score, ...rest }) => rest as MarketNewsArticle);
     }
 }
-
-
 
 export class NewsNormalizer {
     static normalize(rawArticles: RawNewsArticle[]): MarketNewsArticle[] {
         return rawArticles.map(article => ({
-            title: article.title,
-            description: article.description ?? null,
+            title: article.title?.trim() || "Untitled Financial News",
+            description: article.description?.trim() || null,
             url: article.url,
-            image: article.urlToImage ?? null,
-            source: article.source?.name ?? "Unknown",
-            publishedAt: article.publishedAt
+            image: article.urlToImage || null,
+            source: article.source?.name || "Market Source",
+            publishedAt: this.isValidDate(article.publishedAt) ? article.publishedAt : new Date().toISOString()
         }));
+    }
+
+    private static isValidDate(dateStr: string): boolean {
+        return !isNaN(Date.parse(dateStr));
     }
 }
