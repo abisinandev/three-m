@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FetchWatchlistApi, AddToWatchlistApi, RemoveFromWatchlistApi } from '@shared/services/user/stocks/WatchlistApi';
+import { FetchWatchlistApi, AddToWatchlistApi, RemoveFromWatchlistApi } from '@/shared/services/stocks/WatchlistApi';
 import { toast } from 'sonner';
 
 export const useGetWatchlist = () => {

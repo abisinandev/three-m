@@ -1,4 +1,4 @@
-import { useMarketNews } from "../market-news/hooks/useMarketNews";
+import { useMarketNews } from "@modules/user/market-news/hooks/useMarketNews";
 import { NewsCard } from "@modules/user/market-news/components/NewsCard";
 import { CategoryNav } from "@modules/user/market-news/components/CategoryNav";
 import { PersonalizationPanel } from "@modules/user/market-news/components/PersonalizationPanel";
@@ -8,6 +8,10 @@ import { Search, Info, RefreshCw } from "lucide-react";
 export const MarketNewsPage = () => {
     const {
         news,
+        total,
+        page,
+        setPage,
+        pageSize,
         isLoading,
         error,
         refetch,
@@ -16,6 +20,8 @@ export const MarketNewsPage = () => {
         activeCategory,
         setActiveCategory
     } = useMarketNews();
+
+    const totalPages = Math.ceil(total / pageSize);
 
     return (
         <div style={{
@@ -26,7 +32,7 @@ export const MarketNewsPage = () => {
             paddingBottom: 48,
         }}>
             <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-
+                
                 <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                     <div>
                         <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
@@ -71,10 +77,40 @@ export const MarketNewsPage = () => {
                                 </button>
                             </div>
                         ) : news.length > 0 ? (
-                            <div className="space-y-4">
-                                {news.map((item) => (
-                                    <NewsCard key={item.url} news={item} />
-                                ))}
+                            <div className="flex flex-col gap-4">
+                                <div className="space-y-4">
+                                    {news.map((item) => (
+                                        <NewsCard key={item.url} news={item} />
+                                    ))}
+                                </div>
+
+                                {/* Pagination Controls */}
+                                <div className="flex items-center justify-between mt-4 px-1">
+                                    <div className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
+                                        Showing {(page - 1) * pageSize + 1}-{Math.min(page * pageSize, total)} of {total} Reports
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            disabled={page === 1}
+                                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                                            style={{ background: '#111214', border: '1px solid #1e2025' }}
+                                            className="px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed hover:text-white transition-colors"
+                                        >
+                                            Prev
+                                        </button>
+                                        <div className="px-3 py-1.5 text-[10px] font-bold text-gray-300 bg-[#1a1a1a] rounded border border-[#1e2025]">
+                                            {page} / {totalPages}
+                                        </div>
+                                        <button
+                                            disabled={page >= totalPages}
+                                            onClick={() => setPage(p => p + 1)}
+                                            style={{ background: '#111214', border: '1px solid #1e2025' }}
+                                            className="px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed hover:text-white transition-colors"
+                                        >
+                                            Next
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         ) : (
                             <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-16 text-center">

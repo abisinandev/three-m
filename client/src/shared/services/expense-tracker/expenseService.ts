@@ -1,5 +1,5 @@
 import api from "@lib/axiosUser";
-import type { AddExpenseRequest, AddExpenseResponse, AddIncomeRequest, ExpenseTrackerData } from "../types/expense-types";
+import type { AddExpenseRequest, AddExpenseResponse, AddIncomeRequest, ExpenseTrackerData } from "../../../modules/user/types/expense-types";
 
 export const fetchExpenseTrackerData = async (month?: string): Promise<ExpenseTrackerData> => {
     const response = await api.get('/user/expense-tracker', { params: { month } });

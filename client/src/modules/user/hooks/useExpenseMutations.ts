@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addExpenseApi, deleteExpenseApi, addIncomeApi } from "@modules/user/services/expenseService";
+import { addExpenseApi, deleteExpenseApi, addIncomeApi } from "@/shared/services/expense-tracker/expenseService";
 import { toast } from 'sonner';
 import type { AddExpenseRequest, AddIncomeRequest } from "../types/expense-types";
 

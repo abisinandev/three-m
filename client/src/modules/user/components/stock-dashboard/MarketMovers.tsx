@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { TrendingUp, TrendingDown, ChevronRight } from 'lucide-react';
 import stockCurrencyService from '@shared/services/stockCurrency.service';
-import { FetchMarketMoversApi } from '@shared/services/user/stocks/FetchUserStocksApi';
+import { FetchMarketMoversApi } from '@/shared/services/stocks/FetchUserStocksApi';
 import type { MarketMoverProps } from '../../types/stock-dashboard.types';
 
 const MarketMoverCard: React.FC<MarketMoverProps> = ({

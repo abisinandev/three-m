@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchDashboardData } from "../services/dashboardService";
+import { fetchDashboardData } from "../../../shared/services/dashboard/dashboardService";
 
 export const useDashboard = () => {
     const { data, isLoading, isError } = useQuery({
