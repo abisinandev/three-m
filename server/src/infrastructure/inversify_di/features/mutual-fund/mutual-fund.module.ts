@@ -26,6 +26,11 @@ import { NavUpdateProvider } from "@infrastructure/providers/mutual-fund/nav-upd
 import { MutualFundsAdminController } from "@presentation/http/controllers/mutual-funds/mutual-fund-admin.controller";
 import { MutualFundUserController } from "@presentation/http/controllers/mutual-funds/mutual-fund-user.controller";
 
+// Schedulers
+import { NavDailyScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-cron.scheduler";
+import { CagrUpdateScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/cagr-cron-scheduler";
+import { NavAllocationScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-allocatation-scheduler";
+
 // Interfaces
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { IMutualFundNavRepository } from "@application/interfaces/repositories/feature/mutual-fund-nav-repository.interface";
@@ -69,4 +74,9 @@ export const MutualFundModule = new ContainerModule(({ bind }) => {
     // Controllers
     bind<MutualFundsAdminController>(MUTUAL_FUND_TYPES.MutualFundsAdminController).to(MutualFundsAdminController);
     bind<MutualFundUserController>(MUTUAL_FUND_TYPES.MutualFundsUserController).to(MutualFundUserController);
+
+    // Schedulers
+    bind<NavDailyScheduler>(MUTUAL_FUND_TYPES.NavDailyScheduler).to(NavDailyScheduler).inSingletonScope();
+    bind<CagrUpdateScheduler>(MUTUAL_FUND_TYPES.CagrUpdateScheduler).to(CagrUpdateScheduler).inSingletonScope();
+    bind<NavAllocationScheduler>(MUTUAL_FUND_TYPES.NavAllocationScheduler).to(NavAllocationScheduler).inSingletonScope();
 });

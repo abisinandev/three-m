@@ -3,9 +3,8 @@ import { env } from "@presentation/express/utils/constants/env.constants";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
 import { NavDailyScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-cron.scheduler";
 import { CagrUpdateScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/cagr-cron-scheduler";
-// import { NavMontlyScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-monthly-scheduler";
-// import { NavYearScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-yearly.scheduler";
 import { NavAllocationScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-allocatation-scheduler";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { ISocketService } from "@application/interfaces/services/notification/socket-service.interface";
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import http from "http";
@@ -28,9 +27,9 @@ const bootstrap = async () => {
     await connectDB();
 
     //cron-scheduler 
-    NavDailyScheduler();
-    CagrUpdateScheduler(); 
-    NavAllocationScheduler(); 
+    container.get<NavDailyScheduler>(MUTUAL_FUND_TYPES.NavDailyScheduler).start();
+    container.get<CagrUpdateScheduler>(MUTUAL_FUND_TYPES.CagrUpdateScheduler).start();
+    container.get<NavAllocationScheduler>(MUTUAL_FUND_TYPES.NavAllocationScheduler).start();
 
     // Algo Trading BullMQ system
     container.get<StrategyWorker>(STOCK_TYPES.StrategyWorker);

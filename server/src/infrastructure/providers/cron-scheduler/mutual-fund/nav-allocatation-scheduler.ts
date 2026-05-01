@@ -1,30 +1,18 @@
 import { NavAllocateUseCase } from '@application/use_cases/mutual-fund/nav-allocatation-usecase';
-import { container } from '@infrastructure/inversify_di/container';
-import cron from 'node-cron';
+import { BaseScheduler } from '../base.scheduler';
+import { injectable, inject } from 'inversify';
 
-let isRunning = false;
-export function NavAllocationScheduler() {
-    cron.schedule(
-        // "* * * * *",
-        "0 2,3,9 * * *",
-        
-        async () => {
-            console.log("[NAV-CRON] NAV allocation");
-            if (isRunning) return;
-            isRunning = true;
+@injectable()
+export class NavAllocationScheduler extends BaseScheduler {
+    constructor(
+        @inject(NavAllocateUseCase) private readonly _navAllocateUseCase: NavAllocateUseCase
+    ) {
+        super("NAV-ALLOCATION", "0 2,3,9 * * *");
+    }
 
-            try {
-                const useCase = container.get<NavAllocateUseCase>(NavAllocateUseCase);
-                await useCase.execute();
-
-                console.log("[NAV-CRON] NAV Allocation completed");
-            } catch (error) {
-                console.error("[NAV-CRON] NAV Allocation failed", error);
-                isRunning = false;
-            }
-        },
-        {
-            timezone: "Asia/Kolkata",
-        }
-    );
-};     
+    protected async execute(): Promise<void> {
+        console.log("[NAV-ALLOCATION] started");
+        await this._navAllocateUseCase.execute();
+        console.log("[NAV-ALLOCATION] completed");
+    }
+}

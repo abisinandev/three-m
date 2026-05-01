@@ -1,21 +1,18 @@
 import { MfCagrUseCase } from '@application/use_cases/mutual-fund/mf-cagr-usecase';
-import { container } from '@infrastructure/inversify_di/container';
-import cron from 'node-cron'
+import { BaseScheduler } from '../base.scheduler';
+import { injectable, inject } from 'inversify';
 
-export function CagrUpdateScheduler() {
-    cron.schedule(
-        // "* * * * *",
-        "0 2,3,9 * * *",
-        async () => {
-            console.log("CAGR updated");
-            try {
-                const useCase = container.get<MfCagrUseCase>(MfCagrUseCase);
-                await useCase.execute();
+@injectable()
+export class CagrUpdateScheduler extends BaseScheduler {
+    constructor(
+        @inject(MfCagrUseCase) private readonly _cagrUseCase: MfCagrUseCase
+    ) {
+        super("CAGR-UPDATE", "0 2,3,9 * * *");
+    }
 
-                console.log("CAGR updation completed");
-            } catch (error) {
-                console.error("CAGR updation failed", error);
-            }
-        }
-    );
+    protected async execute(): Promise<void> {
+        console.log("[CAGR-UPDATE] started");
+        await this._cagrUseCase.execute();
+        console.log("[CAGR-UPDATE] completed");
+    }
 }
