@@ -52,9 +52,11 @@ const ConfirmModal = ({
       <div className="fixed inset-0 bg-black/80" onClick={onClose} />
 
       <div className="relative w-full max-w-[340px] bg-[#0b0c0e] border border-[#1e2025] rounded-2xl overflow-hidden shadow-2xl">
+        {/* Top Accent Bar */}
+        <div className={`absolute top-0 left-0 right-0 h-[3px] ${statusColor[variant]}`} />
+
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#1e2025]">
           <div className="flex items-center gap-3">
-            <div className={`w-2 h-2 rounded-full ${statusColor[variant]} animate-pulse`} />
             <span className="text-[12px] font-black text-[#e8eaed] uppercase tracking-widest">{title}</span>
           </div>
           <button onClick={onClose} disabled={loading} className="text-[#5a5f6e] hover:text-white transition-colors">

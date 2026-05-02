@@ -68,9 +68,11 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
             />
 
             <div className="relative w-full max-w-[360px] bg-[#0b0c0e] border border-[#1e2025] rounded-2xl overflow-hidden shadow-2xl">
+                {/* Top Accent Bar */}
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#10b981]" />
+
                 <div className="flex justify-between items-center px-5 py-4 border-b border-[#1e2025]">
                     <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-[#00C853] animate-pulse" />
                         <span className="text-[12px] font-black text-[#e8eaed] uppercase tracking-widest">Add Income</span>
                     </div>
                     <button onClick={onClose} className="text-[#5a5f6e] hover:text-white transition-colors">
