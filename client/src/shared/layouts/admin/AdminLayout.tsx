@@ -25,6 +25,7 @@ import { LOGOUT } from '@shared/constants/adminConstants';
 import { toast } from 'sonner';
 import { useAdminStore } from '@stores/admin/useAdminStore';
 import { ROUTES } from '@shared/constants/routes';
+import ConfirmModal from '@shared/components/modals/ConfirmModal';
 
 const navItems = [
   { to: ROUTES.ADMIN.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
@@ -47,22 +48,22 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { data, logout } = useAdminStore();
 
   const handleLogout = async () => {
-    const confirmed = window.confirm('Are you sure you want to logout?');
-    if (!confirmed) return;
-
     try {
       await adminApi.post(LOGOUT, {}, { withCredentials: true });
       logout();
+      setIsLogoutModalOpen(false);
       toast.success('Logged out successfully');
       navigate({ to: ROUTES.ADMIN.AUTH.LOGIN, replace: true });
     } catch (error) {
       console.error('Logout failed:', error);
       toast.error('Failed to logout. Please try again.');
+      setIsLogoutModalOpen(false);
     }
   };
 
@@ -203,7 +204,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={handleLogout}
+              onClick={() => setIsLogoutModalOpen(true)}
               className="flex items-center gap-2 px-3 py-1.5 text-red-400 hover:bg-neutral-800 rounded-md transition-colors text-[13px] font-medium"
             >
               <LogOut size={16} strokeWidth={2} />
@@ -217,6 +218,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           {children}
         </main>
       </div>
+
+      <ConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleLogout}
+        title="Logout"
+        message="Are you sure you want to logout? You will need to re-authenticate to access the admin panel."
+        confirmText="Logout"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }

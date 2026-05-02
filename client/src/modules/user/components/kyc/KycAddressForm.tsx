@@ -53,7 +53,6 @@ export const KycAddressForm = ({ address, setAddress }: KycAddressFormProps) => 
                             city: postOffice.District,
                             state: postOffice.State
                         }));
-                        toast.success('City & State auto-filled!');
                     } else if (data && data[0].Status === 'Error') {
                         toast.error('Invalid PIN Code');
                     }

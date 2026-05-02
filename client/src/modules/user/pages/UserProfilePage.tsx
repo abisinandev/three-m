@@ -166,6 +166,7 @@ const UserProfilePage = () => {
               twoFAEnabled={twoFAEnabled}
               setTwoFAEnabled={setTwoFAEnabled}
               setShowPasswordModal={setShowPasswordModal}
+              user={user}
             />
           </div>
         </div>

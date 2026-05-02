@@ -82,16 +82,16 @@ const AuthenticationPage = () => {
     const hasError = (field: keyof FormErrors) => !!errors[field];
 
     return (
-        <div className="bg-deep-charcoal min-h-screen flex items-center justify-center px-4">
-            <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div className="bg-deep-charcoal min-h-screen flex items-center justify-center px-4 text-text-primary">
+            <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
 
-                <div className="w-full max-w-md mx-auto">
-                    <div className="border border-neutral-800 rounded-2xl p-7 bg-[#0a0a0a]/50 backdrop-blur-sm">
-                        <h1 className="text-white text-center text-2xl font-bold tracking-tight mb-8">
-                            AUTHENTICATION
+                <div className="w-full max-w-[360px] mx-auto border border-neutral-800/60 bg-neutral-900/30 rounded-xl p-6 shadow-sm">
+                    <div>
+                        <h1 className="text-white text-center text-xl font-semibold mb-6 tracking-tight">
+                            Admin Authentication
                         </h1>
 
-                        <form onSubmit={handleSubmit} className="space-y-5">
+                        <form onSubmit={handleSubmit} className="space-y-4">
 
                             <div>
                                 <label className="block text-gray-400 text-xs font-medium mb-1.5">
@@ -172,13 +172,13 @@ const AuthenticationPage = () => {
                             <button
                                 type="submit"
                                 disabled={authMutation.isPending || !!errors.adminCode || !!errors.password}
-                                className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm py-3 rounded-lg transition-all duration-200 active:scale-98 shadow-md hover:shadow-orange-500/30"
+                                className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-sm py-2.5 rounded shadow-sm transition-all duration-200"
                             >
                                 {authMutation.isPending ? "Processing..." : "Authenticate"}
                             </button>
                         </form>
 
-                        <p className="text-center text-[10px] text-gray-600 mt-5 font-medium">
+                        <p className="text-center text-[10px] text-gray-500 mt-5 font-medium">
                             Protected access • Admin only
                         </p>
                     </div>

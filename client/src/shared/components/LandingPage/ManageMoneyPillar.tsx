@@ -11,20 +11,20 @@ export const ManageMoneyPillar: React.FC = () => {
             <div className="w-12 h-12 bg-teal-green/20 rounded-lg flex items-center justify-center">
               <DollarSign className="w-6 h-6 text-teal-green" />
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-cool-white">
-              MANAGE MONEY
+            <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-cool-white uppercase">
+              Manage Money
             </h3>
           </div>
-          <h4 className="text-base sm:text-xl font-semibold text-teal-green">
-            Stop Guessing, Start Growing. Intelligent Expense Management.
+          <h4 className="text-base sm:text-lg font-medium text-cool-white/90">
+            Track Every Rupee. Spend Intelligently.
           </h4>
-          <p className="text-sm sm:text-base text-cool-white/80 leading-relaxed max-w-xl">
-            Our AI-powered expense tracking follows the proven 50/30/20 rule, automatically categorizing your spending and alerting you before you exceed limits.
+          <p className="text-sm text-cool-white/70 leading-relaxed max-w-xl">
+            Take control of your cash flow. Our comprehensive expense tracking system helps you categorize spending, while our AI provides intelligent suggestions to optimize your budget and teaches you core financial principles.
           </p>
           <div className="space-y-2 sm:space-y-3">
-            <FeaturePoint text="Smart Blocking System prevents overspending" />
-            <FeaturePoint text="AI Bill Predictor forecasts upcoming expenses" />
-            <FeaturePoint text="Comparative Analytics show spending trends" />
+            <FeaturePoint text="High-performance expense tracking dashboard" />
+            <FeaturePoint text="Intelligent AI-driven spending suggestions" />
+            <FeaturePoint text="Interactive financial learning resources" />
           </div>
         </div>
 

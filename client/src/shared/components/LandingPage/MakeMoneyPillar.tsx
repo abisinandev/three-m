@@ -12,20 +12,20 @@ export const MakeMoneyPillar: React.FC = () => {
             <div className="w-12 h-12 bg-teal-green/20 rounded-lg flex items-center justify-center">
               <Bot className="w-6 h-6 text-teal-green" />
             </div>
-            <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-cool-white">
-              MAKE MONEY
+            <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-cool-white uppercase">
+              Make Money
             </h3>
           </div>
-          <h4 className="text-lg sm:text-2xl font-semibold text-teal-green">
-            Your Personal Financial Co-Pilot. Leveraging AI for Better Returns.
+          <h4 className="text-base sm:text-lg font-medium text-cool-white/90">
+            You Earn It. We Empower It.
           </h4>
-          <p className="text-base sm:text-lg text-cool-white/80 leading-relaxed max-w-xl">
-            Our advanced AI analyzes market patterns, your risk profile, and financial goals to provide personalized investment recommendations and execute algorithmic trades.
+          <p className="text-sm text-cool-white/70 leading-relaxed max-w-xl">
+            Building your initial capital requires dedication—whether through a career, business, or side hustle. Once you've made your money, Three-M provides the robust infrastructure needed to securely onboard and deploy your hard-earned funds.
           </p>
           <div className="space-y-2 sm:space-y-3">
-            <FeaturePoint text="AI Chatbot with Natural Language Processing" />
-            <FeaturePoint text="Algorithmic Trading with risk management" />
-            <FeaturePoint text="Predictive market analysis and alerts" />
+            <FeaturePoint text="Seamless onboarding for your capital" />
+            <FeaturePoint text="Secure Stripe-powered wallet infrastructure" />
+            <FeaturePoint text="Bank-level security for fund deposits" />
           </div>
         </div>
 
