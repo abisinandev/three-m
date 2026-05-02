@@ -8,6 +8,9 @@ import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
 import type { IForgotPasswordUseCase } from "./interfaces/forgot-password-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
+import { AuthProvider } from "@domain/enum/users/auth-provider.enum";
+import { ErrorMessages } from "@shared/constants/error.messages";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 @injectable()
 export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
@@ -19,6 +22,10 @@ export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
   async execute(data: ForgotPasswordDTO): Promise<void> {
     const user = await this._userRepository.findByField("email", data.email);
     if (!user) throw new NotFoundError("User doest not exist");
+
+    if (user.authProvider !== AuthProvider.MANUAL) {
+      throw new ValidationError(ErrorMessages.AUTH.SOCIAL_USER_CANNOT_CHANGE_PASSWORD);
+    }
 
     const redisKey = `forgot-password-otp:${data.email}`;
     const otp = generateOtp();

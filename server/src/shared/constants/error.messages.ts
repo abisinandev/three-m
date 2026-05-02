@@ -20,6 +20,7 @@ export const ErrorMessages = {
         RESET_TOKEN_INVALID: "Reset token is invalid",
         INVALID_OLD_PASSWORD: "Invalid old password",
         COMPLETE_KYC: "Please complete KYC verification",
+        SOCIAL_USER_CANNOT_CHANGE_PASSWORD: "Users logged in via social accounts cannot change their password",
     },
     USER: {
         ACCOUNT_BLOCKED: "Account is blocked",

@@ -57,6 +57,6 @@ export class GoogleAuthUseCase implements IGoogleAuthUseCase {
 
     const accessToken = this._jwtProvider.generateAccessToken(payload);
     const refreshToken = this._jwtProvider.generateRefreshToken(payload);
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, user };
   }
 }

@@ -10,6 +10,7 @@ import {
 import { inject, injectable } from "inversify";
 import type { IChangePasswordUseCase } from "./interfaces/change-password.usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
+import { AuthProvider } from "@domain/enum/users/auth-provider.enum";
 
 @injectable()
 export class ChangePasswordUseCase implements IChangePasswordUseCase {
@@ -26,6 +27,10 @@ export class ChangePasswordUseCase implements IChangePasswordUseCase {
     const user = await this._userRepository.findById(userId);
 
     if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
+
+    if (user.authProvider !== AuthProvider.MANUAL) {
+      throw new ValidationError(ErrorMessages.AUTH.SOCIAL_USER_CANNOT_CHANGE_PASSWORD);
+    }
 
     const isMatch = await this._hashingService.verify(
       data.currentPassword,

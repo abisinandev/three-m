@@ -32,6 +32,6 @@ export class SignupVerifyOtpUseCase implements ISignupVerifyOtpUseCase {
     const user = await this._userRepository.verifyEmail(data.email);
     if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
-    await redisClient.del(data.email);
+    await redisClient.del(`otp:${data.email}`);
   }
 }

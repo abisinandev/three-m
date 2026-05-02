@@ -1,4 +1,5 @@
 export enum Features {
+    //basic plan
     EXPENSE_TRACKING = "EXPENSE_TRACKING",
     PORTFOLIO_BASIC = "PORTFOLIO_BASIC",
     MARKET_NEWS = "MARKET_NEWS",

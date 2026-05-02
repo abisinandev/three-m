@@ -15,20 +15,26 @@ export class GoogleAuthService implements IGoogleAuthService {
   }
 
   async verifyToken(token: string): Promise<GoogleAuthDTO> {
-    const ticket = await this.client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    try {
+      const response = await fetch(env.GOOGLE_USER_INFO_URL, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const payload = await response.json();
+      
+      if (!response.ok || !payload) {
+        throw new ValidationError(ErrorMessages.AUTH.INVALID_CREDENTIALS);
+      }
 
-    const payload = ticket.getPayload();
-    if (!payload) throw new ValidationError(ErrorMessages.AUTH.INVALID_CREDENTIALS);
-
-    return {
-      id: payload.sub,
-      email: payload.email || "",
-      name: payload.name || payload.given_name || "User",
-      avatar: payload.picture,
-      emailVerified: payload.email_verified === true,
-    };
+      return {
+        id: payload.sub,
+        email: payload.email || "",
+        name: payload.name || payload.given_name || "User",
+        avatar: payload.picture,
+        emailVerified: payload.email_verified === true,
+      };
+    } catch (error) {
+      throw new ValidationError(ErrorMessages.AUTH.INVALID_CREDENTIALS);
+    }
   }
 }
