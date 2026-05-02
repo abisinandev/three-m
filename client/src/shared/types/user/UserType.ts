@@ -29,7 +29,7 @@ export type UserType = {
     currency: string;
 
     panNumber?: string;
-    aadhaarNumber?: string;
+    aadharNumber?: string;
     address?: {
         fullAddress?: string;
         city: string;

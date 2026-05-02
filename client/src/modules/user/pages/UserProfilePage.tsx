@@ -96,8 +96,8 @@ const UserProfilePage = () => {
   })();
 
   const isKycVerified = user?.kycStatus === "verified";
-  const maskedAadhaar = user?.kyc.aadhaarNumber
-    ? `XXXX-XXXX-${user?.kyc.aadhaarNumber.slice(-4)}`
+  const maskedAadhar = user?.kyc?.aadharNumber
+    ? `XXXX-XXXX-${user?.kyc?.aadharNumber.slice(-4)}`
     : "Not added";
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,7 +159,7 @@ const UserProfilePage = () => {
             <PersonalInfoCard 
               setShowEditModal={setShowEditModal}
               isKycVerified={isKycVerified}
-              maskedAadhaar={maskedAadhaar}
+              maskedAadhar={maskedAadhar}
             />
 
             <SecurityCard 

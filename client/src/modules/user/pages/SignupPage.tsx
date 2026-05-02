@@ -132,9 +132,9 @@ export const SignupPage: React.FC = () => {
     return (
         <div className="bg-deep-charcoal min-h-screen flex items-center justify-center px-4 text-text-primary">
             <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-                <div className="w-full max-w-sm mx-auto">
-                    <h1 className="text-white text-center text-3xl lg:text-4xl font-bold mb-8 tracking-wide">
-                        SIGN UP
+                <div className="w-full max-w-[360px] mx-auto border border-neutral-800/60 bg-neutral-900/30 rounded-xl p-6 shadow-sm">
+                    <h1 className="text-white text-center text-xl font-semibold mb-6 tracking-tight">
+                        Create an account
                     </h1>
                     <SignupForm
                         formData={formData}

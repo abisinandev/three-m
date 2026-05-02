@@ -64,9 +64,9 @@ const OTPVerification: React.FC<OTPProps> = ({
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-deep-charcoal px-4">
-            <div className="bg-neutral-800 p-8 rounded-2xl shadow-lg w-full max-w-sm">
+            <div className="bg-neutral-900/50 border border-neutral-800/60 p-6 rounded-xl shadow-lg w-full max-w-[360px]">
 
-                <h1 className="text-3xl font-bold text-white text-center mb-4">{title}</h1>
+                <h1 className="text-xl font-semibold text-white text-center mb-4 tracking-tight">{title}</h1>
 
                 <p className="text-gray-400 text-center text-sm mb-6">
                     We sent a 6-digit code to <br />
@@ -85,7 +85,7 @@ const OTPVerification: React.FC<OTPProps> = ({
                             onChange={(e) => handleChange(e, i)}
                             onPaste={handlePaste}
                             className="
-                                w-12 h-12 text-xl font-bold text-center 
+                                w-10 h-10 text-base font-semibold text-center 
                                 bg-white text-black rounded-md
                                 focus:ring-2 focus:ring-teal-400 outline-none
                                 transition-all duration-150
@@ -126,7 +126,7 @@ const OTPVerification: React.FC<OTPProps> = ({
                     onClick={onVerify}
                     disabled={isLoading || otpValues.join("").length !== 6}
                     className="
-                        w-full py-3 rounded-lg shadow-md 
+                        w-full py-2.5 rounded shadow-sm text-sm
                         bg-teal-green text-white font-semibold
                         flex items-center justify-center gap-2
                         disabled:opacity-60 disabled:cursor-not-allowed

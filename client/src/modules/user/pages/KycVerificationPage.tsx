@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Camera, Upload, CheckCircle, ArrowRight, ArrowLeft, MapPin, Loader2, User, X, FileText, RotateCcw } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Camera, CheckCircle, ArrowRight, ArrowLeft, MapPin, Loader2, User, AlertCircle } from 'lucide-react';
 import api from '@lib/axiosUser';
 import { GetSignatureApi } from '@shared/services/user/GetSignatureApi';
 import { useUserStore } from '@stores/user/UserStore';
@@ -8,52 +8,42 @@ import { KYC_SUMBIT_URL } from '@shared/constants/userContants';
 import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
 import { ROUTES } from '@shared/constants/routes';
+import { KycDetailsForm } from '../components/kyc/KycDetailsForm';
+import { KycAddressForm } from '../components/kyc/KycAddressForm';
+import { KycDocumentUpload } from '../components/kyc/KycDocumentUpload';
+import { KycSelfieCapture } from '../components/kyc/KycSelfieCapture';
+import type { AddressData, DetailsData, KycFiles, KycPreviews } from '../components/kyc/KycTypes';
 
 const steps = [
     { id: 1, title: 'Your Details', field: 'details', isForm: true },
     { id: 2, title: 'Address Proof', field: 'address', isForm: true },
     { id: 3, title: 'PAN Card', field: 'pan' },
-    { id: 4, title: 'Aadhaar Card', field: 'aadhaar' },
+    { id: 4, title: 'Aadhar Card', field: 'aadhaar' },
     { id: 5, title: 'Live Selfie', field: 'selfie' },
 ];
 
-interface DetailsData {
-    fullName: string;
-    panNumber: string;
-    aadhaarNumber: string;
-}
-
-interface AddressData {
-    fullAddress: string;
-    city: string;
-    state: string;
-    pincode: string;
-}
-
 const KYCVerificationPage = () => {
     const [currentStep, setCurrentStep] = useState(0);
-    const { user } = useUserStore();
+    const { user, setUser } = useUserStore();
     const navigate = useNavigate();
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [stream, setStream] = useState<MediaStream | null>(null);
 
-    const [files, setFiles] = useState({
-        pan: null as File | null,
-        aadhaar: null as File | null,
-        selfie: null as File | null,
+
+    const [files, setFiles] = useState<KycFiles>({
+        pan: null,
+        aadhaar: null,
+        selfie: null,
     });
 
-    const [previews, setPreviews] = useState({
-        pan: null as string | null,
-        aadhaar: null as string | null,
-        selfie: null as string | null,
+    const [previews, setPreviews] = useState<KycPreviews>({
+        pan: null,
+        aadhaar: null,
+        selfie: null,
     });
 
     const [details, setDetails] = useState<DetailsData>({
         fullName: '',
         panNumber: '',
-        aadhaarNumber: '',
+        aadharNumber: '',
     });
 
     const [address, setAddress] = useState<AddressData>({
@@ -66,13 +56,77 @@ const KYCVerificationPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
+    const [statesList, setStatesList] = useState<{ name: string }[]>([]);
+    const [isLoadingStates, setIsLoadingStates] = useState(false);
+    const [isFetchingPin, setIsFetchingPin] = useState(false);
+
     const step = steps[currentStep];
+
+    useEffect(() => {
+        if (user?.kycStatus === 'verified' || user?.kycStatus === 'pending') {
+            navigate({ to: ROUTES.USER.PROFILE });
+        }
+    }, [user, navigate]);
 
     useEffect(() => {
         if (user?.fullName) {
             setDetails(prev => ({ ...prev, fullName: user.fullName }));
         }
     }, [user]);
+
+    // Fetch all Indian States on mount
+    useEffect(() => {
+        const fetchStates = async () => {
+            setIsLoadingStates(true);
+            try {
+                const response = await fetch("https://countriesnow.space/api/v0.1/countries/states", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ country: "India" })
+                });
+                const data = await response.json();
+                if (!data.error) {
+                    setStatesList(data.data.states);
+                }
+            } catch (error) {
+                console.error("Failed to fetch states", error);
+            } finally {
+                setIsLoadingStates(false);
+            }
+        };
+        fetchStates();
+    }, []);
+
+    // Auto-fill City and State when a 6-digit PIN is entered
+    useEffect(() => {
+        const fetchLocationByPin = async () => {
+            if (address.pincode.length === 6) {
+                setIsFetchingPin(true);
+                try {
+                    const response = await fetch(`https://api.postalpincode.in/pincode/${address.pincode}`);
+                    const data = await response.json();
+                    if (data && data[0].Status === 'Success') {
+                        const postOffice = data[0].PostOffice[0];
+                        setAddress(prev => ({
+                            ...prev,
+                            city: postOffice.District,
+                            state: postOffice.State
+                        }));
+                        toast.success('City & State auto-filled!');
+                    } else if (data && data[0].Status === 'Error') {
+                        toast.error('Invalid PIN Code');
+                    }
+                } catch (error) {
+                    console.error('Error fetching location from PIN:', error);
+                } finally {
+                    setIsFetchingPin(false);
+                }
+            }
+        };
+
+        const timeoutId = setTimeout(() => fetchLocationByPin(), 500);
+        return () => clearTimeout(timeoutId);
+    }, [address.pincode]);
 
     const handleFileChange = (field: 'pan' | 'aadhaar' | 'selfie', file: File | null) => {
         if (!file) {
@@ -107,56 +161,6 @@ const KYCVerificationPage = () => {
         setFiles(prev => ({ ...prev, [field]: null }));
         setPreviews(prev => ({ ...prev, [field]: null }));
     };
-
-    const startCamera = async () => {
-        try {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: 'user' },
-                audio: false,
-            });
-            setStream(mediaStream);
-            if (videoRef.current) {
-                videoRef.current.srcObject = mediaStream;
-            }
-        } catch (err) {
-            toast.error('Camera access denied. Please allow permission.');
-        }
-    };
-
-    const stopCamera = () => {
-        stream?.getTracks().forEach(track => track.stop());
-        setStream(null);
-    };
-
-    const capturePhoto = () => {
-        if (!videoRef.current || !canvasRef.current) return;
-
-        const video = videoRef.current;
-        const canvas = canvasRef.current;
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        ctx.drawImage(video, 0, 0);
-        canvas.toBlob((blob) => {
-            if (blob) {
-                const file = new File([blob], `selfie_${Date.now()}.jpg`, { type: 'image/jpeg' });
-                handleFileChange('selfie', file);
-                stopCamera();
-            }
-        }, 'image/jpeg', 0.95);
-    };
-
-    useEffect(() => {
-        if (step.field === 'selfie' && !files.selfie) {
-            startCamera();
-        }
-        return () => {
-            if (step.field !== 'selfie') stopCamera();
-        };
-    }, [currentStep, files.selfie]);
 
     const isDetailsComplete = () => {
         const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
@@ -211,10 +215,14 @@ const KYCVerificationPage = () => {
                 userId: user?.id,
                 fullName: details.fullName,
                 panNumber: details.panNumber.toUpperCase(),
-                aadhaarNumber: details.aadhaarNumber || null,
+                aadharNumber: details.aadharNumber || null,
                 address,
                 documents,
             });
+
+            if (user) {
+                setUser({ ...user, kycStatus: 'pending' });
+            }
 
             toast.success('KYC submitted successfully!');
             setSubmitStatus('success');
@@ -231,211 +239,109 @@ const KYCVerificationPage = () => {
 
     return (
         <>
-            <div className="min-h-screen bg-[#050505] flex items-center justify-center px-4 py-8">
+            <div className="min-h-screen bg-[#0b0c0e] flex items-center justify-center px-4 py-8 font-sans">
                 <div className="w-full max-w-md">
+
+                    {user?.kycStatus === 'rejected' && currentStep === 0 && (
+                        <div className="mb-6 p-4 bg-[#F44336]/10 border border-[#F44336]/20 rounded-2xl shadow-[0_0_15px_rgba(244,67,54,0.1)]">
+                            <h3 className="text-[#F44336] text-[13px] font-bold flex items-center gap-2 mb-1.5 tracking-tight uppercase">
+                                <AlertCircle className="w-4 h-4" />
+                                Previous KYC Rejected
+                            </h3>
+                            <p className="text-[#e8eaed] text-[12px] font-medium leading-relaxed opacity-90">
+                                {user?.kyc?.rejectionReason || "Your previous submission didn't meet our guidelines. Please carefully re-enter your details and upload clear, readable documents."}
+                            </p>
+                        </div>
+                    )}
 
                     {submitStatus === 'success' && (
                         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
                             <div className="text-center">
-                                <CheckCircle className="w-24 h-24 text-[#22C55E] mx-auto mb-4" />
-                                <p className="text-2xl font-bold text-white">KYC Submitted!</p>
-                                <p className="text-gray-400 mt-2">We'll review it within 24 hours</p>
+                                <CheckCircle className="w-24 h-24 text-[#00C853] mx-auto mb-4" />
+                                <p className="text-[20px] font-semibold text-[#e8eaed] tracking-tight">KYC Submitted!</p>
+                                <p className="text-[12px] text-[#5a5f6e] mt-2 font-medium">We'll review it within 24 hours</p>
                             </div>
                         </div>
                     )}
 
+                    <button
+                        onClick={() => navigate({ to: ROUTES.USER.PROFILE })}
+                        className="mb-6 flex items-center gap-2 text-[#5a5f6e] hover:text-[#e8eaed] text-[12px] font-semibold transition-colors group"
+                    >
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        Back to Profile
+                    </button>
+
                     <div className="text-center mb-8">
-                        <h2 className="text-xl font-semibold text-white">Complete KYC Verification</h2>
-                        <p className="text-xs text-gray-400 mt-1">
+                        <h2 className="text-[18px] font-semibold text-[#e8eaed] tracking-tight">Complete KYC Verification</h2>
+                        <p className="text-[12px] text-[#5a5f6e] font-medium mt-1">
                             Step {currentStep + 1} of {steps.length} • {step.title}
                         </p>
                     </div>
 
-                    <div className="w-full h-1.5 bg-[#1a1a1a] rounded-full overflow-hidden mb-8">
+                    <div className="w-full h-1.5 bg-[#111214] rounded-full overflow-hidden mb-8 border border-[#1e2025]">
                         <div
-                            className="h-full bg-gradient-to-r from-[#22C55E] to-[#16a34a] transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-[#00C853] to-[#00E676] transition-all duration-500 shadow-[0_0_10px_rgba(0,200,83,0.5)]"
                             style={{ width: `${progress}%` }}
                         />
                     </div>
 
-                    <div className="bg-[#0a0a0a] rounded-2xl border border-[#1f1f1f] p-6 shadow-2xl">
+                    <div className="bg-[#111214] rounded-2xl border border-[#1e2025] p-6 shadow-2xl">
                         <div className="space-y-6">
 
                             <div className="text-center">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#111111] border border-[#333] mb-4">
+                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#0b0c0e] border border-[#1e2025] mb-4 shadow-inner">
                                     {step.isForm ? (
                                         step.field === 'details' ? (
-                                            isDetailsComplete() ? <CheckCircle className="w-8 h-8 text-[#22C55E]" /> : <User className="w-8 h-8 text-gray-500" />
+                                            isDetailsComplete() ? <CheckCircle className="w-7 h-7 text-[#00C853]" /> : <User className="w-7 h-7 text-[#5a5f6e]" />
                                         ) : (
-                                            isAddressComplete() ? <CheckCircle className="w-8 h-8 text-[#22C55E]" /> : <MapPin className="w-8 h-8 text-gray-500" />
+                                            isAddressComplete() ? <CheckCircle className="w-7 h-7 text-[#00C853]" /> : <MapPin className="w-7 h-7 text-[#5a5f6e]" />
                                         )
                                     ) : files[step.field as keyof typeof files] ? (
-                                        <CheckCircle className="w-8 h-8 text-[#22C55E]" />
+                                        <CheckCircle className="w-7 h-7 text-[#00C853]" />
                                     ) : (
-                                        <Camera className="w-8 h-8 text-gray-500" />
+                                        <Camera className="w-7 h-7 text-[#5a5f6e]" />
                                     )}
                                 </div>
-                                <h3 className="text-base font-medium text-white">
+                                <h3 className="text-[14px] font-semibold text-[#e8eaed] tracking-tight">
                                     {step.field === 'details' ? 'Enter Your Details' : step.isForm ? 'Enter Address' : `Upload ${step.title}`}
                                 </h3>
                             </div>
 
                             {step.field === 'selfie' ? (
-                                <div className="space-y-4">
-                                    {!files.selfie ? (
-                                        <div className="relative rounded-xl overflow-hidden bg-black">
-                                            <video
-                                                ref={videoRef}
-                                                autoPlay
-                                                playsInline
-                                                muted
-                                                className="w-full h-96 object-cover"
-                                                style={{ transform: 'scaleX(-1)' }}
-                                            />
-                                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                <div className="w-64 h-80 border-4 border-white/30 rounded-3xl" />
-                                            </div>
-                                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-                                                <button
-                                                    onClick={capturePhoto}
-                                                    className="w-20 h-20 bg-white rounded-full shadow-2xl ring-4 ring-gray-900/50"
-                                                />
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="relative rounded-xl overflow-hidden border border-[#333]">
-                                            <img src={previews.selfie!} alt="Selfie" className="w-full h-96 object-cover" />
-                                            <button
-                                                onClick={() => {
-                                                    removeFile('selfie');
-                                                    setTimeout(startCamera, 300);
-                                                }}
-                                                className="absolute top-4 right-4 bg-black/70 hover:bg-black px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
-                                            >
-                                                <RotateCcw className="w-4 h-4" /> Retake
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {!files.selfie && (
-                                        <label className="block text-center text-xs text-gray-500 hover:text-gray-300 cursor-pointer">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                capture="user"
-                                                className="hidden"
-                                                onChange={(e) => handleFileChange('selfie', e.target.files?.[0] || null)}
-                                            />
-                                            Or choose from gallery
-                                        </label>
-                                    )}
-                                </div>
+                                <KycSelfieCapture
+                                    files={files}
+                                    previews={previews}
+                                    handleFileChange={handleFileChange}
+                                    removeFile={removeFile}
+                                    isActive={step.field === 'selfie'}
+                                />
                             ) : step.field === 'details' ? (
-                                <div className="space-y-4">
-                                    <input
-                                        type="text"
-                                        placeholder="Full Name (as on PAN)"
-                                        value={details.fullName}
-                                        readOnly
-                                        className="w-full px-4 py-3 bg-[#111111] border border-[#333] rounded-lg text-xs text-white placeholder-gray-500 opacity-70 cursor-not-allowed"
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="PAN Number (e.g. ABCDE1234F)"
-                                        value={details.panNumber}
-                                        onChange={(e) => setDetails(prev => ({ ...prev, panNumber: e.target.value.toUpperCase().slice(0, 10) }))}
-                                        className="w-full px-4 py-3 bg-[#111111] border border-[#333] rounded-lg text-xs text-white placeholder-gray-500 focus:border-[#22C55E] outline-none font-mono tracking-widest"
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Aadhaar Number"
-                                        value={details.aadhaarNumber}
-                                        onChange={(e) => setDetails(prev => ({ ...prev, aadhaarNumber: e.target.value.replace(/\D/g, '').slice(0, 12) }))}
-                                        className="w-full px-4 py-3 bg-[#111111] border border-[#333] rounded-lg text-xs text-white placeholder-gray-500 focus:border-[#22C55E] outline-none font-mono"
-                                    />
-                                </div>
+                                <KycDetailsForm
+                                    details={details}
+                                    setDetails={setDetails}
+                                />
                             ) : step.field === 'address' ? (
-                                <div className="space-y-4">
-                                    <input
-                                        type="text"
-                                        placeholder="Full Address"
-                                        value={address.fullAddress}
-                                        onChange={(e) => setAddress(prev => ({ ...prev, fullAddress: e.target.value }))}
-                                        className="w-full px-4 py-3 bg-[#111111] border border-[#333] rounded-lg text-xs text-white placeholder-gray-500 focus:border-[#22C55E] outline-none"
-                                    />
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <input
-                                            type="text"
-                                            placeholder="City"
-                                            value={address.city}
-                                            onChange={(e) => setAddress(prev => ({ ...prev, city: e.target.value }))}
-                                            className="px-4 py-3 bg-[#111111] border border-[#333] rounded-lg text-xs text-white placeholder-gray-500 focus:border-[#22C55E] outline-none"
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="State"
-                                            value={address.state}
-                                            onChange={(e) => setAddress(prev => ({ ...prev, state: e.target.value }))}
-                                            className="px-4 py-3 bg-[#111111] border border-[#333] rounded-lg text-xs text-white placeholder-gray-500 focus:border-[#22C55E] outline-none"
-                                        />
-                                    </div>
-                                    <input
-                                        type="text"
-                                        placeholder="PIN Code"
-                                        value={address.pincode}
-                                        maxLength={6}
-                                        onChange={(e) => setAddress(prev => ({ ...prev, pincode: e.target.value.replace(/\D/g, '') }))}
-                                        className="w-full px-4 py-3 bg-[#111111] border border-[#333] rounded-lg text-xs text-white placeholder-gray-500 focus:border-[#22C55E] outline-none"
-                                    />
-                                </div>
+                                <KycAddressForm
+                                    address={address}
+                                    setAddress={setAddress}
+                                />
                             ) : (
-                                <div className="relative">
-                                    {previews[step.field as keyof typeof previews] ? (
-                                        <div className="relative rounded-xl overflow-hidden border border-[#333]">
-                                            {files[step.field as keyof typeof files]?.type === 'application/pdf' ? (
-                                                <div className="bg-gray-800 h-64 flex flex-col items-center justify-center">
-                                                    <FileText className="w-16 h-16 text-gray-400" />
-                                                    <p className="text-xs text-gray-400 mt-2">PDF Document</p>
-                                                </div>
-                                            ) : (
-                                                <img
-                                                    src={previews[step.field as keyof typeof previews]!}
-                                                    alt="Preview"
-                                                    className="w-full h-64 object-cover"
-                                                />
-                                            )}
-                                            <button
-                                                onClick={() => removeFile(step.field as any)}
-                                                className="absolute top-3 right-3 bg-black/70 hover:bg-black p-2 rounded-full"
-                                            >
-                                                <X className="w-5 h-5 text-white" />
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <label
-                                            htmlFor={`upload-${step.field}`}
-                                            className="block border-2 border-dashed border-[#333] hover:border-[#444] rounded-xl p-12 text-center cursor-pointer transition bg-[#111111]"
-                                        >
-                                            <Upload className="w-12 h-12 text-gray-500 mx-auto mb-3" />
-                                            <p className="text-xs text-gray-400">Click to upload • Max 5MB</p>
-                                            <p className="text-xs text-gray-500 mt-1">JPG, PNG or PDF</p>
-                                        </label>
-                                    )}
-                                    <input
-                                        id={`upload-${step.field}`}
-                                        type="file"
-                                        accept="image/*,.pdf"
-                                        className="hidden"
-                                        onChange={(e) => handleFileChange(step.field as any, e.target.files?.[0] || null)}
-                                    />
-                                </div>
+                                <KycDocumentUpload
+                                    field={step.field as 'pan' | 'aadhaar'}
+                                    title={step.title}
+                                    files={files}
+                                    previews={previews}
+                                    handleFileChange={handleFileChange}
+                                    removeFile={removeFile}
+                                />
                             )}
 
                             <div className="flex justify-between pt-6">
                                 <button
                                     onClick={prevStep}
                                     disabled={currentStep === 0}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition ${currentStep === 0 ? 'text-gray-600' : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
+                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[12px] font-bold tracking-tight transition-all ${currentStep === 0 ? 'text-[#3a3d45] cursor-not-allowed' : 'text-[#5a5f6e] hover:text-[#e8eaed] bg-[#111214] hover:bg-[#1a1b1e] border border-[#1e2025]'
                                         }`}
                                 >
                                     <ArrowLeft className="w-4 h-4" /> Back
@@ -445,9 +351,9 @@ const KYCVerificationPage = () => {
                                     <button
                                         onClick={currentStep === steps.length - 1 ? handleSubmit : goNext}
                                         disabled={!isStepComplete() || isSubmitting}
-                                        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition ${isStepComplete() && !isSubmitting
-                                            ? 'bg-[#22C55E] hover:bg-[#1ea853] text-white'
-                                            : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[12px] font-bold tracking-tight transition-all shadow-lg ${isStepComplete() && !isSubmitting
+                                            ? 'bg-[#00C853] hover:bg-[#00E676] text-black shadow-green-500/10'
+                                            : 'bg-[#111214] text-[#5a5f6e] cursor-not-allowed border border-[#1e2025]'
                                             }`}
                                     >
                                         {isSubmitting ? (
@@ -463,7 +369,6 @@ const KYCVerificationPage = () => {
                         </div>
                     </div>
 
-                    <canvas ref={canvasRef} className="hidden" />
                 </div>
             </div>
         </>

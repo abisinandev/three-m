@@ -23,6 +23,8 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
     const [otp, setOtp] = useState('');
     const [isEmailVerified, setIsEmailVerified] = useState(false);
 
+    const isKycLocked = user?.kycStatus === 'VERIFIED' || user?.kycStatus === 'PENDING';
+
     useEffect(() => {
         if (isOpen && user) {
             setFullName(user.fullName || '');
@@ -105,8 +107,8 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
     if (!isOpen) return null;
 
     const isKycVerified = user?.kycStatus === 'verified';
-    const maskedAadhaar = user?.aadhaarNumber
-        ? `XXXX-XXXX-${user.aadhaarNumber.slice(-4)}`
+    const maskedAadhar = user?.aadharNumber
+        ? `XXXX-XXXX-${user.aadharNumber.slice(-4)}`
         : 'Not added';
 
     return (
@@ -130,11 +132,16 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
                         <input
                             type="text"
                             value={fullName}
+                            disabled={isKycLocked}
                             onChange={(e) => setFullName(e.target.value)}
-                            className="w-full px-3 py-2.5 bg-[#111214] border border-[#1e2025] rounded-xl text-white text-[13px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-medium transition-all"
+                            className={`w-full px-3 py-2.5 bg-[#111214] border border-[#1e2025] rounded-xl text-[13px] placeholder-[#333] focus:outline-none ${isKycLocked ? 'text-[#5a5f6e] cursor-not-allowed opacity-70' : 'text-white focus:border-[#00C853]/50'} font-medium transition-all`}
                             placeholder="Enter full name"
                         />
-                        {errors.fullName && <p className="text-red-500 text-[9px] font-bold mt-1 uppercase tracking-tight">{errors.fullName}</p>}
+                        {isKycLocked ? (
+                            <p className="text-[#f59e0b] text-[9px] font-bold mt-1.5 uppercase tracking-tight">Name locked during KYC verification</p>
+                        ) : errors.fullName ? (
+                            <p className="text-red-500 text-[9px] font-bold mt-1 uppercase tracking-tight">{errors.fullName}</p>
+                        ) : null}
                     </div>
 
                     <div>
@@ -218,9 +225,9 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
                                 </span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-widest">Aadhaar</span>
+                                <span className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-widest">Aadhar</span>
                                 <span className="text-white text-[11px] font-black flex items-center gap-1.5 tracking-wider">
-                                    {maskedAadhaar}
+                                    {maskedAadhar}
                                     <CheckCircle className="w-3 h-3 text-[#00C853]" />
                                 </span>
                             </div>

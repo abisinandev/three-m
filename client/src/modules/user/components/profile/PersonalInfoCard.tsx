@@ -3,13 +3,13 @@ import { useUserStore } from '@stores/user/UserStore';
 interface PersonalInfoCardProps {
   setShowEditModal: (show: boolean) => void;
   isKycVerified: boolean;
-  maskedAadhaar: string;
+  maskedAadhar: string;
 }
 
 export const PersonalInfoCard = ({
   setShowEditModal,
   isKycVerified,
-  maskedAadhaar
+  maskedAadhar
 }: PersonalInfoCardProps) => {
   const { user } = useUserStore();
 
@@ -43,11 +43,11 @@ export const PersonalInfoCard = ({
         </div>
         <div>
           <label className="text-[10px] font-medium text-gray-500 uppercase tracking-wider block mb-1">PAN Number</label>
-          <p className="text-[13px] font-medium text-gray-200">{isKycVerified ? user?.kyc.panNumber : "Not added"}</p>
+          <p className="text-[13px] font-medium text-gray-200">{isKycVerified ? user?.kyc?.panNumber : "Not added"}</p>
         </div>
         <div>
-          <label className="text-[10px] font-medium text-gray-500 uppercase tracking-wider block mb-1">Aadhaar Number</label>
-          <p className="text-[13px] font-medium text-gray-200">{isKycVerified ? maskedAadhaar : "Not added"}</p>
+          <label className="text-[10px] font-medium text-gray-500 uppercase tracking-wider block mb-1">Aadhar Number</label>
+          <p className="text-[13px] font-medium text-gray-200">{isKycVerified ? maskedAadhar : "Not added"}</p>
         </div>
       </div>
     </div>

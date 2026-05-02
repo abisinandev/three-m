@@ -45,7 +45,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     });
 
     return (
-        <div className="space-y-5">
+        <div className="space-y-4">
             <InputField
                 label="Email"
                 name="email"
