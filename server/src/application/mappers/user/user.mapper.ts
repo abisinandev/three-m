@@ -56,7 +56,7 @@ export function toUserResponse(user: UserEntity): UserDTO {
         id: user.kyc.id,
         status: user.kyc.status,
         panNumber: user.kyc.panNumber ?? null,
-        aadhaarNumber: user.kyc.aadhaarNumber ?? null,
+        aadharNumber: user.kyc.aadharNumber ?? null,
         address: user.kyc.address
           ? {
             fullAddress: user.kyc.address.fullAddress,

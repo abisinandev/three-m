@@ -35,7 +35,10 @@ export class KycSubmitUseCase implements IKycSubmitUseCase {
 
     if (existingKyc?.status === KycStatusType.REJECTED) {
       await this._kycRepository.update(existingKyc.id as string, newKyc);
-      await this._userRepository.update(data.userId, { kycId: newKyc.id });
+      await this._userRepository.update(data.userId, { 
+        kycId: existingKyc.id,
+        kycStatus: KycStatusType.PENDING 
+      });
       return;
     }
 

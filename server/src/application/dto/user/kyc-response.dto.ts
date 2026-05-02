@@ -11,7 +11,7 @@ export interface KycResponseDTO {
   status: KycStatusType;
   documents: KycDocumentVO[];
   panNumber: string;
-  aadhaarNumber: string;
+  aadharNumber: string;
   address: {
     fullAddress: string;
     city: string;
