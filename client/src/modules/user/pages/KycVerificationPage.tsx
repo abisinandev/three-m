@@ -5,7 +5,6 @@ import { GetSignatureApi } from '@shared/services/user/GetSignatureApi';
 import { useUserStore } from '@stores/user/UserStore';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { KYC_SUMBIT_URL } from '@shared/constants/userContants';
-import { KYC_SUMBIT_URL } from '@shared/constants/userContants';
 import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
 import { ROUTES } from '@shared/constants/routes';

@@ -117,7 +117,7 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[#1e2025] sticky top-0 bg-[#0b0c0e] z-10">
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-[#00C853] animate-pulse" />
-                        <span className="text-[12px] font-black text-[#e8eaed] uppercase tracking-widest">Edit Profile</span>
+                        <span className="text-[14px] font-semibold text-[#e8eaed] tracking-tight">Edit Profile</span>
                     </div>
                     <button onClick={onClose} className="text-[#5a5f6e] hover:text-white transition-colors">
                         <X className="w-4 h-4" />
@@ -126,27 +126,27 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
 
                 <form onSubmit={handleSubmit} className="p-5 space-y-5">
                     <div>
-                        <label className="block text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2">Full Name</label>
+                        <label className="block text-[11px] font-medium text-[#5a5f6e] tracking-wider mb-2">Full Name</label>
                         <input
                             type="text"
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
-                            className="w-full px-3 py-2.5 bg-[#111214] border border-[#1e2025] rounded-xl text-white text-[12px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-bold transition-all"
+                            className="w-full px-3 py-2.5 bg-[#111214] border border-[#1e2025] rounded-xl text-white text-[13px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-medium transition-all"
                             placeholder="Enter full name"
                         />
                         {errors.fullName && <p className="text-red-500 text-[9px] font-bold mt-1 uppercase tracking-tight">{errors.fullName}</p>}
                     </div>
 
                     <div>
-                        <label className="block text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2">Phone Number</label>
+                        <label className="block text-[11px] font-medium text-[#5a5f6e] tracking-wider mb-2">Phone Number</label>
                         <div className="flex">
-                            <span className="inline-flex items-center px-3 text-[#5a5f6e] bg-[#111214] border border-r-0 border-[#1e2025] rounded-l-xl text-[11px] font-bold">+91</span>
+                            <span className="inline-flex items-center px-3 text-[#5a5f6e] bg-[#111214] border border-r-0 border-[#1e2025] rounded-l-xl text-[11px] font-semibold">+91</span>
                             <input
                                 type="tel"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                                 maxLength={10}
-                                className="w-full px-3 py-2.5 bg-[#111214] border border-[#1e2025] rounded-r-xl text-white text-[12px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-black tracking-widest"
+                                className="w-full px-3 py-2.5 bg-[#111214] border border-[#1e2025] rounded-r-xl text-white text-[13px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-medium tracking-wider"
                                 placeholder="10-digit mobile"
                             />
                         </div>
@@ -154,12 +154,12 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
                     </div>
 
                     <div>
-                        <label className="block text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2">Email Address</label>
+                        <label className="block text-[11px] font-medium text-[#5a5f6e] tracking-wider mb-2">Email Address</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2.5 bg-[#111214] border border-[#1e2025] rounded-xl text-white text-[12px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-bold transition-all"
+                            className="w-full px-3 py-2.5 bg-[#111214] border border-[#1e2025] rounded-xl text-white text-[13px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-medium transition-all"
                             placeholder="name@example.com"
                         />
                         {errors.email && <p className="text-red-500 text-[9px] font-bold mt-1 uppercase tracking-tight">{errors.email}</p>}
@@ -201,7 +201,7 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
                         )}
 
                         {isEmailVerified && (
-                            <div className="mt-2.5 flex items-center gap-1.5 text-[#00C853] text-[10px] font-black uppercase tracking-widest">
+                            <div className="mt-2.5 flex items-center gap-1.5 text-[#00C853] text-[11px] font-semibold uppercase tracking-wider">
                                 <CheckCircle className="w-3.5 h-3.5" />
                                 Verified
                             </div>
@@ -234,14 +234,14 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 px-4 py-3 bg-[#111214] hover:bg-[#1a1b1e] text-[#5a5f6e] hover:text-[#e8eaed] text-[11px] font-black uppercase tracking-widest rounded-xl transition-all"
+                            className="flex-1 px-4 py-3 bg-[#111214] hover:bg-[#1a1b1e] text-[#5a5f6e] hover:text-[#e8eaed] text-[12px] font-semibold tracking-tight rounded-xl transition-all"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={updateProfileMutation.isPending || (isEmailChanged && !isEmailVerified)}
-                            className="flex-1 px-4 py-3 bg-[#00C853] hover:bg-[#00E676] disabled:opacity-30 text-black text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/10 flex items-center justify-center gap-2"
+                            className="flex-1 px-4 py-3 bg-[#00C853] hover:bg-[#00E676] disabled:opacity-30 text-black text-[12px] font-bold tracking-tight rounded-xl transition-all shadow-lg shadow-green-500/10 flex items-center justify-center gap-2"
                         >
                             {updateProfileMutation.isPending ? (
                                 <Loader2 size={14} className="animate-spin" />

@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Button } from "@shared/components/auth/ButtonField";
-import { QrCode, X } from "lucide-react";
+import { Loader2, QrCode, X } from "lucide-react";
 
 type TwoFAModalProps = {
   isOpen: boolean;
