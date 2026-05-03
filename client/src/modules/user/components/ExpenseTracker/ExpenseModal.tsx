@@ -53,10 +53,7 @@ export const ExpenseModal = ({ isOpen, onClose }: ExpenseModalProps) => {
             />
 
             <div className="relative w-full max-w-[360px] bg-[#0b0c0e] border border-[#1e2025] rounded-2xl overflow-hidden shadow-2xl">
-                {/* Top Accent Bar */}
-                <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#10b981]" />
 
-                {/* Header */}
                 <div className="flex justify-between items-center py-4 px-5 border-b border-[#1e2025]">
                     <div className="flex items-center gap-3">
                         <span className="text-[12px] font-black text-[#e8eaed] uppercase tracking-widest">Record Expense</span>

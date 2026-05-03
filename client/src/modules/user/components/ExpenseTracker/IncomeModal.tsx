@@ -38,28 +38,6 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
 
     if (!isOpen) return null;
 
-    const labelStyle: React.CSSProperties = {
-        fontSize: 10,
-        fontWeight: 700,
-        color: '#5a5f6e',
-        textTransform: 'uppercase',
-        letterSpacing: '0.06em',
-        marginBottom: 6,
-        display: 'block'
-    };
-
-    const inputStyle: React.CSSProperties = {
-        width: '100%',
-        background: '#111214',
-        border: '1px solid #1e2025',
-        borderRadius: 6,
-        padding: '10px 12px',
-        fontSize: 12,
-        color: '#e8eaed',
-        outline: 'none',
-        boxSizing: 'border-box'
-    };
-
     return (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
             <div
@@ -68,8 +46,6 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
             />
 
             <div className="relative w-full max-w-[360px] bg-[#0b0c0e] border border-[#1e2025] rounded-2xl overflow-hidden shadow-2xl">
-                {/* Top Accent Bar */}
-                <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#10b981]" />
 
                 <div className="flex justify-between items-center px-5 py-4 border-b border-[#1e2025]">
                     <div className="flex items-center gap-3">
