@@ -10,4 +10,5 @@ export interface NotificationDocument extends Document {
     read: boolean;
     createdAt: Date;
     expiresAt: Date;
+    data?: Record<string, string | number | boolean | undefined>;
 }

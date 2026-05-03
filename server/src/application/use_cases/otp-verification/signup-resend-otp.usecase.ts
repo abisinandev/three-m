@@ -8,7 +8,7 @@ import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import AppError from "@presentation/express/utils/error-handling/app.error";
 import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
-import type { ISignupResendOtpUseCase } from "../user/interfaces/singup-resend-otp-usecase.interface";
+import type { ISignupResendOtpUseCase } from "../auth/interfaces/singup-resend-otp-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
@@ -23,28 +23,41 @@ export class ResendOtpUseCase implements ISignupResendOtpUseCase {
 
     const user = await this._userRepository.findByField("email", data.email);
 
-    const otp = generateOtp();
-    const expiryTime = 5 * 60;
-    const expiresAt = Date.now() + expiryTime * 1000;
-
     if (!user) throw new AppError(ErrorMessages.AUTH.USER_NOT_FOUND, 404);
     if (user.isEmailVerified) throw new AppError(ErrorMessages.AUTH.EMAIL_NOT_VERIFIED, 400);
 
     const otpData = await redisClient.hgetall(`otp:${user.email}`);
 
-    if (otpData) {
-      const now = Date.now();
+    let resendCount = 0;
+    const now = Date.now();
 
+    if (otpData?.otp) {
       if (otpData.lastResendAt && now - Number(otpData.lastResendAt) < 30000) {
         throw new AppError(ErrorMessages.AUTH.RATE_LIMIT_MESSAGE, 429);
       }
 
-      if (Number(otpData.resendCount) >= 5) {
+      if (otpData.resendCount && Number(otpData.resendCount) >= 5) {
         throw new AppError(ErrorMessages.AUTH.MAX_RESEND_REACHED, 429);
       }
+
+      resendCount = Number(otpData.resendCount) + 1;
     }
 
+    const otp = generateOtp();
+    const expiryTime = 5 * 60;
+    const expiresAt = now + expiryTime * 1000;
+
+    await redisClient.hmset(`otp:${user.email}`, {
+      email: user.email,
+      otp,
+      expiresAt,
+      resendCount,
+      lastResendAt: now,
+    });
+    
+    await redisClient.expire(`otp:${user.email}`, 300);
     await this._emailVerifyService.sendOtpEmail(data.email, otp);
-    return { expiresAt, resendCount: 0 };
+    
+    return { expiresAt, resendCount };
   }
 }

@@ -24,4 +24,9 @@ export const MUTUAL_FUND_TYPES = {
     // controllers
     MutualFundsAdminController: Symbol.for("MutualFundsAdminController"),
     MutualFundsUserController: Symbol.for("MutualFundsUserController"),
+
+    // schedulers
+    NavDailyScheduler: Symbol.for("NavDailyScheduler"),
+    CagrUpdateScheduler: Symbol.for("CagrUpdateScheduler"),
+    NavAllocationScheduler: Symbol.for("NavAllocationScheduler"),
 };

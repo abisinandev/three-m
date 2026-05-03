@@ -53,8 +53,8 @@ const MutualFundSchema = new Schema<MutualFundDocument>(
             enum: Object.values(FundStatus),
             default: FundStatus.ACTIVE,
         },
-        
-        logo:{
+
+        logo: {
             type: String,
         }
 

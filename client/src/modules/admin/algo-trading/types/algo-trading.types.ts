@@ -30,3 +30,14 @@ export interface PaginatedResponse<T> {
     page: number;
     totalPages: number;
 }
+export interface AlgoTrade {
+    id: string;
+    userId: string;
+    orderId: string;
+    symbol: string;
+    side: 'BUY' | 'SELL';
+    quantity: number;
+    price: number;
+    profit?: number;
+    createdAt: string;
+}

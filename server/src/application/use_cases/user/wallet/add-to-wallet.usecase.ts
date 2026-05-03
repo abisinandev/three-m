@@ -1,5 +1,5 @@
 import type { AddToWalletDTO } from "@application/dto/user/add-to-wallet.dto";
-import type { IAddToWalletUseCase } from "../interfaces/add-to-wallet-usecase.interface";
+import type { IAddToWalletUseCase } from "./interfaces/add-to-wallet-usecase.interface";
 import { NotFoundError, UnauthorizedError, ValidationError } from "@presentation/express/utils/error-handling";
 import { toTransactionEntity } from "@application/mappers/user/transaction-mapper";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
@@ -54,7 +54,10 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
             if (wallet && data.amount > 10_0000)
                 throw new ValidationError(ErrorMessages.TRANSACTIONS.MAX_TRANSACTION);
 
-            const transaction = toTransactionEntity({ ...data, userCode: user.userCode });
+            console.log("DATAL ", data);
+            
+
+            const transactionEntity = toTransactionEntity({ ...data, userCode: user.userCode });
 
             const isExists = await this._transactionRepository.findByPaymentId(
                 data.paymentIntentId as string,
@@ -65,9 +68,10 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
                 return;
             }
 
+
             try {
 
-                await this._transactionRepository.createTransaction(transaction, session);
+                await this._transactionRepository.createTransaction(transactionEntity, session);
 
             } catch (error: unknown) {
                 if (
@@ -80,8 +84,10 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
                 throw error;
             }
 
-            wallet.credit(data.amount);
-            await this._walletRepository.credit(user.id as string, data.amount, session);
+            if (data.status === TransactionStatus.SUCCESSFUL) {
+                wallet.credit(data.amount);
+                await this._walletRepository.credit(user.id as string, data.amount, session);
+            }
 
             await session.commitTransaction();
 

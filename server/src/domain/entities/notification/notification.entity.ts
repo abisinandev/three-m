@@ -1,5 +1,5 @@
-import { randomUUID } from "crypto";
-import { NotificationType } from "./enums/notification-type.enums";
+import { NotificationData, NotificationType } from "./enums/notification-type.enums";
+
 
 export class NotificationEntity {
     private readonly _id?: string;
@@ -9,6 +9,7 @@ export class NotificationEntity {
     private readonly _message: string;
     private readonly _read: boolean;
     private readonly _createdAt: string;
+    private readonly _data?: NotificationData;
 
     private constructor(props: {
         id?: string;
@@ -18,6 +19,7 @@ export class NotificationEntity {
         message?: string;
         read?: boolean;
         createdAt?: string;
+        data?: NotificationData;
     }) {
         this._id = props.id;
         this._userId = props.userId;
@@ -26,6 +28,7 @@ export class NotificationEntity {
         this._message = props.message ?? "";
         this._read = props.read ?? false;
         this._createdAt = props.createdAt ?? new Date().toISOString();
+        this._data = props.data;
     }
 
     static create(props: {
@@ -33,14 +36,16 @@ export class NotificationEntity {
         type: NotificationType;
         title: string;
         message: string;
+        data?: NotificationData;
     }): NotificationEntity {
         return new NotificationEntity({
             userId: props.userId,
             type: props.type,
             title: props.title,
             message: props.message,
-            read: false, 
+            read: false,
             createdAt: new Date().toISOString(),
+            data: props.data
         });
     }
 
@@ -52,6 +57,7 @@ export class NotificationEntity {
         message: string;
         read: boolean;
         createdAt: string;
+        data?: NotificationData;
     }): NotificationEntity {
         return new NotificationEntity(props);
     }
@@ -84,15 +90,20 @@ export class NotificationEntity {
         return this._createdAt;
     }
 
-    // toJSON() {
-    //     return {
-    //         id: this._id,
-    //         userId: this._userId,
-    //         type: this._type,
-    //         title: this._title,
-    //         message: this._message,
-    //         read: this._read,
-    //         createdAt: this._createdAt,
-    //     };
-    // }
+    get data() {
+        return this._data;
+    }
+
+    toJSON() {
+        return {
+            id: this._id,
+            userId: this._userId,
+            type: this._type,
+            title: this._title,
+            message: this._message,
+            read: this._read,
+            createdAt: this._createdAt,
+            data: this._data
+        };
+    }
 }

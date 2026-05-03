@@ -12,7 +12,7 @@ export interface IKycSchema {
   status: KycStatusType;
   isKycVerified: boolean;
   panNumber?: string | null;
-  aadhaarNumber?: string | null;
+  aadharNumber?: string | null;
   address: {
     fullAddress: string;
     city: string;

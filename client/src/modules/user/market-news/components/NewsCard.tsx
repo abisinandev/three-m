@@ -48,69 +48,73 @@ export function NewsCard({ news }: { news: MarketNews }) {
     };
 
     return (
-        <div className="group block mb-6 px-4 sm:px-0">
-            <div className="relative overflow-hidden rounded-xl border border-[#2D2D2D] bg-black transition-all duration-300 hover:border-[#404040] hover:shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+        <div className="group block mb-4">
+            <div 
+                style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }}
+                className="relative overflow-hidden transition-all duration-200 hover:border-[#2a2a2a]"
+            >
                 <div className="flex flex-col md:flex-row h-full">
-                    <div className="relative w-full md:w-64 h-48 md:h-60 flex-shrink-0 overflow-hidden bg-[#0A0A0A]">
+                    <div className="relative w-full md:w-48 h-40 md:h-48 flex-shrink-0 overflow-hidden bg-[#1a1a1a]">
                         <img
                             src={news.image || "/placeholder-news.jpg"}
                             alt={news.title}
-                            className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                            className="h-full w-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
                             onError={(e) => {
                                 (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1611974714652-96048a9fbc75?auto=format&fit=crop&q=80&w=800";
                             }}
                         />
-                        {/* Category Tag */}
-                        <div className="absolute top-3 left-3">
-                            <span className="rounded-full bg-black/60 px-3 py-1 text-[10px] font-bold uppercase text-white backdrop-blur-md border border-white/10 tracking-widest">
-                                Market
+                        <div className="absolute top-2 left-2">
+                            <span className="rounded bg-black/60 px-2 py-0.5 text-[8px] font-bold uppercase text-gray-300 backdrop-blur-sm border border-white/5 tracking-wider">
+                                Report
                             </span>
                         </div>
                     </div>
 
-                    <div className="flex flex-1 flex-col p-5 md:p-6">
-                        <div className="flex justify-between items-start mb-3">
-                            <div className="flex items-center space-x-2 text-[10px] uppercase tracking-wider text-gray-500 font-bold">
-                                <span className="text-white px-2 py-0.5 bg-blue-600/10 border border-blue-600/20 rounded-md">{news.source}</span>
+                    <div className="flex flex-1 flex-col p-4">
+                        <div className="flex justify-between items-start mb-2">
+                            <div className="flex items-center gap-2 text-[9px] uppercase tracking-wider text-gray-500 font-semibold">
+                                <span className="text-blue-400 font-bold px-1.5 py-0.5 bg-blue-500/5 border border-blue-500/10 rounded">
+                                    {news.source}
+                                </span>
                                 <span>•</span>
                                 <span>{formatDistanceToNow(new Date(news.publishedAt), { addSuffix: true })}</span>
                             </div>
-                            <div className="flex items-center space-x-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button
                                     onClick={toggleSave}
-                                    className={`p-2 rounded-full border border-[#2D2D2D] hover:bg-[#1A1A1A] transition-colors ${isSaved ? 'text-yellow-500 border-yellow-500/50' : 'text-gray-400'}`}
-                                    title={isSaved ? "Remove from saved" : "Save article"}
+                                    style={{ background: '#1a1a1a', border: '1px solid #2d2d2d' }}
+                                    className={`p-1.5 rounded transition-colors ${isSaved ? 'text-amber-500 border-amber-500/30' : 'text-gray-500 hover:text-gray-300'}`}
                                 >
-                                    <Bookmark className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} />
+                                    <Bookmark className={`h-3 w-3 ${isSaved ? "fill-current" : ""}`} />
                                 </button>
                                 <button
                                     onClick={handleShare}
-                                    className="p-2 rounded-full border border-[#2D2D2D] hover:bg-[#1A1A1A] text-gray-400 transition-colors"
-                                    title="Share article"
+                                    style={{ background: '#1a1a1a', border: '1px solid #2d2d2d' }}
+                                    className="p-1.5 rounded text-gray-500 hover:text-gray-300 transition-colors"
                                 >
-                                    <Share2 className="h-4 w-4" />
+                                    <Share2 className="h-3 w-3" />
                                 </button>
                             </div>
                         </div>
 
-                        <a href={news.url} target="_blank" rel="noopener noreferrer" className="block group/title">
-                            <h3 className="mb-3 text-lg font-bold leading-tight text-white group-hover:text-blue-400 transition-colors line-clamp-2">
+                        <a href={news.url} target="_blank" rel="noopener noreferrer" className="block">
+                            <h3 className="mb-2 text-xs font-semibold leading-snug text-gray-100 hover:text-blue-400 transition-colors line-clamp-2 tracking-tight">
                                 {news.title}
                             </h3>
-                            <p className="mb-4 text-sm leading-relaxed text-gray-400 line-clamp-2 md:line-clamp-3">
+                            <p className="text-[11px] leading-relaxed text-gray-500 line-clamp-2 font-medium">
                                 {news.description}
                             </p>
                         </a>
 
-                        <div className="mt-auto pt-4 flex items-center justify-between border-t border-[#1A1A1A]">
+                        <div className="mt-auto pt-3 flex items-center justify-between border-t border-[#1e2025]">
                             <a
                                 href={news.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center text-[10px] font-bold text-white hover:text-blue-400 transition-colors uppercase tracking-widest group/link"
+                                className="flex items-center text-[9px] font-bold text-gray-400 hover:text-gray-200 transition-colors uppercase tracking-widest group/link"
                             >
-                                Read Article
-                                <ExternalLink className="ml-2 h-3 w-3 transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1" />
+                                Intelligence View
+                                <ExternalLink className="ml-1.5 h-2.5 w-2.5 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
                             </a>
                         </div>
                     </div>
@@ -119,35 +123,35 @@ export function NewsCard({ news }: { news: MarketNews }) {
 
             {/* Share Modal */}
             {showShareModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                    <div className="w-full max-w-sm rounded-2xl border border-[#2D2D2D] bg-[#0A0A0A] p-6 shadow-2xl animate-in zoom-in-95 duration-200">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-lg font-bold text-white tracking-tight">Share Article</h3>
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="w-full max-w-xs p-5 shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-[11px] font-bold text-gray-200 uppercase tracking-widest">Share Report</h3>
                             <button
                                 onClick={() => setShowShareModal(false)}
-                                className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A1A1A] transition-colors"
+                                className="p-1 text-gray-500 hover:text-white transition-colors"
                             >
-                                <X className="h-5 w-5" />
+                                <X className="h-4 w-4" />
                             </button>
                         </div>
 
-                        <div className="flex items-center space-x-2 rounded-xl bg-black border border-[#2D2D2D] p-3 mb-6 group-focus-within:border-blue-500/50 transition-colors">
+                        <div style={{ background: '#0b0c0e', border: '1px solid #1e2025' }} className="flex items-center gap-2 p-2 rounded mb-4">
                             <input
                                 type="text"
                                 value={news.url}
                                 readOnly
-                                className="flex-1 bg-transparent text-xs text-gray-400 outline-none truncate"
+                                className="flex-1 bg-transparent text-[10px] text-gray-500 outline-none truncate font-medium"
                             />
                             <button
                                 onClick={copyToClipboard}
-                                className={`p-2 rounded-lg transition-all duration-300 ${copied ? 'bg-green-600 text-white' : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95'}`}
+                                className={`p-1.5 rounded transition-all duration-300 ${copied ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
                             >
-                                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                                {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                             </button>
                         </div>
 
-                        <div className="text-center text-[10px] text-gray-500 uppercase tracking-widest font-bold">
-                            {copied ? "Link Copied!" : "Click to copy link"}
+                        <div className="text-center text-[8px] text-gray-600 uppercase tracking-widest font-bold">
+                            {copied ? "Link Secured" : "Click to secure link"}
                         </div>
                     </div>
                 </div>

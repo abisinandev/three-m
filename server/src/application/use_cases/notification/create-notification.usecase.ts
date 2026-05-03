@@ -18,27 +18,30 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
         type: NotificationType;
         title: string;
         message: string;
+        data?: Record<string, string | number | boolean | undefined>;
     }): Promise<void> {
 
         if (!input.userId || !input.message) {
-            throw new Error("Invalid notification input");
+            return
         }
 
         const notification = NotificationEntity.create({
             userId: input.userId,
             type: input.type,
             title: input.title,
-            message: input.message
+            message: input.message,
+            data: input.data
         });
 
         const notfify = await this.notificationRepository.save(notification);
 
+        const payload = notfify.toJSON();
+
         this.notificationService.send(input.userId, {
-            id: notfify.id as string,
-            type: input.type,
-            title: input.title,
-            message: input.message,
-            createdAt: new Date(notification.createdAt)
+            ...payload,
+            createdAt: new Date(payload.createdAt),
+            id: payload.id || '',
+            data: payload.data || {}
         });
     }
 }

@@ -8,4 +8,5 @@ export interface IKycRepository extends IBaseRepository<KycEntity> {
     kydId: string,
     query: { isKycVerified: boolean; status: string; rejectionReason?: string },
   ): Promise<KycEntity | null>;
+  getPendingKycCount(): Promise<number>;
 }

@@ -1,5 +1,4 @@
-// components/KycActionModal.tsx
-import { CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { CheckCircle, AlertCircle, X, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 interface KycActionModalProps {
@@ -45,35 +44,31 @@ export default function KycActionModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            {/* Backdrop */}
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
             <div
-                className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                className="fixed inset-0 bg-black/80"
                 onClick={handleClose}
             />
 
-            {/* Modal */}
-            <div className="relative w-full max-w-md bg-[#0f0f0f] border border-neutral-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="relative w-full max-w-[360px] bg-[#0b0c0e] border border-[#1e2025] rounded-2xl shadow-2xl overflow-hidden">
                 {/* Tab Switcher */}
-                <div className="flex border-b border-neutral-800">
+                <div className="flex border-b border-[#1e2025]">
                     <button
                         onClick={() => setActiveTab("approve")}
-                        className={`flex-1 py-4 text-sm font-semibold transition-all ${activeTab === "approve"
-                                ? "bg-emerald-600/20 text-emerald-400 border-b-2 border-emerald-500"
-                                : "text-gray-400 hover:text-white"
+                        className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === "approve"
+                            ? "bg-[#00C853]/5 text-[#00C853] border-b-2 border-[#00C853]"
+                            : "text-[#5a5f6e] hover:text-white"
                             }`}
                     >
-                        <CheckCircle className="w-5 h-5 inline-block mr-2" />
                         Approve
                     </button>
                     <button
                         onClick={() => setActiveTab("reject")}
-                        className={`flex-1 py-4 text-sm font-semibold transition-all ${activeTab === "reject"
-                                ? "bg-red-600/20 text-red-400 border-b-2 border-red-500"
-                                : "text-gray-400 hover:text-white"
+                        className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === "reject"
+                            ? "bg-red-500/5 text-red-500 border-b-2 border-red-500"
+                            : "text-[#5a5f6e] hover:text-white"
                             }`}
                     >
-                        <XCircle className="w-5 h-5 inline-block mr-2" />
                         Reject
                     </button>
                 </div>
@@ -82,36 +77,31 @@ export default function KycActionModal({
                 <div className="p-6">
                     {activeTab === "approve" ? (
                         <div className="text-center">
-                            <div className="w-16 h-16 bg-emerald-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <CheckCircle className="w-10 h-10 text-emerald-400" />
+                            <div className="w-12 h-12 bg-[#00C853]/10 rounded-full flex items-center justify-center mx-auto mb-5 border border-[#00C853]/20">
+                                <CheckCircle size={24} className="text-[#00C853]" />
                             </div>
-                            <h3 className="text-xl font-bold text-white">Approve KYC?</h3>
-                            <p className="text-gray-400 mt-2 text-sm">
-                                This will verify <span className="text-emerald-400 font-medium">{fullName}</span>
-                                <br />
-                                and grant full access to the platform.
+                            <h3 className="text-[14px] font-black text-white uppercase tracking-tight mb-2">Approve Verification</h3>
+                            <p className="text-[11px] text-[#5a5f6e] leading-relaxed font-bold uppercase tracking-tight">
+                                This will verify <span className="text-white">{fullName}</span> and grant full platform access.
                             </p>
                         </div>
                     ) : (
-                        <div>
-                            <div className="flex items-center gap-3 text-red-400 mb-4">
-                                <AlertCircle className="w-6 h-6" />
-                                <h3 className="text-xl font-bold">Reject KYC</h3>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-3">
+                                <AlertCircle size={18} className="text-red-500" />
+                                <h3 className="text-[14px] font-black text-white uppercase tracking-tight">Reject Submission</h3>
                             </div>
-                            <p className="text-gray-400 text-sm mb-4">
-                                Please explain why this KYC is being rejected. The user will see this message.
-                            </p>
                             <textarea
                                 value={reason}
                                 onChange={(e) => {
                                     setReason(e.target.value);
                                     setError("");
                                 }}
-                                placeholder="e.g. Image is blurry • Name doesn't match • Document expired"
-                                className="w-full h-32 px-4 py-3 bg-[#111] border border-neutral-700 rounded-lg text-white placeholder:text-gray-500 focus:border-red-500 focus:outline-none resize-none text-sm"
+                                placeholder="Reason for rejection (e.g. Blurry image, Name mismatch)"
+                                className="w-full h-28 px-4 py-3 bg-[#111214] border border-[#1e2025] rounded-xl text-white placeholder-[#222] focus:border-red-500/50 focus:outline-none resize-none text-[12px] font-bold"
                             />
-                            {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
-                            <p className="text-right text-xs text-gray-500 mt-1">
+                            {error && <p className="text-red-500 text-[9px] font-bold uppercase tracking-tight">{error}</p>}
+                            <p className="text-right text-[9px] text-[#3a3d45] font-black uppercase tracking-widest">
                                 {reason.length}/300
                             </p>
                         </div>
@@ -123,7 +113,7 @@ export default function KycActionModal({
                     <button
                         onClick={handleClose}
                         disabled={isLoading}
-                        className="flex-1 py-3 bg-neutral-800 hover:bg-neutral-700 text-white font-medium rounded-lg transition disabled:opacity-60"
+                        className="flex-1 py-3.5 bg-[#111214] hover:bg-[#1a1b1e] text-[#5a5f6e] hover:text-[#e8eaed] text-[10px] font-black uppercase tracking-widest rounded-xl transition-all border border-[#1e2025] disabled:opacity-30"
                     >
                         Cancel
                     </button>
@@ -131,17 +121,17 @@ export default function KycActionModal({
                     <button
                         onClick={activeTab === "approve" ? onApprove : handleReject}
                         disabled={isLoading || (activeTab === "reject" && reason.trim().length < 10)}
-                        className={`flex-1 py-3 font-bold rounded-lg transition flex items-center justify-center gap-2 ${activeTab === "approve"
-                                ? "bg-emerald-600 hover:bg-emerald-500 text-white"
-                                : "bg-red-600 hover:bg-red-500 text-white"
-                            } disabled:opacity-60`}
+                        className={`flex-1 py-3.5 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${activeTab === "approve"
+                            ? "bg-[#00C853] hover:bg-[#00E676] text-black shadow-lg shadow-green-500/10"
+                            : "bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-500/10"
+                            } disabled:opacity-30`}
                     >
                         {isLoading ? (
                             <>Processing...</>
                         ) : activeTab === "approve" ? (
-                            <>Approve KYC</>
+                            <>Confirm Approve</>
                         ) : (
-                            <>Reject KYC</>
+                            <>Confirm Reject</>
                         )}
                     </button>
                 </div>

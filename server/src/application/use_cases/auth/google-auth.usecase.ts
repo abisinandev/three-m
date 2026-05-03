@@ -12,7 +12,7 @@ import {
   ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { IGoogleAuthUseCase } from "../user/interfaces/google-auth.usecase.interface";
+import type { IGoogleAuthUseCase } from "./interfaces/google-auth.usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
@@ -57,6 +57,6 @@ export class GoogleAuthUseCase implements IGoogleAuthUseCase {
 
     const accessToken = this._jwtProvider.generateAccessToken(payload);
     const refreshToken = this._jwtProvider.generateRefreshToken(payload);
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, user };
   }
 }

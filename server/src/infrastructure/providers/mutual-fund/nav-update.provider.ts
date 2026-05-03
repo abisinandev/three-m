@@ -1,7 +1,6 @@
 import { inject, injectable } from "inversify";
-import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
+import { IMutualFundNavUpdateProvider, MfApiNavResponse } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IHttpClient } from "@application/interfaces/services/externals/http-client-interface";
-import { MfApiNavResponse } from "./nav-interfaces";
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 
 @injectable()

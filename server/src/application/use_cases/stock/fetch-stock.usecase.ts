@@ -26,18 +26,34 @@ export class FetchStocksUseCase implements IFetchStocksUseCase {
 
         const stockDTOs = StockMapper.toDTOList(result.data);
 
+        const now = Math.floor(Date.now() / 1000);
+        const sevenDaysAgo = now - (7 * 24 * 60 * 60);
+
         const dataWithPrices = await AsyncHelper.mapWithConcurrency(
             stockDTOs,
             5,
             async (stock) => {
-                const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
+                const [quote, history] = await Promise.all([
+                    this._marketDataProvider.getLatestQuote(stock.symbol),
+                    this._marketDataProvider.getPriceHistory({
+                        symbol: stock.symbol,
+                        period1: sevenDaysAgo,
+                        period2: now,
+                        interval: '1d'
+                    }).catch(() => [])
+                ]);
+
                 return {
                     ...stock,
                     id: stock.id as string,
-                    price: quote?.price ?? null
+                    price: quote?.price ?? null,
+                    change: quote?.change ?? 0,
+                    changePercent: quote?.changePercent ?? 0,
+                    history: history ?? []
                 }
             }
         );
+
 
         return {
             ...result,

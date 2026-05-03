@@ -11,6 +11,7 @@ const toDomain = (doc: NotificationDocument): NotificationEntity => {
         message: doc.message,
         read: doc.read,
         createdAt: doc.createdAt.toISOString(),
+        data: doc.data ? JSON.parse(JSON.stringify(doc.data)) : undefined,
     });
 };
 
@@ -22,6 +23,7 @@ const toPersistance = (entity: NotificationEntity): Partial<NotificationDocument
         message: entity.message,
         read: entity.read,
         createdAt: new Date(entity.createdAt),
+        data: entity.data,
     };
     return persistence;
 };

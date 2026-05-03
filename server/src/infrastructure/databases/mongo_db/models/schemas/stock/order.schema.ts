@@ -40,6 +40,10 @@ export const OrderSchema = new Schema<OrderDocument>(
 
         price: {
             type: Number,
+            required: true,
+        },
+        limitPrice: {
+            type: Number,
             default: null,
         },
         stopLoss: {
@@ -50,6 +54,7 @@ export const OrderSchema = new Schema<OrderDocument>(
             type: Number,
             default: null,
         },
+
 
         status: {
             type: String,
@@ -73,12 +78,16 @@ export const OrderSchema = new Schema<OrderDocument>(
             type: Date,
             default: null,
         },
+        isAlgoTrade: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         timestamps: true,
     }
 );
 
-OrderSchema.index({ status: 1, symbol: 1, price: 1 });
+OrderSchema.index({ status: 1, symbol: 1, limitPrice: 1 });
 
 export const OrderModel = model<OrderDocument>('Orders', OrderSchema) 

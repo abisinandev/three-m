@@ -62,12 +62,12 @@ export class KycSubmitDTO {
   panNumber!: string;
 
   @IsString()
-  @IsOptional() // Aadhaar is optional
+  @IsOptional() // Aadhar is optional
   @Matches(/^\d{12}$/, {
-    message: "Aadhaar must be 12 digits",
+    message: "Aadhar must be 12 digits",
   })
   @IsOptional()
-  aadhaarNumber!: string;
+  aadharNumber!: string;
 
   @ValidateNested()
   @Type(() => AddressDTO)

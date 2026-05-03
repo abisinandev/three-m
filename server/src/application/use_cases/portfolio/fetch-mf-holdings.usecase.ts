@@ -94,7 +94,6 @@ export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsU
             }
         }
 
-        // Terminal cashflow (Current valuation - positive)
         if (totalRemainingUnits > 0 && currentNav > 0) {
             cashFlows.push({
                 date: new Date(),

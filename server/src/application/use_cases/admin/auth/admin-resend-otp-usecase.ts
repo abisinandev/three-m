@@ -1,7 +1,7 @@
 import type { ResendOtpDTO } from "@application/dto/auth/resend-otp.dto";
 import type { ResendOtpResponseDTO } from "@application/dto/auth/resend-otp-response.dto";
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
-import type { IAdminResendOtpUseCase } from "@application/use_cases/admin/interfaces/admin-resend-otp-usecase-interface";
+import type { IAdminResendOtpUseCase } from "@application/use_cases/admin/auth/interfaces/admin-resend-otp-usecase-interface";
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
@@ -22,32 +22,43 @@ export class AdminResendOtpUseCase implements IAdminResendOtpUseCase {
   async execute(data: ResendOtpDTO): Promise<ResendOtpResponseDTO> {
     const admin = await this._adminRepository.findOne({ email: data.email });
 
-    const otp = generateOtp();
-    const expiryTime = 5 * 60;
-    const expiresAt = Date.now() + expiryTime * 1000;
-
     if (!admin) throw new NotFoundError(ErrorMessages.ADMIN.NOT_FOUND);
 
     const otpData = await redisClient.hgetall(`otp:${admin.email}`);
 
-    if (otpData) {
-      const now = Date.now();
+    let resendCount = 0;
+    const now = Date.now();
 
+    if (otpData?.otp) {
       if (otpData.lastResendAt && now - Number(otpData.lastResendAt) < 30000) {
+        throw new AppError(ErrorMessages.AUTH.RATE_LIMIT_MESSAGE, 429);
+      }
+
+      if (otpData.resendCount && Number(otpData.resendCount) >= 5) {
         throw new AppError(ErrorMessages.AUTH.MAX_RESEND_REACHED, 429);
       }
 
-      if (Number(otpData.resendCount) >= 5) {
-        throw new AppError(ErrorMessages.AUTH.MAX_RESEND_REACHED, 429);
-      }
-
+      resendCount = Number(otpData.resendCount) + 1;
     }
 
+    const otp = generateOtp();
+    const expiryTime = 5 * 60;
+    const expiresAt = now + expiryTime * 1000;
+
+    await redisClient.hmset(`otp:${admin.email}`, {
+      email: admin.email,
+      otp,
+      expiresAt,
+      resendCount,
+      lastResendAt: now,
+    });
+    
+    await redisClient.expire(`otp:${admin.email}`, 300);
     await this._emailVerifyService.sendOtpEmail(data.email, otp);
 
     return {
       expiresAt,
-      resendCount: 0,
+      resendCount,
     };
   }
 }

@@ -131,6 +131,7 @@ export class AlgoSignalEntity {
             id: this._id,
             userId: this._userId,
             symbol: this._symbol,
+            strategyName: this._strategyName,
             action: this._action,
             price: this._price,
             reason: this._reason,
@@ -138,5 +139,9 @@ export class AlgoSignalEntity {
             createdAt: this._createdAt,
             expiresAt: this._expiresAt,
         };
+    }
+
+    toJSON() {
+        return this.toPersistence();
     }
 }

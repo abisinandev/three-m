@@ -17,19 +17,19 @@ const ForgotPasswordPage = () => {
 
             <div className="w-full max-w-3xl grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
 
-                <div className="w-full max-w-sm mx-auto border border-border-gray-dark rounded-2xl p-6">
-                    <div className="backdrop-blur-xl bg-deep-charcoal/70 rounded-2xl p-6 shadow-xl">
+                <div className="w-full max-w-[360px] mx-auto border border-neutral-800/60 bg-neutral-900/30 rounded-xl p-6 shadow-sm">
+                    <div className="backdrop-blur-xl bg-transparent">
 
                         <button
                             onClick={() => navigate({ to: ROUTES.AUTH.LOGIN })}
-                            className="flex items-center gap-2 text-cool-white/60 hover:text-teal-green transition mb-6 text-sm"
+                            className="flex items-center gap-2 text-neutral-400 hover:text-teal-green transition mb-5 text-xs"
                         >
-                            <ArrowLeft size={18} />
-                            Back to Login
+                            <ArrowLeft size={16} />
+                            Back to login
                         </button>
 
-                        <h1 className="text-2xl lg:text-3xl font-bold text-cool-white text-center mb-3">
-                            Forgot Password?
+                        <h1 className="text-xl font-semibold text-white text-center mb-2 tracking-tight">
+                            Forgot password?
                         </h1>
 
                         <p className="text-center text-cool-white/60 text-sm mb-8">

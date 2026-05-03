@@ -36,8 +36,10 @@ export const toDomain = (doc: ExpenseTrackerDocument): ExpenseTrackerEntity => {
         expenseSummary: new ExpenseSummary(
             doc.expenseSummary.needsSpent,
             doc.expenseSummary.wantsSpent,
+            doc.expenseSummary.savingsSpent ?? 0,
             doc.expenseSummary.needsUsage,
             doc.expenseSummary.wantsUsage,
+            doc.expenseSummary.savingsUsage ?? 0,
         ),
 
         savingsStatus: new SavingsStatus(
@@ -78,6 +80,8 @@ export const toPersistance = (entity: ExpenseTrackerEntity): Partial<ExpenseTrac
             wantsSpent: entity.expenseSummary.totalWantsSpent,
             needsUsage: entity.expenseSummary.needsUsagePercent,
             wantsUsage: entity.expenseSummary.wantsUsagePercent,
+            savingsSpent: entity.expenseSummary.totalSavingsSpent,
+            savingsUsage: entity.expenseSummary.savingsUsagePercent,
         },
         savingsStatus: {
             target: entity.savingsStatus.targetAmount,

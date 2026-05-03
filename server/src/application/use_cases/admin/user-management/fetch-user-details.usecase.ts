@@ -3,7 +3,7 @@ import type { UserDTO } from "@application/dto/user/user-dto";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { inject, injectable } from "inversify";
 import type { QueryOptions } from "mongoose";
-import type { IFetchUserDetails } from "../interfaces/fetch-user-details.interface";
+import type { IFetchUserDetails } from "./interfaces/fetch-user-details.interface";
 import { toUserResponse } from "@application/mappers/user/user.mapper";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 

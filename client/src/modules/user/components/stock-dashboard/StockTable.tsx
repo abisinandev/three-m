@@ -55,10 +55,14 @@ const StockTable: React.FC<StockTableProps> = ({
         <tbody className="divide-y divide-[#1e2025]">
           {stocks.map((stock) => {
             const price = stock.price ?? 0;
-            const changePercent = parseFloat(((Math.random() * 4) - 2).toFixed(2));
-            const change = price * (changePercent / 100);
+            const changePercent = stock.changePercent ?? 0;
+            const change = stock.change ?? 0;
             const isPositive = changePercent >= 0;
             const isWatched = watchlistSymbols.has(stock.symbol);
+            const history = stock.history && stock.history.length > 0 
+              ? stock.history 
+              : Array.from({ length: 6 }, () => price); // Fallback
+
 
             return (
               <tr key={stock.symbol} className="hover:bg-[#15171a] transition-colors group">
@@ -102,8 +106,9 @@ const StockTable: React.FC<StockTableProps> = ({
                 </td>
                 <td className="px-5 py-3.5 cursor-pointer" onClick={() => onNavigate(stock.symbol)}>
                   <div className="flex justify-center">
-                    <Sparkline data={Array.from({ length: 6 }, () => Math.random() * 20)} positive={isPositive} />
+                    <Sparkline data={history} positive={isPositive} />
                   </div>
+
                 </td>
                 <td className="px-5 py-3.5 text-right">
                   <button

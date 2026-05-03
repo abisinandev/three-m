@@ -4,7 +4,7 @@ import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { ConflictError } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { IKycSubmitUseCase } from "../interfaces/kyc-submit-usecase.interface";
+import type { IKycSubmitUseCase } from "./interfaces/kyc-submit-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { IKycRepository } from "@application/interfaces/repositories/user/kyc-repository.interface";
 
@@ -35,7 +35,10 @@ export class KycSubmitUseCase implements IKycSubmitUseCase {
 
     if (existingKyc?.status === KycStatusType.REJECTED) {
       await this._kycRepository.update(existingKyc.id as string, newKyc);
-      await this._userRepository.update(data.userId, { kycId: newKyc.id });
+      await this._userRepository.update(data.userId, { 
+        kycId: existingKyc.id,
+        kycStatus: KycStatusType.PENDING 
+      });
       return;
     }
 

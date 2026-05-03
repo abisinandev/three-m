@@ -59,6 +59,8 @@ export const SuccessMessages = {
         STOCK_FETCHED: "Stocks fetched successfully",
         SELL_ORDER: "Sell order done successfully",
         BUY_ORDER: "Buy order received successfully",
+        LIMIT_ORDER_PLACED: "Limit order placed successfully. It will execute when price conditions are met.",
+        LIMIT_ORDER_CANCELLED: "Limit order cancelled successfully",
     },
 
     ALGO: {

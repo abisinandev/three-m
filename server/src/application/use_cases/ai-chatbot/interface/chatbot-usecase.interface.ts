@@ -4,7 +4,8 @@ export interface IChatbotUseCase {
     execute(userId: string, userInput: string): Promise<{
         message: string,
         upgradeRequired?: boolean,
-        type?: 'text' | 'confirmation'
+        type?: string,
+        data?: unknown
     }>;
 
     getHistory(userId: string): Promise<ChatMessage[]>;

@@ -24,6 +24,13 @@ import { IFeatureAccessService } from "@application/interfaces/services/subscrip
 import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { Features } from "@domain/entities/subscription/enums/features.enum";
+import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
+import { CurrencyTypes } from "@domain/enum/users/currency-enum";
+import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
+import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
+import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
+import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
+import { OrderStatus } from "@domain/entities/stock/enum/order-status.enum";
 
 @injectable()
 export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
@@ -36,9 +43,10 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
+        @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
     ) { }
 
-    async execute(data: SellOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }>  {
+    async execute(order: SellOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
 
         const hasAccess = await this._featureAccess.hasAccess(
             userId,
@@ -52,6 +60,10 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
             };
         }
 
+
+        // if (!isIndianMarketOpen())
+        //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+
         const session = await mongoose.startSession();
 
         try {
@@ -60,60 +72,97 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
             const user = await this._userRepository.findById(userId);
             if (!user) throw new NotFoundError(ErrorMessages.USER.NOT_FOUND);
 
-            const stock = await this._stockRepository.findBySymbol(data.symbol);
+            const stock = await this._stockRepository.findBySymbol(order.symbol);
             if (!stock) throw new NotFoundError(ErrorMessages.STOCKS.NOT_FOUND);
 
             if (!stock.isVisible)
                 throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_AVAILABLE);
 
-            if (!stock.isTradable)
-                throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
+            // if (!stock.isTradable)
+            //     throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
 
-            if (!isIndianMarketOpen())
-                throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
-            if (!data.quantity || data.quantity <= 0)
+            if (!order.quantity || order.quantity <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);
 
-            const latestQuote = await this._marketDataProvider.getLatestQuote(data.symbol);
-            const marketPrice = latestQuote?.price ?? data.price;
+            const latestQuote = await this._marketDataProvider.getLatestQuote(order.symbol);
+            const marketPrice = latestQuote?.price ?? order.price;
 
             if (!marketPrice || marketPrice <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.INVALID_MARKET_PRICE);
 
             const portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
                 userId,
-                data.symbol,
+                stock.id as string,
                 session
             );
             if (!portfolio) throw new ValidationError(ErrorMessages.PORTFOLIO.NOT_HOLDING);
 
             const availableQty = portfolio.quantity ?? 0;
-            if (availableQty < data.quantity) {
+            if (availableQty < order.quantity) {
                 throw new ValidationError(
-                    `${ErrorMessages.PORTFOLIO.INSUFFICIENT_SHARES}: ${data.quantity}, Holding quantity: ${availableQty}`
+                    `${ErrorMessages.PORTFOLIO.INSUFFICIENT_SHARES}: ${order.quantity}, Holding quantity: ${availableQty}`
                 );
             }
 
             const execution = {
-                filledQty: data.quantity,
+                filledQty: order.quantity,
                 avgPrice: marketPrice,
-                totalValue: marketPrice * data.quantity,
-                profit: (marketPrice - portfolio.avgPrice) * data.quantity,
+                totalValue: marketPrice * order.quantity,
+                profit: (marketPrice - portfolio.avgPrice) * order.quantity,
             };
 
+            const transaction = TransactionEntity.create({
+                userId,
+                userCode: user.userCode,
+                amount: execution.totalValue,
+                currency: CurrencyTypes.INR,
+                referenceType: TransactionReferenceType.WALLET,
+                status: TransactionStatus.PENDING,
+                type: TransactionTypes.SELL
+            })
+            const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
+
             const wallet = await this._wallet.findByUserId(userId, session);
-                        ///📌📌📌📌📌📌📌📌Transaction not managed
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
             wallet.credit(execution.totalValue);
-            await this._wallet.update(userId, wallet, session);
+            await this._wallet.update(wallet.id as string, wallet, session);
+
+
+            const marketOrder = OrderEntity.create({
+                userId,
+                symbol: order.symbol,
+                side: OrderSide.SELL,
+                orderType: OrderType.MARKET_ORDER,
+                quantity: execution.filledQty,
+                price: marketPrice,
+                status: OrderStatus.FILLED,
+                isAlgoTrade: order.isAlgoTrade ?? false,
+            });
+
+            marketOrder.updateFilledQty(execution.filledQty, execution.totalValue);
+            marketOrder.markFilled();
+
+            const newOrder = await this._orderRepository.create(marketOrder, session);
+
+            const trade = TradeEntity.create({
+                userId,
+                orderId: newOrder.id as string,
+                symbol: order.symbol,
+                price: execution.avgPrice,
+                quantity: execution.filledQty,
+                side: OrderSide.SELL,
+                profit: execution.profit,
+                isAlgoTrade: order.isAlgoTrade ?? false,
+            });
+            await this._tradeRepository.create(trade, session);
 
             const newQuantity = (portfolio.quantity ?? 0) - execution.filledQty;
 
             if (newQuantity <= 0) {
                 await this._portfolioRepository.deleteByUserIdAndSymbol(
                     userId,
-                    data.symbol,
+                    stock.id as string,
                     session
                 );
             } else {
@@ -127,54 +176,22 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
                     newInvestedAmount
                 );
 
-                await this._portfolioRepository.update(
-                    portfolio.id as string,
-                    portfolio.toPersistence(),
-                    session
-                );
-            }
 
-            const marketOrder = OrderEntity.create({
-                userId,
-                symbol: data.symbol,
-                side: OrderSide.SELL,
-                orderType: OrderType.MARKET_ORDER,
-                quantity: execution.filledQty,
-                price: marketPrice,
-                stopLoss: data.stopLoss,
-                takeProfit: data.takeProfit,
-            });
-
-            if (data.stopLoss || data.takeProfit) {
-                portfolio.updateRiskLevels(data.stopLoss, data.takeProfit);
                 await this._portfolioRepository.update(
                     portfolio.id as string,
                     portfolio,
                     session
                 );
             }
-            marketOrder.updateFilledQty(execution.filledQty, execution.totalValue);
 
-            const newOrder = await this._orderRepository.create(marketOrder, session);
-
-            const trade = TradeEntity.create({
-                userId,
-                orderId: newOrder.id as string,
-                symbol: data.symbol,
-                price: execution.avgPrice,
-                quantity: execution.filledQty,
-                side: OrderSide.SELL,
-                profit: execution.profit,
-                isAlgoTrade: data.isAlgoTrade ?? false,
-            });
-            await this._tradeRepository.create(trade, session);
+            newTransaction.markSucess();
+            await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
 
             await session.commitTransaction();
 
         } catch (error) {
             await session.abortTransaction();
-            // if (error instanceof AppError) throw error;
-            // if (error instanceof Error) throw new AppError(error.message);
+            if (error instanceof AppError || error instanceof Error) throw error;
             throw new AppError("Market sell order failed");
         } finally {
             session.endSession();

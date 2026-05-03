@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { RefreshCcw, TrendingUp, TrendingDown, Info, Calculator } from 'lucide-react';
-import { simulateBudget } from '../../services/expenseService';
+import { simulateBudget } from '../../../../shared/services/expense-tracker/expenseService';
 import type { SimulationResult } from '../../types/expense-types';
 import { toast } from 'sonner';
 

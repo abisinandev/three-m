@@ -6,6 +6,10 @@ export interface Notification {
     read: boolean;
     createdAt?: string | Date;
     signalId?: string; 
+    data?: {
+        signalId?: string;
+        [key: string]: any;
+    };
 }
 
 export type NotificationFilter = 'all' | 'unread';

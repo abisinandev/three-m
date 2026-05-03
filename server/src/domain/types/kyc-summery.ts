@@ -4,7 +4,7 @@ export type KycSummary = {
     id: string;
     status: KycStatusType;
     panNumber: string | null;
-    aadhaarNumber: string | null;
+    aadharNumber: string | null;
     address?: {
         fullAddress: string;
         city: string;

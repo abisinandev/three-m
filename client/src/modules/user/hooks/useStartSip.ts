@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { startSip } from '@shared/services/feature/mutual-fund/MutualFundApisUserSide';
+import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 
 interface SipPayload {
     schemeCode: string;
@@ -10,7 +11,7 @@ interface SipPayload {
     paymentMethod: 'WALLET';
 }
 
-export const useStartSip = (onSuccess: (data: any) => void, onError: (msg: string) => void) => {
+export const useStartSip = (onSuccess: (data: any) => void, onError: (msg: string, error?: any) => void) => {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -24,8 +25,11 @@ export const useStartSip = (onSuccess: (data: any) => void, onError: (msg: strin
             onSuccess(data);
         },
         onError: (error: any) => {
+            if (error.response?.status === 402) {
+                usePremiumModalStore.getState().onOpen();
+            }
             const msg = error?.response?.data?.message || 'SIP creation failed. Please try again.';
-            onError(msg);
+            onError(msg, error);
         },
     });
 };

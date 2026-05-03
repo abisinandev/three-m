@@ -3,23 +3,23 @@ import { OrderStatus } from "./enum/order-status.enum";
 import { OrderType } from "./enum/order-type.enum";
 
 export class OrderEntity {
-    private readonly _id?: string | null;
-    private readonly _userId: string;
-    private readonly _symbol: string;
-    private readonly _side: OrderSide;
-    private readonly _orderType: OrderType;
-    private readonly _quantity: number;
-    private readonly _price?: number | null;
-    private readonly _stopLoss?: number | null;
-    private readonly _takeProfit?: number | null;
-
-    private _status: OrderStatus;
-    private _filledQty: number;
-    private _executedPrice?: number | null;
-
-    private readonly _createdAt: Date;
-    private _updatedAt: Date;
-    private _executedAt?: Date | null;
+    public id: string | null;
+    public userId: string;
+    public symbol: string;
+    public side: OrderSide;
+    public orderType: OrderType;
+    public quantity: number;
+    public price: number;
+    public limitPrice: number | null;
+    public stopLoss: number | null;
+    public takeProfit: number | null;
+    public isAlgoTrade: boolean;
+    public status: OrderStatus;
+    public filledQty: number;
+    public executedPrice: number | null;
+    public createdAt: Date;
+    public updatedAt: Date;
+    public executedAt: Date | null;
 
     private constructor(props: {
         id?: string | null;
@@ -28,7 +28,9 @@ export class OrderEntity {
         side: OrderSide;
         orderType: OrderType;
         quantity: number;
-        price?: number | null;
+        isAlgoTrade: boolean;
+        price: number;
+        limitPrice?: number | null;
         status: OrderStatus;
         filledQty?: number;
         executedPrice?: number | null;
@@ -38,46 +40,54 @@ export class OrderEntity {
         updatedAt?: Date;
         executedAt?: Date | null;
     }) {
-        this._id = props.id ?? null;
-        this._userId = props.userId;
-        this._symbol = props.symbol;
-        this._side = props.side;
-        this._orderType = props.orderType;
-        this._quantity = props.quantity;
-        this._price = props.price ?? null;
-        this._stopLoss = props.stopLoss ?? null;
-        this._takeProfit = props.takeProfit ?? null;
-
-        this._status = props.status;
-        this._filledQty = props.filledQty ?? 0;
-        this._executedPrice = props.executedPrice ?? null;
-
-        this._createdAt = props.createdAt ?? new Date();
-        this._updatedAt = props.updatedAt ?? new Date();
-        this._executedAt = props.executedAt ?? null;
+        this.id = props.id ?? null;
+        this.userId = props.userId;
+        this.symbol = props.symbol;
+        this.side = props.side;
+        this.orderType = props.orderType;
+        this.quantity = props.quantity;
+        this.price = props.price;
+        this.limitPrice = props.limitPrice ?? null;
+        this.stopLoss = props.stopLoss ?? null;
+        this.takeProfit = props.takeProfit ?? null;
+        this.isAlgoTrade = props.isAlgoTrade;
+        this.status = props.status;
+        this.filledQty = props.filledQty ?? 0;
+        this.executedPrice = props.executedPrice ?? null;
+        this.createdAt = props.createdAt ?? new Date();
+        this.updatedAt = props.updatedAt ?? new Date();
+        this.executedAt = props.executedAt ?? null;
     }
+
 
     static create(data: {
         userId: string;
         symbol: string;
         side: OrderSide;
         orderType: OrderType;
+        status: OrderStatus;
         quantity: number;
-        price?: number;
+        price: number;
+        limitPrice?: number;
+        isAlgoTrade: boolean;
         stopLoss?: number;
         takeProfit?: number;
     }): OrderEntity {
+
         return new OrderEntity({
             userId: data.userId,
             symbol: data.symbol,
             side: data.side,
             orderType: data.orderType,
             quantity: data.quantity,
-            price: data.price ?? null,
+            price: data.price,
+            limitPrice: data.limitPrice ?? null,
             stopLoss: data.stopLoss ?? null,
             takeProfit: data.takeProfit ?? null,
-            status: OrderStatus.OPEN,
+            status: data.status,
+            isAlgoTrade: data.isAlgoTrade,
         });
+
     }
 
     static fromPersistence(data: {
@@ -85,17 +95,20 @@ export class OrderEntity {
         userId: string;
         symbol: string;
         side: OrderSide;
-        orderType: OrderType;
+        orderType: OrderType; 
         quantity: number;
-        price: number | null;
+        price: number;
+        limitPrice?: number | null;
         stopLoss?: number | null;
         takeProfit?: number | null;
         status: OrderStatus;
+        isAlgoTrade: boolean;
         filledQty: number;
         executedPrice: number | null;
         createdAt: Date;
         updatedAt: Date;
         executedAt: Date | null;
+
     }): OrderEntity {
         return new OrderEntity({
             id: data.id,
@@ -105,77 +118,73 @@ export class OrderEntity {
             orderType: data.orderType,
             quantity: data.quantity,
             price: data.price,
+            limitPrice: data.limitPrice ?? null,
             stopLoss: data.stopLoss ?? null,
             takeProfit: data.takeProfit ?? null,
             status: data.status,
+            isAlgoTrade: data.isAlgoTrade,
             filledQty: data.filledQty,
             executedPrice: data.executedPrice,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
             executedAt: data.executedAt,
         });
+
     }
 
-    // Getters
-    get id() { return this._id; }
-    get userId() { return this._userId; }
-    get symbol() { return this._symbol; }
-    get side() { return this._side; }
-    get orderType() { return this._orderType; }
-    get quantity() { return this._quantity; }
-    get price() { return this._price; }
-    get stopLoss() { return this._stopLoss; }
-    get takeProfit() { return this._takeProfit; }
-    get status() { return this._status; }
-    get filledQty() { return this._filledQty; }
-    get executedPrice() { return this._executedPrice; }
-    get createdAt() { return this._createdAt; }
-    get updatedAt() { return this._updatedAt; }
-    get executedAt() { return this._executedAt; }
-
     markFilled() {
-        this._status = OrderStatus.FILLED;
-        this._filledQty = this._quantity;
-        // this._executedPrice = executedPrice;
-        this._executedAt = new Date();
-        this._updatedAt = new Date();
+        this.status = OrderStatus.FILLED;
+        this.filledQty = this.quantity;
+        this.executedAt = new Date();
+        this.updatedAt = new Date();
+    }
+
+    markCancelled() {
+        this.status = OrderStatus.CANCELLED;
+        this.updatedAt = new Date();
     }
 
     cancel() {
-        this._status = OrderStatus.CANCELLED;
-        this._updatedAt = new Date();
+        this.status = OrderStatus.CANCELLED;
+        this.updatedAt = new Date();
     }
 
     updateFilledQty(qty: number, price: number) {
-        this._filledQty = qty;
-        this._executedPrice = price;
+        this.filledQty = qty;
+        this.executedPrice = price;
 
-        if (qty >= this._quantity) {
-            this._status = OrderStatus.FILLED;
-            this._executedAt = new Date();
+        if (qty >= this.quantity) {
+            this.status = OrderStatus.FILLED;
+            this.executedAt = new Date();
         }
 
-        this._updatedAt = new Date();
+        this.updatedAt = new Date();
     }
 
-    // Convert → persistence
     toPersistence() {
         return {
-            id: this._id,
-            userId: this._userId,
-            symbol: this._symbol,
-            side: this._side,
-            orderType: this._orderType,
-            quantity: this._quantity,
-            price: this._price,
-            stopLoss: this._stopLoss,
-            takeProfit: this._takeProfit,
-            status: this._status,
-            filledQty: this._filledQty,
-            executedPrice: this._executedPrice,
-            createdAt: this._createdAt,
-            updatedAt: this._updatedAt,
-            executedAt: this._executedAt,
+            id: this.id,
+            userId: this.userId,
+            symbol: this.symbol,
+            side: this.side,
+            orderType: this.orderType,
+            quantity: this.quantity,
+            price: this.price,
+            limitPrice: this.limitPrice,
+            stopLoss: this.stopLoss,
+            takeProfit: this.takeProfit,
+            status: this.status,
+            filledQty: this.filledQty,
+            executedPrice: this.executedPrice,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
+            executedAt: this.executedAt,
+            isAlgoTrade: this.isAlgoTrade,
         };
     }
+
+    toJSON() {
+        return this.toPersistence();
+    }
 }
+

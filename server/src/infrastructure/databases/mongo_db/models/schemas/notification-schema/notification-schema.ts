@@ -31,6 +31,10 @@ const notificationSchema = new Schema<NotificationDocument>({
         type: Date,
         default: Date.now,
     },
+    data: {
+        type: Schema.Types.Mixed,
+        required: false,
+    },
 });
 
 notificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 3600 });

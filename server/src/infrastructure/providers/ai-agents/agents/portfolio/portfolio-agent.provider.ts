@@ -1,45 +1,38 @@
 import { inject, injectable } from "inversify";
-import { HumanMessage, AIMessage } from "@langchain/core/messages";
-import { normalizeAIResponse } from "../../utils/normalize-response";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
 import { IPortfolioAgent } from "@application/interfaces/services/ai-chatbot/portfolio-agent.interface";
-import { createPortfolioAgentGraph } from "./portfolio-agent-graph";
-import { createPortfolioSummaryTool } from "@infrastructure/providers/ai-agents/langchain/tools/portfolio-summary.tool";
 import { IPortfolioSummaryUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-summary-usecase.interface";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
+import { model } from "../../ollama.config";
+import { AgentResponse } from "@application/interfaces/services/ai-chatbot/agent-response.interface";
 
 @injectable()
 export class PortfolioAgent implements IPortfolioAgent {
-
-    readonly name = "portfolio" as const;
 
     constructor(
         @inject(PORTFOLIO_TYPES.PortfolioSummaryUseCase)
         private readonly _portfolioSummaryUseCase: IPortfolioSummaryUseCase,
     ) { }
 
-    async handle(input: string, history: ChatMessage[], userId: string): Promise<string> {
+    async handle(input: string, history: ChatMessage[], userId: string): Promise<AgentResponse> {
+        const summary = await this._portfolioSummaryUseCase.execute(userId);
+        
+        const prompt = `
+            Summarize this portfolio data friendly and concisely.
+            DATA: ${JSON.stringify(summary, null, 2)}
+            QUESTION: ${input}
+        `;
 
-        const chatHistory = history.map((msg) =>
-            msg.role === "user"
-                ? new HumanMessage(msg.content)
-                : new AIMessage(msg.content)
-        );
+        const response = await model.invoke([
+            new SystemMessage("You format financial data into friendly summaries."),
+            new HumanMessage(prompt)
+        ]);
 
-        const portfolioSummaryTool = createPortfolioSummaryTool(userId, this._portfolioSummaryUseCase);
-
-        const graph = createPortfolioAgentGraph([portfolioSummaryTool]);
-
-        const result = await graph.invoke({
-            messages: [
-                ...chatHistory,
-                new HumanMessage(input),
-            ],
-        });
-
-        const finalMessage = result.messages[result.messages.length - 1];
-
-        return normalizeAIResponse(finalMessage?.content || "");
+        return {
+            message: String(response.content),
+            type: 'portfolio_summary',
+            data: summary
+        };
     }
 }
- 

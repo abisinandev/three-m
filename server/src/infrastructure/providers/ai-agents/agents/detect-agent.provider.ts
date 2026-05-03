@@ -3,92 +3,41 @@ import { model } from "@infrastructure/providers/ai-agents/ollama.config";
 import { IDetectAgent } from "@application/interfaces/services/ai-chatbot/detect-agent.interface";
 import { BaseMessageChunk } from "@langchain/core/messages";
 
+export type IntentType =
+  | "simple"
+  | "education"
+  | "portfolio"
+  | "trade";
+
 @injectable()
 export class DetectAgent implements IDetectAgent {
 
-  classifyIntent(message: string): "simple" | "complex" | "portfolio" | "trade" {
-    const text = message
-      .toLowerCase()
-      .replace(/[^\w\s]/g, "")
-      .trim();
+  classifyIntent(message: string): IntentType {
+    const text = message.toLowerCase().trim();
 
-    const portfolioPatterns = [
-      "my portfolio",
-      "my investments",
-      "my returns",
-      "my profit",
-      "my loss",
-      "my current value",
-      "my xirr",
-      "portfolio summary",
-      "how is my portfolio",
-      "portfolio performance",
-      "how much have i invested",
-      "how much is my portfolio worth",
-      "what is my portfolio",
+    // 1. Portfolio
+    const portfolioPatterns = ["my portfolio", "my investments", "my profit", "my loss", "my current value", "portfolio summary"];
+    if (portfolioPatterns.some((p) => text.includes(p))) return "portfolio";
+
+    // 2. Trade (Information + Actions)
+    const tradePatterns = ["buy", "sell", "order", "invest in", "trade", "stock list", "best stocks", "recommend", "how is"];
+    if (tradePatterns.some((p) => text.includes(p))) return "trade";
+
+    // 3. Education
+    const educationPatterns = [
+      /rbi/i, /sip/i, /risk/i, /sweep/i, /compliance/i,
+      "should i", "which is better", "how to invest", "strategy", "plan", "compare"
     ];
+    if (educationPatterns.some((p) => typeof p === 'string' ? text.includes(p) : p.test(text))) return "education";
 
-    if (portfolioPatterns.some((p) => text.includes(p))) {
-      return "portfolio";
-    }
-
-    const tradePatterns = [
-      "buy",
-      "sell",
-      "invest in",
-      "trade",
-      "stock list",
-      "list stocks",
-      "best stocks",
-      "order",
-    ];
-
-    if (tradePatterns.some((p) => text.includes(p))) {
-      return "trade";
-    }
-
-    const complexKeywords = [
-      "suggest",
-      "recommend",
-      "compare",
-      "strategy",
-      "plan",
-    ];
-
-    const simpleKeywords = ["what", "why", "how", "explain", "define"];
-
-    const strongComplexPatterns = [
-      "should i",
-      "which is better",
-      "how to invest",
-      "best way to",
-    ];
-
-    let score = 0;
-
-    for (const p of strongComplexPatterns) {
-      if (text.includes(p)) score += 3;
-    }
-
-    for (const k of complexKeywords) {
-      if (text.includes(k)) score += 2;
-    }
-
-    for (const k of simpleKeywords) {
-      if (text.includes(k)) score -= 1;
-    }
-
-    return score > 0 ? "complex" : "simple";
+    return "simple";
   }
-
-
 
   async directLLM(message: string): Promise<BaseMessageChunk> {
     return await model.invoke([
       {
         role: "system",
-        content:
-          "You are a helpful financial educator. Give clear and simple answers.",
+        content: "You are a helpful financial educator. Give clear and simple answers.",
       },
       {
         role: "user",

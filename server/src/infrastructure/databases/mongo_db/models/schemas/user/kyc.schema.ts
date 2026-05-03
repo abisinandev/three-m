@@ -30,7 +30,7 @@ const KycSchema = new Schema<KycDocument>(
     status: { type: String, enum: Object.values(KycStatusType), default: KycStatusType.PENDING, index: true },
     isKycVerified: { type: Boolean, default: false },
     panNumber: { type: String, trim: true, uppercase: true, sparse: true, default: null },
-    aadhaarNumber: { type: String, trim: true, sparse: true, default: null },
+    aadharNumber: { type: String, trim: true, sparse: true, default: null },
     address: { type: AddressSchema, required: true },
     rejectionReason: { type: String, trim: true, default: null },
   },

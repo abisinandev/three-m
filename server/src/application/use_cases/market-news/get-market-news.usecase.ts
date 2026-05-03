@@ -2,7 +2,7 @@ import { IMarketNewsServices } from "@application/interfaces/services/market-new
 import { MARKET_NEWS_TYPES } from "@infrastructure/inversify_di/features/market-news/market-news.types";
 import { inject, injectable } from "inversify";
 import { IGetMarketNewsUseCase } from "./interfaces/get-market-news-usecase.interfac";
-import { MarketNewsArticle } from "@application/dto/market-news/market-news.dto";
+import { MarketNewsResponse } from "@application/dto/market-news/market-news.dto";
 
 @injectable()
 export class GetMarketNewsUseCase implements IGetMarketNewsUseCase {
@@ -10,10 +10,10 @@ export class GetMarketNewsUseCase implements IGetMarketNewsUseCase {
         @inject(MARKET_NEWS_TYPES.MarketNewsServices) private readonly _marketNewsService: IMarketNewsServices,
     ) { }
 
-    async execute(query?: string, category?: string): Promise<MarketNewsArticle[]> {
+    async execute(query?: string, category?: string, page = 1, pageSize = 10): Promise<MarketNewsResponse> {
         if (query && query.trim() !== "") {
-            return this._marketNewsService.searchMarketNews(query, category);
+            return this._marketNewsService.searchMarketNews(query, category, page, pageSize);
         }
-        return this._marketNewsService.getTopMarketNews(category);
+        return this._marketNewsService.getTopMarketNews(category, page, pageSize);
     }
 }

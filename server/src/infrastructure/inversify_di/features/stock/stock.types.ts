@@ -25,6 +25,12 @@ export const STOCK_TYPES = {
     OrdersController: Symbol.for("OrdersController"),
     MarketBuyOrderUseCase: Symbol.for("MarketBuyOrderUseCase"),
     MarketSellOrderUseCase: Symbol.for("MarketSellOrderUseCase"),
+    LimitBuyOrderUseCase: Symbol.for("LimitBuyOrderUseCase"),
+    ExecuteLimitBuyOrderUseCase: Symbol.for("ExecuteLimitBuyOrderUseCase"),
+    LimitSellOrderUseCase: Symbol.for("LimitSellOrderUseCase"),
+    ExecuteLimitSellOrderUseCase: Symbol.for("ExecuteLimitSellOrderUseCase"),
+    CancelLimitOrderUseCase: Symbol.for("CancelLimitOrderUseCase"),
+    FetchPendingOrdersUseCase: Symbol.for("FetchPendingOrdersUseCase"),
     OrderRepository: Symbol.for("OrderRepository"),
     TradeRepository: Symbol.for("TradeRepository"),
 
@@ -35,18 +41,31 @@ export const STOCK_TYPES = {
     TurnOnAlgoTradingUseCase: Symbol.for("TurnOnAlgoTradingUseCase"),
     AlgoStrategyRepository: Symbol.for("AlgoStrategyRepository"),
     AlgoSignalRepository: Symbol.for("AlgoSignalRepository"),
-    SignalService: Symbol.for("SignalService"),
+    ProcessSignalUseCase: Symbol.for("ProcessSignalUseCase"),
     ConfirmBuySignalUseCase: Symbol.for("ConfirmBuySignalUseCase"),
     ConfirmSellSignalUseCase: Symbol.for("ConfirmSellSignalUseCase"),
-    StrategyService: Symbol.for("StrategyService"),
     SignalManager: Symbol.for("SignalManager"),
+    GetValidStrategiesUseCase: Symbol.for("GetValidStrategiesUseCase"),
+    AlgoStrategyConfigRepository: Symbol.for("AlgoStrategyConfigRepository"),
+    AdminGetBaseStrategiesUseCase: Symbol.for("AdminGetBaseStrategiesUseCase"),
+    AdminUpdateStrategyRiskConfigUseCase: Symbol.for("AdminUpdateStrategyRiskConfigUseCase"),
+    EvaluateStrategyUseCase: Symbol.for("EvaluateStrategyUseCase"),
 
     // Queue & BullMQ
     StrategyQueue: Symbol.for("StrategyQueue"),
     SignalQueue: Symbol.for("SignalQueue"),
     StrategyWorker: Symbol.for("StrategyWorker"),
     SignalWorker: Symbol.for("SignalWorker"),
+    OrderWorker: Symbol.for("OrderWorker"),
     StrategyScheduler: Symbol.for("StrategyScheduler"),
+    LimitOrderScheduler: Symbol.for("LimitOrderScheduler"),
+
+    OrderQueue: Symbol.for("OrderQueue"),
+    SlTpOrderQueue: Symbol.for("SlTpOrderQueue"),
+    SlTpOrderWorker: Symbol.for("SlTpOrderWorker"),
+    SlTpOrderScheduler: Symbol.for("SlTpOrderScheduler"),
+    ExecuteSlTpUseCase: Symbol.for("ExecuteSlTpUseCase"),
+
 
     // EngineRunner:Symbol.for("EngineRunner")
     WatchlistRepository: Symbol.for("WatchlistRepository"),
@@ -54,5 +73,7 @@ export const STOCK_TYPES = {
     AddToWatchlistUseCase: Symbol.for("AddToWatchlistUseCase"),
     RemoveFromWatchlistUseCase: Symbol.for("RemoveFromWatchlistUseCase"),
     FetchWatchlistUseCase: Symbol.for("FetchWatchlistUseCase"),
+    GetMarketMoversUseCase: Symbol.for("GetMarketMoversUseCase"),
+
 
 }

@@ -28,6 +28,8 @@ import adminAlgoTradingRoutes from '@presentation/http/routes/admin/admin-algo-t
 import adminSubscriptionsRoutes from '@presentation/http/routes/admin/admin-subscription-management.routes'
 import userSubscriptionRoutes from '@presentation/http/routes/user/user-subscription.routes';
 import { StockTradingRoutes } from "@shared/routes/stock-trading.routes";
+import userDashboardRoutes from '@presentation/http/routes/user/user-dashboard.routes';
+import adminDashboardRoutes from '@presentation/http/routes/admin/admin-dashboard.routes';
 
 export const RegisterRoutes = (app: Application) => {
   const authMiddleware = container.get<AuthMiddleware>(AUTH_TYPES.AuthMiddleware);
@@ -43,6 +45,8 @@ export const RegisterRoutes = (app: Application) => {
   app.use("/api/user/portfolio", (req, res, next) => authMiddleware.handle(req, res, next), userPortfoilo);
   app.use("/api/notifications", (req, res, next) => authMiddleware.handle(req, res, next), notificationRoutes);
 
+  app.use("/api/user/dashboard", (req, res, next) => authMiddleware.handle(req, res, next), userDashboardRoutes);
+
   app.use("/api/user", (req, res, next) => authMiddleware.handle(req, res, next), userRoute);
   app.use("/api/user/subscriptions", (req, res, next) => authMiddleware.handle(req, res, next), userSubscriptionRoutes);
 
@@ -51,13 +55,14 @@ export const RegisterRoutes = (app: Application) => {
   app.use('/api/admin/mutual-funds', (req, res, next) => authAdminMiddleware.handle(req, res, next), mutualFundRoutes);
   app.use("/api/admin/sip-management", (req, res, next) => authAdminMiddleware.handle(req, res, next), adminSipRoutes);
   app.use('/api/payments', (req, res, next) => authMiddleware.handle(req, res, next), paymentRoutes);
+  app.use("/api/admin/dashboard", (req, res, next) => authAdminMiddleware.handle(req, res, next), adminDashboardRoutes);
   app.use("/api/admin", (req, res, next) => authAdminMiddleware.handle(req, res, next), adminRoutes);
   app.use("/api/market-news", (req, res, next) => authMiddleware.handle(req, res, next), marketNewsRoutes);
   app.use("/api/file-upload", fileUploadRoutes);
 
   app.use('/api/admin/stocks', (req, res, next) => authAdminMiddleware.handle(req, res, next), adminStockRoutes);
   app.use(StockTradingRoutes.BASE_ROUTE, (req, res, next) => authMiddleware.handle(req, res, next), userStockRoutes);
-  app.use('/api/user/stock/order/:symbol', (req, res, next) => authMiddleware.handle(req, res, next), ordersRoutes);
+  app.use('/api/user/stock/order', (req, res, next) => authMiddleware.handle(req, res, next), ordersRoutes);
   app.use(AlgoTradingRoutes.BASE_ROUTE, (req, res, next) => authMiddleware.handle(req, res, next), algoTradingRoute);
 
 

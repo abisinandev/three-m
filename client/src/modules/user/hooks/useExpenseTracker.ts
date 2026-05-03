@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchExpenseTrackerData, fetchAnalyticsData } from '../services/expenseService';
+import { fetchExpenseTrackerData, fetchAnalyticsData } from '../../../shared/services/expense-tracker/expenseService';
 import { format } from 'date-fns';
 
 export const useExpenseTracker = (selectedMonth: Date) => {

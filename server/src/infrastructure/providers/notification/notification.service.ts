@@ -16,6 +16,7 @@ export class NotificationService implements INotificationService {
       title: payload.title,
       message: payload.message,
       createdAt: payload.createdAt,
+      data: payload.data
     });
   }
 }

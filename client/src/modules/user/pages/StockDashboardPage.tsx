@@ -5,23 +5,21 @@ import { useQuery, keepPreviousData, useQueryClient } from '@tanstack/react-quer
 import { useDebouncedCallback } from 'use-debounce';
 
 // Services & Hooks
-import { FetchUserStocksApi } from '@shared/services/user/stocks/FetchUserStocksApi';
+import { FetchUserStocksApi } from '@/shared/services/stocks/FetchUserStocksApi';
 import { useGetWatchlist, useWatchlistMutation } from '@shared/hooks/useWatchlist';
 import { getStockHoldings } from '@shared/services/feature/portfolio/PortfolioApi';
 import { socket } from '@socket';
 
-// Components
-import PremiumPaymentModal from '@shared/components/modals/PremiumPaymentModal';
 import { Pagination } from '@shared/components/pagination/Pagination';
 import StockTable from '../components/stock-dashboard/StockTable';
 import StockDashboardTabs from '../components/stock-dashboard/StockDashboardTabs';
 import MarketMovers from '../components/stock-dashboard/MarketMovers';
 import RecentActivity from '../components/stock-dashboard/RecentActivity';
 
-// Types
-import type { UserStockFilters, StockListResponse } from '@shared/services/user/stocks/FetchUserStocksApi';
+import type { UserStockFilters, StockListResponse } from '@/shared/services/stocks/FetchUserStocksApi';
 import type { Stock } from '@shared/components/interfaces/IStockTable';
 import type { DashboardTab } from '../types/stock-dashboard.types';
+import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 
 const TABS: DashboardTab[] = [
   { id: 'all', label: 'All Stocks' },
@@ -31,17 +29,15 @@ const TABS: DashboardTab[] = [
 const StockDashboardPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  
-  // UI State
+
   const [activeTab, setActiveTab] = useState('all');
-  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
+  const { onOpen: openPremiumModal } = usePremiumModalStore();
   const [filters, setFilters] = useState<UserStockFilters>({
     page: 1,
     limit: 20,
     search: '',
   });
 
-  // Queries
   const { data: stocksResponse, isLoading: isStocksLoading, isError: isStocksError } = useQuery({
     queryKey: ['user-stocks', filters],
     queryFn: () => FetchUserStocksApi(filters),
@@ -54,11 +50,9 @@ const StockDashboardPage = () => {
   });
 
   const { data: watchlistResponse, isLoading: isWatchlistLoading } = useGetWatchlist();
-  
-  // Mutations
-  const { add: addToWatchlist, remove: removeFromWatchlist } = useWatchlistMutation(() => setIsPremiumModalOpen(true));
 
-  // Derived State
+  const { add: addToWatchlist, remove: removeFromWatchlist } = useWatchlistMutation(openPremiumModal);
+
   const stocks = useMemo(() => {
     if (activeTab === 'watchlist') {
       return watchlistResponse?.data ?? [];
@@ -67,15 +61,14 @@ const StockDashboardPage = () => {
   }, [stocksResponse, watchlistResponse, activeTab]);
 
   const watchlistSymbols = useMemo(() => {
-      // Defensive check to ensure data is an array
-      const list = watchlistResponse?.data;
-      return new Set(Array.isArray(list) ? list.map(s => s.symbol) : []);
+    // Defensive check to ensure data is an array
+    const list = watchlistResponse?.data;
+    return new Set(Array.isArray(list) ? list.map(s => s.symbol) : []);
   }, [watchlistResponse]);
 
   const total = stocksResponse?.data?.total ?? 0;
   const recentTrades = useMemo(() => tradesResponse?.data ?? [], [tradesResponse]);
 
-  // Handlers
   const updateFilters = (updates: Partial<UserStockFilters>) => {
     setFilters(prev => ({ ...prev, ...updates, page: updates.page ?? 1 }));
   };
@@ -94,7 +87,6 @@ const StockDashboardPage = () => {
     navigate({ to: '/user/trading/$symbol', params: { symbol } });
   };
 
-  // Real-time updates
   const filtersRef = useRef(filters);
   useEffect(() => { filtersRef.current = filters; }, [filters]);
 
@@ -124,12 +116,11 @@ const StockDashboardPage = () => {
   }, [queryClient]);
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] pb-10 selection:bg-[#2962ff]/30"
       style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
     >
-      
-      {/* Header Section */}
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pt-6 px-6 max-w-[1600px] mx-auto">
         <div>
           <h2 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
@@ -148,14 +139,14 @@ const StockDashboardPage = () => {
               placeholder="Search stocks, ETFs..."
               onChange={(e) => debouncedSearch(e.target.value)}
               style={{
-                  width: '100%',
-                  background: '#111214',
-                  border: '1px solid #1e2025',
-                  borderRadius: 6,
-                  padding: '7px 10px 7px 32px',
-                  fontSize: 12,
-                  color: '#e8eaed',
-                  outline: 'none',
+                width: '100%',
+                background: '#111214',
+                border: '1px solid #1e2025',
+                borderRadius: 6,
+                padding: '7px 10px 7px 32px',
+                fontSize: 12,
+                color: '#e8eaed',
+                outline: 'none',
               }}
             />
           </div>
@@ -166,15 +157,14 @@ const StockDashboardPage = () => {
       </div>
 
       <div className="flex flex-col xl:flex-row gap-6 px-6 max-w-[1600px] mx-auto">
-        
-        {/* Main Content Area */}
+
         <div className="flex-1 space-y-6">
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-[#1e2025] pb-4">
-            <StockDashboardTabs 
-              activeTab={activeTab} 
-              setActiveTab={setActiveTab} 
-              tabs={TABS} 
+            <StockDashboardTabs
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              tabs={TABS}
             />
 
             <div className="flex items-center gap-2 self-start sm:self-auto">
@@ -187,7 +177,7 @@ const StockDashboardPage = () => {
           </div>
 
           <div className="bg-[#111214] rounded-lg border border-[#1e2025] overflow-hidden">
-            <StockTable 
+            <StockTable
               stocks={stocks}
               isLoading={isStocksLoading || (activeTab === 'watchlist' && isWatchlistLoading)}
               isError={isStocksError}
@@ -196,7 +186,6 @@ const StockDashboardPage = () => {
               onNavigate={handleNavigate}
             />
 
-            {/* Pagination - only for 'all' tab as watchlist is usually smaller/unpaginated in this view */}
             {!isStocksLoading && !isStocksError && activeTab === 'all' && stocks.length > 0 && (
               <div className="p-4 border-t border-[#1e2025] bg-[#0b0c0e]">
                 <Pagination
@@ -210,23 +199,18 @@ const StockDashboardPage = () => {
           </div>
         </div>
 
-        {/* Right Sidebar Section */}
         <div className="w-full xl:w-80 space-y-6">
-          <MarketMovers 
-            onNavigate={handleNavigate} 
+          <MarketMovers
+            onNavigate={handleNavigate}
           />
-          
-          <RecentActivity 
-            trades={recentTrades} 
-            onNavigate={handleNavigate} 
+
+          <RecentActivity
+            trades={recentTrades}
+            onNavigate={handleNavigate}
           />
         </div>
       </div>
-      
-      <PremiumPaymentModal 
-        isOpen={isPremiumModalOpen} 
-        onClose={() => setIsPremiumModalOpen(false)} 
-      />
+
     </div>
   );
 };

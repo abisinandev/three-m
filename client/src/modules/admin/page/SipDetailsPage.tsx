@@ -7,21 +7,16 @@ import {
     Calendar,
     Activity,
     Loader2,
-    Ban,
 } from 'lucide-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ROUTES } from '@shared/constants/routes';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { SipStatusBadge } from '../components/SipStatusBadges';
 import { fetchSipDetailsApi } from '@shared/services/admin/sip-management/SipManagementAdminApi';
-import { toast } from 'sonner';
-import ConfirmModal from '@shared/components/modals/ConfirmModal';
-import axios from 'axios';
 import { useNavigate, useParams } from '@tanstack/react-router';
 
 const SipDetailsPage = () => {
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
     const { sipId } = useParams({ from: '/admin/sip-details/$sipId' });
 
     const [filters, setFilters] = useState({
@@ -30,7 +25,7 @@ const SipDetailsPage = () => {
         status: '',
     });
 
-    const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
+
 
     const {
         data,
@@ -48,26 +43,7 @@ const SipDetailsPage = () => {
         placeholderData: (prev) => prev,
     });
 
-    const blockSipMutation = useMutation({
-        mutationFn: async () => {
-            const res = await axios.patch(`/api/admin/sip-management/block/${sipId}`);
-            return res.data;
-        },
-        onSuccess: (res) => {
-            toast.success(
-                res?.data?.message || 'SIP blocked successfully'
-            );
-            queryClient.invalidateQueries({
-                queryKey: ['sip-details', sipId],
-            });
-            setIsBlockModalOpen(false);
-        },
-        onError: (error: any) => {
-            toast.error(
-                error?.response?.data?.message || 'Failed to block SIP'
-            );
-        },
-    });
+
 
     if (isLoading) {
         return (
@@ -101,11 +77,7 @@ const SipDetailsPage = () => {
         100
     ).toFixed(0);
 
-    const handleBlockSip = () => {
-        setIsBlockModalOpen(true);
-    };
 
-    const canCancel = ['ACTIVE', 'RUNNING', 'PAUSED'].includes(sip.status);
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white p-5 space-y-6 text-xs">
@@ -203,25 +175,7 @@ const SipDetailsPage = () => {
                         </div>
                     </div>
 
-                    {canCancel && (
-                        <button
-                            onClick={handleBlockSip}
-                            disabled={blockSipMutation.isPending}
-                            className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-rose-900/20 disabled:opacity-50 active:scale-95"
-                        >
-                            {blockSipMutation.isPending ? (
-                                <>
-                                    <Loader2 size={14} className="animate-spin" />
-                                    Blocking...
-                                </>
-                            ) : (
-                                <>
-                                    <Ban size={14} />
-                                    Block SIP
-                                </>
-                            )}
-                        </button>
-                    )}
+
                 </div>
             </div>
 
@@ -286,21 +240,7 @@ const SipDetailsPage = () => {
                 </div>
             </div>
 
-            <ConfirmModal
-                isOpen={isBlockModalOpen}
-                onClose={() => setIsBlockModalOpen(false)}
-                onConfirm={() => blockSipMutation.mutate()}
-                title="Block SIP?"
-                message={
-                    <>
-                        <p>Are you sure you want to block this SIP for <span className="text-white font-semibold">{sip.userCode}</span>?</p>
-                        <p className="mt-2 text-rose-400">This will stop all future installments for this specific SIP.</p>
-                    </>
-                }
-                confirmText="Block SIP"
-                variant="destructive"
-                loading={blockSipMutation.isPending}
-            />
+
         </div>
     );
 };

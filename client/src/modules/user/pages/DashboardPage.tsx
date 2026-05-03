@@ -1,150 +1,200 @@
 import { PremiumUpgradeCard, VerificationAlertCard } from '@shared/components/cards/AlertCard';
 import { useUserStore } from '@stores/user/UserStore';
-import { Wallet, TrendingDown, ArrowUpRight, ArrowDownRight, BarChart3, Activity } from 'lucide-react';
-import { useState } from 'react';
-import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
+import {
+    Wallet, TrendingDown, ArrowUpRight, ArrowDownRight,
+    BarChart3, Activity, Zap, PieChart, TrendingUp
+} from 'lucide-react';
+import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
+import { useDashboard } from '../hooks/useDashboard';
+
+import { formatCurrency, formatCompact } from '../helpers/format';
+import { Skeleton } from '../components/dashboard/Skeleton';
+import { PortfolioLineChart } from '../components/dashboard/PortfolioLineChart';
+import { ExpenseDonut } from '../components/dashboard/ExpenseDonut';
+import { ActiveSipsPanel } from '../components/dashboard/ActiveSipsPanel';
+import { RecentInvestmentsPanel } from '../components/dashboard/RecentInvestmentsPanel';
 
 const DashboardPage = () => {
-  const user = useUserStore((state) => state.user);
-  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
+    const user = useUserStore((state) => state.user);
+    const { onOpen: openPremiumModal } = usePremiumModalStore();
+    const { data, isLoading } = useDashboard();
 
-  return (
-    <div className="space-y-5 pb-10">
-      {!user?.isVerified && <VerificationAlertCard />}
-      {user?.isVerified && !user?.isSubscribed && (
-        <PremiumUpgradeCard onUpgrade={() => setIsPremiumModalOpen(true)} />
-      )}
-      {user?.isSubscribed && (
-        <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-3 flex items-center justify-between">
-           <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-md bg-amber-500/10 flex items-center justify-center">
-                <span className="text-amber-500 text-[10px] font-black italic">P</span>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-[#e8eaed]">Premium Intelligence Active</p>
-                <p className="text-[9px] text-[#5a5f6e] uppercase tracking-wider font-medium">Full access to advanced trading & analytics</p>
-              </div>
-           </div>
-           <div className="px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-[8px] font-black text-amber-500 uppercase tracking-tighter">
-             Verified
-           </div>
-        </div>
-      )}
+    const walletBalance = data?.wallet?.balance ?? 0;
+    const totalExpenses = data?.expense?.totalExpenses ?? 0;
+    const totalMfInvest = data?.totalMutualFundInvestment ?? 0;
+    const stockHoldings = data?.portfolio?.stockHoldingsCount ?? 0;
+    const netSavings = data?.expense?.netSavings ?? 0;
+    const totalIncome = data?.expense?.totalIncome ?? 0;
+    const needsSpent = data?.expense?.needsSpent ?? 0;
+    const wantsSpent = data?.expense?.wantsSpent ?? 0;
+    const savingsSpent = data?.expense?.savingsSpent ?? 0;
+    const portfolioGrowth = data?.portfolioGrowth ?? [];
+    const totalStockValue = data?.portfolio?.totalInvestedAmount ?? 0;
+    const recentSips = data?.recentSips ?? [];
+    const recentInvestments = data?.recentInvestments ?? [];
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { icon: Wallet, label: 'Wallet Balance', value: '₹1,24,500', change: '+12.5%', positive: true },
-          { icon: TrendingDown, label: 'Monthly Spend', value: '₹45,200', change: '-8.2%', positive: false },
-          { icon: BarChart3, label: 'Investments', value: '₹2,85,750', change: '+15.3%', positive: true },
-          { icon: Activity, label: 'Algo Active', value: '5 strategies', change: 'Running', positive: true },
-        ].map((stat, i) => (
-          <div
-            key={i}
-            className="bg-[#0f0f0f] rounded-lg border border-[#1f1f1f] p-4 hover:border-[#2a2a2a] transition"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className={`p-1.5 rounded ${stat.positive ? 'bg-[#22C55E]/10' : 'bg-red-500/10'}`}>
-                <stat.icon className={`w-4 h-4 ${stat.positive ? 'text-[#22C55E]' : 'text-red-400'}`} />
-              </div>
-              {stat.positive ? (
-                <ArrowUpRight className="w-3.5 h-3.5 text-[#22C55E]" />
-              ) : (
-                <ArrowDownRight className="w-3.5 h-3.5 text-red-400" />
-              )}
-            </div>
-            <p className="text-xs text-gray-400">{stat.label}</p>
-            <p className="text-base font-semibold text-white mt-0.5">{stat.value}</p>
-            <p className={`text-xs mt-1 ${stat.positive ? 'text-[#22C55E]' : 'text-red-400'}`}>
-              {stat.change}
-            </p>
-          </div>
-        ))}
-      </div>
+    const statsRows = [
+        {
+            icon: Wallet, label: 'Wallet Balance',
+            value: formatCurrency(walletBalance),
+            change: walletBalance > 0 ? 'Available funds' : 'No funds',
+            isPositive: walletBalance >= 0,
+        },
+        {
+            icon: TrendingDown, label: 'Monthly Spend',
+            value: formatCurrency(totalExpenses),
+            change: totalIncome > 0 ? `Income ₹${(totalIncome / 1000).toFixed(0)}K` : 'This month',
+            isPositive: false,
+        },
+        {
+            icon: BarChart3, label: 'MF Investment',
+            value: formatCurrency(totalMfInvest),
+            change: `${stockHoldings} stock holding${stockHoldings !== 1 ? 's' : ''}`,
+            isPositive: true,
+        },
+        {
+            icon: Activity, label: 'Net Savings',
+            value: formatCurrency(netSavings),
+            change: netSavings >= 0 ? 'Surplus' : 'Deficit',
+            isPositive: netSavings >= 0,
+        },
+    ];
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div className="bg-[#0f0f0f] rounded-lg border border-[#1f1f1f] p-5">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-semibold text-white">Expense Breakdown</h3>
-            <span className="text-xs text-gray-500">This Month</span>
-          </div>
-          <div className="relative w-40 h-40 mx-auto">
-            <div className="absolute inset-0 rounded-full bg-gradient-conic from-[#22C55E] via-blue-500 to-purple-500 p-1.5">
-              <div className="w-full h-full rounded-full bg-[#0f0f0f] flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-white">68%</p>
-                  <p className="text-[10px] text-gray-500">of budget</p>
+    return (
+        <div style={{
+            minHeight: '100vh',
+            background: '#0b0c0e',
+            color: '#e8eaed',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            paddingBottom: 48,
+        }}>
+            <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                            Dashboard
+                        </h1>
+                        <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+                            Overview & summary
+                        </p>
+                    </div>
                 </div>
-              </div>
+
+                {!user?.isVerified && <VerificationAlertCard />}
+                {user?.isVerified && !user?.isSubscribed && (
+                    <PremiumUpgradeCard onUpgrade={openPremiumModal} />
+                )}
+                {user?.isSubscribed && (
+                    <div className="bg-amber-500/5 border border-amber-500/20 rounded-md p-2.5 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded bg-amber-500/10 flex items-center justify-center">
+                                <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500/20" />
+                            </div>
+                            <div>
+                                <p className="text-[11px] font-semibold text-[#e8eaed]">Premium Intelligence Active</p>
+                                <p className="text-[9px] text-[#5a5f6e] uppercase tracking-wider font-medium mt-0.5">
+                                    Full access to advanced trading & analytics
+                                </p>
+                            </div>
+                        </div>
+                        <div className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-[9px] font-semibold text-amber-500 uppercase tracking-wide">
+                            Verified
+                        </div>
+                    </div>
+                )}
+
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    {statsRows.map((stat, i) => (
+                        <div
+                            key={i}
+                            style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }}
+                            className="p-4 hover:border-[#2a2a2a] transition-colors flex flex-col justify-between h-24"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <stat.icon className="w-3.5 h-3.5 text-gray-400" />
+                                    <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">
+                                        {stat.label}
+                                    </span>
+                                </div>
+                                {stat.isPositive
+                                    ? <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />
+                                    : <ArrowDownRight className="w-3.5 h-3.5 text-red-500" />
+                                }
+                            </div>
+                            <div>
+                                {isLoading
+                                    ? <><Skeleton className="h-4 w-24 mb-1.5" /><Skeleton className="h-2.5 w-16" /></>
+                                    : (
+                                        <>
+                                            <p className="text-sm font-semibold text-gray-100 tracking-tight">{stat.value}</p>
+                                            <p className={`text-[10px] mt-0.5 font-medium ${stat.isPositive ? 'text-emerald-500/90' : 'text-red-500/90'}`}>
+                                                {stat.change}
+                                            </p>
+                                        </>
+                                    )
+                                }
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+
+                    {/* Expense Breakdown */}
+                    <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-5 flex flex-col">
+                        <div className="flex justify-between items-center mb-3">
+                            <div className="flex items-center gap-2">
+                                <PieChart className="w-4 h-4 text-gray-400" />
+                                <h3 className="text-[11px] font-semibold text-gray-200 uppercase tracking-wider">
+                                    Expense Breakdown
+                                </h3>
+                            </div>
+                            <span className="text-[10px] text-gray-500 font-medium bg-[#1a1a1a] px-2 py-0.5 rounded">
+                                This Month
+                            </span>
+                        </div>
+                        <ExpenseDonut
+                            totalExpenses={totalExpenses}
+                            needsSpent={needsSpent}
+                            wantsSpent={wantsSpent}
+                            savingsSpent={savingsSpent}
+                            isLoading={isLoading}
+                        />
+                    </div>
+
+                    {/* Portfolio Growth */}
+                    <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-5 flex flex-col">
+                        <div className="flex justify-between items-center mb-3">
+                            <div className="flex items-center gap-2">
+                                <TrendingUp className="w-4 h-4 text-gray-400" />
+                                <h3 className="text-[11px] font-semibold text-gray-200 uppercase tracking-wider">
+                                    Portfolio Growth
+                                </h3>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {!isLoading && totalStockValue > 0 && (
+                                    <span className="text-[10px] text-gray-400 font-medium">
+                                        Stocks: {formatCompact(totalStockValue)}
+                                    </span>
+                                )}
+                                <span className="text-[10px] text-gray-500 font-medium bg-[#1a1a1a] px-2 py-0.5 rounded">
+                                    Last 6 Months
+                                </span>
+                            </div>
+                        </div>
+                        <PortfolioLineChart data={portfolioGrowth} isLoading={isLoading} />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    <ActiveSipsPanel recentSips={recentSips} isLoading={isLoading} />
+                    <RecentInvestmentsPanel recentInvestments={recentInvestments} isLoading={isLoading} />
+                </div>
+
             </div>
-          </div>
-          <div className="grid grid-cols-3 gap-2 mt-5 text-xs">
-            {['Food', 'Transport', 'Shopping'].map((cat, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-[#22C55E]' : i === 1 ? 'bg-blue-500' : 'bg-purple-500'}`} />
-                <span className="text-gray-400">{cat}</span>
-              </div>
-            ))}
-          </div>
         </div>
-
-        <div className="bg-[#0f0f0f] rounded-lg border border-[#1f1f1f] p-5">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-semibold text-white">Portfolio Growth</h3>
-            <span className="text-xs text-gray-500">6M</span>
-          </div>
-          <div className="h-32 flex items-end justify-between gap-1.5">
-            {[240, 255, 268, 272, 292, 310].map((h, i) => (
-              <div key={i} className="flex-1">
-                <div
-                  className="w-full bg-gradient-to-t from-[#22C55E] to-[#22C55E]/20 rounded-t"
-                  style={{ height: `${(h / 320) * 100}%` }}
-                />
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between mt-3 text-xs text-gray-500">
-            <span>Jan</span>
-            <span>Feb</span>
-            <span>Mar</span>
-            <span>Apr</span>
-            <span>May</span>
-            <span>Jun</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div className="bg-[#0f0f0f] rounded-lg border border-[#1f1f1f] p-5">
-          <h3 className="text-sm font-semibold text-white mb-3">Active SIPs</h3>
-          <div className="space-y-3">
-            {['HDFC Top 100', 'SBI Small Cap', 'Axis Bluechip'].map((fund, i) => (
-              <div key={i} className="flex justify-between text-xs">
-                <span className="text-gray-300">{fund}</span>
-                <span className="text-[#22C55E] font-medium">+12.5%</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-[#0f0f0f] rounded-lg border border-[#1f1f1f] p-5">
-          <h3 className="text-sm font-semibold text-white mb-3">Recent Algo Trades</h3>
-          <div className="space-y-3 text-xs">
-            {['RELIANCE → +₹2,450', 'TCS → -₹1,200', 'INFY → +₹3,760'].map((t, i) => (
-              <div key={i} className="flex justify-between">
-                <span className="text-gray-300">{t.split(' → ')[0]}</span>
-                <span className={t.includes('+') ? 'text-[#22C55E]' : 'text-red-400'}>{t.split(' → ')[1]}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <PremiumPaymentModal
-        isOpen={isPremiumModalOpen}
-        onClose={() => setIsPremiumModalOpen(false)}
-      />
-    </div>
-  );
+    );
 };
 
 export default DashboardPage;

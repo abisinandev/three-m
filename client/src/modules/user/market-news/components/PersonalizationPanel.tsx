@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, ChevronRight, Bookmark, X, TrendingUp } from "lucide-react";
+import { MARKET_NEWS_CATEGORIES } from "../constants/categories";
 import type { MarketNews } from "../types";
 
 export function PersonalizationPanel() {
@@ -12,8 +13,6 @@ export function PersonalizationPanel() {
 
     useEffect(() => {
         loadSavedArticles();
-
-        // Listen for custom event when things are saved/unsaved
         window.addEventListener("saved_news_updated", loadSavedArticles);
         return () => window.removeEventListener("saved_news_updated", loadSavedArticles);
     }, []);
@@ -23,45 +22,47 @@ export function PersonalizationPanel() {
         const newSaved = saved.filter((item: MarketNews) => item.url !== url);
         localStorage.setItem("saved_news", JSON.stringify(newSaved));
         setSavedArticles(newSaved);
-        // Notify other components (like NewsCard) that list changed
         window.dispatchEvent(new Event("saved_news_updated"));
     };
 
     return (
-        <aside className="hidden lg:flex flex-col gap-6 w-full lg:sticky lg:top-24 max-h-[calc(100vh-120px)] overflow-y-auto no-scrollbar">
-            {/* Your Interests */}
-            <div className="rounded-2xl border border-[#2D2D2D] bg-black p-6">
-                <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-[#505050]">Your Interests</h3>
+        <div className="flex flex-col gap-4">
+
+            <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-4">
+                <h3 className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-gray-500">Curated Interests</h3>
                 <div className="flex flex-wrap gap-2">
-                    {["Stocks", "Mutual Funds", "Economy", "Crypto", "RBI"].map((interest) => (
+                    {MARKET_NEWS_CATEGORIES.filter(c => c !== "All").map((interest) => (
                         <button
                             key={interest}
-                            className="rounded-full border border-[#2D2D2D] bg-black px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 transition-all hover:border-white hover:text-white"
+                            style={{ background: '#0b0c0e', border: '1px solid #1e2025' }}
+                            className="rounded px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-gray-400 transition-all hover:border-gray-600 hover:text-gray-200"
                         >
                             {interest}
                         </button>
                     ))}
-                    <button className="flex items-center space-x-1 rounded-full border border-dashed border-[#404040] bg-transparent px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:border-gray-400 hover:text-gray-400 transition-colors">
-                        <Plus className="h-3 w-3" />
+                    <button
+                        style={{ border: '1px dashed #2d2d2d' }}
+                        className="flex items-center gap-1 rounded bg-transparent px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-gray-600 hover:border-gray-500 transition-colors"
+                    >
+                        <Plus className="h-2.5 w-2.5" />
                         <span>Add</span>
                     </button>
                 </div>
             </div>
 
-            {/* Recommended */}
-            <div className="rounded-2xl border border-[#2D2D2D] bg-black p-6">
-                <div className="mb-4 flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-blue-500" />
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-[#505050]">Market Insights</h3>
+            <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-4">
+                <div className="mb-3 flex items-center gap-2">
+                    <TrendingUp className="h-3.5 w-3.5 text-blue-500/80" />
+                    <h3 className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Market Briefings</h3>
                 </div>
                 <div className="space-y-4">
                     {[
                         "RBI Repo Rate: Impact on Home Loans",
-                        "NIFTY 50 hits record high: What's next?",
-                        "Top 5 Debt Funds for 2026"
+                        "NIFTY 50 hits record high: Technical Analysis",
+                        "Top 5 Debt Funds for 2026 Strategy"
                     ].map((title, i) => (
                         <div key={i} className="group cursor-pointer">
-                            <h4 className="mb-1 text-xs font-bold leading-snug text-gray-300 transition-colors group-hover:text-blue-400 line-clamp-2">
+                            <h4 className="mb-1 text-[11px] font-semibold leading-relaxed text-gray-300 transition-colors group-hover:text-blue-400 line-clamp-2">
                                 {title}
                             </h4>
                             <p className="text-[9px] uppercase tracking-wider text-gray-600 font-bold">
@@ -70,30 +71,25 @@ export function PersonalizationPanel() {
                         </div>
                     ))}
                 </div>
-                <button className="mt-6 flex w-full items-center justify-center space-x-2 rounded-xl bg-[#0A0A0A] border border-[#1A1A1A] py-3 text-[10px] font-bold uppercase tracking-widest text-white transition-all hover:bg-[#1A1A1A] hover:border-[#333333]">
-                    <span>View Detailed Insights</span>
-                    <ChevronRight className="h-3 w-3" />
-                </button>
             </div>
 
-            {/* Saved News */}
-            <div className="rounded-2xl border border-[#2D2D2D] bg-black p-6">
-                <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-[#505050]">Saved News</h3>
-                    <span className="rounded-full bg-blue-600/20 border border-blue-600/30 px-2 py-0.5 text-[9px] font-bold text-blue-400">
+            <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-4">
+                <div className="mb-3 flex items-center justify-between">
+                    <h3 className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Intel Archive</h3>
+                    <span className="rounded bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.5 text-[8px] font-bold text-blue-400">
                         {savedArticles.length}
                     </span>
                 </div>
 
                 {savedArticles.length > 0 ? (
-                    <div className="space-y-5">
-                        {savedArticles.map((article) => (
-                            <div key={article.url} className="group relative border-l-2 border-[#1A1A1A] pl-3 hover:border-blue-500 transition-colors">
+                    <div className="space-y-4">
+                        {savedArticles.slice(0, 5).map((article) => (
+                            <div key={article.url} className="group relative border-l-2 border-[#1e2025] pl-3 hover:border-blue-500/50 transition-colors">
                                 <a href={article.url} target="_blank" rel="noopener noreferrer" className="block pr-6">
-                                    <h4 className="mb-1 text-[11px] font-bold leading-relaxed text-gray-300 group-hover:text-blue-400 line-clamp-2 transition-colors">
+                                    <h4 className="mb-1 text-[11px] font-medium leading-relaxed text-gray-400 group-hover:text-gray-200 line-clamp-2 transition-colors">
                                         {article.title}
                                     </h4>
-                                    <p className="text-[9px] uppercase tracking-wider text-[#505050] font-bold">
+                                    <p className="text-[9px] uppercase tracking-wider text-gray-600 font-bold">
                                         {article.source}
                                     </p>
                                 </a>
@@ -102,8 +98,7 @@ export function PersonalizationPanel() {
                                         e.preventDefault();
                                         removeSavedItem(article.url);
                                     }}
-                                    className="absolute top-0 right-0 p-1 text-[#333333] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    title="Remove"
+                                    className="absolute top-0 right-0 p-1 text-gray-700 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
                                     <X className="h-3 w-3" />
                                 </button>
@@ -111,13 +106,12 @@ export function PersonalizationPanel() {
                         ))}
                     </div>
                 ) : (
-                    <div className="py-10 text-center border border-dashed border-[#1A1A1A] rounded-xl">
-                        <Bookmark className="mx-auto mb-3 h-8 w-8 text-[#1A1A1A]" />
-                        <p className="text-[9px] uppercase tracking-widest font-bold text-gray-600">No saved items</p>
-                        <p className="mt-1 text-[8px] text-gray-700">Save articles to read later</p>
+                    <div className="py-8 text-center border border-dashed border-[#1e2025] rounded">
+                        <Bookmark className="mx-auto mb-2 h-6 w-6 text-[#1e2025]" />
+                        <p className="text-[9px] uppercase tracking-widest font-bold text-gray-600">No archived reports</p>
                     </div>
                 )}
             </div>
-        </aside>
+        </div>
     );
 }

@@ -22,6 +22,10 @@ import { IResumeSipUseCase } from "@application/use_cases/sip/interfaces/resume-
 import { ISipBlockUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-block-usecase.interface";
 import { SipBlockUseCase } from "@application/use_cases/admin/sip-management/sip-block.usecase";
 
+import { ISipQueue } from "@application/interfaces/services/sip/sip-queue.interface";
+import { SipQueue } from "@infrastructure/providers/sip/queue/sip.queue";
+import { SipWorker } from "@infrastructure/providers/sip/queue/workers/sip.worker";
+import { SipScheduler } from "@infrastructure/providers/sip/queue/sip.scheduler";
 
 export const SipModule = new ContainerModule(({ bind }) => {
     // Repositories
@@ -40,4 +44,10 @@ export const SipModule = new ContainerModule(({ bind }) => {
 
     // Controllers
     bind<MutualFundSipController>(SIP_TYPES.MutualFundSipController).to(MutualFundSipController);
+
+    // Queue
+    bind<ISipQueue>(SIP_TYPES.SipQueue).to(SipQueue).inSingletonScope();
+    bind<SipWorker>(SIP_TYPES.SipWorker).to(SipWorker).inSingletonScope();
+    bind<SipScheduler>(SIP_TYPES.SipScheduler).to(SipScheduler).inSingletonScope();
 });
+

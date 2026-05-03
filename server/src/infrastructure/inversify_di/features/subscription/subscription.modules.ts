@@ -20,6 +20,8 @@ import { IFeatureAccessService } from "@application/interfaces/services/subscrip
 import { FeatureAccessService } from "@infrastructure/providers/subscription/feature-access.service";
 import { IUpgradePremiumUseCase } from "@application/use_cases/user/subscription/interfaces/upgrade-premium-usecase.interface";
 import { UpgradePremiumUseCase } from "@application/use_cases/user/subscription/upgrade-premium.usecase";
+import { IGetUserPlanUseCase } from "@application/use_cases/user/subscription/interfaces/get-user-plan.usecase.interface";
+import { GetUserPlanUseCase } from "@application/use_cases/user/subscription/get-user-plan.usecase";
 
 export const SubscriptionModule = new ContainerModule(({ bind }) => {
     bind<ISubscriptionRepository>(SUBSCRIPTION_TYPES.SubscriptionRepository).to(SubscriptionRepository);
@@ -37,4 +39,5 @@ export const SubscriptionModule = new ContainerModule(({ bind }) => {
     bind<IFeatureAccessService>(SUBSCRIPTION_TYPES.FeatureAccessService).to(FeatureAccessService);
 
     bind<IUpgradePremiumUseCase>(SUBSCRIPTION_TYPES.UpgradePremiumUseCase).to(UpgradePremiumUseCase);
+    bind<IGetUserPlanUseCase>(SUBSCRIPTION_TYPES.GetUserPlanUseCase).to(GetUserPlanUseCase);
 });

@@ -3,12 +3,13 @@ import { IProcessStripePaymentUseCase } from "./interfaces/process-payment-useca
 import Stripe from "stripe";
 import stripe from "@infrastructure/providers/stripe/stripe.client";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
-import { IAddToWalletUseCase } from "../user/interfaces/add-to-wallet-usecase.interface";
+import { IAddToWalletUseCase } from "../user/wallet/interfaces/add-to-wallet-usecase.interface";
 import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
 import { IUpgradePremiumUseCase } from "../user/subscription/interfaces/upgrade-premium-usecase.interface";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 @injectable()
 export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase {
@@ -26,13 +27,13 @@ export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase
         );
 
         if (paymentIntent.status !== "succeeded") {
-            throw new Error("Payment not successful");
+            throw new ValidationError("Payment not successful");
         }
 
         const metadata = paymentIntent.metadata;
 
         if (!metadata?.userId || !metadata?.purpose) {
-            throw new Error("Invalid metadata");
+            throw new ValidationError("Invalid metadata");
         }
 
         const userId = metadata.userId;
@@ -65,7 +66,7 @@ export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase
                 break;
 
             default:
-                throw new Error("Unknown payment purpose");
+                throw new ValidationError("Unknown payment purpose");
         }
 
         return { success: true };

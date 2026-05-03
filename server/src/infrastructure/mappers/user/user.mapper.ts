@@ -40,7 +40,7 @@ export const toDomain = (userDoc: UserDocument): UserEntity => {
         id: userDoc.kycId._id.toString(),
         status: userDoc.kycId.status,
         panNumber: userDoc.kycId.panNumber as string,
-        aadhaarNumber: userDoc.kycId.aadhaarNumber as string,
+        aadharNumber: userDoc.kycId.aadharNumber as string,
         address: {
           city: userDoc.kycId.address.city,
           fullAddress: userDoc.kycId.address.fullAddress,

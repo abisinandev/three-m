@@ -12,10 +12,9 @@ import { MutualFundsUseCase } from "@application/use_cases/mutual-fund/mutual-fu
 import { FetchAllFundUseCases } from "@application/use_cases/mutual-fund/fetch-all-funds.usecase";
 import { MutualFundNavUpdate } from "@application/use_cases/mutual-fund/mutual-fund-nav-update.usecase";
 import { ChangeStatusUseCase } from "@application/use_cases/mutual-fund/change-status.usecase";
-import { ListFundUserSideUseCase } from "@application/use_cases/user/mutual-fund/list-funds.usecase";
+import { ListFundUserSideUseCase } from "@application/use_cases/mutual-fund/list-funds.usecase";
 import { MfCagrUseCase } from "@application/use_cases/mutual-fund/mf-cagr-usecase";
-import { MutualFundDetailsUseCase } from "@application/use_cases/user/mutual-fund/mutual-fund-details.usecase";
-import { NavHistoryUseCase } from "@application/use_cases/mutual-fund/nav-chart-usecase";
+import { MutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/mutual-fund-details.usecase";
 import { OneTimeInvestmentUseCase } from "@application/use_cases/mutual-fund/one-time-investment.usecase";
 import { NavAllocateUseCase } from "@application/use_cases/mutual-fund/nav-allocatation-usecase";
 import { MfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/mf-investment-history.usecase";
@@ -26,6 +25,11 @@ import { NavUpdateProvider } from "@infrastructure/providers/mutual-fund/nav-upd
 // Controllers
 import { MutualFundsAdminController } from "@presentation/http/controllers/mutual-funds/mutual-fund-admin.controller";
 import { MutualFundUserController } from "@presentation/http/controllers/mutual-funds/mutual-fund-user.controller";
+
+// Schedulers
+import { NavDailyScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-cron.scheduler";
+import { CagrUpdateScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/cagr-cron-scheduler";
+import { NavAllocationScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-allocatation-scheduler";
 
 // Interfaces
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
@@ -39,7 +43,6 @@ import { IChangeFundStatusUseCase } from "@application/use_cases/mutual-fund/int
 import { IListFundsUserSideUseCase } from "@application/use_cases/mutual-fund/interfaces/list-fund-usecase.interface";
 import { IMfCagrUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-cagr-usecse.interface";
 import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-details-usecase.interface";
-import { INavHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/nav-history-usecase.interface";
 import { IOneTimeInvestmentUseCase } from "@application/use_cases/mutual-fund/interfaces/one-time-investment.usecase.interface";
 import { INavAllocateUseCase } from "@application/use_cases/mutual-fund/interfaces/nav-allocate-usecase.interface";
 import { IMfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-investment-history-usecase.interface";
@@ -61,7 +64,6 @@ export const MutualFundModule = new ContainerModule(({ bind }) => {
     bind<IListFundsUserSideUseCase>(MUTUAL_FUND_TYPES.ListFundUserSideUseCase).to(ListFundUserSideUseCase);
     bind<IMfCagrUseCase>(MUTUAL_FUND_TYPES.MfCagrUseCase).to(MfCagrUseCase);
     bind<IMutualFundDetailsUseCase>(MUTUAL_FUND_TYPES.MutualFundDetailsUseCase).to(MutualFundDetailsUseCase);
-    bind<INavHistoryUseCase>(MUTUAL_FUND_TYPES.NavHistoryUseCase).to(NavHistoryUseCase);
     bind<IOneTimeInvestmentUseCase>(MUTUAL_FUND_TYPES.InvestmentUseCase).to(OneTimeInvestmentUseCase);
     bind<INavAllocateUseCase>(MUTUAL_FUND_TYPES.NavAllocateUseCase).to(NavAllocateUseCase);
     bind<IMfInvestmentHistoryUseCase>(MUTUAL_FUND_TYPES.MfInvestmentHistoryUseCase).to(MfInvestmentHistoryUseCase);
@@ -72,4 +74,9 @@ export const MutualFundModule = new ContainerModule(({ bind }) => {
     // Controllers
     bind<MutualFundsAdminController>(MUTUAL_FUND_TYPES.MutualFundsAdminController).to(MutualFundsAdminController);
     bind<MutualFundUserController>(MUTUAL_FUND_TYPES.MutualFundsUserController).to(MutualFundUserController);
+
+    // Schedulers
+    bind<NavDailyScheduler>(MUTUAL_FUND_TYPES.NavDailyScheduler).to(NavDailyScheduler).inSingletonScope();
+    bind<CagrUpdateScheduler>(MUTUAL_FUND_TYPES.CagrUpdateScheduler).to(CagrUpdateScheduler).inSingletonScope();
+    bind<NavAllocationScheduler>(MUTUAL_FUND_TYPES.NavAllocationScheduler).to(NavAllocationScheduler).inSingletonScope();
 });

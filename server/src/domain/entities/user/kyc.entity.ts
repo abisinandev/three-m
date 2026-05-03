@@ -8,7 +8,7 @@ export class KycEntity {
   private _status: KycStatusType;
   private _documents: KycDocumentVO[];
   private _panNumber?: string | null;
-  private _aadhaarNumber?: string | null;
+  private _aadharNumber?: string | null;
   private _address: {
     fullAddress: string;
     city: string;
@@ -25,7 +25,7 @@ export class KycEntity {
     status: KycStatusType;
     documents: KycDocumentVO[];
     panNumber?: string | null;
-    aadhaarNumber?: string | null;
+    aadharNumber?: string | null;
     address: {
       fullAddress: string;
       city: string;
@@ -41,7 +41,7 @@ export class KycEntity {
     this._status = props.status;
     this._documents = props.documents;
     this._panNumber = props.panNumber ?? null;
-    this._aadhaarNumber = props.aadhaarNumber ?? null;
+    this._aadharNumber = props.aadharNumber ?? null;
     this._address = props.address;
     this._rejectionReason = props.rejectionReason ?? null;
     this._createdAt = props.createdAt;
@@ -51,7 +51,7 @@ export class KycEntity {
     userId: string;
     documents: KycDocumentVO[];
     panNumber?: string;
-    aadhaarNumber?: string;
+    aadharNumber?: string;
     address: { fullAddress: string; city: string; state: string; pincode: string };
   }): KycEntity {
     return new KycEntity({
@@ -60,7 +60,7 @@ export class KycEntity {
       status: KycStatusType.PENDING,
       documents: data.documents,
       panNumber: data.panNumber ?? null,
-      aadhaarNumber: data.aadhaarNumber ?? null,
+      aadharNumber: data.aadharNumber ?? null,
       address: data.address,
       rejectionReason: null,
     });
@@ -73,7 +73,7 @@ export class KycEntity {
     status: KycStatusType;
     documents: KycDocumentVO[];
     panNumber?: string | null;
-    aadhaarNumber?: string | null;
+    aadharNumber?: string | null;
     address: { fullAddress: string; city: string; state: string; pincode: string };
     rejectionReason?: string | null;
     createdAt?: Date;
@@ -85,7 +85,7 @@ export class KycEntity {
       status: data.status,
       documents: data.documents ?? [],
       panNumber: data.panNumber ?? null,
-      aadhaarNumber: data.aadhaarNumber ?? null,
+      aadharNumber: data.aadharNumber ?? null,
       address: data.address,
       rejectionReason: data.rejectionReason ?? null,
       createdAt: data.createdAt,
@@ -110,8 +110,8 @@ export class KycEntity {
   get panNumber() {
     return this._panNumber;
   }
-  get aadhaarNumber() {
-    return this._aadhaarNumber;
+  get aadharNumber() {
+    return this._aadharNumber;
   }
   get status() {
     return this._status;

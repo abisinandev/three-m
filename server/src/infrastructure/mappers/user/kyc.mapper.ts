@@ -10,7 +10,7 @@ export const toDomain = (doc: KycDocument): KycEntity => {
     documents: doc.documents,
     address: doc.address,
     panNumber: doc.panNumber as string,
-    aadhaarNumber: doc.aadhaarNumber as string,
+    aadharNumber: doc.aadharNumber as string,
     isKycVerified: doc.isKycVerified,
     status: doc.status,
     rejectionReason: doc.rejectionReason as string,
@@ -38,9 +38,10 @@ export const toPersistance = (data: KycEntity): Partial<KycDocument> => {
       : undefined,
 
     panNumber: data.panNumber ?? null,
-    aadhaarNumber: data.aadhaarNumber ?? null,
+    aadharNumber: data.aadharNumber ?? null,
     isKycVerified: data.isKycVerified,
     status: data.status as KycStatusType,
+    rejectionReason: data.rejectionReason ?? null,
   };
 };
 

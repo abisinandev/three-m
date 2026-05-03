@@ -1,5 +1,5 @@
 
-import { MarketNewsPage } from '@modules/user/pages/MarketNewPage'
+import { MarketNewsPage } from '@modules/user/pages/MarketNewsPage'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/user/market-news')({

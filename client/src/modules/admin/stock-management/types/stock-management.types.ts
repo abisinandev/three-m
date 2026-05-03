@@ -6,7 +6,6 @@ export interface Stock {
     sector: string;
     logo?: string | null;
     isTradable: boolean;
-    isTracked: boolean;
     isVisible: boolean;
     price?: number;
     createdAt?: string;
@@ -19,8 +18,7 @@ export interface StockFilters {
     search: string;
     exchange: string;
     isTradable: string;
-    isTracked: string;
     isVisible: string;
 }
 
-export type StockStatusKey = 'isTradable' | 'isTracked' | 'isVisible';
+export type StockStatusKey = 'isTradable' | 'isVisible';

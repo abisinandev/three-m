@@ -14,11 +14,11 @@ import { IStockRepository } from "@application/interfaces/repositories/stock/sto
 import { PortfolioXirrService } from "@domain/domain-services/portfolio/xirr-calculation.domain-service";
 import { CashFlow } from "@domain/domain-services/portfolio/xirr-calculation.interface";
 import { TradeEntity } from "@domain/entities/stock/trade.entity";
-import { InvestmentFundDTO } from "@application/dto/portfolio/aggregated-asset.dto";
 import { PortfolioSummaryDTO } from "@application/dto/portfolio/portfolio-summary.dto";
 import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { ICacheProvider } from "@application/interfaces/services/externals/redis-cache.provider.interface";
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
+import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 
 
 /**
@@ -44,18 +44,22 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
+        @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
         @inject(EXTERNAL_TYPES.RedisCacheProvider) private readonly _cache: ICacheProvider,
     ) { }
 
     async execute(userId: string): Promise<PortfolioSummaryDTO> {
 
-        const [investments, stockPortfolios, allTrades] = await Promise.all([
-            this._investmentRepository.getUserInvestementSummary(userId),
-            this._portfolioRepository.findByUserId(userId),
+        const [portfolioAssets, allInvestments, allTrades] = await Promise.all([
+            this._portfolioRepository.getUserAssets(userId),
+            this._investmentRepository.findUserInvestmentsForXirr(userId),
             this._tradeRepository.findByUserId(userId)
         ]);
 
-        if (!investments.length && !stockPortfolios.length) {
+        const investments = allInvestments || [];
+        const trades = allTrades || [];
+
+        if (!portfolioAssets.length) {
             return {
                 totalCount: 0,
                 totalInvestment: 0,
@@ -71,88 +75,88 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
         let totalInvestment = 0;
         let currentValue = 0;
 
-        //Mutualfunds
-        const schemeCodes = [...new Set(investments.map(i => i.schemeCode))];
-        const navMap = new Map<string, number>();
+        const assetInfoMap = new Map<string, { symbol?: string, schemeCode?: string, name: string }>();
+        const priceMap = new Map<string, number>();
 
-        await Promise.all(
-            schemeCodes.map(async (schemeCode) => {
-                const cacheKey = `nav-cache:${schemeCode}`;
-                const cachedNav = await this._cache.get(cacheKey);
+        await Promise.all(portfolioAssets.map(async (asset) => {
+            if (asset.assetType === "STOCK") {
+                const stock = await this._stockRepository.findById(asset.assetId);
+                if (stock) {
+                    assetInfoMap.set(asset.assetId, { symbol: stock.symbol, name: stock.name });
 
-                if (cachedNav) {
-                    navMap.set(schemeCode, Number(cachedNav));
-                } else {
-                    const navHistory = await this._navUpdateProvider.fetchNavHistories(schemeCode);
-                    if (navHistory?.length) {
-                        const latestNav = Number(navHistory[0].nav);
-                        navMap.set(schemeCode, latestNav);
-                        await this._cache.set(cacheKey, latestNav.toString(), 3600); // Cache for 1 hour
+                    const cacheKey = `stock-price-cache:${stock.symbol}`;
+                    const cachedPrice = await this._cache.get(cacheKey);
+                    if (cachedPrice) {
+                        priceMap.set(asset.assetId, Number(cachedPrice));
+                    } else {
+                        const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
+                        if (quote) {
+                            priceMap.set(asset.assetId, quote.price);
+                            await this._cache.set(cacheKey, quote.price.toString(), 1800); // 30 min cache
+                        }
                     }
                 }
-            })
-        );
+            } else if (asset.assetType === "MUTUAL_FUND") {
+                const fund = await this._mutualFundRepository.findById(asset.assetId);
+                if (fund) {
+                    assetInfoMap.set(asset.assetId, { schemeCode: fund.schemeCode, name: fund.schemeName });
 
-        for (const inv of investments) {
-            totalInvestment += Number(inv.amount);
-            if (inv.status === InvestmentStatus.ALLOTTED && Number(inv.units) > 0) {
-                const nav = navMap.get(inv.schemeCode);
-                if (!nav) continue;
-                currentValue += Number(inv.units) * nav;
-            }
-        }
-
-        //Stocks
-        const assetPriceMap = new Map<string, number>();
-        const uniqueAssetIds = [...new Set(stockPortfolios.map(p => p.assetId))];
-
-        await Promise.all(uniqueAssetIds.map(async (assetId) => {
-            const cacheKey = `stock-price-cache:${assetId}`;
-            const cachedPrice = await this._cache.get(cacheKey);
-
-            if (cachedPrice) {
-                assetPriceMap.set(assetId, Number(cachedPrice));
-            } else {
-                const stock = await this._stockRepository.findById(assetId);
-                if (stock) {
-                    const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
-                    if (quote) {
-                        assetPriceMap.set(assetId, quote.price);
-                        await this._cache.set(cacheKey, quote.price.toString(), 3600); // Cache for 1 hour
+                    const cacheKey = `nav-cache:${fund.schemeCode}`;
+                    const cachedNav = await this._cache.get(cacheKey);
+                    if (cachedNav) {
+                        priceMap.set(asset.assetId, Number(cachedNav));
+                    } else {
+                        const navHistory = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
+                        if (navHistory?.length) {
+                            const latestNav = Number(navHistory[0].nav);
+                            priceMap.set(asset.assetId, latestNav);
+                            await this._cache.set(cacheKey, latestNav.toString(), 3600); // 1 hour cache
+                        }
                     }
                 }
             }
         }));
 
-        for (const stock of stockPortfolios) {
-            totalInvestment += Number(stock.investedAmount);
-            const stockPrice = assetPriceMap.get(stock.assetId) ?? stock.avgPrice;
-            currentValue += (stock.quantity ?? 0) * stockPrice;
+        for (const asset of portfolioAssets) {
+            totalInvestment += asset.investedAmount;
+            const currentPrice = priceMap.get(asset.assetId) ?? asset.avgPrice;
+            const quantity = asset.quantity || asset.units || 0;
+            currentValue += quantity * currentPrice;
         }
 
-        const totalProfit = currentValue - totalInvestment;
-        const profitAfterSell = allTrades.reduce((acc, trade) => {
+        const stockRealizedProfit = trades.reduce((acc, trade) => {
             if (trade.side === OrderSide.SELL && trade.profit !== undefined) {
                 return acc + trade.profit;
             }
             return acc;
         }, 0);
 
+        const mfRealizedProfit = investments.reduce((acc, inv) => {
+            if (inv.status === "REDEEMED" || inv.status === "PARTIALLY_REDEEMED") {
+
+                const costOfRedeemedUnits = (inv.redeemedUnits || 0) * Number(inv.nav);
+                return acc + (inv.redeemedAmount || 0) - costOfRedeemedUnits;
+            }
+            return acc;
+        }, 0);
+
+        const profitAfterSell = stockRealizedProfit + mfRealizedProfit;
+        const totalProfit = currentValue - totalInvestment;
         const totalReturns = totalProfit + profitAfterSell;
         const profitPercentage = totalInvestment > 0 ? (totalReturns / totalInvestment) * 100 : 0;
 
+        // XIRR Calculation
         const cashflows = await this.buildCashFlows(
             investments,
-            allTrades,
-            navMap,
-            stockPortfolios,
-            assetPriceMap,
+            trades,
+            portfolioAssets,
+            priceMap
         );
 
         const xirr = this.xirrService.calculate(cashflows);
 
         return {
-            totalCount: investments.length + stockPortfolios.length,
+            totalCount: portfolioAssets.length,
             totalInvestment,
             totalProfit,
             profitAfterSell,
@@ -164,34 +168,33 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
     }
 
     private buildCashFlows(
-        investments: InvestmentFundDTO[],
+        investments: any[],
         trades: TradeEntity[],
-        navMap: Map<string, number>,
-        stockPortfolios: PortfolioEntity[],
-        assetPriceMap: Map<string, number>
+        portfolioAssets: PortfolioEntity[],
+        priceMap: Map<string, number>
     ): CashFlow[] {
         const cashFlows: CashFlow[] = [];
 
-        // mf
-        let mfCurrentValue = 0;
+        // Mutual Funds Cashflows
         for (const inv of investments) {
+            // Inflow: Investment amount
             cashFlows.push({
                 date: new Date(inv.createdAt),
                 amount: -inv.amount,
             });
 
-            if (inv.status === InvestmentStatus.REDEEMED) {
-                cashFlows.push({
-                    date: new Date(inv.redeemedAt || inv.updatedAt || inv.createdAt),
-                    amount: inv.redeemedAmount,
-                });
-            } else {
-                const nav = navMap.get(inv.schemeCode) || 0;
-                mfCurrentValue += (inv.remainingUnits || 0) * nav;
+            // Outflow: Redemption amount
+            if (inv.status === InvestmentStatus.REDEEMED || inv.status === InvestmentStatus.PARTIALLY_REDEEMED) {
+                if (inv.redeemedAmount && inv.redeemedAt) {
+                    cashFlows.push({
+                        date: new Date(inv.redeemedAt),
+                        amount: inv.redeemedAmount,
+                    });
+                }
             }
         }
 
-        // Stocks
+        // Stocks Cashflows
         for (const trade of trades) {
             const amount = trade.quantity * trade.price;
             if (trade.side === OrderSide.BUY) {
@@ -207,14 +210,14 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             }
         }
 
-        // Portfolio Current Value 
-        let stockCurrentValue = 0;
-        for (const stock of stockPortfolios) {
-            const price = assetPriceMap.get(stock.assetId) ?? stock.avgPrice;
-            stockCurrentValue += (stock.quantity ?? 0) * price;
+        // Final Outflow: Current Value of all assets
+        let totalCurrentValue = 0;
+        for (const asset of portfolioAssets) {
+            const currentPrice = priceMap.get(asset.assetId) ?? asset.avgPrice;
+            const quantity = asset.quantity || asset.units || 0;
+            totalCurrentValue += quantity * currentPrice;
         }
 
-        const totalCurrentValue = mfCurrentValue + stockCurrentValue;
         if (totalCurrentValue > 0) {
             cashFlows.push({
                 date: new Date(),

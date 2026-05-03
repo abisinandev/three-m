@@ -35,14 +35,25 @@ export const HoldingsTable = ({
 }: HoldingsTableProps) => {
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
-    const headers = (activeTab === 'stocks' || activeTab === 'mf')
-        ? TABLE_HEADERS[activeTab]
-        : TABLE_HEADERS.all;
+    // Pick tab-appropriate headers
+    const headers = activeTab === 'stocks'
+        ? TABLE_HEADERS.stocks
+        : activeTab === 'mf'
+            ? TABLE_HEADERS.mf
+            : TABLE_HEADERS.all;
 
     if (isLoading) {
         return (
             <div style={{ padding: '40px 0', textAlign: 'center', fontSize: 12, color: '#5a5f6e', background: '#111214', border: '1px solid #1e2025', borderRadius: 8 }}>
-                Loading holdings…
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                    <div style={{
+                        width: 24, height: 24, borderRadius: '50%',
+                        border: '2px solid #1e2025', borderTopColor: '#00C853',
+                        animation: 'spin 0.8s linear infinite',
+                    }} />
+                    <span>Loading holdings…</span>
+                </div>
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
             </div>
         );
     }
@@ -55,14 +66,21 @@ export const HoldingsTable = ({
         );
     }
 
+    const totalInvested = items.reduce((s, i) => s + (i.amount ?? i.investedAmount ?? 0), 0);
+    const totalValue = items.reduce((s, i) => s + (i.currentValue ?? ((i.amount ?? 0) + (i.profit ?? 0))), 0);
+    const totalPnl = items.reduce((s, i) => s + (i.profit ?? 0), 0);
+
     return (
         <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 8, overflow: 'hidden' }}>
+
+            {/* Header Row */}
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 100px 110px 120px 110px 14px',
                 gap: 8,
                 padding: '8px 16px',
                 borderBottom: '1px solid #1e2025',
+                background: '#0e1014',
             }}>
                 {headers.map((h, i) => (
                     <p key={i} style={{
@@ -73,15 +91,24 @@ export const HoldingsTable = ({
                 ))}
             </div>
 
+            {/* Empty state */}
             {items.length === 0 ? (
-                <div style={{ padding: '40px 0', textAlign: 'center', fontSize: 12, color: '#5a5f6e' }}>
-                    {search ? 'No matching holdings' : 'No holdings yet'}
+                <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 12, color: '#5a5f6e' }}>
+        
+                    {search
+                        ? 'No matching holdings found'
+                        : activeTab === 'stocks'
+                            ? 'No stock holdings yet'
+                            : activeTab === 'mf'
+                                ? 'No mutual fund holdings yet'
+                                : 'No holdings yet'
+                    }
                 </div>
             ) : (
                 <>
                     {items.map((inv, idx) => (
                         <HoldingsTableRow
-                            key={inv.id || inv.schemeCode}
+                            key={inv.id || inv.schemeCode || idx}
                             inv={inv}
                             idx={idx}
                             isLast={idx === items.length - 1}
@@ -89,9 +116,11 @@ export const HoldingsTable = ({
                             onExpand={setExpandedId}
                             onNavigate={onNavigate}
                             returnType={returnType}
+                            activeTab={activeTab}
                         />
                     ))}
 
+                    {/* Summary Footer */}
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 100px 110px 120px 110px 14px',
@@ -104,19 +133,16 @@ export const HoldingsTable = ({
                             {items.length} holding{items.length !== 1 ? 's' : ''}
                         </p>
                         <p style={{ textAlign: 'right', fontSize: 11, fontWeight: 600, color: '#9ca3af', margin: 0 }}>
-                            ₹{formatCurrency(items.reduce((s, i) => s + (i.amount ?? 0), 0), 0)}
+                            ₹{formatCurrency(totalInvested, 0)}
                         </p>
                         <p style={{ textAlign: 'right', fontSize: 11, fontWeight: 600, color: '#e8eaed', margin: 0 }}>
-                            ₹{formatCurrency(items.reduce((s, i) => s + (i.amount ?? 0) + (i.profit ?? 0), 0), 0)}
+                            ₹{formatCurrency(totalValue, 0)}
                         </p>
                         <p style={{
                             textAlign: 'right', fontSize: 11, fontWeight: 700, margin: 0,
-                            color: getPnlColor(items.reduce((s, i) => s + (i.profit ?? 0), 0)),
+                            color: getPnlColor(totalPnl),
                         }}>
-                            {(() => {
-                                const tot = items.reduce((s, i) => s + (i.profit ?? 0), 0);
-                                return `${tot >= 0 ? '+' : ''}₹${formatCurrency(Math.abs(tot), 1)}`;
-                            })()}
+                            {`${totalPnl >= 0 ? '+' : ''}₹${formatCurrency(Math.abs(totalPnl), 1)}`}
                         </p>
                         <p style={{ margin: 0 }} />
                         <p style={{ margin: 0 }} />
@@ -124,7 +150,8 @@ export const HoldingsTable = ({
                 </>
             )}
 
-            {!search && total > 0 && (
+            {/* Pagination */}
+            {!search && total > limit && (
                 <div style={{ borderTop: '1px solid #1e2025' }}>
                     <Pagination
                         page={page}

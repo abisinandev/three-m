@@ -46,7 +46,7 @@ const ForgotPasswordForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <InputField
         label="Email Address"
         name="email"

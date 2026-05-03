@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { BlockchainSection } from '@shared/components/LandingPage/BlockchainSection';
 import { FeaturesSection } from '@shared/components/LandingPage/FeaturesSection';
 import { FinalCTA } from '@shared/components/LandingPage/FinalCTA';
 import { Header } from '@shared/components/LandingPage/Header';
@@ -29,7 +28,6 @@ export const LandingPage: React.FC = () => {
       />
       <HeroSection />
       <FeaturesSection />
-      <BlockchainSection />
       <PricingSection />
       <FinalCTA />
       <Footer/>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CalendarCheck, Pause, Play, Trash2, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { CalendarCheck, Pause, Play, Trash2, AlertCircle, ChevronDown, ChevronUp, Clock, Info } from 'lucide-react';
 import dayjs from 'dayjs';
 import type { SipDto } from '@modules/user/types/mutual-fund/dashboard.types';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
@@ -63,119 +63,188 @@ const SipsTab: React.FC<SipsTabProps> = ({
     };
 
     return (
-        <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 space-y-4">
-            <h3 className="text-base font-semibold flex items-center gap-2.5">
-                <CalendarCheck size={18} className="text-green-400" />
-                Your Active SIPs
-            </h3>
+        <div className="bg-[#111214] border border-[#1e2025] rounded-xl p-6 space-y-6 shadow-2xl">
+            <div className="flex justify-between items-center">
+                <h3 className="text-lg font-bold flex items-center gap-3 text-white">
+                    <div className="p-2 bg-green-500/10 rounded-lg">
+                        <CalendarCheck size={20} className="text-green-400" />
+                    </div>
+                    Active SIPs
+                </h3>
+                <span className="text-[10px] bg-[#1e2025] px-2.5 py-1 rounded-full text-gray-400 font-bold uppercase tracking-wider">
+                    {sips.length} {sips.length === 1 ? 'Plan' : 'Plans'}
+                </span>
+            </div>
 
             {sipsLoading ? (
-                <div className="py-12 text-center text-gray-500">Loading SIPs...</div>
+                <div className="py-20 text-center">
+                    <div className="animate-spin w-8 h-8 border-2 border-green-500/20 border-t-green-500 rounded-full mx-auto mb-4"></div>
+                    <p className="text-[11px] text-gray-500 uppercase tracking-widest font-bold">Synchronizing SIP Data...</p>
+                </div>
             ) : sips.length === 0 ? (
-                <div className="py-10 text-center text-gray-500">
-                    No active SIPs yet. Start investing regularly!
+                <div className="py-16 text-center bg-[#0d0d0e] rounded-xl border border-dashed border-[#1e2025]">
+                    <div className="w-12 h-12 bg-[#1a1c20] rounded-full flex items-center justify-center mx-auto mb-4 text-gray-600">
+                        <Info size={24} />
+                    </div>
+                    <h4 className="text-sm font-semibold text-gray-400">No active SIPs found</h4>
+                    <p className="text-[11px] text-gray-600 mt-2 max-w-[200px] mx-auto leading-relaxed">
+                        Start your wealth creation journey with regular investments today.
+                    </p>
                 </div>
             ) : (
-                sips.map(sip => (
-                    <div key={sip.id} className="border border-[#2a2a2a] rounded-lg p-4 bg-[#0d0d0d]">
-                        <div className="flex justify-between items-start gap-4">
-                            <div>
-                                <p className="font-medium text-white">{sip.schemeCode}</p>
-                                <p className="text-sm text-gray-400 mt-1">
-                                    ₹{sip.amount} • {sip.frequency}
-                                    <span className="ml-3 text-gray-500">Started: {dayjs(sip.startDate).format('DD MMM YYYY')}</span>
-                                </p>
-                                <p className="text-xs mt-1.5 flex items-center gap-1.5">
-                                    Next: <span className="text-green-400 font-medium">{dayjs(sip.nextExecutionDate).format('DD MMM YYYY')}</span>
-                                    {sip.status === 'PAUSED' && (
-                                        <span className="inline-flex items-center gap-1 text-yellow-400 text-xs ml-2">
-                                            <AlertCircle size={12} /> Paused
-                                        </span>
-                                    )}
-                                    {sip.status === 'CANCELLED' && (
-                                        <span className="inline-flex items-center gap-1 text-red-500 text-xs ml-2">
-                                            <AlertCircle size={12} /> Cancelled
-                                        </span>
-                                    )}
-                                </p>
-                            </div>
-
-                            <div className="flex gap-2 flex-shrink-0">
-                                {sip.status === 'CANCELLED' ? (
-                                    <span className="px-3 py-1 bg-red-900/20 text-red-500 text-xs font-semibold rounded-full border border-red-900/30">
-                                        Terminated
-                                    </span>
-                                ) : (
-                                    <>
-                                        {sip.status === 'ACTIVE' ? (
-                                            <button
-                                                onClick={() => openConfirmModal('pause', sip.id, sip.schemeCode)}
-                                                className="p-2 bg-yellow-900/40 text-yellow-300 rounded hover:bg-yellow-900/60 transition-colors"
-                                                title="Pause SIP"
-                                            >
-                                                <Pause size={16} />
-                                            </button>
-                                        ) : (
-                                            <button
-                                                onClick={() => handleResume(sip.id)}
-                                                className="p-2 bg-green-900/40 text-green-300 rounded hover:bg-green-900/60 transition-colors"
-                                                title="Resume SIP"
-                                            >
-                                                <Play size={16} />
-                                            </button>
-                                        )}
-
-                                        <button
-                                            onClick={() => openConfirmModal('cancel', sip.id, sip.schemeCode)}
-                                            className="p-2 bg-red-900/40 text-red-300 rounded hover:bg-red-900/60 transition-colors"
-                                            title="Cancel SIP"
-                                        >
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-
-                        <details className="mt-3 group">
-                            <summary className="text-sm text-gray-400 cursor-pointer hover:text-gray-300 list-none flex items-center gap-2">
-                                <span className="group-open:hidden"><ChevronDown size={14} /></span>
-                                <span className="hidden group-open:block"><ChevronUp size={14} /></span>
-                                Installments ({sip.installments?.length || 0})
-                            </summary>
-                            <div className="mt-2 space-y-1.5 text-xs pl-5 bg-[#121212] p-2 rounded">
-                                {sip.installments?.map((inst, idx) => (
-                                    <div key={inst.id || idx} className="flex justify-between text-gray-300 border-b border-[#222] last:border-0 pb-1 last:pb-0">
-                                        <span>{dayjs(inst.executionDate).format('DD MMM YYYY')}</span>
-                                        <span className={
-                                            inst.status === 'success' ? 'text-green-400' :
-                                                inst.status === 'failed' ? 'text-red-400' : 'text-yellow-400'
-                                        }>
-                                            ₹{inst.amount} • {inst.status}
-                                        </span>
+                <div className="grid gap-4">
+                    {sips.map(sip => (
+                        <div key={sip.id} className="group relative border border-[#1e2025] hover:border-[#2a2d35] rounded-2xl p-5 bg-[#0d0d0e] transition-all duration-300">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
+                                
+                                <div className="flex items-center gap-4">
+                                    <div className="relative">
+                                        <img 
+                                            src={sip.logo || 'https://placeholder.com/48'} 
+                                            alt={sip.schemeName} 
+                                            className="w-12 h-12 rounded-xl object-cover bg-white/5 border border-[#1e2025]"
+                                        />
+                                        <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-[#0d0d0e] flex items-center justify-center ${
+                                            sip.status === 'ACTIVE' ? 'bg-green-500' : 
+                                            sip.status === 'PAUSED' ? 'bg-amber-500' : 'bg-red-500'
+                                        }`}>
+                                            {sip.status === 'ACTIVE' ? <Play size={8} className="text-black fill-current" /> : 
+                                             sip.status === 'PAUSED' ? <Pause size={8} className="text-black fill-current" /> : 
+                                             <Trash2 size={8} className="text-white" />}
+                                        </div>
                                     </div>
-                                ))}
-                                {(!sip.installments || sip.installments.length === 0) && (
-                                    <div className="text-gray-500 italic">No installments found</div>
-                                )}
+                                    
+                                    <div>
+                                        <h4 className="font-bold text-white text-sm line-clamp-1 mb-1 group-hover:text-green-400 transition-colors">
+                                            {sip.schemeName || sip.schemeCode}
+                                        </h4>
+                                        <div className="flex items-center gap-2 text-[11px] font-bold">
+                                            <span className="text-white tracking-wide">₹{sip.amount.toLocaleString('en-IN')}</span>
+                                            <span className="w-1 h-1 bg-[#1e2025] rounded-full"></span>
+                                            <span className="text-gray-500 uppercase tracking-tighter">{sip.frequency}</span>
+                                            <span className="w-1 h-1 bg-[#1e2025] rounded-full"></span>
+                                            <span className="text-[#4b505c]">{dayjs(sip.startDate).format('MMM D, YYYY')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="w-full md:w-auto flex items-center justify-between md:justify-end gap-6 bg-[#111214] md:bg-transparent p-3 md:p-0 rounded-xl border border-[#1e2025] md:border-0">
+                                    <div className="text-right">
+                                        <p className="text-[9px] text-[#4b505c] font-black uppercase tracking-[0.1em] mb-1">Next Installment</p>
+                                        <div className="flex items-center gap-2 text-xs font-mono font-bold text-green-400">
+                                            <Clock size={12} strokeWidth={3} />
+                                            {dayjs(sip.nextExecutionDate).format('DD MMM YYYY')}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-2">
+                                        {sip.status !== 'CANCELLED' && (
+                                            <>
+                                                {sip.status === 'ACTIVE' ? (
+                                                    <button
+                                                        onClick={() => openConfirmModal('pause', sip.id, sip.schemeName || sip.schemeCode)}
+                                                        className="w-9 h-9 flex items-center justify-center bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-xl hover:bg-amber-500 hover:text-black transition-all duration-300"
+                                                        title="Pause SIP"
+                                                    >
+                                                        <Pause size={16} strokeWidth={2.5} />
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleResume(sip.id)}
+                                                        className="w-9 h-9 flex items-center justify-center bg-green-500/10 text-green-500 border border-green-500/20 rounded-xl hover:bg-green-500 hover:text-black transition-all duration-300"
+                                                        title="Resume SIP"
+                                                    >
+                                                        <Play size={16} strokeWidth={2.5} />
+                                                    </button>
+                                                )}
+
+                                                <button
+                                                    onClick={() => openConfirmModal('cancel', sip.id, sip.schemeName || sip.schemeCode)}
+                                                    className="w-9 h-9 flex items-center justify-center bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-300"
+                                                    title="Cancel SIP"
+                                                >
+                                                    <Trash2 size={16} strokeWidth={2.5} />
+                                                </button>
+                                            </>
+                                        )}
+                                        {sip.status === 'CANCELLED' && (
+                                            <span className="px-4 py-1.5 bg-red-500/10 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-500/20">
+                                                Cancelled
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
-                        </details>
-                    </div>
-                ))
+
+                            <details className="mt-5 border-t border-[#1e2025] pt-3 group">
+                                <summary className="text-[10px] font-black text-[#4b505c] uppercase tracking-widest cursor-pointer hover:text-gray-300 list-none flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <ChevronDown size={12} className="group-open:rotate-180 transition-transform" />
+                                        Payment History ({sip.installments?.length || 0})
+                                    </div>
+                                    {sip.executedInstallments > 0 && (
+                                        <span className="text-green-500/80">{sip.executedInstallments} Successful</span>
+                                    )}
+                                </summary>
+                                <div className="mt-4 grid gap-2">
+                                    {sip.installments?.map((inst, idx) => (
+                                        <div key={inst.id || idx} className="flex justify-between items-center bg-[#111214] p-3 rounded-xl border border-[#1e2025]">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-1.5 h-1.5 rounded-full ${
+                                                    inst.status === 'success' ? 'bg-green-500' :
+                                                    inst.status === 'failed' ? 'bg-red-500' : 'bg-amber-500'
+                                                }`} />
+                                                <span className="text-xs font-mono font-bold text-gray-300">{dayjs(inst.executionDate).format('DD MMM YYYY')}</span>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-xs font-black text-white">₹{inst.amount.toLocaleString('en-IN')}</span>
+                                                <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${
+                                                    inst.status === 'success' ? 'bg-green-500/10 text-green-500' :
+                                                    inst.status === 'failed' ? 'bg-red-500/10 text-red-500' : 'bg-amber-500/10 text-amber-500'
+                                                }`}>
+                                                    {inst.status}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {(!sip.installments || sip.installments.length === 0) && (
+                                        <div className="py-4 text-center text-[10px] text-gray-600 font-bold uppercase tracking-widest">No transaction history yet</div>
+                                    )}
+                                </div>
+                            </details>
+                        </div>
+                    ))}
+                </div>
             )}
 
             <ConfirmModal
                 isOpen={confirmModal.isOpen}
                 onClose={closeConfirmModal}
                 onConfirm={handleConfirmAction}
-                title={confirmModal.type === 'pause' ? 'Pause SIP?' : 'Cancel SIP?'}
+                title={confirmModal.type === 'pause' ? 'Pause Wealth Creation?' : 'Terminate SIP Plan?'}
                 message={
-                    <p>
-                        Are you sure you want to {confirmModal.type} your SIP in <span className="text-white font-semibold">{confirmModal.sipName}</span>?
-                        {confirmModal.type === 'cancel' && <span className="block mt-2 text-red-400">This action cannot be undone.</span>}
-                    </p>
+                    <div className="space-y-4">
+                        <p className="text-gray-400 text-sm leading-relaxed">
+                            You are about to {confirmModal.type} your SIP for <span className="text-white font-bold">{confirmModal.sipName}</span>.
+                        </p>
+                        {confirmModal.type === 'cancel' ? (
+                            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                                <p className="text-[11px] text-red-400 font-medium flex items-center gap-2">
+                                    <AlertCircle size={14} />
+                                    This action is permanent and cannot be undone.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                                <p className="text-[11px] text-amber-400 font-medium flex items-center gap-2">
+                                    <Info size={14} />
+                                    You can resume this SIP anytime from your dashboard.
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 }
-                confirmText={confirmModal.type === 'pause' ? 'Pause SIP' : 'Cancel SIP'}
+                confirmText={confirmModal.type === 'pause' ? 'Pause Plan' : 'Terminate Plan'}
                 variant={confirmModal.type === 'pause' ? 'warning' : 'destructive'}
             />
         </div>

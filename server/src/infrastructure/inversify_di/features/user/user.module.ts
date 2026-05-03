@@ -1,15 +1,14 @@
 import { UserLoginUseCase } from "@application/use_cases/auth/user-login.usecase";
 import { LogoutUseCase } from "@application/use_cases/auth/user-logout.usecase";
 import { UserSignupUseCase } from "@application/use_cases/auth/user-signup.usecase";
-import type { IChangePasswordUseCase } from "@application/use_cases/user/interfaces/change-password.usecase.interface";
-import type { ICheckUserBlockedUseCase } from "@application/use_cases/user/interfaces/check-user-blocked-usecase.interface";
-import type { IKycSubmitUseCase } from "@application/use_cases/user/interfaces/kyc-submit-usecase.interface";
-import type { IUserLoginUseCase } from "@application/use_cases/user/interfaces/user-login-usecase.interface";
-import type { IUserLogoutUseCase } from "@application/use_cases/user/interfaces/user-logout-usecase.interface";
-import type { IUserProfileInterface } from "@application/use_cases/user/interfaces/user-profile-usecase.interface";
-import type { IUserSignupUseCase } from "@application/use_cases/user/interfaces/user-signup.usecase.interface";
+import type { IChangePasswordUseCase } from "@application/use_cases/user/profile/interfaces/change-password.usecase.interface";
+import type { ICheckUserBlockedUseCase } from "@application/use_cases/user/profile/interfaces/check-user-blocked-usecase.interface";
+import type { IKycSubmitUseCase } from "@application/use_cases/user/profile/interfaces/kyc-submit-usecase.interface";
+import type { IUserLoginUseCase } from "@application/use_cases/auth/interfaces/user-login-usecase.interface";
+import type { IUserLogoutUseCase } from "@application/use_cases/auth/interfaces/user-logout-usecase.interface";
+import type { IUserProfileInterface } from "@application/use_cases/user/profile/interfaces/user-profile-usecase.interface";
+import type { IUserSignupUseCase } from "@application/use_cases/auth/interfaces/user-signup.usecase.interface";
 import { ChangePasswordUseCase } from "@application/use_cases/user/profile/change-password.usecase";
-import { CheckUserBlockedUseCase } from "@application/use_cases/user/check-user-blocked.usecase";
 import { KycSubmitUseCase } from "@application/use_cases/user/profile/kyc-submit.usecase";
 import { GetUserProfileUseCase } from "@application/use_cases/user/profile/user-profile.usecase";
 import { KycRepository } from "@infrastructure/databases/repository/user/kyc-repository";
@@ -17,25 +16,26 @@ import { UserRepository } from "@infrastructure/databases/repository/user/user.r
 import { UserController } from "@presentation/http/controllers/user/user.controller";
 import { ContainerModule } from "inversify";
 import { USER_TYPES } from "./user.types";
-import { IEditProfileUseCase } from "@application/use_cases/user/interfaces/edit-profile-usecase.interface";
-import { IChangeEmailSendOtpUseCase } from "@application/use_cases/user/interfaces/change-email-usecase.interface";
+import { IEditProfileUseCase } from "@application/use_cases/user/profile/interfaces/edit-profile-usecase.interface";
+import { IChangeEmailSendOtpUseCase } from "@application/use_cases/user/profile/interfaces/change-email-usecase.interface";
 import { ChangeEmailSendOtpUseCase } from "@application/use_cases/user/profile/change-email-send-otp.usecase";
-import { IChangeEmailVerifyOtpUseCase } from "@application/use_cases/user/interfaces/change-email-verify-usecase.interface";
+import { IChangeEmailVerifyOtpUseCase } from "@application/use_cases/user/profile/interfaces/change-email-verify-usecase.interface";
 import { ChangeEmailVerifyOtpUseCase } from "@application/use_cases/user/profile/change-email-verify.usecase";
-import { IProfileImageUploadUseCase } from "@application/use_cases/user/interfaces/profile-image-upload-usecase.interface";
+import { IProfileImageUploadUseCase } from "@application/use_cases/user/profile/interfaces/profile-image-upload-usecase.interface";
 import { ProfileImageUploadUseCase } from "@application/use_cases/user/profile/profile-image-upload.usecase";
 import { WalletRepository } from "@infrastructure/databases/repository/user/wallet.repository";
-import { IUserWalletUseCase } from "@application/use_cases/user/interfaces/user-wallet-usecase.interface";
+import { IUserWalletUseCase } from "@application/use_cases/user/wallet/interfaces/user-wallet-usecase.interface";
 import { UserWalletUseCase } from "@application/use_cases/user/wallet/user-wallet.usecase";
 import { WalletController } from "@presentation/http/controllers/wallet/wallet.controller";
 import { TransactionRepository } from "@infrastructure/databases/repository/transaction/transaction.repository";
 import { AddToWalletUseCase } from "@application/use_cases/user/wallet/add-to-wallet.usecase";
-import { IAddToWalletUseCase } from "@application/use_cases/user/interfaces/add-to-wallet-usecase.interface";
+import { IAddToWalletUseCase } from "@application/use_cases/user/wallet/interfaces/add-to-wallet-usecase.interface";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IKycRepository } from "@application/interfaces/repositories/user/kyc-repository.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { EditProfileUseCase } from "@application/use_cases/user/profile/edit-profile.usecase";
+import { CheckUserBlockedUseCase } from "@application/use_cases/user/profile/check-user-blocked.usecase";
 
 export const UserModule = new ContainerModule(({ bind }) => {
   //Repository

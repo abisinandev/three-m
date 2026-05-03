@@ -5,7 +5,7 @@ export interface IDetectAgent {
    * Classifies the user's intent into 'simple', 'complex', or 'portfolio'.
    * @param message User's prompt
    */
-  classifyIntent(message: string): "simple" | "complex" | "portfolio" | "trade";
+  classifyIntent(message: string): "simple" | "education" | "portfolio" | "trade";
 
 
   /**

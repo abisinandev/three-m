@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { IFetchPortfolioAssetsUsecase } from "./interfaces/fetch-portfolio-assets.usecase.interface";
 import { PortfolioAssetQueryDTO } from "@application/dto/portfolio/portfolio-asset-query.dto";
-import { PaginatedPortfolioAssetsResponseDTO, PortfolioAssetResponseDTO } from "@application/dto/portfolio/portfolio-asset-response.dto";
+import { PortfolioAssetsResponseDTO, PortfolioAssetDTO } from "@application/dto/portfolio/portfolio-asset-response.dto";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
@@ -9,8 +9,10 @@ import { IInvestmentRepository } from "@application/interfaces/repositories/feat
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
-import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
+import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
+import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
+import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 
 @injectable()
 export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecase {
@@ -19,99 +21,116 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
+        @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
+        @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
     ) { }
 
-    async execute(userId: string, query: PortfolioAssetQueryDTO): Promise<PaginatedPortfolioAssetsResponseDTO> {
-        const { assetType = "ALL", page = 1, limit = 10, search = "" } = query;
+    async execute(userId: string, query: PortfolioAssetQueryDTO): Promise<PortfolioAssetsResponseDTO> {
+        const { page = 1, limit = 10, search = "" } = query;
 
-        let assets: PortfolioAssetResponseDTO[] = [];
-        let totalCount = 0;
+        const userAssets = await this._portfolioRepository.getUserAssets(userId);
 
-        if (assetType === "MF" || assetType === "ALL") {
-            
-            const [investments, mfTotal] = await Promise.all([
-                this._investmentRepository.getUserInvestments(userId, { ...query, filter: { status: InvestmentStatus.ALLOTTED } }),
-                this._investmentRepository.countInvestments(userId, { ...query, filter: { status: InvestmentStatus.ALLOTTED } })
-            ]);
+        const assetProcessingPromises = userAssets.map(async (asset): Promise<PortfolioAssetDTO | null> => {
 
-            const mfAssets = await Promise.all(investments.map(async (inv) => {
-                const latestNav = await this._navUpdateProvider.fetchNavHistories(inv.schemeCode);
-                const currentPrice = latestNav?.[0]?.nav || inv.nav || 0;
-                const currentValue = (inv.units || 0) * currentPrice;
-                const profit = currentValue - inv.amount;
+            if (asset.assetType === AssetType.MUTUAL_FUND) {
+                const fund = await this._mutualFundRepository.findById(asset.assetId);
+                if (!fund) return null;
+
+                const investments = await this._investmentRepository.getUserInvestments(userId, {
+                    filter: { schemeCode: fund.schemeCode },
+                    page: 1,
+                    limit: 1,
+                    sortBy: "createdAt",
+                    sortOrder: "desc",
+                });
+
+                const investment = investments?.[0];
+                if (!investment) return null;
+
+                if (search && !fund.schemeCode.toLowerCase().includes(search.toLowerCase()) &&
+                    !fund.schemeName?.toLowerCase().includes(search.toLowerCase())) {
+                    return null;
+                }
+
+                const latestNav = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
+                const currentNav = latestNav?.[0]?.nav || investment.nav || 0;
+
+                const holdingUnits = asset.units ?? asset.quantity ?? investment.units ?? 0;
+                const currentValue = holdingUnits * currentNav;
+                const investedAmount = asset.investedAmount;
+                const profit = currentValue - investedAmount;
 
                 return {
-                    id: inv.id,
-                    userId: inv.userId,
-                    assetId: inv.schemeCode,
-                    symbol: inv.schemeCode,
-                    schemeCode: inv.schemeCode,
-                    name: inv.fund?.schemeName || inv.schemeCode,
-                    schemeName: inv.fund?.schemeName || inv.schemeCode,
-                    assetType: "MF" as const,
-                    quantity: inv.units || 0,
-                    avgPrice: inv.nav || 0,
-                    investedAmount: inv.amount,
-                    currentPrice,
+                    id: asset.id as string,
+                    userId: asset.userId,
+                    assetId: asset.assetId,
+                    symbol: fund.schemeCode,
+                    name: fund.schemeName || fund.schemeCode,
+                    schemeCode: fund.schemeCode,
+                    schemeName: fund.schemeName || fund.schemeCode,
+                    assetType: "MF",
+                    quantity: holdingUnits,
+                    avgPrice: investment.nav || asset.avgPrice || 0,
+                    investedAmount,
+                    currentPrice: currentNav,
                     currentValue,
                     profit,
-                    profitPercentage: inv.amount > 0 ? (profit / inv.amount) * 100 : 0,
-                    status: inv.status,
-                    logo: inv.fund?.logo || "",
-                    category: inv.fund?.category || "",
-                    createdAt: inv.createdAt,
-                    updatedAt: inv.updatedAt
+                    profitPercentage: investedAmount > 0 ? (profit / investedAmount) * 100 : 0,
+                    status: investment.status || InvestmentStatus.ALLOTTED,
+                    logo: fund.logo || "",
+                    category: fund.category || "",
+                    nav: currentNav ?? 0,
+                    navDate: latestNav?.[0]?.navDate || investment.navDate,
+                    units: holdingUnits,
+                    createdAt: asset.createdAt,
+                    updatedAt: asset.updatedAt,
                 };
-            }));
+            } else {
+                const stock = await this._stockRepository.findById(asset.assetId);
+                if (!stock) return null;
 
-            assets.push(...mfAssets);
-            totalCount += mfTotal;
-        }
+                if (search && !stock.symbol.toLowerCase().includes(search.toLowerCase()) &&
+                    !stock.name.toLowerCase().includes(search.toLowerCase())) {
+                    return null;
+                }
 
-        if (assetType === "STOCK" || assetType === "ALL") {
-            const stockFilter = { assetType: AssetType.STOCK };
-            const [portfolios, stockTotal] = await Promise.all([
-                this._portfolioRepository.findWithFilters(userId, { ...query, filter: stockFilter }),
-                this._portfolioRepository.countWithFilters(userId, stockFilter, search)
-            ]);
-
-            const stockAssets = await Promise.all(portfolios.map(async (pf) => {
-                let currentPrice = pf.avgPrice;
-                const quote = await this._marketDataProvider.getLatestQuote(pf.stockDetails?.symbol || pf.assetId);
+                let currentPrice = asset.avgPrice;
+                const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
                 if (quote) currentPrice = quote.price;
 
-                const currentValue = (pf.quantity || 0) * currentPrice;
-                const profit = currentValue - pf.investedAmount;
+                const currentValue = (asset.quantity || 0) * currentPrice;
+                const profit = currentValue - asset.investedAmount;
 
                 return {
-                    id: pf.id,
-                    userId: pf.userId,
-                    assetId: pf.assetId,
-                    symbol: pf.stockDetails?.symbol || pf.assetId,
-                    schemeCode: pf.stockDetails?.symbol || pf.assetId,
-                    name: pf.stockDetails?.name || pf.assetId,
-                    schemeName: pf.stockDetails?.name || pf.assetId,
-                    assetType: "STOCK" as const,
-                    quantity: pf.quantity || 0,
-                    avgPrice: pf.avgPrice,
-                    investedAmount: pf.investedAmount,
+                    id: asset.id as string,
+                    userId: asset.userId,
+                    assetId: asset.assetId,
+                    symbol: stock.symbol,
+                    name: stock.name,
+                    assetType: "STOCK",
+                    quantity: asset.quantity || 0,
+                    avgPrice: asset.avgPrice,
+                    investedAmount: asset.investedAmount,
                     currentPrice,
                     currentValue,
                     profit,
-                    profitPercentage: pf.investedAmount > 0 ? (profit / pf.investedAmount) * 100 : 0,
+                    profitPercentage: asset.investedAmount > 0 ? (profit / asset.investedAmount) * 100 : 0,
                     status: "HOLDING",
-                    logo: pf.stockDetails?.logo || "",
-                    createdAt: pf.createdAt,
-                    updatedAt: pf.updatedAt
+                    logo: stock.logo || "",
+                    createdAt: asset.createdAt,
+                    updatedAt: asset.updatedAt,
                 };
-            }));
+            }
+        });
+ 
+        const allResults = (await Promise.all(assetProcessingPromises)).filter(a => a !== null) as PortfolioAssetDTO[];
 
-            assets.push(...stockAssets);
-            totalCount += stockTotal;
-        }
+        const totalCount = allResults.length;
+        const startIndex = (Number(page) - 1) * Number(limit);
+        const paginatedData = allResults.slice(startIndex, startIndex + Number(limit));
 
         return {
-            data: assets,
+            data: paginatedData,
             total: totalCount,
             page: Number(page),
             limit: Number(limit),
@@ -119,3 +138,4 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
         };
     }
 }
+  

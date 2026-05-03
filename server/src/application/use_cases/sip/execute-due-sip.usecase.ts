@@ -25,6 +25,8 @@ import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notifi
 import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
+import { NotFoundError } from "@presentation/express/utils/error-handling";
+import { ErrorMessages } from "@shared/constants/error.messages";
 
 @injectable()
 export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
@@ -61,6 +63,8 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
             if (!fund) return;
 
             const wallet = await this._walletRepository.findById(user.walletId as string);
+            if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
+
 
             if ((wallet?.balance ?? 0) < installment.amount) {
                 await this._sipInstallmentRepository.markFailed(
@@ -75,12 +79,12 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                     message: `Your SIP installment of ₹${installment.amount} failed due to insufficient wallet balance.`,
                 });
 
-                return; 
+                return;
             }
 
             const transaction = TransactionEntity.create({
-                userId: user.id!,
-                userCode: user.userCode!,
+                userId: user.id as string,
+                userCode: user.userCode,
                 amount: installment.amount,
                 currency: CurrencyTypes.INR,
                 status: TransactionStatus.PENDING,
@@ -89,7 +93,13 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 referenceId: installment.id,
                 fundId: fund.id,
             });
-            await this._transactionRepository.create(transaction, session);
+            const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
+
+            wallet.lock(installment.amount);
+            wallet.debit(installment.amount);
+            wallet.unlock(installment.amount);
+
+            await this._walletRepository.update(wallet.id as string, wallet, session);
 
             const investment = InvestmentEntity.create({
                 amount: installment.amount,
@@ -100,7 +110,7 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 sipInstallmentId: installment.id,
             });
 
-            await this._investmentRepository.create(investment,session);
+            await this._investmentRepository.create(investment, session);
 
             const nextDate = calculateNextExecutionDate(
                 sip.nextExecutionDate,
@@ -133,6 +143,11 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 });
                 await this._sipInstallmentRepository.create(nextInstallment, session);
             }
+
+            newTransaction.markSucess();
+            await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
+
+            await session.commitTransaction()
 
         } catch (error) {
             await session.abortTransaction();

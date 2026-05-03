@@ -33,8 +33,12 @@ import { IMarketSellOrderUseCase } from "@application/use_cases/stock/interfaces
 import { MarketSellOrderUseCase } from "@application/use_cases/stock/market-sell-order.usecase";
 import { IOrderRepository } from "@application/interfaces/repositories/stock/order-repository.interface";
 import { OrderRepository } from "@infrastructure/databases/repository/stock/order.repository";
+import { IAlgoStrategyConfigRepository } from "@application/interfaces/repositories/algo/algo-strategy-config-repository.interface";
+import { AlgoStrategyConfigRepository } from "@infrastructure/databases/repository/algo-trading/algo-strategy-config.repository";
+import { IAdminGetBaseStrategiesUseCase, IAdminUpdateStrategyRiskConfigUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-base-strategy-risk.interface";
+import { AdminGetBaseStrategiesUseCase } from "@application/use_cases/admin/algo-trading/admin-get-base-strategies.usecase";
+import { AdminUpdateStrategyRiskConfigUseCase } from "@application/use_cases/admin/algo-trading/admin-update-strategy-risk-config.usecase";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
-import { TradeRepository } from "@infrastructure/databases/repository/stock/trade.repository";
 import { AlgoTradingController } from "@presentation/http/controllers/algo-trading/algo-trading.controller";
 import { GetStrategiesUseCase } from "@application/use_cases/algo-trading/get-strategies.usecase";
 import { IAlgoStrategyRepository } from "@application/interfaces/repositories/algo/algo-strategy-repository.interface";
@@ -46,26 +50,47 @@ import { GetActiveStrategyUseCase } from "@application/use_cases/algo-trading/ge
 import { TurnOnAlgoTradingUseCase } from "@application/use_cases/algo-trading/turn-on-algo-trading.usecase";
 import { IAlgoSignalRepository } from "@application/interfaces/repositories/algo/algo-signal-repository.interface";
 import { AlgoSignalRepository } from "@infrastructure/databases/repository/algo-trading/algo-signal.repository";
-import { SignalService } from "@infrastructure/providers/algos/queue/signal.service";
-import { ISignalService } from "@application/interfaces/services/algo-trading/signal.service.interface";
-import { IStrategyService } from "@application/interfaces/services/algo-trading/strategy-service.interface";
-import { StrategyService } from "@infrastructure/providers/algos/queue/strategy.service";
+import { IProcessSignalUseCase } from "@application/use_cases/algo-trading/interfaces/process-signal.interface";
+import { ProcessSignalUseCase } from "@application/use_cases/algo-trading/process-signal.usecase";
 import { IConfirmBuySignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-buy-signal.interface";
 import { ConfirmBuySignalUseCase } from "@application/use_cases/algo-trading/confirm-buy-signal.usecase";
 import { IConfirmSellSignalUseCase } from "@application/use_cases/algo-trading/interfaces/confirm-sell-signal.interface";
 import { ConfirmSellSignalUseCase } from "@application/use_cases/algo-trading/confirm-sell-signal.usecase";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { YahooProvider } from "@infrastructure/providers/stocks/market-data/providers/yahoo.provider";
-import { SignalManager } from "@infrastructure/providers/algos/signal-manager";
-import { ISignalManager } from "@application/interfaces/repositories/algo/signal-manager.interface";
 import { ITurnOnAlgoTradingUseCase } from "@application/use_cases/algo-trading/interfaces/turn-on-algo-trading.interface";
+import { ILimitBuyOrderUseCase } from "@application/use_cases/stock/interfaces/limit-buy-order-usecase.interface";
+import { LimitBuyOrderUseCase } from "@application/use_cases/stock/limit-buy-order.usecase";
+import { IExecuteLimitBuyOrderUseCase } from "@application/use_cases/stock/interfaces/execute-limit-buy-order.interface";
+import { ExecuteLimitBuyOrderUseCase } from "@application/use_cases/stock/execute-limit-buy-order.usecase";
+import { ILimitSellOrderUseCase } from "@application/use_cases/stock/interfaces/limit-sell-order-usecase.interface";
+import { LimitSellOrderUseCase } from "@application/use_cases/stock/limit-sell-order.usecase";
+import { IExecuteLimitSellOrderUseCase } from "@application/use_cases/stock/interfaces/execute-limit-sell-order.interface";
+import { ExecuteLimitSellOrderUseCase } from "@application/use_cases/stock/execute-limit-sell-order.usecase";
+import { ICancelLimitOrderUseCase } from "@application/use_cases/stock/interfaces/cancel-limit-order-usecase.interface";
+import { CancelLimitOrderUseCase } from "@application/use_cases/stock/cancel-limit-order.usecase";
+import { IFetchPendingOrdersUseCase } from "@application/use_cases/stock/interfaces/fetch-pending-orders-usecase.interface";
+import { FetchPendingOrdersUseCase } from "@application/use_cases/stock/fetch-pending-orders.usecase";
+import { IOrderQueue } from "@application/interfaces/services/stocks/order-queue.interface";
+import { OrderQueue } from "@infrastructure/providers/stocks/queue/order.queue";
+import { OrderWorker } from "@infrastructure/providers/stocks/queue/workers/order.worker";
+import { LimitOrderScheduler } from "@infrastructure/providers/stocks/queue/limit-order-scheduler";
+import { IExecuteSlTpUseCase } from "@application/use_cases/stock/interfaces/execute-sl-tp.interface";
+import { ExecuteSlTpUseCase } from "@application/use_cases/stock/execute-sl-tp.usecase";
+import { SlTpOrderWorker } from "@infrastructure/providers/stocks/queue/workers/sl-tp-order.worker";
+import { SlTpOrderScheduler } from "@infrastructure/providers/stocks/queue/sl-tp-order.scheduler";
+import { IGetMarketMoversUseCase } from "@application/use_cases/stock/interfaces/get-market-movers.interface";
+import { GetMarketMoversUseCase } from "@application/use_cases/stock/get-market-movers.usecase";
+import { IGetValidStrategiesUseCase } from "@application/use_cases/algo-trading/interfaces/get-valid-strategies.interface";
+import { GetValidStrategiesUseCase } from "@application/use_cases/algo-trading/get-valid-strategies.usecase";
+import { IEvaluateStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/evaluate-strategy.interface";
+import { EvaluateStrategyUseCase } from "@application/use_cases/algo-trading/evaluate-strategy.usecase";
 
 // BullMQ & Queues
-import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy.queue";
-import { SignalQueue } from "@infrastructure/providers/algos/queue/signal.queue";
+import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy/strategy.queue";
 import { StrategyWorker } from "@infrastructure/providers/algos/queue/workers/strategy.worker";
 import { SignalWorker } from "@infrastructure/providers/algos/queue/workers/signal.worker";
-import { StrategyScheduler } from "@infrastructure/providers/algos/queue/strategy-scheduler";
+import { StrategyScheduler } from "@infrastructure/providers/algos/strategy-scheduler";
 import { IStrategyQueue } from "@application/interfaces/services/algo-trading/strategy-queue.interface";
 import { ISignalQueue } from "@application/interfaces/services/algo-trading/signal-queue.interface";
 import { IStrategyScheduler } from "@application/interfaces/services/algo-trading/strategy-scheduler.interface";
@@ -74,6 +99,10 @@ import { ICandleEngineService } from "@application/interfaces/services/stocks/ca
 import { IPollingService } from "@application/interfaces/services/stocks/polling-service.interface";
 import { IMarketDataService } from "@application/interfaces/services/stocks/market-data-service.usecase";
 import { IWsGateway } from "@application/interfaces/services/stocks/ws-gateway.interface";
+import { ISlTpOrderQueue } from "@application/interfaces/services/stocks/sl-tp-order-queue.interface";
+import { SlTpOrderQueue } from "@infrastructure/providers/stocks/queue/sl-tp-order-queue";
+import { SignalQueue } from "@infrastructure/providers/algos/queue/signal/signal.queue";
+import { TradeRepository } from "@infrastructure/databases/repository/stock/trade.repository";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
@@ -96,6 +125,13 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<OrdersController>(STOCK_TYPES.OrdersController).to(OrdersController);
     bind<IMarketBuyOrderUseCase>(STOCK_TYPES.MarketBuyOrderUseCase).to(MarketBuyOrderUseCase);
     bind<IMarketSellOrderUseCase>(STOCK_TYPES.MarketSellOrderUseCase).to(MarketSellOrderUseCase);
+    bind<ILimitBuyOrderUseCase>(STOCK_TYPES.LimitBuyOrderUseCase).to(LimitBuyOrderUseCase);
+    bind<IExecuteLimitBuyOrderUseCase>(STOCK_TYPES.ExecuteLimitBuyOrderUseCase).to(ExecuteLimitBuyOrderUseCase);
+    bind<ILimitSellOrderUseCase>(STOCK_TYPES.LimitSellOrderUseCase).to(LimitSellOrderUseCase);
+    bind<IExecuteLimitSellOrderUseCase>(STOCK_TYPES.ExecuteLimitSellOrderUseCase).to(ExecuteLimitSellOrderUseCase);
+    bind<ICancelLimitOrderUseCase>(STOCK_TYPES.CancelLimitOrderUseCase).to(CancelLimitOrderUseCase);
+    bind<IFetchPendingOrdersUseCase>(STOCK_TYPES.FetchPendingOrdersUseCase).to(FetchPendingOrdersUseCase);
+    bind<IExecuteSlTpUseCase>(STOCK_TYPES.ExecuteSlTpUseCase).to(ExecuteSlTpUseCase);
     bind<IOrderRepository>(STOCK_TYPES.OrderRepository).to(OrderRepository);
     bind<ITradeRepository>(STOCK_TYPES.TradeRepository).to(TradeRepository);
 
@@ -105,19 +141,29 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IGetActiveStrategyUseCase>(STOCK_TYPES.GetActiveStrategyUseCase).to(GetActiveStrategyUseCase);
     bind<ITurnOnAlgoTradingUseCase>(STOCK_TYPES.TurnOnAlgoTradingUseCase).to(TurnOnAlgoTradingUseCase);
     bind<IAlgoStrategyRepository>(STOCK_TYPES.AlgoStrategyRepository).to(AlgoStrategyRepository);
+    bind<IAlgoStrategyConfigRepository>(STOCK_TYPES.AlgoStrategyConfigRepository).to(AlgoStrategyConfigRepository);
+    bind<IAdminGetBaseStrategiesUseCase>(STOCK_TYPES.AdminGetBaseStrategiesUseCase).to(AdminGetBaseStrategiesUseCase);
+    bind<IAdminUpdateStrategyRiskConfigUseCase>(STOCK_TYPES.AdminUpdateStrategyRiskConfigUseCase).to(AdminUpdateStrategyRiskConfigUseCase);
     bind<IAlgoSignalRepository>(STOCK_TYPES.AlgoSignalRepository).to(AlgoSignalRepository);
-    bind<ISignalService>(STOCK_TYPES.SignalService).to(SignalService);
+    bind<IProcessSignalUseCase>(STOCK_TYPES.ProcessSignalUseCase).to(ProcessSignalUseCase);
     bind<IConfirmBuySignalUseCase>(STOCK_TYPES.ConfirmBuySignalUseCase).to(ConfirmBuySignalUseCase);
     bind<IConfirmSellSignalUseCase>(STOCK_TYPES.ConfirmSellSignalUseCase).to(ConfirmSellSignalUseCase);
-    bind<IStrategyService>(STOCK_TYPES.StrategyService).to(StrategyService);
-    bind<ISignalManager>(STOCK_TYPES.SignalManager).to(SignalManager);
+    bind<IGetValidStrategiesUseCase>(STOCK_TYPES.GetValidStrategiesUseCase).to(GetValidStrategiesUseCase);
+    bind<IEvaluateStrategyUseCase>(STOCK_TYPES.EvaluateStrategyUseCase).to(EvaluateStrategyUseCase);
 
     // BullMQ & Queues
     bind<IStrategyQueue>(STOCK_TYPES.StrategyQueue).to(StrategyQueue);
     bind<ISignalQueue>(STOCK_TYPES.SignalQueue).to(SignalQueue);
     bind<StrategyWorker>(STOCK_TYPES.StrategyWorker).to(StrategyWorker);
     bind<SignalWorker>(STOCK_TYPES.SignalWorker).to(SignalWorker);
+    bind<OrderWorker>(STOCK_TYPES.OrderWorker).to(OrderWorker);
     bind<IStrategyScheduler>(STOCK_TYPES.StrategyScheduler).to(StrategyScheduler);
+    bind<LimitOrderScheduler>(STOCK_TYPES.LimitOrderScheduler).to(LimitOrderScheduler);
+    bind<SlTpOrderWorker>(STOCK_TYPES.SlTpOrderWorker).to(SlTpOrderWorker);
+    bind<SlTpOrderScheduler>(STOCK_TYPES.SlTpOrderScheduler).to(SlTpOrderScheduler);
+
+    bind<IOrderQueue>(STOCK_TYPES.OrderQueue).to(OrderQueue);
+    bind<ISlTpOrderQueue>(STOCK_TYPES.SlTpOrderQueue).to(SlTpOrderQueue);
 
     // bind<IEngineRunner>(STOCK_TYPES.EngineRunner).to(EngineRunner);
     bind<IWatchlistRepository>(STOCK_TYPES.WatchlistRepository).to(WatchlistRepository);
@@ -125,4 +171,6 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IAddToWatchlistUseCase>(STOCK_TYPES.AddToWatchlistUseCase).to(AddToWatchlistUseCase);
     bind<IRemoveFromWatchlistUseCase>(STOCK_TYPES.RemoveFromWatchlistUseCase).to(RemoveFromWatchlistUseCase);
     bind<IFetchWatchlistUseCase>(STOCK_TYPES.FetchWatchlistUseCase).to(FetchWatchlistUseCase);
+    bind<IGetMarketMoversUseCase>(STOCK_TYPES.GetMarketMoversUseCase).to(GetMarketMoversUseCase);
+
 });

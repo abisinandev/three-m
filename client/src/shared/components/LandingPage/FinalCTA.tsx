@@ -7,15 +7,15 @@ export const FinalCTA: React.FC = () => {
           <span className="text-teal-green">Financial Future</span>?
         </h2>
 
-        <p className="text-base text-cool-white/80 mb-6">
-          Join over 1M+ users growing wealth with AI-powered insights and blockchain-level security.
+        <p className="text-sm text-cool-white/80 mb-6">
+          Join over 1M+ users growing wealth with AI-powered insights and bank-level security.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <button className="bg-teal-green text-white px-8 py-3 rounded-md text-base font-semibold hover:bg-teal-green/90 transition-all duration-200 transform hover:scale-105">
+          <button className="bg-teal-green text-white px-8 py-3 rounded-md text-sm font-semibold hover:bg-teal-green/90 transition-all duration-200 transform hover:scale-105">
             Start Free
           </button>
-          <button className="border border-teal-green text-white px-8 py-3 rounded-md text-base font-semibold hover:bg-teal-green hover:text-deep-charcoal transition-colors duration-200">
+          <button className="border border-teal-green text-white px-8 py-3 rounded-md text-sm font-semibold hover:bg-teal-green hover:text-deep-charcoal transition-colors duration-200">
             Book a Demo
           </button>
         </div>

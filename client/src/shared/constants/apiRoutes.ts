@@ -54,6 +54,8 @@ export const API_ROUTES = {
             TRADES: "/user/portfolio/trades",
             HISTORIES: "/user/portfolio/histories",
             GET_ASSETS: "/user/portfolio/assets",
+            GET_MF_ASSETS: "/user/portfolio/assets/mf",
+            GET_STOCK_ASSETS: "/user/portfolio/assets/stock",
         },
         MUTUAL_FUNDS: {
             LIST: "/user/mutual-funds/lists",
@@ -107,6 +109,7 @@ export const API_ROUTES = {
             UPDATE_STATUS: (symbol: string) => `/stocks/${symbol}/status`,
         },
         ALGO_TRADING: {
+            BASE: "/algo-trading",
             GET_STATS: "/algo-trading",
             GET_STRATEGIES: "/algo-trading/strategies",
             GET_SIGNALS: "/algo-trading/signals",

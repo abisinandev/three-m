@@ -7,6 +7,9 @@ export interface SipDto {
     readonly userId: string;
     readonly userCode?: string;
     readonly schemeCode: string;
+    readonly schemeName?: string;
+    readonly logo?: string;
+
 
     readonly amount: number;
     readonly frequency: SipFrequency;

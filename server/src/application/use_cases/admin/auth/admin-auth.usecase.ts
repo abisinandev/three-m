@@ -3,7 +3,7 @@ import type { AdminAuthReponseDTO } from "@application/dto/admin/admin-auth.resp
 import { IAdminRepository } from "@application/interfaces/repositories/admin/admin.repository.interface";
 import type { IEmailService } from "@application/interfaces/services/externals/email.service.interface";
 import type { IPasswordHashingService } from "@application/interfaces/services/externals/password-hashing.service.interface";
-import type { IAdminAuthUseCase } from "@application/use_cases/admin/interfaces/admin-auth-usecase.interface";
+import type { IAdminAuthUseCase } from "@application/use_cases/admin/auth/interfaces/admin-auth-usecase.interface";
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";

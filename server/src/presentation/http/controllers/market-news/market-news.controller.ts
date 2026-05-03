@@ -15,19 +15,23 @@ export class MarketNewsControllers {
 
     async getMarketNews(req: Request, res: Response, next: NextFunction) {
         try {
-            const { query, category } = req.query;
-            const news = await this.getMarketNewsUseCase.execute(
+            const { query, category, page, pageSize } = req.query;
+            
+            const newsResponse = await this.getMarketNewsUseCase.execute(
                 query as string,
-                category as string
+                category as string,
+                Number(page) || 1,
+                Number(pageSize) || 10
             );
+
             return ResponseHelper.success(
                 res,
                 SuccessMessages.DATA.FETCHED,
-                news,
+                newsResponse,
                 HttpStatus.OK,
             )
         } catch (error) {
             next(error);
         }
     }
-} 
+}

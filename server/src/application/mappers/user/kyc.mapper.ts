@@ -8,7 +8,7 @@ export const toEntity = (dto: KycSubmitDTO): KycEntity => {
     userId: dto.userId,
     panNumber: dto.panNumber,
     documents: dto.documents,
-    aadhaarNumber: dto.aadhaarNumber,
+    aadharNumber: dto.aadharNumber,
     address: dto.address,
   });
 };
@@ -22,7 +22,7 @@ export const toKycResponse = (data: KycEntity, user: UserEntity): KycResponseDTO
     fullName: user.fullName,
     isKycVerified: data.isKycVerified,
     panNumber: data.panNumber as string,
-    aadhaarNumber: data.aadhaarNumber as string,
+    aadharNumber: data.aadharNumber as string,
     address: data.address ?? {
       fullAddress: "",
       city: "",

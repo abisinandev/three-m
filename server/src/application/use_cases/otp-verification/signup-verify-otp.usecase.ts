@@ -7,7 +7,7 @@ import {
   ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
-import type { ISignupVerifyOtpUseCase } from "../user/interfaces/signup-verify-otp-usecase.interface";
+import type { ISignupVerifyOtpUseCase } from "../auth/interfaces/signup-verify-otp-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
@@ -32,6 +32,6 @@ export class SignupVerifyOtpUseCase implements ISignupVerifyOtpUseCase {
     const user = await this._userRepository.verifyEmail(data.email);
     if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
-    await redisClient.del(data.email);
+    await redisClient.del(`otp:${data.email}`);
   }
 }

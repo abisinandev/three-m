@@ -14,8 +14,11 @@ const MAX_DAYS: Record<string, number> = {
 
 @injectable()
 export class YahooProvider implements IMarketDataProvider {
+    private _quoteCache = new Map<string, { quote: IQuote, timestamp: number }>();
+    private readonly CACHE_TTL = 10 * 1000; // 10 seconds
 
     async getHistoricalData(params: IHistoricalDataParams): Promise<ICandle[]> {
+
         const { symbol, period1, period2, interval = '1m' } = params;
 
         try {
@@ -59,11 +62,18 @@ export class YahooProvider implements IMarketDataProvider {
     }
 
     async getLatestQuote(symbol: string): Promise<IQuote | null> {
+        const now = Date.now();
+        const cached = this._quoteCache.get(symbol);
+
+        if (cached && (now - cached.timestamp < this.CACHE_TTL)) {
+            return cached.quote;
+        }
+
         try {
             const result = await yahooFinance.quote(symbol);
             if (!result?.regularMarketPrice) return null;
 
-            return {
+            const quote: IQuote = {
                 price: result.regularMarketPrice,
                 timestamp: result.regularMarketTime
                     ? Math.floor(new Date(result.regularMarketTime).getTime() / 1000)
@@ -76,9 +86,13 @@ export class YahooProvider implements IMarketDataProvider {
                 previousClose: result.regularMarketPreviousClose,
                 volume: result.regularMarketVolume,
             };
+
+            this._quoteCache.set(symbol, { quote, timestamp: now });
+            return quote;
         } catch {
             return null;
         }
     }
+
 }
 

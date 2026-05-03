@@ -1,26 +1,19 @@
 import { MutualFundNavUpdate } from '@application/use_cases/mutual-fund/mutual-fund-nav-update.usecase';
 import { NavInterval } from '@domain/enum/funds/nav-intervals.enums';
-import { container } from '@infrastructure/inversify_di/container';
-import cron from 'node-cron';
+import { BaseScheduler } from '../base.scheduler';
+import { injectable, inject } from 'inversify';
 
-export function NavDailyScheduler() {
-    cron.schedule(
-        // "* * * * *", 
-        "0 2,3,9 * * *",
-        async () => {
-            console.log("[NAV-CRON] NAV sync started");
+@injectable()
+export class NavDailyScheduler extends BaseScheduler {
+    constructor(
+        @inject(MutualFundNavUpdate) private readonly _navUpdateUseCase: MutualFundNavUpdate
+    ) {
+        super("NAV-DAILY", "0 2,3,9 * * *");
+    }
 
-            try {
-                const useCase = container.get<MutualFundNavUpdate>(MutualFundNavUpdate);
-                await useCase.execute(NavInterval.DAILY);
-
-                console.log("[NAV-CRON] NAV sync completed");
-            } catch (error) {
-                console.error("[NAV-CRON] NAV sync failed", error);
-            }
-        },
-        {
-            timezone: "Asia/Kolkata", 
-        }
-    );
-}                  
+    protected async execute(): Promise<void> {
+        console.log("[NAV-DAILY] sync started");
+        await this._navUpdateUseCase.execute(NavInterval.DAILY);
+        console.log("[NAV-DAILY] sync completed");
+    }
+}

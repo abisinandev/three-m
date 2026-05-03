@@ -1,8 +1,7 @@
-import { IAgent } from "./agent.interface";
 import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
+import { AgentResponse } from "./agent-response.interface";
 
-export interface IEducationAgent extends IAgent {
-    readonly name: "education";
-    handle(input: string, history: ChatMessage[]): Promise<string>;
+export interface IEducationAgent {
+    handle(input: string, history: ChatMessage[]): Promise<AgentResponse>;
 }
 

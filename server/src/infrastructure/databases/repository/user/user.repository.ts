@@ -100,4 +100,57 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
     if (!user) return null;
     return this.mapper.toDomain(user);
   };
+
+  async getTotalUsersCount(): Promise<number> {
+    return this.model.countDocuments({});
+  }
+
+  async getPremiumUsersCount(): Promise<number> {
+    return this.model.countDocuments({ 
+        subscriptionStatus: "ACTIVE", 
+        subscriptionPlan: "PREMIUM" 
+    });
+  }
+
+  async getUserRegistrationGrowthByMonth(months: number): Promise<{ month: string; users: number; premium: number }[]> {
+    const date = new Date();
+    date.setMonth(date.getMonth() - months);
+    
+    const pipeline = [
+      {
+        $match: {
+          createdAt: { $gte: date }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" }
+          },
+          users: { $sum: 1 },
+          premium: {
+            $sum: {
+              $cond: [
+                { $and: [ { $eq: ["$subscriptionStatus", "ACTIVE"] }, { $eq: ["$subscriptionPlan", "PREMIUM"] } ] },
+                1,
+                0
+              ]
+            }
+          }
+        }
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } as any }
+    ];
+
+    const result = await this.model.aggregate(pipeline);
+    
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    return result.map((item: any) => ({
+      month: monthNames[item._id.month - 1],
+      users: item.users,
+      premium: item.premium
+    }));
+  }
 }

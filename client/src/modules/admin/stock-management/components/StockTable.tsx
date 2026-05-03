@@ -37,7 +37,6 @@ export const StockTable: React.FC<StockTableProps> = ({ stocks, isLoading, isErr
                         <th style={headerStyle}>Exchange</th>
                         <th style={headerStyle}>Sector</th>
                         <th style={{ ...headerStyle, textAlign: 'center' }}>Tradable</th>
-                        <th style={{ ...headerStyle, textAlign: 'center' }}>Tracked</th>
                         <th style={{ ...headerStyle, textAlign: 'center' }}>Visible</th>
                     </tr>
                 </thead>
@@ -68,10 +67,6 @@ export const StockTable: React.FC<StockTableProps> = ({ stocks, isLoading, isErr
                             <StatusCell
                                 status={stock.isTradable}
                                 onToggle={(v) => onStatusToggle(stock.symbol, 'isTradable', v)}
-                            />
-                            <StatusCell
-                                status={stock.isTracked}
-                                onToggle={(v) => onStatusToggle(stock.symbol, 'isTracked', v)}
                             />
                             <StatusCell
                                 status={stock.isVisible}

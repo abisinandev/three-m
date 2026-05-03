@@ -1,25 +1,24 @@
-import { INewsApiProvider } from "@application/interfaces/services/market-news/news-api-provider.interface";
+import { IMarketNewsProvider, RawNewsArticle } from "@application/interfaces/services/market-news/news-api-provider.interface";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import axios from "axios";
 
-export class NewsApiProvider implements INewsApiProvider {
+export class NewsApiProvider implements IMarketNewsProvider {
     private readonly baseUrl = env.MARKET_NEWS_API;
     private readonly apiKey = env.MARKET_NEWS_API_KEY;
-
 
     private readonly validCategories = ["business", "entertainment", "general", "health", "science", "sports", "technology"];
 
     private readonly categoryQueryMap: Record<string, string> = {
-        "stocks": "stock market india nse bse",
-        "mutual funds": "mutual funds india investment",
-        "economy": "indian economy gdp inflation",
-        "rbi": "reserve bank of india rbi policy",
+        "stocks": "Indian stock market NSE BSE",
+        "mutual funds": "India SIP mutual funds investment",
+        "economy": "Indian economy GDP inflation news", 
+        "rbi": "Reserve Bank of India RBI repo rate policy",
         "global markets": "global financial markets nasdaq dow jones",
-        "crypto": "cryptocurrency bitcoin ethereum market",
-        "commodities": "gold oil silver commodities market"
+        "crypto": "cryptocurrency India regulation bitcoin",
+        "commodities": "gold oil silver commodities market India"
     };
 
-    async getTopHeadlines(category?: string): Promise<any[]> {
+    async getTopHeadlines(category?: string): Promise<RawNewsArticle[]> {
         const lowerCategory = category?.toLowerCase().trim();
         const isValidCategory = this.validCategories.includes(lowerCategory || "");
 
@@ -32,11 +31,10 @@ export class NewsApiProvider implements INewsApiProvider {
         }
 
         const searchQuery = this.categoryQueryMap[lowerCategory] || lowerCategory;
-        console.log(`Mapping category "${category}" to search query: "${searchQuery}"`);
         return this.searchNews(searchQuery);
     }
 
-    private async fetchTopHeadlines(category: string): Promise<any[]> {
+    private async fetchTopHeadlines(category: string): Promise<RawNewsArticle[]> {
         const response = await axios.get(
             `${this.baseUrl}/top-headlines`,
             {
@@ -52,8 +50,7 @@ export class NewsApiProvider implements INewsApiProvider {
         return Array.isArray(response.data?.articles) ? response.data.articles : [];
     }
 
-
-    async searchNews(query: string, category?: string): Promise<any[]> {
+    async searchNews(query: string, category?: string): Promise<RawNewsArticle[]> {
         let finalQuery = query?.trim();
         const lowerCategory = category?.toLowerCase().trim();
 
@@ -62,9 +59,7 @@ export class NewsApiProvider implements INewsApiProvider {
             finalQuery = finalQuery ? `${finalQuery} ${categoryContext}` : categoryContext;
         }
 
-        if (!finalQuery) finalQuery = "market news";
-
-        console.log(`Executing News Search with query: "${finalQuery}"`);
+        if (!finalQuery) finalQuery = "Indian market news";
 
         const response = await axios.get(`${this.baseUrl}/everything`, {
             params: {

@@ -1,5 +1,5 @@
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
-import type { IUnblockUserUsecase } from "@application/use_cases/admin/interfaces/unblock-user-usecase.interface";
+import type { IUnblockUserUsecase } from "@application/use_cases/admin/user-management/interfaces/unblock-user-usecase.interface";
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import {

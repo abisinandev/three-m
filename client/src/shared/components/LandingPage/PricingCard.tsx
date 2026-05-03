@@ -25,9 +25,9 @@ export const PricingCard: React.FC<PricingCardProps> = ({
     <div
       className={`
         relative backdrop-blur-xl bg-deep-charcoal/40 border border-cool-white/10 
-        rounded-3xl p-8 transition-all duration-500 group
-        ${popular ? "ring-2 ring-teal-green/50 shadow-2xl shadow-teal-green/10 scale-105" : "hover:shadow-xl hover:shadow-teal-green/5"}
-        hover:-translate-y-2 hover:border-teal-green/30
+        rounded-2xl p-6 transition-all duration-300 group
+        ${popular ? "ring-1 ring-teal-green/50 shadow-md shadow-teal-green/10" : "hover:shadow-lg hover:shadow-teal-green/5"}
+        hover:-translate-y-1 hover:border-teal-green/30
       `}
     >
       {/* Optional Glow */}
@@ -37,19 +37,19 @@ export const PricingCard: React.FC<PricingCardProps> = ({
 
       <div className="space-y-6">
         <div>
-          <h3 className="text-2xl font-bold text-cool-white mb-2">{title}</h3>
-          <p className="text-cool-white/60 text-sm">{description}</p>
+          <h3 className="text-xl font-semibold text-cool-white mb-1">{title}</h3>
+          <p className="text-cool-white/60 text-xs">{description}</p>
         </div>
 
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl sm:text-5xl font-bold text-cool-white">{price}</span>
-          <span className="text-cool-white/60">{period}</span>
+          <span className="text-3xl font-bold text-cool-white">{price}</span>
+          <span className="text-cool-white/60 text-sm">{period}</span>
         </div>
 
         <ul className="space-y-3">
           {features.map((feature, idx) => (
-            <li key={idx} className="flex items-start gap-3 text-cool-white/80 text-sm">
-              <svg className="w-5 h-5 text-teal-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <li key={idx} className="flex items-start gap-2 text-cool-white/80 text-sm">
+              <svg className="w-4 h-4 text-teal-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               <span>{feature}</span>
@@ -59,7 +59,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
 
         <button
           className={`
-            w-full py-3.5 rounded-xl font-semibold text-sm transition-all duration-300
+            w-full py-2.5 rounded-lg font-semibold text-sm transition-all duration-300
             ${buttonStyle}
           `}
         >

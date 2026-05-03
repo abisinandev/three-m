@@ -6,17 +6,20 @@ export interface Stock {
     sector: string;
     logo?: string | null;
     isTradable: boolean;
-    isTracked: boolean;
     isVisible: boolean;
     price?: number;
+    change?: number;
+    changePercent?: number;
+    history?: number[];
     createdAt?: string;
     updatedAt?: string;
 }
+
 
 
 export interface IStockTableProps {
     stocks: Stock[];
     isLoading: boolean;
     isError?: boolean;
-    onStatusToggle: (symbol: string, statusKey: 'isTradable' | 'isTracked' | 'isVisible', newValue: boolean) => void;
+    onStatusToggle: (symbol: string, statusKey: 'isTradable' | 'isVisible', newValue: boolean) => void;
 }

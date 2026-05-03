@@ -10,19 +10,21 @@ import { HoldingsTable } from '../portfolio/components/HoldingsTable';
 import { TradeHistoryTable } from '../portfolio/components/TradeHistoryTable';
 import { AssetAllocationDonut } from '../portfolio/components/AssetAllocationDonut';
 import { PortfolioXirrCard } from '../portfolio/components/StatsSidebar';
-import PremiumPaymentModal from '@/shared/components/modals/premium-payment/PremiumPaymentModal';
+import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 import { usePortfolio } from '../portfolio/hooks/usePortfolio';
+import PendingOrdersTable from '../components/stock-detail/PendingOrdersTable';
+
 
 const PortfolioDashboard = () => {
     const user = useUserStore((state) => state.user);
     const navigate = useNavigate();
-    const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
+    const { onOpen: openPremiumModal } = usePremiumModalStore();
 
     const {
         page, setPage, search, setSearch, status, setStatus,
         activeTab, setActiveTab, returnType, setReturnType, limit,
-        summaryData, investments, totalCount, tradeHistoryData,
-        isLoading, isHistoryLoading, isError, error, handlePageChange
+        summaryData, investments, totalCount, historyData,
+        isLoading, isAssetsLoading, isHistoryLoading, isError, error, handlePageChange
     } = usePortfolio();
 
     const xirrValue = summaryData?.xirr ? Number(summaryData.xirr).toFixed(2) : '0.00';
@@ -103,7 +105,7 @@ const PortfolioDashboard = () => {
                             </div>
                         </div>
                         <button 
-                            onClick={() => setIsPremiumModalOpen(true)}
+                            onClick={openPremiumModal}
                             style={{
                                 padding: '6px 14px', borderRadius: 6,
                                 background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.2)',
@@ -139,13 +141,15 @@ const PortfolioDashboard = () => {
 
                         {activeTab === 'history' ? (
                             <TradeHistoryTable 
-                                data={tradeHistoryData?.data || []}
-                                total={tradeHistoryData?.total || 0}
+                                data={historyData?.data || []}
+                                total={historyData?.total || 0}
                                 page={page}
                                 limit={limit}
                                 onPageChange={handlePageChange}
                                 isLoading={isHistoryLoading}
                             />
+                        ) : activeTab === 'pending' ? (
+                            <PendingOrdersTable />
                         ) : (
                             <HoldingsTable 
                                 items={investments}
@@ -155,13 +159,14 @@ const PortfolioDashboard = () => {
                                 onPageChange={handlePageChange}
                                 activeTab={activeTab}
                                 returnType={returnType}
-                                isLoading={isLoading}
+                                isLoading={isAssetsLoading}
                                 isError={isError}
                                 error={error}
                                 search={search}
                                 onNavigate={(symbol) => navigate({ to: `/user/trading/${symbol}` })}
                             />
                         )}
+
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -189,10 +194,6 @@ const PortfolioDashboard = () => {
                 </div>
             </div>
 
-            <PremiumPaymentModal
-                isOpen={isPremiumModalOpen}
-                onClose={() => setIsPremiumModalOpen(false)}
-            />
         </div>
     );
 };

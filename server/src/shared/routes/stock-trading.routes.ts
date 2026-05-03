@@ -4,4 +4,5 @@ export enum StockTradingRoutes {
     GET_STOCKS = "/:symbol",
     GET_CANDLES = "/:symbol/candles",
     WATCHLIST = "/all/watchlist",
-}
+    MOVERS = "/market/movers",
+}

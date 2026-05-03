@@ -1,0 +1,14 @@
+Internal Risk Score Model
+
+Risk Score Formula:
+Risk Score = (Volatility Index * 0.4) + (Debt Ratio * 0.3) + (Market Sentiment * 0.3)
+
+Where:
+- Volatility Index ranges from 0 to 100
+- Debt Ratio = Total Debt / Total Assets
+- Market Sentiment is derived from social signals
+
+Risk Levels:
+0–30 → Low Risk
+31–60 → Moderate Risk
+61–100 → High Risk

@@ -14,6 +14,7 @@ import { StockModules } from "./features/stock/stock.modules";
 import { AlogTradingModule } from "./features/algo-trading/algo-trading.module";
 import { SubscriptionModule } from "./features/subscription/subscription.modules";
 import { PaymentModule } from "./features/payment/payment.module";
+import { DashboardModule } from "./features/dashboard/dashboard.module";
 
 const container = new Container({
   defaultScope: "Singleton",
@@ -35,7 +36,8 @@ container.load(
   StockModules,
   AlogTradingModule,
   SubscriptionModule,
-  PaymentModule
+  PaymentModule,
+  DashboardModule
 );
 
 export { container };

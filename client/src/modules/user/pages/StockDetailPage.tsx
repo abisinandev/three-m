@@ -5,24 +5,27 @@ import { finnhubService } from "@shared/services/finnhub.service";
 import { StockChart } from "@modules/user/components/StockChart";
 import { socketService } from "@shared/services/socket";
 import TradeModal from "@shared/components/modals/TradeModal";
-import PremiumPaymentModal from "@shared/components/modals/PremiumPaymentModal";
 import type { TradeData } from "@shared/components/modals/TradeModal";
 import { useTradeMutation } from "@shared/hooks/useTradeMutation";
-import { getPortfolioInvestments } from "@shared/services/feature/portfolio/PortfolioApi";
+import { getStockHoldings } from "@shared/services/feature/portfolio/PortfolioApi";
+import { useUserStore } from "@stores/user/UserStore";
 
 import { StockDetailHeader } from "../components/stock-detail/StockDetailHeader";
 import { AlgoConsole } from "../components/stock-detail/AlgoConsole";
 import { MarketStatCard } from "../components/stock-detail/MarketStatCard";
 import { MarketDepthCard } from "../components/stock-detail/MarketDepthCard";
 import { CompanyInfoCard } from "../components/stock-detail/CompanyInfoCard";
+import PendingOrdersTable from "../components/stock-detail/PendingOrdersTable";
+import { usePremiumModalStore } from "@stores/user/PremiumModalStore";
 
 const StockDetailPage = () => {
+  const user = useUserStore((state) => state.user);
   const { symbol } = useParams({ strict: false }) as { symbol: string };
   const [realtimePrice, setRealtimePrice] = useState<number | null>(null);
 
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
-  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
+  const { onOpen: openPremiumModal } = usePremiumModalStore();
 
   const {
     data: queryData,
@@ -37,7 +40,7 @@ const StockDetailPage = () => {
 
   const { data: holdingsData } = useQuery({
     queryKey: ["portfolio", symbol],
-    queryFn: () => getPortfolioInvestments(1, 10, undefined, symbol),
+    queryFn: () => getStockHoldings(1, 10, symbol),
     enabled: !!symbol,
   });
 
@@ -63,7 +66,7 @@ const StockDetailPage = () => {
     return () => socketService.off("stock_update", handleUpdate);
   }, [symbol]);
 
-  // Derived values
+   
   const responseData = queryData?.data;
   const stockInfo = responseData?.data;
   const apiPrice = responseData?.latestPrice;
@@ -80,9 +83,13 @@ const StockDetailPage = () => {
     });
   };
 
-  const { buy, sell, isTrading } = useTradeMutation();
+  const { buy, sell, limitBuy, limitSell, isTrading } = useTradeMutation();
 
   const handleTradeClick = (type: "buy" | "sell") => {
+    if (!user?.isSubscribed) {
+      openPremiumModal();
+      return;
+    }
     setTradeType(type);
     setIsTradeModalOpen(true);
   };
@@ -90,23 +97,43 @@ const StockDetailPage = () => {
   const handleTradeConfirm = async (tradeData: TradeData) => {
     try {
       if (tradeData.type === "buy") {
-        await buy({
-          symbol: tradeData.symbol,
-          quantity: tradeData.quantity,
-          orderType: tradeData.orderType as any,
-          price: tradeData.price,
-          stopLoss: tradeData.stopLoss,
-          takeProfit: tradeData.takeProfit,
-        });
+        if (tradeData.orderType === "LIMIT_ORDER") {
+      
+          await limitBuy({
+            symbol: tradeData.symbol,
+            quantity: tradeData.quantity,
+            orderType: "LIMIT_ORDER",
+            price: tradeData.price,
+            stopLoss: tradeData.stopLoss,
+            takeProfit: tradeData.takeProfit,
+          });
+        } else {
+          await buy({
+            symbol: tradeData.symbol,
+            quantity: tradeData.quantity,
+            orderType: tradeData.orderType as any,
+            price: tradeData.price,
+            stopLoss: tradeData.stopLoss,
+            takeProfit: tradeData.takeProfit,
+          });
+        }
       } else {
-        await sell({
-          symbol: tradeData.symbol,
-          quantity: tradeData.quantity,
-          orderType: tradeData.orderType as any,
-          price: tradeData.price,
-          stopLoss: tradeData.stopLoss,
-          takeProfit: tradeData.takeProfit,
-        });
+        if (tradeData.orderType === "LIMIT_ORDER") {
+          await limitSell({
+            symbol: tradeData.symbol,
+            quantity: tradeData.quantity,
+            orderType: "LIMIT_ORDER",
+            price: tradeData.price,
+          });
+        } else {
+          await sell({
+            symbol: tradeData.symbol,
+            quantity: tradeData.quantity,
+            orderType: tradeData.orderType as any,
+            price: tradeData.price,
+          });
+        }
+
       }
       setIsTradeModalOpen(false);
     } catch (error) {
@@ -171,12 +198,14 @@ const StockDetailPage = () => {
                 value={`₹${fmt(responseData?.previousClose)}`}
               />
             </div>
+
+            <PendingOrdersTable symbol={symbol} />
           </div>
 
           <div className="col-span-12 lg:col-span-3 space-y-6">
             <AlgoConsole
               symbol={symbol}
-              onPremiumModalOpen={() => setIsPremiumModalOpen(true)}
+              onPremiumModalOpen={openPremiumModal}
             />
 
             <MarketDepthCard
@@ -204,11 +233,6 @@ const StockDetailPage = () => {
         isLoading={isTrading}
         onConfirm={handleTradeConfirm}
         availableQuantity={position?.units || position?.quantity}
-      />
-
-      <PremiumPaymentModal
-        isOpen={isPremiumModalOpen}
-        onClose={() => setIsPremiumModalOpen(false)}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import type { UserDTO } from "@application/dto/user/user-dto";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { inject, injectable } from "inversify";
-import type { IUserProfileInterface } from "../interfaces/user-profile-usecase.interface";
+import type { IUserProfileInterface } from "./interfaces/user-profile-usecase.interface";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { toUserResponse } from "@application/mappers/user/user.mapper";

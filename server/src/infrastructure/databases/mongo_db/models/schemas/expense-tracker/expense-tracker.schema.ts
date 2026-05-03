@@ -29,8 +29,10 @@ const ExpenseTrackerSchema = new Schema<ExpenseTrackerDocument>(
         expenseSummary: {
             needsSpent: { type: Number },
             wantsSpent: { type: Number },
+            savingsSpent: { type: Number, default: 0 },
             needsUsage: { type: Number },
             wantsUsage: { type: Number },
+            savingsUsage: { type: Number, default: 0 },
         },
         savingsStatus: {
             target: { type: Number },

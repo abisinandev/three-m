@@ -51,7 +51,11 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
       setAlgoStep("active");
       toast.success("Algo trading started successfully.");
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      if (error.response?.status === 402) {
+        onPremiumModalOpen();
+        return;
+      }
       console.error("Failed to save algo strategy:", error);
       toast.error("Failed to start algo trading. Please try again.");
     },
@@ -70,7 +74,11 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
       setAlgoStep("idle");
       toast.info("Algo strategy stopped.");
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      if (error.response?.status === 402) {
+        onPremiumModalOpen();
+        return;
+      }
       console.error("Failed to toggle strategy status:", error);
       toast.error("An error occurred while stopping the strategy.");
     },
@@ -103,8 +111,9 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
     }
   };
 
+  const user = useUserStore((state) => state.user);
+
   const handleSetupClick = () => {
-    const { user } = useUserStore.getState();
     if (!user?.isSubscribed) {
       toast.warning("Upgrade to Premium to unlock algorithmic trading.");
       onPremiumModalOpen();

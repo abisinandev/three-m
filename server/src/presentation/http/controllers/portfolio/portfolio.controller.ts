@@ -10,7 +10,9 @@ import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio
 import { IXirrCalculationUseCase } from "@application/use_cases/portfolio/interfaces/xirr-calculation-usecase.interface";
 import { IPortfolioProjectionUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-projection-usecase.interface";
 import { IFetchPortfolioAssetsUsecase } from "@application/use_cases/portfolio/interfaces/fetch-portfolio-assets.usecase.interface";
-import { IFetchTradeHistoryUseCase } from "@application/use_cases/portfolio/interfaces/fetch-trade-history-usecase.interface";
+import { IFetchPortfolioHistoryUseCase } from "@application/use_cases/portfolio/interfaces/fetch-portfolio-history-usecase.interface";
+import { IFetchMutualFundHoldingsUseCase } from "@application/use_cases/portfolio/interfaces/fetch-mf-holdings-usecase.interface";
+import { IFetchStockHoldingsUseCase } from "@application/use_cases/portfolio/interfaces/fetch-stock-holdings-usecase.interface";
 
 @injectable()
 export class PortFolioController {
@@ -20,8 +22,10 @@ export class PortFolioController {
         @inject(PORTFOLIO_TYPES.PortfolioSummaryUseCase) private readonly _portfolioSummaryUseCase: IPortfolioSummaryUseCase,
         @inject(PORTFOLIO_TYPES.XirrCalculationUseCase) private readonly _xirrCalculation: IXirrCalculationUseCase,
         @inject(PORTFOLIO_TYPES.PortfolioProjectionUseCase) private readonly _portfolioProjection: IPortfolioProjectionUseCase,
-        @inject(PORTFOLIO_TYPES.FetchTradeHistoryUseCase) private readonly _fetchTradeHistory: IFetchTradeHistoryUseCase,
+        @inject(PORTFOLIO_TYPES.FetchPortfolioHistoryUseCase) private readonly _fetchPortfolioHistory: IFetchPortfolioHistoryUseCase,
         @inject(PORTFOLIO_TYPES.FetchPortfolioAssetsUseCase) private readonly _fetchPortfolioAssets: IFetchPortfolioAssetsUsecase,
+        @inject(PORTFOLIO_TYPES.FetchMutualFundHoldingsUseCase) private readonly _fetchMFHoldings: IFetchMutualFundHoldingsUseCase,
+        @inject(PORTFOLIO_TYPES.FetchStockHoldingsUseCase) private readonly _fetchStockHoldings: IFetchStockHoldingsUseCase,
     ) { }
 
 
@@ -108,7 +112,7 @@ export class PortFolioController {
     async listTradeHistory(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req?.user?.id;
-            const result = await this._fetchTradeHistory.execute(userId as string, req.query);
+            const result = await this._fetchPortfolioHistory.execute(userId as string, req.query);
             return ResponseHelper.success(
                 res,
                 SuccessMessages.DATA.FETCHED,
@@ -124,6 +128,36 @@ export class PortFolioController {
         try {
             const userId = req?.user?.id;
             const result = await this._fetchPortfolioAssets.execute(userId as string, req.query);
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.FETCHED,
+                result,
+                HttpStatus.OK,
+            )
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async listMFAssets(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req?.user?.id;
+            const result = await this._fetchMFHoldings.execute(userId as string, req.query);
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.FETCHED,
+                result,
+                HttpStatus.OK,
+            )
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async listStockAssets(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req?.user?.id;
+            const result = await this._fetchStockHoldings.execute(userId as string, req.query);
             return ResponseHelper.success(
                 res,
                 SuccessMessages.DATA.FETCHED,

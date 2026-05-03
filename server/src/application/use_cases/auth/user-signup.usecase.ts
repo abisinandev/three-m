@@ -10,7 +10,7 @@ import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import { ConflictError } from "@presentation/express/utils/error-handling/index";
 import { generateOtp } from "@shared/utils/otp/otp-generator";
 import { inject, injectable } from "inversify";
-import type { IUserSignupUseCase } from "../user/interfaces/user-signup.usecase.interface";
+import type { IUserSignupUseCase } from "./interfaces/user-signup.usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()

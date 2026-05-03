@@ -1,11 +1,10 @@
 import { inject, injectable } from "inversify";
 import { IMfCagrUseCase } from "./interfaces/mf-cagr-usecse.interface";
-import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
+import { IMutualFundNavUpdateProvider, ParsedNav } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { MfCagrEntity } from "@domain/entities/mutual-fund/cagr-entity";
 import { Cagr } from "@domain/entities/mutual-fund/value-objects/cagr-calculation.vo";
 import { findOldNav } from "@shared/utils/mutual-fund/nav-cagr-utils";
-import { ParsedNav } from "@infrastructure/providers/mutual-fund/nav-interfaces";
 import { IMfCagrRepository } from "@application/interfaces/repositories/feature/mf-cagr-repository.interface";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 

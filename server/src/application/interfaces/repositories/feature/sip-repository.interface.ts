@@ -7,7 +7,9 @@ export interface ISipRepository extends IBaseRepository<SipEntity> {
     fetchAllSips(options: QueryOptions): Promise<SipEntity[]>
     findActiveSips(): Promise<{ totalActiveSips: number, datas: SipEntity[] }>
     findSipsByUser(options: QueryOptions, userId: string): Promise<SipEntity[] | null>;
+    findUserActiveSips(userId: string, limit?: number): Promise<SipEntity[]>;
     pause(sipId: string): Promise<void>;
     resume(sipId: string): Promise<void>;
     cancel(sipId: string): Promise<void>;
+    getTotalActiveSipsCount(): Promise<number>;
 }

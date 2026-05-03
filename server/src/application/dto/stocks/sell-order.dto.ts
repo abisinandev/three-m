@@ -18,15 +18,5 @@ export class SellOrderDTO {
   price?: number;
 
   @IsOptional()
-  @IsNumber()
-  @Min(0.01)
-  stopLoss?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Min(0.01)
-  takeProfit?: number;
-
-  @IsOptional()
   isAlgoTrade?: boolean;
 }

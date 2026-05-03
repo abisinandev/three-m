@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getMarketNews } from "@shared/services/market-new-api/marketNewsApi";
+import { useMarketNews } from "../market-news/hooks/useMarketNews";
 import { NewsCard } from "@modules/user/market-news/components/NewsCard";
 import { CategoryNav } from "@modules/user/market-news/components/CategoryNav";
 import { PersonalizationPanel } from "@modules/user/market-news/components/PersonalizationPanel";
@@ -8,43 +6,47 @@ import { NewsSkeleton, SidebarSkeleton } from "@modules/user/market-news/compone
 import { Search, Info, RefreshCw } from "lucide-react";
 
 export const MarketNewsPage = () => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [activeCategory, setActiveCategory] = useState("All");
-
-    const { data: news, isLoading, error, refetch } = useQuery({
-        queryKey: ["market-news", activeCategory, searchQuery],
-        queryFn: () => getMarketNews({
-            query: searchQuery,
-            category: activeCategory === "All" ? "" : activeCategory
-        }), 
-    });
-
-    const filteredNews = news || [];
+    const {
+        news,
+        isLoading,
+        error,
+        refetch,
+        searchQuery,
+        setSearchQuery,
+        activeCategory,
+        setActiveCategory
+    } = useMarketNews();
 
     return (
-        <div className="flex flex-col min-h-screen bg-black">
-            {/* <MarketSnapshotBar /> */}
+        <div style={{
+            minHeight: '100vh',
+            background: '#0b0c0e',
+            color: '#e8eaed',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            paddingBottom: 48,
+        }}>
+            <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-            <div className="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-                <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 mt-2">
-                    <div className="space-y-1">
-                        <h1 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
-                            Market News
+                <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                    <div>
+                        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                            Market Intelligence
                         </h1>
-                        <p className="text-gray-400 text-sm sm:text-base font-medium flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse" />
+                        <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E]" />
                             Real-time updates from global financial markets
                         </p>
                     </div>
 
-                    <div className="relative w-full md:w-80 group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-[#3B82F6] transition-colors" />
+                    <div className="relative w-full md:w-72 group">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500 group-focus-within:text-blue-500 transition-colors" />
                         <input
                             type="text"
-                            placeholder="Search by keyword, stock..."
+                            placeholder="Search articles..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-[#111111] border border-[#2d2d2d] text-gray-200 text-sm rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/30 focus:border-[#3B82F6] transition-all"
+                            style={{ background: '#111214', border: '1px solid #1e2025' }}
+                            className="w-full text-gray-200 text-[11px] rounded-md py-2 pl-9 pr-4 focus:outline-none focus:border-blue-500/50 transition-all"
                         />
                     </div>
                 </header>
@@ -54,65 +56,58 @@ export const MarketNewsPage = () => {
                     onCategoryChange={setActiveCategory}
                 />
 
-                <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 mt-4">
-
-                    <main className="lg:col-span-7 space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <main className="lg:col-span-8">
                         {isLoading ? (
                             <NewsSkeleton />
                         ) : error ? (
-                            <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-8 text-center">
-                                <p className="text-red-400 font-medium mb-4">Something went wrong while fetching market news.</p>
+                            <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-12 text-center">
+                                <p className="text-red-400 text-xs font-medium mb-4">Connection to news intelligence lost.</p>
                                 <button
                                     onClick={() => refetch()}
-                                    className="px-6 py-2 bg-red-500 text-white rounded-xl text-sm font-bold hover:bg-red-600 transition-colors inline-flex items-center gap-2"
+                                    className="px-6 py-2 bg-red-500/10 border border-red-500/20 text-red-500 rounded-md text-[10px] font-bold hover:bg-red-500/20 transition-colors inline-flex items-center gap-2 uppercase tracking-wider"
                                 >
-                                    <RefreshCw className="w-4 h-4" /> Try Again
+                                    <RefreshCw className="w-3.5 h-3.5" /> Reconnect
                                 </button>
                             </div>
-                        ) : filteredNews.length > 0 ? (
-                            <div className="space-y-5">
-                                {filteredNews.map((item) => (
+                        ) : news.length > 0 ? (
+                            <div className="space-y-4">
+                                {news.map((item) => (
                                     <NewsCard key={item.url} news={item} />
                                 ))}
                             </div>
                         ) : (
-                            <div className="bg-black border border-[#2d2d2d] rounded-3xl p-16 text-center">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#111111] text-gray-500 mb-6">
-                                    <Search className="w-8 h-8" />
+                            <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-16 text-center">
+                                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#1a1a1a] text-gray-500 mb-6">
+                                    <Search className="w-5 h-5" />
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-200 mb-2">No news found</h3>
-                                <p className="text-gray-500 max-w-sm mx-auto">
-                                    We couldn't find any news matching "{searchQuery}" in the {activeCategory} category.
+                                <h3 className="text-sm font-semibold text-gray-200 mb-1">No results found</h3>
+                                <p className="text-[11px] text-gray-500 max-w-xs mx-auto">
+                                    We couldn't find any intelligence reports matching "{searchQuery}".
                                 </p>
-                                <button
-                                    onClick={() => { setSearchQuery(""); setActiveCategory("All") }}
-                                    className="mt-6 text-[#3B82F6] font-bold text-sm hover:underline"
-                                >
-                                    Clear all filters
-                                </button>
                             </div>
                         )}
                     </main>
 
-                    <aside className="lg:col-span-3">
+                    <aside className="lg:col-span-4 space-y-4">
                         {isLoading ? (
                             <SidebarSkeleton />
                         ) : (
                             <PersonalizationPanel />
                         )}
 
-                        <div className="mt-8 p-4 rounded-xl bg-[#111111]/50 border border-[#2d2d2d] border-dashed">
+                        <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-4 border-dashed">
                             <div className="flex gap-3">
-                                <div className="mt-0.5"><Info className="w-4 h-4 text-gray-600 flex-shrink-0" /></div>
-                                <p className="text-[10px] text-gray-500 leading-relaxed font-medium uppercase tracking-tight">
-                                    Trading involves high risk. Information provided is for educational purposes only and does not constitute financial advice.
+                                <Info className="w-3.5 h-3.5 text-gray-600 mt-0.5 flex-shrink-0" />
+                                <p className="text-[9px] text-gray-500 leading-relaxed font-medium uppercase tracking-wider">
+                                    Market intelligence is for informational purposes. Trading involves capital risk. Professional consultation is advised.
                                 </p>
                             </div>
                         </div>
                     </aside>
-
                 </div>
             </div>
         </div>
     );
 }
+
