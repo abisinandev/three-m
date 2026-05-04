@@ -1,6 +1,6 @@
-import { StripePaymentDTO } from "@application/dto/user/stripe-payment-dto";
+import { PaymentDataDTO } from "@application/dto/user/stripe-payment-dto";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
-import stripe from "@infrastructure/providers/stripe/stripe.client";
+import stripe from "@infrastructure/providers/payment/stripe/stripe.client";
 import Stripe from "stripe";
 
 export async function extractPaymentIntent(event: Stripe.Event): Promise<Stripe.PaymentIntent | null> {
@@ -24,7 +24,7 @@ export async function extractPaymentIntent(event: Stripe.Event): Promise<Stripe.
 
 
 
-export function mapIntentToDTO(intent: Stripe.PaymentIntent): StripePaymentDTO {
+export function mapIntentToDTO(intent: Stripe.PaymentIntent): PaymentDataDTO {
     const userId = intent.metadata?.userId;
     const purpose = intent.metadata?.purpose;
 
@@ -39,7 +39,7 @@ export function mapIntentToDTO(intent: Stripe.PaymentIntent): StripePaymentDTO {
 
     return {
         userId,
-        purpose: purpose as StripePaymentDTO["purpose"],
+        purpose: purpose as PaymentDataDTO["purpose"],
         paymentIntentId: intent.id,
         amount: amountInPaise / 100,
         currency: intent.currency,

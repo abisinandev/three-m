@@ -1,8 +1,9 @@
-import Stripe from "stripe";
 
 export interface IProcessStripePaymentUseCase {
-    execute(session: Stripe.Checkout.Session): Promise<{
+    execute(sessionId: string): Promise<{
         success: boolean;
         message?: string;
+        amount?: number;
+        purpose?: string;
     }>;
 }

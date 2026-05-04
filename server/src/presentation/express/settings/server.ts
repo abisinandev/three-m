@@ -23,7 +23,7 @@ import { SipScheduler } from "@infrastructure/providers/sip/queue/sip.scheduler"
 import { SlTpOrderScheduler } from "@infrastructure/providers/stocks/queue/sl-tp-order.scheduler";
 
 const bootstrap = async () => {
-  try {
+  try { 
     await connectDB();
 
     //cron-scheduler 

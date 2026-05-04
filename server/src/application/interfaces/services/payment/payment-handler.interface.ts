@@ -1,5 +1,5 @@
-import { StripePaymentDTO } from "@application/dto/user/stripe-payment-dto";
+import { PaymentDataDTO } from "@application/dto/user/stripe-payment-dto";
 
 export interface IPaymentHandler {
-    handleSuccess(payment: StripePaymentDTO): void;
+    handleSuccess(payment: PaymentDataDTO): void;
 }

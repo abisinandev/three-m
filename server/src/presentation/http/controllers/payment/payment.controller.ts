@@ -1,77 +1,32 @@
-import { ErrorMessages } from "@shared/constants/error.messages";
-import stripe from "@infrastructure/providers/stripe/stripe.client";
-import { env } from "@presentation/express/utils/constants/env.constants";
-import { UnauthorizedError, ValidationError } from "@presentation/express/utils/error-handling";
+import stripe from "@infrastructure/providers/payment/stripe/stripe.client";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { PAYMENT_TYPES } from "@infrastructure/inversify_di/features/payment/payment.types";
 import { IProcessStripePaymentUseCase } from "@application/use_cases/payment/interfaces/process-payment-usecase.interface";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
+import { ICreateCheckoutSessionUseCase } from "@application/use_cases/payment/interfaces/create-checkout-session-usecase.interface";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
-/**
- * Creates a Stripe Checkout Session for a one-time payment.
- * is completed securely via Stripe webhooks after payment success.
- * @param req - Express request object containing amount and payment purpose
- * @param res - Express response object used to return the checkout URL
- * @param next - Express next function for error handling
- */
 
 @injectable()
 export class PaymentController {
 
     constructor(
-        @inject(PAYMENT_TYPES.ProcessStripePaymentUseCase) private readonly _processPayment: IProcessStripePaymentUseCase
+        @inject(PAYMENT_TYPES.ProcessStripePaymentUseCase) private readonly _processPayment: IProcessStripePaymentUseCase,
+        @inject(PAYMENT_TYPES.CreateCheckoutSessionUseCase) private readonly _createCheckSession: ICreateCheckoutSessionUseCase,
     ) { }
 
     async createCheckoutSession(req: Request, res: Response, next: NextFunction) {
         try {
-            const { amount, purpose } = req.body;
             const userId = req.user?.id;
-
-            if (!userId) {
-                throw new UnauthorizedError(ErrorMessages.AUTH.UNAUTHORIZED);
-            }
-
-            if (!amount || amount <= 0) {
-                throw new ValidationError(ErrorMessages.PAYMENT.INVALID_AMOUNT);
-            }
-
-            if (amount > 100000) {
-                throw new ValidationError(ErrorMessages.PAYMENT.LIMIT_EXCEEDED);
-            }
-
-            const session = await stripe.checkout.sessions.create({
-                mode: "payment",
-
-                line_items: [
-                    {
-                        price_data: {
-                            currency: "inr",
-                            unit_amount: amount * 100,// converting to paisa
-                            product_data: {
-                                name: purpose,
-                            },
-                        },
-                        quantity: 1,
-                    },
-                ],
-
-                success_url: `${env.FRONTEND_URL}/user/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: `${env.FRONTEND_URL}/user/payment-failed`,
-
-                payment_intent_data: {
-                    metadata: {
-                        purpose,
-                        userId: userId,
-                        amount: amount.toString(),
-                    },
-                },
+            const result = await this._createCheckSession.execute({
+                ...req.body,
+                userId
             });
-
             return ResponseHelper.success(
                 res,
                 "Checkout session created",
-                { checkoutUrl: session.url },
+                { checkoutUrl: result.url },
                 200
             );
         } catch (error) {
@@ -86,20 +41,21 @@ export class PaymentController {
 
             if (!sessionId) throw new ValidationError("Session ID expired");
 
-            const session = await stripe.checkout.sessions.retrieve(sessionId);
-            console.log("payment00: ",session.payment_status)
-            if (session.payment_status !== "paid") {
-                throw new ValidationError("Payment not completed");
-            }
+            // const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-            await this._processPayment.execute(session);
+
+            // if (session.payment_status !== "paid") {
+            //     throw new ValidationError("Payment not completed");
+            // }
+
+            const result = await this._processPayment.execute(sessionId);
 
             return ResponseHelper.success(
                 res,
                 "Payment verified successfully",
                 {
-                    amount: (session.amount_total || 0) / 100,
-                    purpose: session.metadata?.purpose || 'TOPUP',
+                    amount: result.amount,
+                    purpose: result.purpose,
                     status: 'SUCCESSFUL'
                 },
                 200

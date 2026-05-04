@@ -1,4 +1,4 @@
-import { StripePaymentDTO } from "@application/dto/user/stripe-payment-dto";
+import { PaymentDataDTO } from "@application/dto/user/stripe-payment-dto";
 import { IPaymentHandler } from "@application/interfaces/services/payment/payment-handler.interface";
 import { IAddToWalletUseCase } from "@application/use_cases/user/wallet/interfaces/add-to-wallet-usecase.interface";
 import { IUpgradePremiumUseCase } from "@application/use_cases/user/subscription/interfaces/upgrade-premium-usecase.interface";
@@ -17,7 +17,7 @@ export class StripePaymentHandler implements IPaymentHandler {
         @inject(SUBSCRIPTION_TYPES.UpgradePremiumUseCase) private _upgradePremium: IUpgradePremiumUseCase,
     ) { }
 
-    async handleSuccess(payment: StripePaymentDTO) {
+    async handleSuccess(payment: PaymentDataDTO) {
 
         const mappedStatus = mapStripeStatusToTransactionStatus(payment.status);
         
