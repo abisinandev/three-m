@@ -1,3 +1,4 @@
+import { AuthProvider } from "@domain/enum/users/auth-provider.enum";
 import type { LoginReponseDTO } from "@application/dto/auth/login-response.dto";
 import type { UserLoginDTO } from "@application/dto/auth/user-login.dto";
 import type { ITwoFactorAuthSetup } from "@application/interfaces/services/externals/2fa-auth-setup.interface";
@@ -30,11 +31,18 @@ export class UserLoginUseCase implements IUserLoginUseCase {
 
     if (!existingUser) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
     if (existingUser.isBlocked) throw new ForbiddenError(ErrorMessages.USER.ACCOUNT_BLOCKED);
-    if (!existingUser.isEmailVerified) new ForbiddenError(ErrorMessages.AUTH.EMAIL_NOT_VERIFIED);
+    if (!existingUser.isEmailVerified) throw new ForbiddenError(ErrorMessages.AUTH.EMAIL_NOT_VERIFIED);
+
+    if (!existingUser.password) {
+      if (existingUser.authProvider !== AuthProvider.MANUAL) {
+        throw new UnauthorizedError(`This account was registered using ${existingUser.authProvider}. Please login with your social provider.`);
+      }
+      throw new UnauthorizedError(ErrorMessages.AUTH.INVALID_CREDENTIALS);
+    }
 
     const isMatch = await this._passwordHashing.verify(
       user.password,
-      existingUser.password as string,
+      existingUser.password,
     );
     if (!isMatch) throw new UnauthorizedError(ErrorMessages.AUTH.INVALID_CREDENTIALS);
 
