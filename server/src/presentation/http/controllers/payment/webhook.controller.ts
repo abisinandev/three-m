@@ -1,25 +1,16 @@
-import { IPaymentHandler } from "@application/interfaces/services/payment/payment-handler.interface";
+import { IFulfillPaymentUseCase } from "@application/use_cases/payment/fulfill-payment.usecase";
 import { PAYMENT_TYPES } from "@infrastructure/inversify_di/features/payment/payment.types";
-import stripe from "@infrastructure/providers/stripe/stripe.client";
+import stripe from "@infrastructure/providers/payment/stripe/stripe.client";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import AppError from "@presentation/express/utils/error-handling/app.error";
 import { extractPaymentIntent, mapIntentToDTO } from "@shared/utils/payments/stripe-payment.utils";
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
-
-/**
- * Stripe webhook controller.
- * Handles Stripe webhook events to securely process completed payments.
- * @param req - Express request containing the raw webhook payload
- * @param res - Sends a success acknowledgment to Stripe
- * @param next - Express next function for error handling
- */
-
 @injectable()
 export class WebhookController {
     constructor(
-        @inject(PAYMENT_TYPES.StripePaymentHandler) private readonly stripePaymentHandler: IPaymentHandler,
+        @inject(PAYMENT_TYPES.FulfillPaymentUseCase) private readonly _fulfillPayment: IFulfillPaymentUseCase,
     ) { }
 
     async stripeWebhookHandler(req: Request, res: Response, next: NextFunction) {
@@ -41,15 +32,16 @@ export class WebhookController {
             if (!intent) return res.json({ received: true });
             
             const paymentDTO = mapIntentToDTO(intent);
-            await this.stripePaymentHandler.handleSuccess(paymentDTO);
+            await this._fulfillPayment.execute(paymentDTO);
             return res.status(200).json({ received: true });
 
         } catch (error) {
             next(error);
         }
     }
-
 }
+
+
 
 
 

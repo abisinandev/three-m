@@ -1,14 +1,6 @@
 import Stripe from "stripe";
 
-// export interface StripePaymentDTO {
-//     userId: string;
-//     paymentIntentId: string;
-//     amount: number; // rupees
-//     currency: string;
-//     status: Stripe.PaymentIntent.Status;
-// }
-
-export interface StripePaymentDTO {
+export interface PaymentDataDTO {
     userId: string;
     purpose: "TOPUP" | "INVEST" | "SUBSCRIPTION";
     amount: number;
