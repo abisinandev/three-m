@@ -2,7 +2,7 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { IPortfolioSummaryUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-summary-usecase.interface";
 
-
+//OFF
 export const createPortfolioSummaryTool = (
     userId: string,
     portfolioSummaryUseCase: IPortfolioSummaryUseCase

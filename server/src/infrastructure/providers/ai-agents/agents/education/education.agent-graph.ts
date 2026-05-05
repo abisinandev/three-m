@@ -1,9 +1,9 @@
-import { model } from "../../ollama.config";
+import { groqModel } from "../../groq.config";
 import { FinancialIntelligentTool } from "../../langchain/tools/financial-intelligent";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 
 export const EducationAgentGraph = createReactAgent({
-    llm: model,
+    llm: groqModel,
     tools: [
         FinancialIntelligentTool
     ],

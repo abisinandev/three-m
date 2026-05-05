@@ -225,7 +225,7 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
             }
 
             newTransaction.markSucess();
-            await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
+            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
 
             signal.approve();
             await this._signalRepository.update(signal.id as string, signal, session);

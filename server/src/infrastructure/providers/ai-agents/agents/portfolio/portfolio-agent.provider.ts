@@ -4,8 +4,9 @@ import { ChatMessage } from "@application/interfaces/models/chat-message.interfa
 import { IPortfolioAgent } from "@application/interfaces/services/ai-chatbot/portfolio-agent.interface";
 import { IPortfolioSummaryUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-summary-usecase.interface";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
-import { model } from "../../ollama.config";
+import { groqModel } from "../../groq.config";
 import { AgentResponse } from "@application/interfaces/services/ai-chatbot/agent-response.interface";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 
 @injectable()
 export class PortfolioAgent implements IPortfolioAgent {
@@ -15,7 +16,10 @@ export class PortfolioAgent implements IPortfolioAgent {
         private readonly _portfolioSummaryUseCase: IPortfolioSummaryUseCase,
     ) { }
 
-    async handle(input: string, history: ChatMessage[], userId: string): Promise<AgentResponse> {
+    async handle(input: string, _history: ChatMessage[], userId: string): Promise<AgentResponse> {
+
+        logger.info("PORTFOLIO AGENT WORKING...");
+
         const summary = await this._portfolioSummaryUseCase.execute(userId);
         
         const prompt = `
@@ -35,7 +39,7 @@ export class PortfolioAgent implements IPortfolioAgent {
             USER QUESTION: ${input}
         `;
 
-        const response = await model.invoke([
+        const response = await groqModel.invoke([
             new SystemMessage("You are a helpful portfolio assistant for Indian investors. Always use ₹ for currency."),
             new HumanMessage(prompt)
         ]);

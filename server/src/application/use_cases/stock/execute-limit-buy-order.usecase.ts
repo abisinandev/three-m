@@ -157,7 +157,7 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
             }
 
             newTransaction.markSucess();
-            await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
+            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
 
             await this._createNotification.execute({
                 userId: order.userId,

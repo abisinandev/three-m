@@ -1,11 +1,11 @@
-import { model } from "../../ollama.config";
+import { groqModel } from "../../groq.config";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { StructuredToolInterface } from "@langchain/core/tools";
 
 
 export const createPortfolioAgentGraph = (tools: StructuredToolInterface[]) =>
     createReactAgent({
-        llm: model,
+        llm: groqModel,
         tools,
 
         messageModifier: `

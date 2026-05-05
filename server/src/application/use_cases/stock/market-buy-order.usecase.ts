@@ -202,7 +202,7 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
             }
 
             newTransaction.markSucess();
-            await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
+            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
 
             await session.commitTransaction();
 

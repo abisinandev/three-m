@@ -1,11 +1,11 @@
 import { injectable } from "inversify";
-import { model } from "@infrastructure/providers/ai-agents/ollama.config";
+import { groqModel } from "@infrastructure/providers/ai-agents/groq.config";
 import { IDetectAgent } from "@application/interfaces/services/ai-chatbot/detect-agent.interface";
 import { BaseMessageChunk } from "@langchain/core/messages";
 
 export type IntentType =
   | "simple"
-  | "education"
+  | "education" 
   | "portfolio"
   | "trade";
 
@@ -15,15 +15,12 @@ export class DetectAgent implements IDetectAgent {
   classifyIntent(message: string): IntentType {
     const text = message.toLowerCase().trim();
 
-    // 1. Portfolio
     const portfolioPatterns = ["my portfolio", "my investments", "my profit", "my loss", "my current value", "portfolio summary"];
     if (portfolioPatterns.some((p) => text.includes(p))) return "portfolio";
 
-    // 2. Trade (Information + Actions)
     const tradePatterns = ["buy", "sell", "order", "invest in", "trade", "stock list", "best stocks", "recommend", "how is"];
     if (tradePatterns.some((p) => text.includes(p))) return "trade";
 
-    // 3. Education
     const educationPatterns = [
       /rbi/i, /sip/i, /risk/i, /sweep/i, /compliance/i,
       "should i", "which is better", "how to invest", "strategy", "plan", "compare"
@@ -34,7 +31,7 @@ export class DetectAgent implements IDetectAgent {
   }
 
   async directLLM(message: string): Promise<BaseMessageChunk> {
-    return await model.invoke([
+    return await groqModel.invoke([
       {
         role: "system",
         content: "You are a helpful financial educator. Give clear and simple answers.",
