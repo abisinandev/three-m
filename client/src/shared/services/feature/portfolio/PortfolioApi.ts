@@ -54,8 +54,13 @@ export const confirmRedeemInvestment = async (payload: {
     return data;
 };
 
-export const getPortfolioProjection = async (): Promise<IPortfolioProjectionResponse> => {
-    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.PROJECTION);
+export const getPortfolioProjection = async (
+    expectedReturnRate = 12,
+    years = 10
+): Promise<IPortfolioProjectionResponse> => {
+    const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.PROJECTION, {
+        params: { expectedReturnRate, years },
+    });
     return data?.data;
 };
 

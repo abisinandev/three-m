@@ -1,5 +1,4 @@
 'use client';
-import { useState } from 'react';
 import { TrendingUp } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useUserStore } from '@stores/user/UserStore';
@@ -13,6 +12,7 @@ import { PortfolioXirrCard } from '../portfolio/components/StatsSidebar';
 import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 import { usePortfolio } from '../portfolio/hooks/usePortfolio';
 import PendingOrdersTable from '../components/stock-detail/PendingOrdersTable';
+import { PortfolioProjection } from '../portfolio/components/PortfolioProjection';
 
 
 const PortfolioDashboard = () => {
@@ -173,6 +173,8 @@ const PortfolioDashboard = () => {
                         <PortfolioXirrCard xirrValue={xirrValue} />
                         
                         <AssetAllocationDonut investments={investments} />
+
+                        <PortfolioProjection />
 
 
                         <button
