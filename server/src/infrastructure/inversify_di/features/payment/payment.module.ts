@@ -4,13 +4,13 @@ import { PaymentController } from "@presentation/http/controllers/payment/paymen
 import { WebhookController } from "@presentation/http/controllers/payment/webhook.controller";
 import { ProcessStripePaymentUseCase } from "@application/use_cases/payment/process-payment.usecase";
 import { StripePaymentGateway } from "@infrastructure/providers/payment/stripe/stripe-payment-gateway";
-import { IPaymentGateway } from "@application/interfaces/services/payment/payment-gateway";
+import { IPaymentGateway } from "@application/interfaces/services/payment/payment-gateway.interface";
 import { ICreateCheckoutSessionUseCase } from "@application/use_cases/payment/interfaces/create-checkout-session-usecase.interface";
 import { CreateCheckoutSessionUseCase } from "@application/use_cases/payment/create-checkout-session.usecase";
-import { TopupPaymentHandler } from "@application/services/payment/handlers/topup-payment.handler";
-import { SubscriptionPaymentHandler } from "@application/services/payment/handlers/subscription-payment.handler";
 import { IPaymentPurposeHandler } from "@application/interfaces/services/payment/payment-purpose-handler.interface";
 import { FulfillPaymentUseCase } from "@application/use_cases/payment/fulfill-payment.usecase";
+import { AddToWalletHanlder } from "@infrastructure/providers/payment/addtowallet-handler";
+import { SubscriptionPaymentHandler } from "@infrastructure/providers/payment/subscription-payment.handler";
 
 export const PaymentModule = new ContainerModule(({ bind }) => {
     // Controller
@@ -25,6 +25,6 @@ export const PaymentModule = new ContainerModule(({ bind }) => {
     bind<IPaymentGateway>(PAYMENT_TYPES.PaymentGateway).to(StripePaymentGateway);
 
     // Purpose Handlers
-    bind<IPaymentPurposeHandler>(PAYMENT_TYPES.PaymentPurposeHandler).to(TopupPaymentHandler);
+    bind<IPaymentPurposeHandler>(PAYMENT_TYPES.PaymentPurposeHandler).to(AddToWalletHanlder);
     bind<IPaymentPurposeHandler>(PAYMENT_TYPES.PaymentPurposeHandler).to(SubscriptionPaymentHandler);
 });

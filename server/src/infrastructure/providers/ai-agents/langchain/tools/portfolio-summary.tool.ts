@@ -28,19 +28,19 @@ export const createPortfolioSummaryTool = (
         {
             name: "get_portfolio_summary",
             description: `
-                Retrieves the user's current portfolio summary including:
-                - Total number of funds/stocks held
-                - Total invested amount across mutual funds and stocks
-                - Current portfolio market value
-                - Profit/loss details including realized profits from sells
-                - Overall return percentage
-                - XIRR (annualized return rate based on cash flow timing)
+                Retrieves the user's current portfolio summary. 
+                IMPORTANT: All financial values (totalInvested, currentValue, totalProfit, etc.) are in Indian Rupees (INR).
+                Always use the ₹ (rupee symbol) when presenting these values to the user.
                 
-                Use this tool when the user asks about:
-                - Their portfolio performance or returns
-                - How much they have invested or what it is worth now
-                - Their profit, loss, or XIRR
-                - An overall summary of their investments
+                The returned data includes:
+                - totalFunds: Total number of instruments
+                - totalInvested: Amount invested (formatted with ₹)
+                - currentValue: Current market value (formatted with ₹)
+                - totalProfit: Overall profit/loss (formatted with ₹)
+                - profitFromSells: Realized profit (formatted with ₹)
+                - totalReturns: Absolute returns (formatted with ₹)
+                - returnPercentage: Percentage gain/loss
+                - xirr: Annualized returns (XIRR)
             `,
             schema: z.object({}),
         }

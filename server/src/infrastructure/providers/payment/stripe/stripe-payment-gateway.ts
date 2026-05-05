@@ -1,5 +1,5 @@
 import { CreatePaymentRequest } from "@application/dto/payment/create-payment-req.dto";
-import { IPaymentGateway } from "@application/interfaces/services/payment/payment-gateway";
+import { IPaymentGateway } from "@application/interfaces/services/payment/payment-gateway.interface";
 import { injectable } from "inversify";
 import stripe from "./stripe.client";
 import { env } from "@presentation/express/utils/constants/env.constants";

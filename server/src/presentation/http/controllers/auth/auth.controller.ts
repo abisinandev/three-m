@@ -12,7 +12,7 @@ import type { IVerifyTwoFactorUseCase } from "@application/use_cases/auth/interf
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
-import { ForbiddenError } from "@presentation/express/utils/error-handling";
+import { UnauthorizedError } from "@presentation/express/utils/error-handling";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { SuccessMessages } from "@shared/constants/success.messages";
@@ -160,7 +160,7 @@ export class AuthController {
     try {
       const refreshToken = req.cookies.refreshToken;
       console.log("Refresh : ", refreshToken);
-      if (!refreshToken) throw new ForbiddenError(ErrorMessages.AUTH.REFRESH_TOKEN_EXPIRED);
+      if (!refreshToken) throw new UnauthorizedError(ErrorMessages.AUTH.REFRESH_TOKEN_EXPIRED);
 
       const result = await this._refreshTokenUseCase.execute({ refreshToken });
 

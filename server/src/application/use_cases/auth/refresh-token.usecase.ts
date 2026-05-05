@@ -8,6 +8,7 @@ import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.type
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import {
   NotFoundError,
+  UnauthorizedError,
   ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
@@ -21,15 +22,17 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
   ) { }
   async execute(data: RefreshDTO): Promise<RefreshResponseDTO> {
+
     if (!data.refreshToken)
-      throw new ValidationError(ErrorMessages.AUTH.REFRESH_TOKEN_MISSING);
+      throw new UnauthorizedError(ErrorMessages.AUTH.REFRESH_TOKEN_MISSING);
+
     const decoded = this._jwtProvider.verifyJwtTokens(
       data.refreshToken,
       "refresh",
     );
 
     if (typeof decoded === "string" || !decoded.id) {
-      throw new ValidationError(ErrorMessages.AUTH.REFRESH_TOKEN_EXPIRED);
+      throw new UnauthorizedError(ErrorMessages.AUTH.REFRESH_TOKEN_EXPIRED);
     }
 
     const storedToken = await redisClient.hgetall(
@@ -37,7 +40,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     );
 
     if (!storedToken || storedToken.refreshToken !== data.refreshToken) {
-      throw new ValidationError(ErrorMessages.AUTH.REFRESH_TOKEN_NOT_FOUND);
+      throw new UnauthorizedError(ErrorMessages.AUTH.REFRESH_TOKEN_NOT_FOUND);
     }
 
     const user = await this._userRepository.findById(decoded.id);

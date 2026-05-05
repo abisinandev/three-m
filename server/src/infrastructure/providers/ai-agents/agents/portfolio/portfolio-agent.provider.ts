@@ -19,13 +19,24 @@ export class PortfolioAgent implements IPortfolioAgent {
         const summary = await this._portfolioSummaryUseCase.execute(userId);
         
         const prompt = `
-            Summarize this portfolio data friendly and concisely.
-            DATA: ${JSON.stringify(summary, null, 2)}
-            QUESTION: ${input}
+            Summarize the user's portfolio data friendly and concisely.
+            IMPORTANT: Always use the Indian Rupee symbol (₹) for all currency values. Do NOT use dollars ($).
+
+            PORTFOLIO DATA:
+            - Total Funds: ${summary.totalCount}
+            - Total Invested: ₹${summary.totalInvestment.toFixed(2)}
+            - Current Value: ₹${summary.currentValue.toFixed(2)}
+            - Total Profit: ₹${summary.totalProfit.toFixed(2)}
+            - Profit from Sells: ₹${summary.profitAfterSell.toFixed(2)}
+            - Total Returns: ₹${summary.totalReturns.toFixed(2)}
+            - Return Percentage: ${summary.profitPercentage.toFixed(2)}%
+            - XIRR: ${summary.xirr !== null ? `${summary.xirr.toFixed(2)}%` : "Insufficient data for XIRR calculation"}
+
+            USER QUESTION: ${input}
         `;
 
         const response = await model.invoke([
-            new SystemMessage("You format financial data into friendly summaries."),
+            new SystemMessage("You are a helpful portfolio assistant for Indian investors. Always use ₹ for currency."),
             new HumanMessage(prompt)
         ]);
 

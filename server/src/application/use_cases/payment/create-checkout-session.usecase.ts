@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { ICreateCheckoutSessionUseCase } from "./interfaces/create-checkout-session-usecase.interface";
-import { IPaymentGateway } from "@application/interfaces/services/payment/payment-gateway";
+import { IPaymentGateway } from "@application/interfaces/services/payment/payment-gateway.interface";
 import { CreatePaymentRequest } from "@application/dto/payment/create-payment-req.dto";
 import { UnauthorizedError, ValidationError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";

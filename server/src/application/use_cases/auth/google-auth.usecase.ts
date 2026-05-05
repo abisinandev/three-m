@@ -7,6 +7,8 @@ import { AuthProvider } from "@domain/enum/users/auth-provider.enum";
 import type { JwtPayload } from "@domain/types/jwt-payload.type";
 import { AUTH_TYPES } from "@infrastructure/inversify_di/features/auth/auth.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
+import { redisClient } from "@infrastructure/providers/redis/redis.provider";
+import { env } from "@presentation/express/utils/constants/env.constants";
 import {
   UnauthorizedError,
   ValidationError,
@@ -57,6 +59,12 @@ export class GoogleAuthUseCase implements IGoogleAuthUseCase {
 
     const accessToken = this._jwtProvider.generateAccessToken(payload);
     const refreshToken = this._jwtProvider.generateRefreshToken(payload);
+
+    const key = `refresh_token:${user.id}`;
+    const ttl = Number(env.REFRESH_EXPIRES_IN);
+    await redisClient.hset(key, "refreshToken", refreshToken);
+    await redisClient.expire(key, ttl);
+
     return { accessToken, refreshToken, user };
   }
 }

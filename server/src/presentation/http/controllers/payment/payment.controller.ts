@@ -41,13 +41,6 @@ export class PaymentController {
 
             if (!sessionId) throw new ValidationError("Session ID expired");
 
-            // const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-
-            // if (session.payment_status !== "paid") {
-            //     throw new ValidationError("Payment not completed");
-            // }
-
             const result = await this._processPayment.execute(sessionId);
 
             return ResponseHelper.success(
