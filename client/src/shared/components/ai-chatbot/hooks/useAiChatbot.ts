@@ -68,6 +68,8 @@ export function useAiChatbot() {
                 role: 'assistant',
                 content: reply.message,
                 timestamp: new Date(),
+                type: reply.type,
+                data: reply.data,
                 upgradeRequired: reply.upgradeRequired,
             };
             setMessages(prev => [...prev, aiMsg]);

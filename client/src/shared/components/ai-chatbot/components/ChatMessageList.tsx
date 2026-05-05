@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-react';
 import { ChatBubble } from './ChatBubble';
 import { QuickActions } from './QuickActions';
 import { OrderPreview } from './OrderPreview';
+import { StockSuggestionList } from './StockSuggestionList';
 import type { ChatMessage } from '../types/chatbot.types';
 
 interface ChatMessageListProps {
@@ -34,7 +35,8 @@ export function ChatMessageList({
                         message={msg}
                         onUpgradeClick={onUpgradeClick}
                     />
-                    {msg.type === 'confirmation' && <OrderPreview />}
+                    {msg.type === 'confirmation' && <OrderPreview data={msg.data} />}
+                    {msg.type === 'suggestion_list' && <StockSuggestionList stocks={msg.data} />}
                 </div>
             ))}
 

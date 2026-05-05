@@ -9,6 +9,8 @@ export interface ChatHistoryMessage {
 
 export interface ChatResponse {
     message: string;
+    type?: 'text' | 'confirmation' | 'suggestion_list' | 'portfolio_summary';
+    data?: any;
     upgradeRequired?: boolean;
 }
 
@@ -20,4 +22,9 @@ export const sendChatMessage = async (message: string): Promise<ChatResponse> =>
 export const getChatHistory = async (): Promise<ChatHistoryMessage[]> => {
     const response = await api.get(API_ROUTES.CHATBOT.HISTORY);
     return response.data.data ?? [];
+};
+
+export const confirmBotOrder = async (symbol: string, quantity: number) => {
+    const response = await api.post(API_ROUTES.CHATBOT.CONFIRM_ORDER, { symbol, quantity });
+    return response.data;
 };
