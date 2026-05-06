@@ -21,9 +21,8 @@ export class CalculateSimulationUseCase implements ICalculateSimulationUseCase {
         const originalIncome = tracker ? tracker.totalIncome : 0;
         const originalNeedsSpent = tracker ? tracker.expenseSummary.totalNeedsSpent : 0;
         const originalWantsSpent = tracker ? tracker.expenseSummary.totalWantsSpent : 0;
-        const originalSavingsSpent = tracker ? tracker.expenseSummary.totalSavingsSpent : 0;
         const originalSpent = originalNeedsSpent + originalWantsSpent;
-        const originalBalance = originalIncome - originalSpent;
+        const originalProjectedSavings = originalIncome - originalSpent;
 
         const originalDto = {
             income: originalIncome,
@@ -38,15 +37,15 @@ export class CalculateSimulationUseCase implements ICalculateSimulationUseCase {
             })) : [],
             totalNeeds: originalNeedsSpent,
             totalWants: originalWantsSpent,
-            totalSavings: originalSavingsSpent,
+            totalSavings: Math.max(0, originalProjectedSavings), // Use projected savings
             needsTarget: originalIncome * 0.50,
             wantsTarget: originalIncome * 0.30,
             savingsTarget: originalIncome * 0.20,
             totalSpent: originalSpent,
-            currentMonthBalance: originalBalance,
-            healthScore: generateInsights({
+            currentMonthBalance: originalProjectedSavings,
+            healthScore: Math.round(generateInsights({
                 totalSpent: originalSpent,
-                lastMonthSpent: originalSpent, // Baseline for simulation
+                lastMonthSpent: originalSpent,
                 percentageChange: 0,
                 topCategory: 'N/A',
                 topCategoryChange: 0,
@@ -54,13 +53,12 @@ export class CalculateSimulationUseCase implements ICalculateSimulationUseCase {
                 investmentRatio: 0,
                 needsRatio: originalIncome > 0 ? originalNeedsSpent / originalIncome : 0,
                 wantsRatio: originalIncome > 0 ? originalWantsSpent / originalIncome : 0
-            }).healthScore
+            }).healthScore)
         } as ExpenseTrackerDTO;
 
         let simulatedIncome = originalIncome;
         let simulatedNeeds = originalNeedsSpent;
         let simulatedWants = originalWantsSpent;
-        let simulatedSavings = originalSavingsSpent;
 
         for (const adj of data.adjustments) {
             if (adj.type === AdjustmentType.INCOME) {
@@ -68,7 +66,6 @@ export class CalculateSimulationUseCase implements ICalculateSimulationUseCase {
             } else if (adj.type === AdjustmentType.CATEGORY) {
                 if (adj.categoryType === 'NEED') simulatedNeeds += adj.amount;
                 if (adj.categoryType === 'WANT') simulatedWants += adj.amount;
-                if (adj.categoryType === 'SAVING') simulatedSavings += adj.amount;
             }
         }
 
@@ -76,21 +73,22 @@ export class CalculateSimulationUseCase implements ICalculateSimulationUseCase {
         const simulatedWantsTarget = simulatedIncome * 0.30;
         const simulatedSavingsTarget = simulatedIncome * 0.20;
 
-        const simulatedSpent = simulatedNeeds + simulatedWants;
+        const simulatedSpent = Math.max(0, simulatedNeeds) + Math.max(0, simulatedWants);
         const simulatedBalance = simulatedIncome - simulatedSpent;
+        const simulatedProjectedSavings = simulatedBalance; // All leftover is projected savings
 
         const simulatedDto = {
             ...originalDto,
             income: simulatedIncome,
             totalNeeds: Math.max(0, simulatedNeeds),
             totalWants: Math.max(0, simulatedWants),
-            totalSavings: Math.max(0, simulatedSavings),
+            totalSavings: Math.max(0, simulatedProjectedSavings),
             needsTarget: simulatedNeedsTarget,
             wantsTarget: simulatedWantsTarget,
             savingsTarget: simulatedSavingsTarget,
             totalSpent: simulatedSpent,
             currentMonthBalance: simulatedBalance,
-            healthScore: generateInsights({
+            healthScore: Math.round(generateInsights({
                 totalSpent: simulatedSpent,
                 lastMonthSpent: originalSpent,
                 percentageChange: originalSpent > 0 ? ((simulatedSpent - originalSpent) / originalSpent) * 100 : 0,
@@ -100,7 +98,7 @@ export class CalculateSimulationUseCase implements ICalculateSimulationUseCase {
                 investmentRatio: 0,
                 needsRatio: simulatedIncome > 0 ? simulatedNeeds / simulatedIncome : 0,
                 wantsRatio: simulatedIncome > 0 ? simulatedWants / simulatedIncome : 0
-            }).healthScore
+            }).healthScore)
         } as ExpenseTrackerDTO;
 
         const impact = {

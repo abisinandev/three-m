@@ -60,7 +60,7 @@ export class AdminDashboardUseCase implements IAdminDashboardUseCase {
 
         const recentTransactions = recentTransactionsData.map(tx => ({
             id: tx.transactionId,
-            user: "User", // Ideally populate user details or map from tx
+            user: "User", 
             amount: tx.amount,
             type: tx.type,
             status: tx.status,

@@ -21,14 +21,13 @@ import { TopSummary } from '../components/TopSummary';
 import { BudgetPattern } from '../components/BudgetPattern';
 import { MonthPicker } from '../components/MonthPicker';
 import { SimulationTool } from '../components/SimulationTool';
-import { SimulationResultView } from '../components/SimulationResult';
-import type { SimulationResult } from '../types/expense-types';
+import { BudgetAlerts } from '../components/BudgetAlerts';
 
 
 import { formatCurrency } from '../helpers/expense-helpers';
 import { CHART_COLORS } from '../constants/expense-constants';
 import type { Category, TransactionType } from '../types/expense-tracker.types';
-import type { Expense } from '../types/expense-types';
+import type { Expense } from '../types/expense.types';
 
 const ExpenseTracker = () => {
     const [selectedMonth, setSelectedMonth] = useState(startOfMonth(new Date()));
@@ -38,7 +37,7 @@ const ExpenseTracker = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [filterCategory, setFilterCategory] = useState<string>('All');
     const [searchQuery, setSearchQuery] = useState('');
-    const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
+
 
 
     const { dashboardData, analyticsData, isDashboardLoading, isAnalyticsLoading } = useExpenseTracker(selectedMonth);
@@ -61,24 +60,18 @@ const ExpenseTracker = () => {
     const filteredSavings = filteredExpenses.filter((e: Expense) => e.type === 'SAVING').reduce((sum: number, e: Expense) => sum + e.amount, 0);
     const filteredSpent = filteredNeeds + filteredWants;
 
-    const needsTarget = simulationResult ? simulationResult.simulated.needsTarget : (dashboardData?.needsTarget || 0);
-    const wantsTarget = simulationResult ? simulationResult.simulated.wantsTarget : (dashboardData?.wantsTarget || 0);
-    const savingsTarget = simulationResult ? simulationResult.simulated.savingsTarget : (dashboardData?.savingsTarget || 0);
+    const needsTarget = dashboardData?.needsTarget || 0;
+    const wantsTarget = dashboardData?.wantsTarget || 0;
+    const savingsTarget = dashboardData?.savingsTarget || 0;
 
-    const effectiveIncome = simulationResult ? simulationResult.simulated.income : totalIncome;
-    const effectiveSpent = simulationResult ? (Number(simulationResult.simulated.totalNeeds) + Number(simulationResult.simulated.totalWants)) : filteredSpent;
-    const effectiveNeeds = simulationResult ? simulationResult.simulated.totalNeeds : filteredNeeds;
-    const effectiveWants = simulationResult ? simulationResult.simulated.totalWants : filteredWants;
-    const effectiveSavings = simulationResult ? (simulationResult.simulated.totalSavings || 0) : filteredSavings;
-
-    const currentBalance = effectiveIncome - effectiveSpent;
-    const usagePercent = effectiveIncome > 0 ? (effectiveSpent / effectiveIncome) * 100 : 0;
-    const unspentBalance = Math.max(0, currentBalance - effectiveSavings);
+    const currentBalance = totalIncome - filteredSpent;
+    const usagePercent = totalIncome > 0 ? (filteredSpent / totalIncome) * 100 : 0;
+    const unspentBalance = Math.max(0, currentBalance - filteredSavings);
 
     const chartData = [
-        { name: 'Needs', value: effectiveNeeds, color: CHART_COLORS.needs },
-        { name: 'Wants', value: effectiveWants, color: (Number(effectiveWants) / effectiveIncome) > 0.3 ? CHART_COLORS.wants.high : CHART_COLORS.wants.normal },
-        { name: 'Savings', value: effectiveSavings, color: CHART_COLORS.savings },
+        { name: 'Needs', value: filteredNeeds, color: CHART_COLORS.needs },
+        { name: 'Wants', value: filteredWants, color: (filteredWants / totalIncome) > 0.3 ? CHART_COLORS.wants.high : CHART_COLORS.wants.normal },
+        { name: 'Savings', value: filteredSavings, color: CHART_COLORS.savings },
     ];
 
 
@@ -138,17 +131,24 @@ const ExpenseTracker = () => {
                 ) : activeTab === 'dashboard' ? (
                     <div className="flex flex-col gap-4">
 
-
-                        <TopSummary
-                            filteredSpent={effectiveSpent}
-                            currentBalance={currentBalance}
-                            totalIncome={effectiveIncome}
-                            incomeSourcesCount={incomeSources.length}
-                            usagePercent={usagePercent}
-                            filteredSpentMinusIncome={effectiveSpent - effectiveIncome}
-                            filteredSavings={effectiveSavings}
+                        <BudgetAlerts
+                            totalIncome={totalIncome}
+                            filteredSpent={filteredSpent}
+                            filteredNeeds={filteredNeeds}
+                            filteredWants={filteredWants}
+                            needsTarget={needsTarget}
+                            wantsTarget={wantsTarget}
                         />
 
+                        <TopSummary
+                            filteredSpent={filteredSpent}
+                            currentBalance={currentBalance}
+                            totalIncome={totalIncome}
+                            incomeSourcesCount={incomeSources.length}
+                            usagePercent={usagePercent}
+                            filteredSpentMinusIncome={filteredSpent - totalIncome}
+                            filteredSavings={filteredSavings}
+                        />
 
                         <div className="grid grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
                             <div className="flex flex-col gap-4">
@@ -190,14 +190,14 @@ const ExpenseTracker = () => {
                                 <BudgetPattern
                                     finalChartData={finalChartData}
                                     activeChartData={activeChartData}
-                                    filteredSpent={effectiveSpent}
-                                    totalIncome={effectiveIncome}
+                                    filteredSpent={filteredSpent}
+                                    totalIncome={totalIncome}
                                     needsTarget={needsTarget}
                                     wantsTarget={wantsTarget}
                                     savingsTarget={savingsTarget}
-                                    filteredNeeds={effectiveNeeds}
-                                    filteredWants={effectiveWants}
-                                    filteredSavings={effectiveSavings}
+                                    filteredNeeds={filteredNeeds}
+                                    filteredWants={filteredWants}
+                                    filteredSavings={filteredSavings}
                                     unspentBalance={unspentBalance}
                                 />
 
@@ -220,12 +220,7 @@ const ExpenseTracker = () => {
 
                                 <SimulationTool
                                     month={format(selectedMonth, 'yyyy-MM')}
-                                    onResult={setSimulationResult}
                                 />
-
-                                {simulationResult && (
-                                    <SimulationResultView result={simulationResult} />
-                                )}
                             </div>
 
                         </div>
