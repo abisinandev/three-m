@@ -20,6 +20,7 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
             name: stock.name,
             exchange: stock.exchange,
             sector: stock.sector,
+            logo: stock.logo,
             isTradable: stock.isTradable,
             isVisible: stock.isVisible,
         }));

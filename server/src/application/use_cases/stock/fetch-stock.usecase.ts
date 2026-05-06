@@ -20,6 +20,7 @@ export class FetchStocksUseCase implements IFetchStocksUseCase {
         const safeOptions: StockQueryOptions = {
             ...options,
             isVisible: true,
+            isTradable: true
         };
 
         const result = await this._stockRepository.findAllStocks(safeOptions);

@@ -4,6 +4,7 @@ export const STOCK_TYPES = {
 
     StockWebSocketClient: Symbol.for("StockWebSocketClient"),
     MarketDataProvider: Symbol.for("MarketDataProvider"),
+    StockSearchProvider: Symbol.for("StockSearchProvider"),
     FetchStocksUseCase: Symbol.for("FetchStocksUseCase"),
     UserStocksController: Symbol.for("UserStocksController"),
 

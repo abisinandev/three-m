@@ -71,4 +71,6 @@ export const env = {
   YAHOO_FINANCE_RSS_DEFAULT: requireEnv("YAHOO_FINANCE_RSS_DEFAULT"),
 
   GROQ_API_KEY: requireEnv("GROQ_API_KEY"),
+
+  TWELVE_DATA_API_KEY: requireEnv("TWELVE_DATA_API_KEY"),
 };

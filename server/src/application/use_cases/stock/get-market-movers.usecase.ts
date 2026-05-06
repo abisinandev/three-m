@@ -18,7 +18,8 @@ export class GetMarketMoversUseCase implements IGetMarketMoversUseCase {
         const result = await this._stockRepository.findAllStocks({
             page: 1,
             limit: 40,
-            isVisible: true
+            isVisible: true,
+            isTradable: true
         });
 
         const stockDTOs = StockMapper.toDTOList(result.data);

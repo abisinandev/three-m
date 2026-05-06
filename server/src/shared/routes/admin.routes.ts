@@ -25,6 +25,8 @@ export enum AdminProtectedRoutes {
 export enum AdminStockRoutes {
     LIST_STOCKS = "/",
     UPDATE_STATUS = "/:symbol/status",
+    SEARCH_STOCKS = "/search",
+    ADD_STOCK = "/add"
 }
 
 export enum AdminSipRoutes {

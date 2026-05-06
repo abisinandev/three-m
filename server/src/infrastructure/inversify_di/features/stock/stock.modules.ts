@@ -103,9 +103,12 @@ import { ISlTpOrderQueue } from "@application/interfaces/services/stocks/sl-tp-o
 import { SlTpOrderQueue } from "@infrastructure/providers/stocks/queue/sl-tp-order-queue";
 import { SignalQueue } from "@infrastructure/providers/algos/queue/signal/signal.queue";
 import { TradeRepository } from "@infrastructure/databases/repository/stock/trade.repository";
+import { IStockSearchProvider } from "@application/interfaces/repositories/stock/stock-search-provider.interface";
+import { TwelveDataSearchProvider } from "@infrastructure/providers/stocks/twelve-data/twelve-data-search.provider";
 
 export const StockModules = new ContainerModule(({ bind }) => {
     bind<IStockRepository>(STOCK_TYPES.StockRepository).to(StockRepository);
+    bind<IStockSearchProvider>(STOCK_TYPES.StockSearchProvider).to(TwelveDataSearchProvider);
 
     bind<IStockWebsocketProvider>(STOCK_TYPES.StockWebSocketClient).to(StockWebSocketClient)
     bind<IFetchStocksUseCase>(STOCK_TYPES.FetchStocksUseCase).to(FetchStocksUseCase);
