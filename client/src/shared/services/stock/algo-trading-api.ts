@@ -21,9 +21,6 @@ export interface ApiResponse {
 }
 
 export class AlgoTradingApiService {
-  /**
-   * Confirms an algo signal and places the corresponding market order
-   */
   static async confirmSignal(data: ConfirmSignalRequest): Promise<ApiResponse> {
     const response = await api.post<ApiResponse>(
       `/user/stock/algo-trading/confirm-signal`,

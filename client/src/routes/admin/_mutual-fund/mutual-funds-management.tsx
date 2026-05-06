@@ -1,4 +1,4 @@
-import MutualFundsPage from '@modules/admin/page/MutualFundManagementPage'
+import MutualFundsPage from '@/modules/admin/mutual-fund/pages/MutualFundManagementPage'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute(

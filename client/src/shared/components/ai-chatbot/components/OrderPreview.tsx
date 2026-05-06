@@ -1,6 +1,6 @@
 import { Zap, Loader2, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
-import { confirmBotOrder } from '../../../services/chatbot/chatbotApi';
+import { confirmBotOrder } from '../../../services/chatbot/chatbot-api';
 import { toast } from 'sonner';
 
 interface OrderPreviewProps {
@@ -124,3 +124,4 @@ export function OrderPreview({ data, onExecuted }: OrderPreviewProps) {
         </div>
     );
 }
+

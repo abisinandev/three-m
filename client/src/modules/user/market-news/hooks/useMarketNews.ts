@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getMarketNews } from "@shared/services/market-new-api/marketNewsApi";
+import { getMarketNews } from "@shared/services/market-new-api/market-news-api";
 
 export const useMarketNews = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -33,3 +33,4 @@ export const useMarketNews = () => {
         setActiveCategory: (c: string) => { setActiveCategory(c); setPage(1); }
     };
 };
+

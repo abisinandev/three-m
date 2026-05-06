@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { sendChatMessage, getChatHistory } from '@shared/services/chatbot/chatbotApi';
+import { sendChatMessage, getChatHistory } from '@shared/services/chatbot/chatbot-api';
 import type { ChatMessage } from '../types/chatbot.types';
 
 export function useAiChatbot() {
@@ -104,3 +104,4 @@ export function useAiChatbot() {
         closePremiumModal,
     };
 }
+

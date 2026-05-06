@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { createChart, CandlestickSeries } from 'lightweight-charts';
 import type { IChartApi, ISeriesApi, Time, DeepPartial, ChartOptions } from 'lightweight-charts';
-import { socketService } from '@shared/services/socket';
-import { marketDataService } from '@shared/services/marketData.service';
+import { socketService } from '@/socket/socket';
+import { marketDataService } from '@/shared/services/external/market-data.service';
 
 export interface Candle {
     time: Time;
@@ -208,3 +208,4 @@ export const useMarketData = (
 
     return { isLoading, currentPrice, status };
 };
+

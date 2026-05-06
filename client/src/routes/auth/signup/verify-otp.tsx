@@ -1,4 +1,4 @@
-import SignupOTP from '@modules/user/pages/SignupOtpPage';
+import SignupOTP from '@modules/user/auth/pages/SignupOtpPage';
 import { useAuthStore } from '@stores/user/UserAuthStore';
 import { createFileRoute, redirect } from '@tanstack/react-router'
 

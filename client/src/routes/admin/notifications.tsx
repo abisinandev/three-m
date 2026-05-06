@@ -7,3 +7,4 @@ export const Route = createFileRoute('/admin/notifications')({
 function RouteComponent() {
   return <div>Hello "/admin/notifications"!</div>
 }
+

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FetchAdminBaseStrategies, UpdateAdminStrategyRiskConfig } from '@/shared/services/admin/algo-trading/AdminAlgoTradingApi';
+import { FetchAdminBaseStrategies, UpdateAdminStrategyRiskConfig } from '@/shared/services/admin/algo-trading/admin-algo-trading-api';
 import { Edit2, Shield, Target, TrendingDown, TrendingUp, Info, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -195,3 +195,4 @@ const BaseStrategiesRiskTable = () => {
 };
 
 export default BaseStrategiesRiskTable;
+

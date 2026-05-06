@@ -1,4 +1,4 @@
-import ResetPasswordPage from '@modules/user/pages/ResetPasswordPage'
+import ResetPasswordPage from '@modules/user/auth/pages/ResetPasswordPage'
 import { useAuthStore } from '@stores/user/UserAuthStore'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 

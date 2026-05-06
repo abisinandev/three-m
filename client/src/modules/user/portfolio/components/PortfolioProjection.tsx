@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Loader2 } from 'lucide-react';
-import { getPortfolioProjection } from '@shared/services/feature/portfolio/PortfolioApi';
+import { getPortfolioProjection } from '@/shared/services/portfolio/portfolio-api';
 import type { IPortfolioProjectionResponse } from '@shared/types/portfolio.types';
 
 const fmt = (n: number) =>
@@ -323,3 +323,4 @@ export function PortfolioProjection() {
         </div>
     );
 }
+

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Eye, EyeOff, AlertCircle, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
-import { ChangePasswordApi } from '@shared/services/user/ChangePasswordApi';
+import { ChangePasswordApi } from '@shared/services/user/change-password-api';
 import type { AxiosError } from 'axios';
 
 interface ChangePasswordModalProps {

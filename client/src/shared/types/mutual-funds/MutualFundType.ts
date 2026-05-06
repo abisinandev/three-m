@@ -15,7 +15,7 @@ export type RiskLevel = 'Low' | 'Medium' | 'High';
 
 export type FundStatus = 'Active' | 'Inactive';
 
-export interface IMutualFund {
+export interface MutualFundType {
     id: string;
     schemeCode: string;
     schemeName: string;
@@ -41,8 +41,9 @@ export interface IMutualFund {
 };
 
 
+
 export interface PaginatedMutualFundsResponse {
-    data: IMutualFund[];
+    data: MutualFundType[];
     page: number;
     limit: number;
     total: number;

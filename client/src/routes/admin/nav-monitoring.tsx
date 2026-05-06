@@ -7,3 +7,4 @@ export const Route = createFileRoute('/admin/nav-monitoring')({
 function RouteComponent() {
   return <div>Hello "/admin/nav-monitoring"!</div>
 }
+

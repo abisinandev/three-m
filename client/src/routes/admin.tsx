@@ -1,4 +1,4 @@
-import adminApi from '@lib/axiosAdmin';
+import adminApi from '@/lib/axios-admin';
 import NotFoundPage from '@shared/components/error/NotFoundComponent';
 import { PROFILE_URL } from '@shared/constants/adminConstants';
 import AdminLayout from '@shared/layouts/admin/AdminLayout'

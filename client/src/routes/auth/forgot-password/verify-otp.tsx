@@ -1,4 +1,4 @@
-import ForgotPasswordOTP from '@modules/user/pages/ForgotPasswordOtp'
+import ForgotPasswordOTP from '@modules/user/auth/pages/ForgotPasswordOtp'
 import { useAuthStore } from '@stores/user/UserAuthStore';
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
@@ -25,4 +25,5 @@ export const Route = createFileRoute('/auth/forgot-password/verify-otp')({
   },
   component: ForgotPasswordOTP,
 })
+
 

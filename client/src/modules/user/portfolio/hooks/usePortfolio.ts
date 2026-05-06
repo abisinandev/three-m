@@ -6,7 +6,7 @@ import {
     getStockHoldings,
     getPortfolioSummary,
     getHistories,
-} from '@shared/services/feature/portfolio/PortfolioApi';
+} from '@/shared/services/portfolio/portfolio-api';
 import type {
     IPortfolioSummaryResponse,
 } from '@shared/types/portfolio.types';
@@ -137,3 +137,4 @@ export const usePortfolio = () => {
         handlePageChange,
     };
 };
+

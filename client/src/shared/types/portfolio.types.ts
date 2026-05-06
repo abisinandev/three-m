@@ -6,7 +6,6 @@ export interface IInvestmentResponse {
     name?: string;
     assetType?: "MF" | "STOCK";
     
-    // Legacy mapping support for existing UI
     schemeCode: string;
     amount: number;
     units?: number;

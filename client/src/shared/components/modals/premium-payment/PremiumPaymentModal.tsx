@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { usePremiumPlan } from '@/shared/services/admin/subscription/SubscriptionApi';
+import { usePremiumPlan } from '@/shared/services/admin/subscription/subscription-api';
 import { toast } from 'sonner';
 import api from "@lib/axiosUser";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
@@ -142,3 +142,4 @@ const PremiumPaymentModal = ({ isOpen, onClose }: PremiumPaymentModalProps) => {
 };
 
 export default PremiumPaymentModal;
+

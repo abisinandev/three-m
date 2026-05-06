@@ -1,6 +1,6 @@
 import NotFoundPage from '@shared/components/error/NotFoundComponent';
 import UserLayout from '@shared/layouts/user/UserLayout';
-import { ProfileApi } from '@shared/services/user/ProfileApi';
+import { ProfileApi } from '@shared/services/user/profile-api';
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { ROUTES } from '@shared/constants/routes';
 
@@ -16,4 +16,5 @@ export const Route = createFileRoute('/user')({
     notFoundComponent: () => <NotFoundPage />,
     component: UserLayout,
 })
+
 
