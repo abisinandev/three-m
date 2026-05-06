@@ -14,6 +14,7 @@ import { MutualFundsTable } from '../components/MutualFundTable';
 import { fetchMutualFunds, updateStatus } from '@shared/services/admin/mutual-fund-management/mutual-fund-admin-side';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { ROUTES } from '@shared/constants/routes';
+import ConfirmModal from '@shared/components/modals/ConfirmModal';
 
 
 export default function MutualFundsPage() {
@@ -25,6 +26,18 @@ export default function MutualFundsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('name-asc');
     const [sortOpen, setSortOpen] = useState(false);
+    
+    const [confirmModal, setConfirmModal] = useState<{
+        isOpen: boolean;
+        fund: MutualFundType | null;
+        newStatus: 'Active' | 'Inactive' | null;
+        isLoading: boolean;
+    }>({
+        isOpen: false,
+        fund: null,
+        newStatus: null,
+        isLoading: false,
+    });
 
     const sortRef = useRef<HTMLDivElement>(null);
     const [debouncedSearch] = useDebounce(searchTerm, 400);
@@ -66,13 +79,26 @@ export default function MutualFundsPage() {
         };
     }, [data]);
 
-    const handleStatusToggle = async (fund: MutualFundType, newStatus: 'Active' | 'Inactive') => {
-        if (!confirm(`Change status to ${newStatus}?`)) return;
+    const handleStatusToggle = (fund: MutualFundType, newStatus: 'Active' | 'Inactive') => {
+        setConfirmModal({
+            isOpen: true,
+            fund,
+            newStatus,
+            isLoading: false,
+        });
+    };
+
+    const confirmStatusChange = async () => {
+        if (!confirmModal.fund || !confirmModal.newStatus) return;
+        
+        setConfirmModal(prev => ({ ...prev, isLoading: true }));
         try {
-            await updateStatus(fund, newStatus);
+            await updateStatus(confirmModal.fund, confirmModal.newStatus);
             queryClient.invalidateQueries({ queryKey: ['mutual-funds'] });
+            setConfirmModal({ isOpen: false, fund: null, newStatus: null, isLoading: false });
         } catch {
             alert('Failed to update status');
+            setConfirmModal(prev => ({ ...prev, isLoading: false }));
         }
     };
 
@@ -235,6 +261,23 @@ export default function MutualFundsPage() {
                     onPageChange={setPage}
                 />
             </div>
+
+            <ConfirmModal
+                isOpen={confirmModal.isOpen}
+                onClose={() => setConfirmModal({ isOpen: false, fund: null, newStatus: null, isLoading: false })}
+                onConfirm={confirmStatusChange}
+                title="Confirm Status Change"
+                message={
+                    <>
+                        Are you sure you want to change the status of <br/>
+                        <span className="text-white">{(confirmModal.fund as any)?.name}</span> <br/>
+                        to <span className={confirmModal.newStatus === 'Active' ? 'text-[#00C853]' : 'text-amber-500'}>{confirmModal.newStatus}</span>?
+                    </>
+                }
+                confirmText={`Mark ${confirmModal.newStatus}`}
+                variant={confirmModal.newStatus === 'Active' ? 'success' : 'warning'}
+                loading={confirmModal.isLoading}
+            />
         </div>
     );
 }

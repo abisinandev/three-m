@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import { Pagination } from '@shared/components/pagination/Pagination';
 import { StockTable } from '../components/StockTable';
 import { useStockManagement } from '../hooks/useStockManagement';
 import { StockFilters } from '../components/StockFilters';
+import { StockOnboardingModal } from '../components/StockOnboardingModal';
+import { Plus } from 'lucide-react';
 
 export default function StockManagementPage() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const {
         filters,
         stocks,
@@ -12,7 +16,8 @@ export default function StockManagementPage() {
         isError,
         updateFilters,
         debouncedSearch,
-        handleStatusToggle
+        handleStatusToggle,
+        refetch
     } = useStockManagement();
 
     return (
@@ -28,19 +33,37 @@ export default function StockManagementPage() {
             <div className="px-6 pt-6 max-w-[1600px] mx-auto space-y-6">
                 {/* Header */}
                 <div className="flex justify-between items-end">
-                    <div>
-                        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
-                            Stock Management
-                        </h1>
-                        <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
-                            Configuration for {total.toLocaleString()} assets across markets.
-                        </p>
+                    <div className="flex items-end gap-6">
+                        <div>
+                            <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                                Stock Management
+                            </h1>
+                            <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+                                Configuration for {total.toLocaleString()} assets across markets.
+                            </p>
+                        </div>
+
+                        <button 
+                            onClick={() => setIsModalOpen(true)}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold transition-all shadow-lg shadow-teal-900/20 active:scale-95"
+                        >
+                            <Plus size={14} />
+                            Onboard Assets
+                        </button>
                     </div>
                     
                     <div style={{ fontSize: 10, color: '#5a5f6e', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                         Admin Console / Stocks
                     </div>
                 </div>
+
+                <StockOnboardingModal 
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSuccess={() => {
+                        refetch();
+                    }}
+                />
 
       
                 <StockFilters 

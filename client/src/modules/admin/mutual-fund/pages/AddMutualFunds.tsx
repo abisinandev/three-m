@@ -9,11 +9,13 @@ import {
     Search,
     X,
     Upload,
-    Edit2,
     CheckCircle,
     Image,
     Loader2,
     AlertCircle,
+    Building2,
+    Briefcase,
+    ShieldAlert
 } from 'lucide-react';
 
 import {
@@ -24,9 +26,11 @@ import {
     isValidFund,
 } from '@utils/mutualFundUtils/mutual-fund-utilities';
 
-import { addFundApi, type AddFundPayload } from '@shared/services/admin/mutual-fund-management/mutual-fund-admin-side';
+import { addFundApi, } from '@shared/services/admin/mutual-fund-management/mutual-fund-admin-side';
 import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
+import { useAdminStore } from '@/stores/admin/useAdminStore';
+import type { AddFundPayload } from '@/shared/types/admin/mutual-fund-management.types';
 
 type MfScheme = {
     schemeCode: number;
@@ -34,15 +38,12 @@ type MfScheme = {
 };
 
 export default function AddMutualFundPage() {
+    const adminId = useAdminStore(state => state.data?.adminCode || 'admin');
     const queryClient = useQueryClient();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [selectedScheme, setSelectedScheme] = useState<MfScheme | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
-    const [category, setCategory] = useState('');
-    const [subCategory, setSubCategory] = useState('');
-    const [risk, setRisk] = useState('');
-    const [isManualEdit, setIsManualEdit] = useState(false);
 
     const [logoFile, setLogoFile] = useState<File | null>(null);
     const [logoPreview, setLogoPreview] = useState('');
@@ -54,7 +55,9 @@ export default function AddMutualFundPage() {
     const { data: allSchemes, isLoading, error } = useQuery({
         queryKey: ['mf-master'],
         queryFn: async () => {
-            const res = await axios.get<MfScheme[]>('https://api.mfapi.in/mf');
+            const url = import.meta.env.VITE_MF_API_URL;
+            if (!url) throw new Error("VITE_MF_API_URL is not defined in environment variables");
+            const res = await axios.get<MfScheme[]>(url);
             return res.data;
         },
         staleTime: 1000 * 60 * 60 * 24, // 24 hours
@@ -70,9 +73,9 @@ export default function AddMutualFundPage() {
                 schemeCode: String(selectedScheme.schemeCode),
                 schemeName: selectedScheme.schemeName,
                 amc: extractAMC(selectedScheme.schemeName),
-                category: category || autoCategory(selectedScheme.schemeName),
-                subCategory: subCategory || autoSubCategory(selectedScheme.schemeName),
-                risk: risk || autoRisk(subCategory || autoSubCategory(selectedScheme.schemeName)),
+                category: autoCategory(selectedScheme.schemeName),
+                subCategory: autoSubCategory(selectedScheme.schemeName),
+                risk: autoRisk(autoSubCategory(selectedScheme.schemeName)),
                 logo: logoUrl || '',
             };
 
@@ -124,7 +127,7 @@ export default function AddMutualFundPage() {
         setSubmitError(null);
 
         try {
-            const signatureData = await GetSignatureApi('fund-logo', String(selectedScheme?.schemeCode));
+            const signatureData = await GetSignatureApi(adminId, 'fund-logo');
             const result = await uploadToCloudinary(file, signatureData.data);
             setLogoUrl(result.secure_url);
         } catch (err: any) {
@@ -140,10 +143,6 @@ export default function AddMutualFundPage() {
         setLogoPreview('');
         setLogoUrl('');
         if (fileInputRef.current) fileInputRef.current.value = '';
-    };
-
-    const toggleManualEdit = () => {
-        setIsManualEdit((prev) => !prev);
     };
 
     const handleAddFund = () => {
@@ -165,7 +164,7 @@ export default function AddMutualFundPage() {
     const filteredSchemes = useMemo(() => {
         if (!allSchemes) return [];
         const valid = allSchemes.filter((f) => isValidFund(f.schemeName));
-        if (!searchQuery.trim()) return valid.slice(0, 100); // limit even when no query
+        if (!searchQuery.trim()) return valid.slice(0, 100);
 
         const lowerQuery = searchQuery.toLowerCase();
         return valid
@@ -182,34 +181,25 @@ export default function AddMutualFundPage() {
 
     const handleSelectScheme = (scheme: MfScheme) => {
         setSelectedScheme(scheme);
-        const sub = autoSubCategory(scheme.schemeName);
-        setCategory(autoCategory(scheme.schemeName));
-        setSubCategory(sub);
-        setRisk(autoRisk(sub));
-        setIsManualEdit(false);
         setSearchQuery('');
         setSubmitError(null);
     };
 
     const handleClearSelection = () => {
         setSelectedScheme(null);
-        setCategory('');
-        setSubCategory('');
-        setRisk('');
         setLogoFile(null);
         setLogoPreview('');
         setLogoUrl('');
-        setIsManualEdit(false);
         setSubmitError(null);
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-black text-white flex items-center justify-center">
+            <div className="flex-1 bg-[#0b0c0e] text-white flex items-center justify-center min-h-[500px]">
                 <div className="flex items-center gap-3">
-                    <Loader2 className="animate-spin" size={20} />
-                    <p>Loading mutual fund schemes...</p>
+                    <Loader2 className="animate-spin text-emerald-500" size={20} />
+                    <p className="text-sm text-neutral-400">Loading master list...</p>
                 </div>
             </div>
         );
@@ -217,249 +207,269 @@ export default function AddMutualFundPage() {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-black text-white flex items-center justify-center">
+            <div className="flex-1 bg-[#0b0c0e] text-white flex items-center justify-center min-h-[500px]">
                 <div className="text-center">
-                    <AlertCircle size={32} className="mx-auto text-red-400 mb-3" />
-                    <p className="text-red-400">Failed to load schemes</p>
-                    <p className="text-neutral-500 text-sm mt-2">Check your connection and try again</p>
+                    <AlertCircle size={24} className="mx-auto text-red-500 mb-2" />
+                    <p className="text-sm text-red-400">Failed to load schemes</p>
+                    <button onClick={() => queryClient.invalidateQueries({ queryKey: ['mf-master'] })} className="text-xs text-emerald-500 mt-2 hover:underline">Retry</button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-black text-white flex flex-col">
-            <main className="flex-1 p-5 overflow-y-auto pb-24">
-                <div className="max-w-3xl mx-auto">
-                    <div className="mb-8">
-                        <h2 className="text-2xl font-bold flex items-center gap-3">
-                            <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
-                                <Plus size={20} className="text-emerald-400" />
-                            </div>
-                            Add New Mutual Fund
-                        </h2>
-                        <p className="text-sm text-neutral-400 mt-2">
-                            Search and add verified growth/direct plans from official sources
+        <div
+            style={{
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                minHeight: '100vh',
+                background: '#0b0c0e',
+                color: '#e8eaed',
+                paddingBottom: 40
+            }}
+        >
+            <main className="px-6 pt-6 max-w-[1200px] mx-auto space-y-6">
+                <div className="flex justify-between items-end">
+                    <div>
+                        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                            Onboard Mutual Funds
+                        </h1>
+                        <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+                            Search and verify growth/direct plans for the platform
                         </p>
                     </div>
 
-                    <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6 mb-8">
-                        <label className="text-sm font-medium text-neutral-300 mb-2 block">
+                    <div style={{ fontSize: 10, color: '#5a5f6e', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                        Admin Console / Mutual Funds
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    {/* Left Column: Search & Selection */}
+                    <div className="bg-[#111214] border border-[#1e2025] rounded-xl p-5 shadow-sm">
+                        <label className="text-xs font-semibold text-[#e8eaed] mb-2 block">
                             Search Scheme
                         </label>
                         <div className="relative">
-                            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" />
+                            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5f6e]" />
                             <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search by fund name, e.g., HDFC Flexi Cap Growth Direct"
-                                className="w-full pl-11 pr-12 py-3.5 bg-neutral-800 border border-neutral-700 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-colors"
-                                autoFocus
+                                placeholder="e.g. HDFC Flexi Cap Growth Direct"
+                                className="w-full pl-9 pr-8 py-2.5 bg-[#0b0c0e] border border-[#1e2025] rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder:text-[#5a5f6e]"
                             />
                             {searchQuery && (
                                 <button
                                     onClick={() => setSearchQuery('')}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5a5f6e] hover:text-white"
                                 >
-                                    <X size={18} />
+                                    <X size={14} />
                                 </button>
                             )}
                         </div>
 
                         {searchQuery && (
-                            <div className="mt-4 max-h-96 overflow-y-auto border border-neutral-800 rounded-lg bg-neutral-950">
+                            <div className="mt-3 max-h-[300px] overflow-y-auto border border-[#1e2025] rounded-lg bg-[#0b0c0e] custom-scrollbar">
                                 {filteredSchemes.length === 0 ? (
-                                    <div className="p-8 text-center">
-                                        <p className="text-neutral-500">No schemes found matching your search</p>
+                                    <div className="p-4 text-center">
+                                        <p className="text-xs text-[#5a5f6e]">No schemes found matching your search</p>
                                     </div>
                                 ) : (
-                                    <div className="divide-y divide-neutral-800">
+                                    <div className="divide-y divide-[#1e2025]">
                                         {filteredSchemes.map((scheme) => (
                                             <button
                                                 key={scheme.schemeCode}
                                                 onClick={() => handleSelectScheme(scheme)}
-                                                className="w-full text-left px-5 py-4 hover:bg-neutral-800/70 transition-colors"
+                                                className="w-full text-left px-4 py-3 hover:bg-[#141518] transition-colors flex items-center justify-between group"
                                             >
-                                                <p className="font-medium text-sm truncate">{scheme.schemeName}</p>
-                                                <p className="text-xs text-neutral-500 mt-1">
-                                                    Scheme Code: {scheme.schemeCode}
-                                                </p>
+                                                <div className="overflow-hidden">
+                                                    <p className="font-medium text-xs text-[#e8eaed] truncate pr-4">{scheme.schemeName}</p>
+                                                    <p className="text-[10px] text-[#5a5f6e] mt-0.5">
+                                                        Code: {scheme.schemeCode}
+                                                    </p>
+                                                </div>
+                                                <Plus size={14} className="text-[#5a5f6e] group-hover:text-emerald-500 flex-shrink-0" />
                                             </button>
                                         ))}
-                                        {filteredSchemes.length === 50 && (
-                                            <p className="text-center text-xs text-neutral-500 py-3">
-                                                Showing first 50 results. Refine your search.
-                                            </p>
-                                        )}
                                     </div>
                                 )}
                             </div>
                         )}
+
+                        {!searchQuery && !selectedScheme && (
+                            <div className="mt-4 flex flex-col items-center justify-center p-8 border border-dashed border-[#1e2025] rounded-lg bg-[#0b0c0e]">
+                                <Search size={24} className="text-[#1e2025] mb-2" />
+                                <p className="text-xs text-[#5a5f6e]">Search to select a scheme</p>
+                            </div>
+                        )}
                     </div>
 
-                    {selectedScheme && (
-                        <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-6">
-                            <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-lg font-semibold">Selected Scheme</h3>
-                                <div className="flex items-center gap-4">
-                                    <button
-                                        onClick={toggleManualEdit}
-                                        className="text-sm text-neutral-400 hover:text-emerald-400 flex items-center gap-1.5 transition-colors"
-                                    >
-                                        <Edit2 size={15} />
-                                        {isManualEdit ? 'Lock Edits' : 'Edit Fields'}
-                                    </button>
-                                    <button
-                                        onClick={handleClearSelection}
-                                        className="text-sm text-neutral-500 hover:text-neutral-300 flex items-center gap-1.5 transition-colors"
-                                    >
-                                        <X size={15} /> Clear
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Basic Info */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                    {/* Right Column: Configuration */}
+                    {selectedScheme ? (
+                        <div className="bg-[#111214] border border-[#1e2025] rounded-xl p-5 shadow-sm">
+                            <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#1e2025]">
                                 <div>
-                                    <label className="text-xs text-neutral-500 uppercase tracking-wider">Scheme Code</label>
-                                    <p className="mt-1.5 text-sm font-mono bg-neutral-800 px-4 py-3 rounded-lg">
-                                        {selectedScheme.schemeCode}
-                                    </p>
+                                    <h3 className="text-sm font-semibold text-white">Asset Verification</h3>
+                                    <p className="text-[10px] text-[#5a5f6e]">Data is read-only and automatically mapped.</p>
                                 </div>
+                                <button
+                                    onClick={handleClearSelection}
+                                    className="p-1.5 hover:bg-[#1e2025] rounded-md transition-colors text-[#5a5f6e] hover:text-white"
+                                >
+                                    <X size={16} />
+                                </button>
+                            </div>
+
+                            {/* Info display - Read Only */}
+                            <div className="space-y-4 mb-6">
                                 <div>
-                                    <label className="text-xs text-neutral-500 uppercase tracking-wider">AMC</label>
-                                    <p className="mt-1.5 text-sm bg-neutral-800 px-4 py-3 rounded-lg capitalize">
-                                        {amc || 'Not detected'}
-                                    </p>
+                                    <label className="text-[10px] text-[#5a5f6e] uppercase tracking-wider font-bold mb-1 block">Full Scheme Name</label>
+                                    <div className="text-xs bg-[#0b0c0e] border border-[#1e2025] px-3 py-2 rounded-lg break-words text-[#e8eaed]">
+                                        {selectedScheme.schemeName}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="mb-6">
-                                <label className="text-xs text-neutral-500 uppercase tracking-wider">Full Scheme Name</label>
-                                <p className="mt-1.5 text-sm bg-neutral-800 px-4 py-3 rounded-lg break-words">
-                                    {selectedScheme.schemeName}
-                                </p>
-                            </div>
-
-                            <div className="grid grid-cols-3 gap-4 mb-8">
-                                {(['Category', 'Sub Category', 'Risk'] as const).map((label, i) => {
-                                    const value = i === 0 ? category : i === 1 ? subCategory : risk;
-                                    const setValue = i === 0 ? setCategory : i === 1 ? setSubCategory : setRisk;
-                                    const options = i === 0
-                                        ? ['Equity', 'Debt', 'Hybrid', 'Index']
-                                        : i === 1
-                                            ? ['Large Cap', 'Mid Cap', 'Small Cap', 'Flexi Cap', 'Multi Cap', 'ELSS', 'Index', 'Other']
-                                            : ['Low', 'Medium', 'High'];
-
-                                    return (
-                                        <div key={label}>
-                                            <label className="text-xs text-neutral-400 mb-1.5 block">{label}</label>
-                                            <select
-                                                value={value}
-                                                onChange={(e) => setValue(e.target.value)}
-                                                disabled={!isManualEdit}
-                                                className="w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-sm disabled:opacity-60 disabled:cursor-not-allowed focus:border-emerald-500 focus:outline-none transition-colors"
-                                            >
-                                                <option value="">Auto-detected</option>
-                                                {options.map((opt) => (
-                                                    <option key={opt} value={opt}>{opt}</option>
-                                                ))}
-                                            </select>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-[10px] text-[#5a5f6e] uppercase tracking-wider font-bold mb-1 block">Scheme Code</label>
+                                        <div className="text-xs font-mono bg-[#0b0c0e] border border-[#1e2025] px-3 py-2 rounded-lg text-[#e8eaed]">
+                                            {selectedScheme.schemeCode}
                                         </div>
-                                    );
-                                })}
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] text-[#5a5f6e] uppercase tracking-wider font-bold mb-1 block">AMC</label>
+                                        <div className="text-xs bg-[#0b0c0e] border border-[#1e2025] px-3 py-2 rounded-lg capitalize text-[#e8eaed]">
+                                            {amc || 'Not detected'}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-3 pt-2">
+                                    <div className="bg-[#0b0c0e] border border-[#1e2025] p-3 rounded-lg flex flex-col items-center justify-center text-center">
+                                        <Building2 size={14} className="text-emerald-500/70 mb-1" />
+                                        <span className="text-[10px] text-[#5a5f6e] font-medium uppercase mb-0.5">Category</span>
+                                        <span className="text-xs font-semibold text-white">{autoCategory(selectedScheme.schemeName)}</span>
+                                    </div>
+                                    <div className="bg-[#0b0c0e] border border-[#1e2025] p-3 rounded-lg flex flex-col items-center justify-center text-center">
+                                        <Briefcase size={14} className="text-emerald-500/70 mb-1" />
+                                        <span className="text-[10px] text-[#5a5f6e] font-medium uppercase mb-0.5">Sub Category</span>
+                                        <span className="text-xs font-semibold text-white">{autoSubCategory(selectedScheme.schemeName)}</span>
+                                    </div>
+                                    <div className="bg-[#0b0c0e] border border-[#1e2025] p-3 rounded-lg flex flex-col items-center justify-center text-center">
+                                        <ShieldAlert size={14} className="text-emerald-500/70 mb-1" />
+                                        <span className="text-[10px] text-[#5a5f6e] font-medium uppercase mb-0.5">Risk</span>
+                                        <span className="text-xs font-semibold text-white">{autoRisk(autoSubCategory(selectedScheme.schemeName))}</span>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="mb-8">
-                                <label className="text-sm font-medium flex items-center gap-2 mb-4">
-                                    <Image size={18} className="text-emerald-400" />
-                                    Fund Logo <span className="text-neutral-500 font-normal">(Optional)</span>
+                            {/* Logo Upload - The only editable action */}
+                            <div className="mb-6 pt-4 border-t border-[#1e2025]">
+                                <label className="text-[11px] font-semibold flex items-center gap-2 mb-3 text-white">
+                                    <Image size={14} className="text-emerald-500" />
+                                    Fund Logo <span className="text-[#5a5f6e] font-normal">(Optional)</span>
                                 </label>
 
                                 {logoPreview ? (
-                                    <div className="relative max-w-xs mx-auto group">
-                                        <div className="aspect-square bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-xl border-2 border-neutral-700 flex items-center justify-center overflow-hidden">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-16 h-16 bg-[#0b0c0e] rounded-xl border border-[#1e2025] flex items-center justify-center overflow-hidden relative group">
                                             <img
                                                 src={logoPreview}
-                                                alt="Fund logo preview"
-                                                className="max-w-full max-h-full object-contain p-4"
+                                                alt="Logo preview"
+                                                className="w-full h-full object-contain p-2"
                                             />
-                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <button
-                                                    onClick={removeLogo}
-                                                    className="bg-red-500 hover:bg-red-600 p-3 rounded-full transition-colors"
-                                                >
-                                                    <X size={20} />
-                                                </button>
+                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onClick={removeLogo}>
+                                                <X size={16} className="text-white" />
                                             </div>
                                         </div>
-                                        <p className="text-center text-xs text-neutral-400 mt-3 truncate">
-                                            {logoFile?.name}
-                                        </p>
-                                        <p className="text-center text-xs text-emerald-400">
-                                            {(logoFile?.size && Math.round(logoFile.size / 1024)) || 0} KB
-                                        </p>
+                                        <div>
+                                            <p className="text-[10px] text-[#e8eaed] truncate max-w-[150px]">{logoFile?.name}</p>
+                                            <p className="text-[10px] text-emerald-500">{(logoFile?.size && Math.round(logoFile.size / 1024)) || 0} KB</p>
+                                        </div>
                                     </div>
                                 ) : (
-                                    <label
-                                        htmlFor="logo-upload"
-                                        className="block border-2 border-dashed border-neutral-600 hover:border-emerald-500/70 rounded-xl p-10 text-center cursor-pointer transition-all group bg-neutral-800/30 hover:bg-neutral-800/50"
-                                    >
-                                        <Upload size={32} className="mx-auto text-neutral-500 group-hover:text-emerald-400 mb-4 transition-colors" />
-                                        <p className="text-sm font-medium group-hover:text-white transition-colors">
-                                            Click to upload logo
-                                        </p>
-                                        <p className="text-xs text-neutral-500 mt-2">
-                                            PNG, JPG, SVG • Max 1MB
-                                        </p>
-                                        <input
-                                            id="logo-upload"
-                                            ref={fileInputRef}
-                                            type="file"
-                                            accept="image/png,image/jpeg,image/jpg,image/svg+xml"
-                                            onChange={handleLogoUpload}
-                                            className="sr-only"
-                                        />
-                                    </label>
+                                    <div className="flex items-center gap-3">
+                                        <label
+                                            htmlFor="logo-upload"
+                                            className="px-4 py-2 bg-[#0b0c0e] border border-[#1e2025] hover:border-emerald-500/30 rounded-lg text-xs font-medium cursor-pointer transition-all flex items-center gap-2 text-[#e8eaed] hover:text-white"
+                                        >
+                                            <Upload size={14} />
+                                            Upload Logo
+                                            <input
+                                                id="logo-upload"
+                                                ref={fileInputRef}
+                                                type="file"
+                                                accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+                                                onChange={handleLogoUpload}
+                                                className="sr-only"
+                                            />
+                                        </label>
+                                        <span className="text-[10px] text-[#5a5f6e]">Max 1MB (PNG, JPG, SVG)</span>
+                                    </div>
                                 )}
 
                                 {isUploading && (
-                                    <div className="mt-4 flex items-center gap-3 text-emerald-400 bg-emerald-500/10 px-4 py-3 rounded-lg">
-                                        <Loader2 size={18} className="animate-spin" />
-                                        <span className="text-sm">Uploading logo...</span>
+                                    <div className="mt-3 flex items-center gap-2 text-emerald-500 text-xs">
+                                        <Loader2 size={14} className="animate-spin" />
+                                        <span>Uploading...</span>
                                     </div>
                                 )}
                             </div>
 
                             {submitError && (
-                                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg flex items-start gap-3">
-                                    <AlertCircle size={18} className="text-red-400 mt-0.5 flex-shrink-0" />
-                                    <p className="text-sm text-red-300">{submitError}</p>
+                                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-2">
+                                    <AlertCircle size={14} className="text-red-400 mt-0.5 flex-shrink-0" />
+                                    <p className="text-xs text-red-400">{submitError}</p>
                                 </div>
                             )}
 
                             <button
                                 onClick={handleAddFund}
                                 disabled={addFundMutation.isPending || isUploading}
-                                className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed rounded-xl text-base font-semibold transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-emerald-500/30"
+                                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:scale-100 active:scale-[0.98] rounded-lg text-xs font-bold text-white transition-all shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2"
                             >
                                 {addFundMutation.isPending ? (
                                     <>
-                                        <Loader2 size={20} className="animate-spin" />
+                                        <Loader2 size={14} className="animate-spin" />
                                         Adding Fund...
                                     </>
                                 ) : (
                                     <>
-                                        <CheckCircle size={20} />
-                                        Add Fund to Database
+                                        <CheckCircle size={14} />
+                                        Onboard Fund
                                     </>
                                 )}
                             </button>
                         </div>
+                    ) : (
+                        <div className="hidden lg:flex bg-[#111214] border border-[#1e2025] rounded-xl p-8 items-center justify-center shadow-sm">
+                            <div className="text-center space-y-3 opacity-50">
+                                <ShieldAlert size={32} className="mx-auto text-[#5a5f6e]" />
+                                <div>
+                                    <p className="text-sm font-medium text-white">No Selection</p>
+                                    <p className="text-xs text-[#5a5f6e] mt-1 max-w-[200px] mx-auto">
+                                        Select a scheme from the list to view its verified details and onboard it.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     )}
                 </div>
             </main>
+
+            <style>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: #1e2025;
+                    border-radius: 10px;
+                }
+            `}</style>
         </div>
     );
 }
+

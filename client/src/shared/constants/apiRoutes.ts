@@ -107,6 +107,8 @@ export const API_ROUTES = {
         STOCKS: {
             GET_ALL: "/stocks",
             UPDATE_STATUS: (symbol: string) => `/stocks/${symbol}/status`,
+            SEARCH: "/stocks/search",
+            ADD: "/stocks/add"
         },
         ALGO_TRADING: {
             BASE: "/algo-trading",

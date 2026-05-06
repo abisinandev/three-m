@@ -9,7 +9,7 @@ export const useStockManagement = () => {
     const queryClient = useQueryClient();
     const [filters, setFilters] = useState<StockFilters>(DEFAULT_FILTERS);
 
-    const { data, isLoading, isError } = useQuery({
+    const { data, isLoading, isError, refetch } = useQuery({
         queryKey: ['admin-stocks', filters],
         queryFn: () => StockManagementApi.fetchStocks(filters),
         placeholderData: keepPreviousData,
@@ -70,6 +70,7 @@ export const useStockManagement = () => {
         isError,
         updateFilters,
         debouncedSearch,
-        handleStatusToggle
+        handleStatusToggle,
+        refetch
     };
 };
