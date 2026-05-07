@@ -108,8 +108,8 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                             sip.status === 'ACTIVE' ? 'bg-green-500' : 
                                             sip.status === 'PAUSED' ? 'bg-amber-500' : 'bg-red-500'
                                         }`}>
-                                            {sip.status === 'ACTIVE' ? <Play size={8} className="text-black fill-current" /> : 
-                                             sip.status === 'PAUSED' ? <Pause size={8} className="text-black fill-current" /> : 
+                                            {sip.status === 'ACTIVE' ? <Play size={8} className="text-white fill-current" /> : 
+                                             sip.status === 'PAUSED' ? <Pause size={8} className="text-white fill-current" /> : 
                                              <Trash2 size={8} className="text-white" />}
                                         </div>
                                     </div>

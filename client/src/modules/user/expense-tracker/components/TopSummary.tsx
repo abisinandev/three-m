@@ -80,7 +80,7 @@ export const TopSummary = ({
         <div className="bg-[#111214] border border-[#1e2025] rounded-lg py-5 px-6 grid grid-cols-[300px_1fr] gap-6 items-center">
             <div className="border-r border-[#1e2025] pr-6">
                 <p className="text-[10px] text-[#5a5f6e] tracking-[0.08em] uppercase m-0 mb-1">
-                    Available Surplus
+                    Available Balance
                 </p>
                 <p className={`text-[28px] font-bold tracking-[-0.5px] leading-none m-0 ${positive ? 'text-[#e8eaed]' : 'text-[#F43F5E]'}`}>
                     {formatCurrency(currentBalance)}

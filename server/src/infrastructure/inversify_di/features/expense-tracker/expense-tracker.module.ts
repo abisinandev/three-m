@@ -13,8 +13,8 @@ import { IAnalyticsUseCase } from "@application/use_cases/expense-tracker/interf
 import { AnalyticsUseCase } from "@application/use_cases/expense-tracker/analytics.usecase";
 import { ExpenseTrackerRepository } from "@infrastructure/databases/repository/expense-tracker/expense-tracker.repository";
 import { IExpenseTrackerRepository } from "@application/interfaces/repositories/feature/expense-tracker-repository.interface";
-import { ICalculateSimulationUseCase } from "@application/use_cases/expense-tracker/interfaces/calculate-simulation.usecase.interface";
-import { CalculateSimulationUseCase } from "@application/use_cases/expense-tracker/calculate-simulation.usecase";
+import { ICalculateBudgetPlanUseCase } from "@application/use_cases/expense-tracker/interfaces/calculate-budget-plan.usecase.interface";
+import { CalculateBudgetPlanUseCase } from "@application/use_cases/expense-tracker/calculate-budget-plan.usecase";
 
 
 export const ExpenseTrackerModule = new ContainerModule(({ bind }) => {
@@ -24,7 +24,7 @@ export const ExpenseTrackerModule = new ContainerModule(({ bind }) => {
     bind<IAddExpenseUseCase>(EXPENSE_TRACKER_TYPE.AddExpenseUseCase).to(AddExpensesUseCase);
     bind<IDeleteExpenseUseCase>(EXPENSE_TRACKER_TYPE.DeleteExpenseUseCase).to(DeleteExpenseUseCase);
     bind<IAnalyticsUseCase>(EXPENSE_TRACKER_TYPE.AnalyticsUseCase).to(AnalyticsUseCase);
-    bind<ICalculateSimulationUseCase>(EXPENSE_TRACKER_TYPE.CalculateSimulationUseCase).to(CalculateSimulationUseCase);
+    bind<ICalculateBudgetPlanUseCase>(EXPENSE_TRACKER_TYPE.CalculateBudgetPlanUseCase).to(CalculateBudgetPlanUseCase);
 
 
     bind<IExpenseTrackerRepository>(EXPENSE_TRACKER_TYPE.ExpenseTrackerRepository).to(ExpenseTrackerRepository);

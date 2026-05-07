@@ -25,6 +25,7 @@ import { OrderStatus } from "@domain/entities/stock/enum/order-status.enum";
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { IExecuteMarketSellOrderUseCase } from "./interfaces/execute-market-sell-order.interface";
 import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 
 @injectable()
 export class ExecuteMarketSellOrderUseCase implements IExecuteMarketSellOrderUseCase {
@@ -128,7 +129,6 @@ export class ExecuteMarketSellOrderUseCase implements IExecuteMarketSellOrderUse
                 await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
             }
 
-            // Mark Transaction as Success
             newTransaction.markSucess();
             await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
 
@@ -140,6 +140,8 @@ export class ExecuteMarketSellOrderUseCase implements IExecuteMarketSellOrderUse
             });
 
             await session.commitTransaction();
+
+            logger.info(`[ExecuteMarketSellOrder] is completed`);
         } catch (error) {
             await session.abortTransaction();
             console.error(`[ExecuteMarketSellOrder] Failed for order ${orderId}:`, error);

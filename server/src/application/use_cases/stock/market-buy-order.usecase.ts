@@ -92,9 +92,6 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
             if (wallet.availableBalance < execution.totalValue)
                 throw new ValidationError(ErrorMessages.WALLET.INSUFFICIENT_BALANCE);
 
-            wallet.debit(execution.totalValue);
-            await this._wallet.update(wallet.id as string, wallet, session);
-
             const marketOrder = OrderEntity.create({
                 userId,
                 symbol: order.symbol,

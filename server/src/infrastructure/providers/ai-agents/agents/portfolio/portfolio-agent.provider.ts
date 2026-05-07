@@ -21,9 +21,11 @@ export class PortfolioAgent implements IPortfolioAgent {
         logger.info("PORTFOLIO AGENT WORKING...");
 
         const summary = await this._portfolioSummaryUseCase.execute(userId);
-        
+
         const prompt = `
-            Summarize the user's portfolio data friendly and concisely.
+            Summarize the user's portfolio data in a clear, structured format using bullet points.
+            Use bold text for key metrics and headings to make it easy to read at a glance.
+            
             IMPORTANT: Always use the Indian Rupee symbol (₹) for all currency values. Do NOT use dollars ($).
 
             PORTFOLIO DATA:

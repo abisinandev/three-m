@@ -5,7 +5,7 @@ export const EXPENSE_TRACKER_TYPE = {
     AddExpenseUseCase: Symbol.for("AddExpenseUseCase"),
     DeleteExpenseUseCase: Symbol.for("DeleteExpenseUseCase"),
     AnalyticsUseCase: Symbol.for("AnalyticsUseCase"),
-    CalculateSimulationUseCase: Symbol.for("CalculateSimulationUseCase"),
+    CalculateBudgetPlanUseCase: Symbol.for("CalculateBudgetPlanUseCase"),
 
 
     //repository

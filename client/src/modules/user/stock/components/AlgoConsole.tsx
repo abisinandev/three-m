@@ -230,14 +230,14 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
                   </span>
                   <p className="text-[10px] font-bold text-[#00C853]">RUNNING</p>
                 </div>
-                <div className="space-y-1 text-right">
+                {/* <div className="space-y-1 text-right">
                   <span className="text-[9px] text-[#5a5f6e] uppercase tracking-widest font-bold">
                     Runtime
                   </span>
                   <p className="text-[10px] font-bold text-[#e8eaed]">
                     Cloud Engine
                   </p>
-                </div>
+                </div> */}
               </div>
             </div>
             <button

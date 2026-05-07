@@ -92,7 +92,7 @@ export const StartSipModal = ({
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-black/60 hover:text-black transition-colors"
+                        className="text-white/60 hover:text-white transition-colors"
                     >
                         <X size={16} />
                     </button>
@@ -185,7 +185,7 @@ export const StartSipModal = ({
                         <button
                             type="submit"
                             disabled={!isValid || isSubmitting}
-                            className="px-8 py-3.5 bg-[#2962ff] hover:bg-[#3d72ff] active:scale-[0.98] transition-all text-white text-[11px] font-black uppercase tracking-[0.15em] rounded-xl shadow-lg shadow-blue-500/10 disabled:opacity-30 disabled:cursor-not-allowed disabled:scale-100 min-w-[140px]"
+                            className="px-8 py-3.5 bg-[#2962ff] hover:bg-[#3d72ff] active:scale-[0.98] transition-all text-white text-[11px] font-white uppercase tracking-[0.15em] rounded-xl shadow-lg shadow-blue-500/10 disabled:opacity-30 disabled:cursor-not-allowed disabled:scale-100 min-w-[140px]"
                         >
                             {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : "START SIP"}
                         </button>

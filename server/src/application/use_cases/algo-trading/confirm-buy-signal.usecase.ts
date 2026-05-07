@@ -59,18 +59,22 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
 
     async execute(order: ConfirmSignalDTO): Promise<void | { message: string, upgrade: boolean }> {
 
+        
         const hasAccess = await this._featureAccess.hasAccess(
             order.userId,
             Features.STOCK_TRADING,
         );
-
+        
         if (!hasAccess) {
             return {
                 message: SuccessMessages.SUBSCRIPTION.UPGRADE_PREMIUM,
                 upgrade: true
             };
         }
-
+        
+        if (!isIndianMarketOpen())
+            throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+        
         const { userId } = order;
         const signal = await this._signalRepository.findById(order.signalId);
         if (!signal) throw new NotFoundError(SuccessMessages.ALGO.SIGNAL_NOT_FOUND);
@@ -98,9 +102,6 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
 
         try {
             session.startTransaction();
-
-            if (!isIndianMarketOpen())
-                throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
             const user = await this._userRepository.findById(order.userId);
             if (!user) throw new NotFoundError(ErrorMessages.USER.NOT_FOUND);
@@ -156,6 +157,7 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
                 status: TransactionStatus.PENDING,
                 type: TransactionTypes.BUY
             })
+
             const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
 
             wallet.debit(execution.totalValue);

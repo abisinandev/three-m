@@ -61,14 +61,14 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
             order.userId,
             Features.STOCK_TRADING,
         );
-
+        
         if (!hasAccess) {
             return {
                 message: SuccessMessages.SUBSCRIPTION.UPGRADE_PREMIUM,
                 upgrade: true
             };
         }
-
+        
         if (!isIndianMarketOpen())
             throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 

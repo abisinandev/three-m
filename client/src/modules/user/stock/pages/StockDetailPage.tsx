@@ -7,6 +7,7 @@ import { socketService } from "@/socket/socket";
 import TradeModal from "@shared/components/modals/TradeModal";
 import type { TradeData } from "@shared/components/modals/TradeModal";
 import { useTradeMutation } from "@shared/hooks/useTradeMutation";
+import { FetchUserWallet } from "@/shared/services/user/fetch-user-wallet";
 import { getStockHoldings } from "@/shared/services/portfolio/portfolio-api";
 import { useUserStore } from "@stores/user/UserStore";
 
@@ -26,6 +27,13 @@ const StockDetailPage = () => {
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
   const [tradeType, setTradeType] = useState<"buy" | "sell">("buy");
   const { onOpen: openPremiumModal } = usePremiumModalStore();
+
+  const { data: walletData } = useQuery({
+    queryKey: ["user-wallet-data"],
+    queryFn: FetchUserWallet,
+  });
+
+  const balance = (walletData as any)?.data?.data?.balance ?? 0;
 
   const {
     data: queryData,
@@ -66,7 +74,7 @@ const StockDetailPage = () => {
     return () => socketService.off("stock_update", handleUpdate);
   }, [symbol]);
 
-   
+
   const responseData = queryData?.data;
   const stockInfo = responseData?.data;
   const apiPrice = responseData?.latestPrice;
@@ -98,7 +106,7 @@ const StockDetailPage = () => {
     try {
       if (tradeData.type === "buy") {
         if (tradeData.orderType === "LIMIT_ORDER") {
-      
+
           await limitBuy({
             symbol: tradeData.symbol,
             quantity: tradeData.quantity,
@@ -233,6 +241,7 @@ const StockDetailPage = () => {
         isLoading={isTrading}
         onConfirm={handleTradeConfirm}
         availableQuantity={position?.units || position?.quantity}
+        balance={balance}
       />
     </div>
   );

@@ -9,7 +9,7 @@ import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { IDeleteExpenseUseCase } from "@application/use_cases/expense-tracker/interfaces/delete-expense-usecase.interface";
 import { IAnalyticsUseCase } from "@application/use_cases/expense-tracker/interfaces/analytics-usecase.interface";
-import { ICalculateSimulationUseCase } from "@application/use_cases/expense-tracker/interfaces/calculate-simulation.usecase.interface";
+import { ICalculateBudgetPlanUseCase } from "@application/use_cases/expense-tracker/interfaces/calculate-budget-plan.usecase.interface";
 
 
 @injectable()
@@ -20,7 +20,7 @@ export class ExpenseTrackerController {
         @inject(EXPENSE_TRACKER_TYPE.AddExpenseUseCase) private readonly _addExpenseUseCase: IAddExpenseUseCase,
         @inject(EXPENSE_TRACKER_TYPE.DeleteExpenseUseCase) private readonly _deleteExpenseUseCase: IDeleteExpenseUseCase,
         @inject(EXPENSE_TRACKER_TYPE.AnalyticsUseCase) private readonly _analyticsUseCase: IAnalyticsUseCase,
-        @inject(EXPENSE_TRACKER_TYPE.CalculateSimulationUseCase) private readonly _calculateSimulationUseCase: ICalculateSimulationUseCase,
+        @inject(EXPENSE_TRACKER_TYPE.CalculateBudgetPlanUseCase) private readonly _calculateBudgetPlanUseCase: ICalculateBudgetPlanUseCase,
     ) { }
 
 
@@ -109,11 +109,11 @@ export class ExpenseTrackerController {
         }
     }
 
-    async simulate(req: Request, res: Response, next: NextFunction) {
+    async calculateBudgetPlan(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req?.user?.id as string;
             const dto = { ...req.body };
-            const result = await this._calculateSimulationUseCase.execute(userId, dto);
+            const result = await this._calculateBudgetPlanUseCase.execute(userId, dto);
             return ResponseHelper.success(
                 res,
                 SuccessMessage.OPERATION_SUCCESSFUL,

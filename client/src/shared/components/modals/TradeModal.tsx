@@ -11,6 +11,7 @@ interface TradeModalProps {
   onConfirm: (data: TradeData) => void;
   isLoading?: boolean;
   availableQuantity?: number;
+  balance?: number;
 }
 
 export interface TradeData {
@@ -33,6 +34,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
   onConfirm,
   isLoading = false,
   availableQuantity,
+  balance = 0,
 }) => {
   const [type, setType] = useState<'buy' | 'sell'>(initialType);
   const [quantity, setQuantity] = useState<string>('');
@@ -40,9 +42,6 @@ const TradeModal: React.FC<TradeModalProps> = ({
   const [limitPrice, setLimitPrice] = useState<string>('');
   const [stopLoss, setStopLoss] = useState<string>('');
   const [takeProfit, setTakeProfit] = useState<string>('');
-
-  const balance = 100000;
-
   useEffect(() => {
     if (isOpen) {
       setType(initialType);
@@ -52,7 +51,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
       setStopLoss('');
       setTakeProfit('');
     }
-  }, [isOpen, symbol, initialType, currentPrice]);
+  }, [isOpen, symbol]);
 
   if (!isOpen) return null;
 

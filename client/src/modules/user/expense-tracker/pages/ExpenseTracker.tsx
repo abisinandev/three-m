@@ -20,7 +20,7 @@ import { AnalyticsView } from '../components/AnalyticsView';
 import { TopSummary } from '../components/TopSummary';
 import { BudgetPattern } from '../components/BudgetPattern';
 import { MonthPicker } from '../components/MonthPicker';
-import { SimulationTool } from '../components/SimulationTool';
+import { SmartBudgetPlanner } from '../components/SmartBudgetPlanner';
 import { BudgetAlerts } from '../components/BudgetAlerts';
 
 
@@ -40,7 +40,13 @@ const ExpenseTracker = () => {
 
 
 
-    const { dashboardData, analyticsData, isDashboardLoading, isAnalyticsLoading } = useExpenseTracker(selectedMonth);
+    const { 
+        dashboardData, 
+        analyticsData, 
+        isDashboardLoading, 
+        isAnalyticsLoading,
+        budgetPlanMutation 
+    } = useExpenseTracker(selectedMonth);
 
     const backendExpenses = dashboardData?.expenses || [];
     const incomeSources = dashboardData?.incomeSources || [];
@@ -218,11 +224,15 @@ const ExpenseTracker = () => {
                                 </div>
 
 
-                                <SimulationTool
-                                    month={format(selectedMonth, 'yyyy-MM')}
-                                />
                             </div>
+                        </div>
 
+                        <div className="mt-8">
+                            <SmartBudgetPlanner 
+                                dashboardData={dashboardData} 
+                                budgetPlanMutation={budgetPlanMutation}
+                                month={format(selectedMonth, 'yyyy-MM')}
+                            />
                         </div>
                     </div>
                 ) : (

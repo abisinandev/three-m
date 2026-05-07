@@ -28,7 +28,7 @@ export const ConfirmModal = ({
             <div className="relative w-full max-w-[360px] bg-[#0b0c0e] border border-[#1e2025] rounded-2xl shadow-2xl overflow-hidden">
                 <div className="px-5 py-4 flex items-center justify-between bg-[#00C853]">
                     <div className="flex items-center gap-3">
-                        <span className="text-[12px] font-black text-black uppercase tracking-widest">Confirm Order</span>
+                        <span className="text-[12px] font-black text-white uppercase tracking-widest">Confirm Order</span>
                     </div>
                     <button onClick={onClose} disabled={isSubmitting} className="text-black/60 hover:text-black transition-colors">
                         <X size={16} />

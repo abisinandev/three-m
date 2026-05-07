@@ -25,6 +25,7 @@ import mongoose from "mongoose";
 import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 
 @injectable()
 export class ExecuteLimitSellOrderUseCase implements IExecuteLimitSellOrderUseCase {
@@ -161,7 +162,7 @@ export class ExecuteLimitSellOrderUseCase implements IExecuteLimitSellOrderUseCa
             })
 
             await session.commitTransaction();
-
+            logger.info(`[ExecuteLimitSellOrder] is completed`);
         } catch (error) {
             await session.abortTransaction();
             console.error(`Execution failed for sell order ${orderId}:`, error);

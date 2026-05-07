@@ -38,13 +38,13 @@ export const InvestModal = ({
 
                 <div className="px-5 py-4 flex items-center justify-between bg-[#00C853]">
                     <div className="flex items-center gap-3">
-                        <span className="text-[12px] font-black text-black uppercase tracking-widest">
+                        <span className="text-[12px] font-black text-white uppercase tracking-widest">
                             Invest in Fund
                         </span>
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-black/60 hover:text-black transition-colors"
+                        className="text-white/60 hover:text-white transition-colors"
                     >
                         <X size={16} />
                     </button>
@@ -104,7 +104,7 @@ export const InvestModal = ({
                     <button
                         onClick={onProceed}
                         disabled={!isValid}
-                        className="w-full py-3.5 bg-[#00C853] hover:bg-[#00E676] active:scale-[0.98] transition-all text-black text-[11px] font-black uppercase tracking-[0.15em] rounded-xl shadow-lg shadow-green-500/10 disabled:opacity-30 disabled:cursor-not-allowed disabled:scale-100"
+                        className="w-full py-3.5 bg-[#00C853] hover:bg-[#00E676] active:scale-[0.98] transition-all text-white text-[11px] font-black uppercase tracking-[0.15em] rounded-xl shadow-lg shadow-green-500/10 disabled:opacity-30 disabled:cursor-not-allowed disabled:scale-100"
                     >
                         PROCEED TO INVEST
                     </button>

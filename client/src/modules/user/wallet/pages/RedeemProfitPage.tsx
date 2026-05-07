@@ -1,9 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { ROUTES } from '@shared/constants/routes';
-import { useRedeem } from '../portfolio/hooks/useRedeem';
-import { RedeemCard } from '../portfolio/components/RedeemCard';
-import { RedeemModal } from '../portfolio/components/RedeemModal';
+import { useRedeem } from '../../portfolio/hooks/useRedeem';
+import { RedeemCard } from '../../portfolio/components/RedeemCard';
+import { RedeemModal } from '../../portfolio/components/RedeemModal';
 
 const RedeemProfitPage = () => {
     const navigate = useNavigate();

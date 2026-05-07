@@ -1,3 +1,4 @@
+import { Insight } from "@domain/entities/expense-tracker/types/expense-tracker.types";
 import { ExpenseType, PaymentMode } from "./add-expense.dto";
 
 export interface IncomeSourceDTO {
@@ -28,4 +29,5 @@ export interface ExpenseTrackerDTO {
     totalSpent: number;
     currentMonthBalance: number;
     healthScore?: number;
+    insights?: Insight[];
 }
