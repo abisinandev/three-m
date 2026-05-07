@@ -73,4 +73,5 @@ export const env = {
   GROQ_API_KEY: requireEnv("GROQ_API_KEY"),
 
   TWELVE_DATA_API_KEY: requireEnv("TWELVE_DATA_API_KEY"),
+  TWELVE_DATA_API: requireEnv("TWELVE_DATA_API"),
 };

@@ -22,4 +22,7 @@ export class OrderQueue implements IOrderQueue {
         await this.queue.add('execute-limit-order', { orderId }, { jobId: orderId });
     }
 
+    public async addMarketOrderJob(orderId: string): Promise<void> {
+        await this.queue.add('execute-market-order', { orderId }, { jobId: orderId });
+    }
 }

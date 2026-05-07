@@ -61,7 +61,7 @@ export const useRealtimeChart = (
   const [hasHistory, setHasHistory] = useState(false);
 
   const [currentPrice, setCurrentPrice] = useState<number | null>(null);
-  
+
   const priceLineRef = useRef<IPriceLine | null>(null);
   const stopLossLineRef = useRef<IPriceLine | null>(null);
   const takeProfitLineRef = useRef<IPriceLine | null>(null);
@@ -103,14 +103,14 @@ export const useRealtimeChart = (
 
     let backendTimeframe = '1m';
     switch (timeframe) {
-      case '1':  backendTimeframe = '1m';  break;
-      case '5':  backendTimeframe = '5m';  break;
+      case '1': backendTimeframe = '1m'; break;
+      case '5': backendTimeframe = '5m'; break;
       case '15': backendTimeframe = '15m'; break;
       case '30': backendTimeframe = '15m'; break; // 30m maps to 15m (Yahoo doesn't have 30m)
-      case '60': backendTimeframe = '1h';  break;
-      case 'D':  backendTimeframe = '1d';  break;
-      case 'W':  backendTimeframe = '1d';  break; // weekly maps to daily
-      default:   backendTimeframe = '1m';  break;
+      case '60': backendTimeframe = '1h'; break;
+      case 'D': backendTimeframe = '1d'; break;
+      case 'W': backendTimeframe = '1d'; break; // weekly maps to daily
+      default: backendTimeframe = '1m'; break;
     }
 
     const handleCandleUpdate = (candleUpdate: Candle & { symbol?: string; timeframe?: string }) => {
@@ -154,14 +154,14 @@ export const useRealtimeChart = (
         const now = Math.floor(Date.now() / 1000);
         let from: number;
         switch (timeframe) {
-          case '1':  from = now - 3   * 24 * 60 * 60; break; // 3 days  (Yahoo 1m limit: 7d)
-          case '5':  from = now - 59  * 24 * 60 * 60; break; // 59 days (Yahoo 5m limit: 60d)
-          case '15': from = now - 59  * 24 * 60 * 60; break; // 59 days (Yahoo 15m limit: 60d)
-          case '30': from = now - 59  * 24 * 60 * 60; break; // 59 days
-          case '60': from = now - 180 * 24 * 60 * 60; break; // 180 days
-          case 'D':  from = now - 730 * 24 * 60 * 60; break; // 2 years
-          case 'W':  from = now - 730 * 24 * 60 * 60; break; // 2 years
-          default:   from = now - 3   * 24 * 60 * 60;
+          case '1': from = now - 3 * 24 * 60 * 60; break;
+          case '5': from = now - 59 * 24 * 60 * 60; break;
+          case '15': from = now - 59 * 24 * 60 * 60; break;
+          case '30': from = now - 59 * 24 * 60 * 60; break;
+          case '60': from = now - 180 * 24 * 60 * 60; break;
+          case 'D': from = now - 730 * 24 * 60 * 60; break;
+          case 'W': from = now - 730 * 24 * 60 * 60; break;
+          default: from = now - 3 * 24 * 60 * 60;
         }
 
         const params = new URLSearchParams({
@@ -177,9 +177,9 @@ export const useRealtimeChart = (
         if (candleData && candleData.s === 'ok' && candleData.t && candleData.t.length > 0 && isMounted) {
           const formattedData: Candle[] = candleData.t.map((timeIndex: number, idx: number) => ({
             time: timeIndex as Time,
-            open:  candleData.o[idx],
-            high:  candleData.h[idx],
-            low:   candleData.l[idx],
+            open: candleData.o[idx],
+            high: candleData.h[idx],
+            low: candleData.l[idx],
             close: candleData.c[idx],
           }));
 
@@ -190,7 +190,7 @@ export const useRealtimeChart = (
           setHasHistory(true);
           setStatus('live');
         } else {
-  
+
           if (isMounted) setStatus('live');
         }
       } catch (error: any) {
@@ -208,13 +208,13 @@ export const useRealtimeChart = (
 
       let bucketSec = 60;
       switch (timeframe) {
-        case '1':  bucketSec = 60;          break;
-        case '5':  bucketSec = 5  * 60;     break;
-        case '15': bucketSec = 15 * 60;     break;
-        case '30': bucketSec = 30 * 60;     break;
-        case '60': bucketSec = 60 * 60;     break;
-        case 'D':  bucketSec = 24 * 60 * 60; break;
-        default:   bucketSec = 60;
+        case '1': bucketSec = 60; break;
+        case '5': bucketSec = 5 * 60; break;
+        case '15': bucketSec = 15 * 60; break;
+        case '30': bucketSec = 30 * 60; break;
+        case '60': bucketSec = 60 * 60; break;
+        case 'D': bucketSec = 24 * 60 * 60; break;
+        default: bucketSec = 60;
       }
 
       const nowSec = Math.floor(Date.now() / 1000);
@@ -226,10 +226,10 @@ export const useRealtimeChart = (
           const closePrice = currentCandleRef.current.close;
           const nextTime = (currentCandleTime + missedBuckets * bucketSec) as Time;
           const blankCandle: Candle = {
-            time:  nextTime,
-            open:  closePrice,
-            high:  closePrice,
-            low:   closePrice,
+            time: nextTime,
+            open: closePrice,
+            high: closePrice,
+            low: closePrice,
             close: closePrice,
           };
           currentCandleRef.current = blankCandle;
@@ -254,12 +254,12 @@ export const useRealtimeChart = (
         priceLineRef.current = null;
       }
       if (stopLossLineRef.current && candlestickSeriesRef.current) {
-          candlestickSeriesRef.current.removePriceLine(stopLossLineRef.current);
-          stopLossLineRef.current = null;
+        candlestickSeriesRef.current.removePriceLine(stopLossLineRef.current);
+        stopLossLineRef.current = null;
       }
       if (takeProfitLineRef.current && candlestickSeriesRef.current) {
-          candlestickSeriesRef.current.removePriceLine(takeProfitLineRef.current);
-          takeProfitLineRef.current = null;
+        candlestickSeriesRef.current.removePriceLine(takeProfitLineRef.current);
+        takeProfitLineRef.current = null;
       }
       return;
     }
@@ -290,44 +290,44 @@ export const useRealtimeChart = (
     }
 
     if (slValue && slValue > 0) {
-        if (!stopLossLineRef.current) {
-            stopLossLineRef.current = candlestickSeriesRef.current.createPriceLine({
-                price: slValue,
-                color: '#ef4444',
-                lineWidth: 1,
-                lineStyle: 1, 
-                axisLabelVisible: true,
-                title: `SL ₹${slValue.toFixed(2)}`,
-            });
-        } else {
-            stopLossLineRef.current.applyOptions({ price: slValue });
-        }
+      if (!stopLossLineRef.current) {
+        stopLossLineRef.current = candlestickSeriesRef.current.createPriceLine({
+          price: slValue,
+          color: '#ef4444',
+          lineWidth: 1,
+          lineStyle: 1,
+          axisLabelVisible: true,
+          title: `SL ₹${slValue.toFixed(2)}`,
+        });
+      } else {
+        stopLossLineRef.current.applyOptions({ price: slValue });
+      }
     } else if (stopLossLineRef.current) {
-        candlestickSeriesRef.current.removePriceLine(stopLossLineRef.current);
-        stopLossLineRef.current = null;
+      candlestickSeriesRef.current.removePriceLine(stopLossLineRef.current);
+      stopLossLineRef.current = null;
     }
 
     if (tpValue && tpValue > 0) {
-        if (!takeProfitLineRef.current) {
-            takeProfitLineRef.current = candlestickSeriesRef.current.createPriceLine({
-                price: tpValue,
-                color: '#2962ff',
-                lineWidth: 1,
-                lineStyle: 1,
-                axisLabelVisible: true,
-                title: `TP ₹${tpValue.toFixed(2)}`,
-            });
-        } else {
-            takeProfitLineRef.current.applyOptions({ price: tpValue });
-        }
+      if (!takeProfitLineRef.current) {
+        takeProfitLineRef.current = candlestickSeriesRef.current.createPriceLine({
+          price: tpValue,
+          color: '#2962ff',
+          lineWidth: 1,
+          lineStyle: 1,
+          axisLabelVisible: true,
+          title: `TP ₹${tpValue.toFixed(2)}`,
+        });
+      } else {
+        takeProfitLineRef.current.applyOptions({ price: tpValue });
+      }
     } else if (takeProfitLineRef.current) {
-        candlestickSeriesRef.current.removePriceLine(takeProfitLineRef.current);
-        takeProfitLineRef.current = null;
+      candlestickSeriesRef.current.removePriceLine(takeProfitLineRef.current);
+      takeProfitLineRef.current = null;
     }
 
     const container = containerRef.current;
     if (!container) return;
-    
+
     let toolTip = document.getElementById('chart-position-tooltip');
     if (!toolTip) {
       toolTip = document.createElement('div');
@@ -352,23 +352,23 @@ export const useRealtimeChart = (
     }
 
     const handleCrosshairMove = (param: any) => {
-        if (!param.point || !toolTip) {
-            toolTip!.style.display = 'none';
-            return;
-        }
+      if (!param.point || !toolTip) {
+        toolTip!.style.display = 'none';
+        return;
+      }
 
-        const priceY = candlestickSeriesRef.current?.priceToCoordinate(avgPriceValue);
-        
-        if (priceY !== null && priceY !== undefined && Math.abs(param.point.y - priceY) < 20) {
-            const currentClose = currentCandleRef.current?.close ?? currentPrice ?? avgPriceValue;
-            const pnl = (currentClose - avgPriceValue) * qty;
-            const pnlColor = pnl >= 0 ? '#22c55e' : '#ef4444';
-            const sign = pnl >= 0 ? '+' : '';
+      const priceY = candlestickSeriesRef.current?.priceToCoordinate(avgPriceValue);
 
-            toolTip.style.display = 'block';
-            toolTip.style.left = (param.point.x + 20) + 'px';
-            toolTip.style.top = (param.point.y + 20) + 'px';
-            toolTip.innerHTML = `
+      if (priceY !== null && priceY !== undefined && Math.abs(param.point.y - priceY) < 20) {
+        const currentClose = currentCandleRef.current?.close ?? currentPrice ?? avgPriceValue;
+        const pnl = (currentClose - avgPriceValue) * qty;
+        const pnlColor = pnl >= 0 ? '#22c55e' : '#ef4444';
+        const sign = pnl >= 0 ? '+' : '';
+
+        toolTip.style.display = 'block';
+        toolTip.style.left = (param.point.x + 20) + 'px';
+        toolTip.style.top = (param.point.y + 20) + 'px';
+        toolTip.innerHTML = `
                 <div style="color: #9ca3af; font-size: 10px; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; letter-spacing: 0.05em">Trade Position</div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
                     <span style="color: #9ca3af">Avg Buy</span>
@@ -387,16 +387,16 @@ export const useRealtimeChart = (
                     <span style="font-weight: 700; color: ${pnlColor}">${sign}₹${pnl.toFixed(2)}</span>
                 </div>
             `;
-        } else {
-            toolTip.style.display = 'none';
-        }
+      } else {
+        toolTip.style.display = 'none';
+      }
     };
 
     chartRef.current.subscribeCrosshairMove(handleCrosshairMove);
 
     return () => {
-        chartRef.current?.unsubscribeCrosshairMove(handleCrosshairMove);
-        if (container.contains(toolTip)) container.removeChild(toolTip!);
+      chartRef.current?.unsubscribeCrosshairMove(handleCrosshairMove);
+      if (container.contains(toolTip)) container.removeChild(toolTip!);
     };
   }, [position, showPosition, currentPrice]);
 

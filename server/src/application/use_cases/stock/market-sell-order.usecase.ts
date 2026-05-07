@@ -31,6 +31,7 @@ import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { OrderStatus } from "@domain/entities/stock/enum/order-status.enum";
+import { IOrderQueue } from "@application/interfaces/services/stocks/order-queue.interface";
 
 @injectable()
 export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
@@ -39,11 +40,11 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
         @inject(STOCK_TYPES.OrderRepository) private readonly _orderRepository: IOrderRepository,
-        @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
-        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
+        @inject(STOCK_TYPES.OrderQueue) private readonly _orderQueue: IOrderQueue,
+        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
     ) { }
 
     async execute(order: SellOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
@@ -61,8 +62,8 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
         }
 
 
-        // if (!isIndianMarketOpen())
-        //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+        if (!isIndianMarketOpen())
+            throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
         const session = await mongoose.startSession();
 
@@ -121,7 +122,7 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
                 status: TransactionStatus.PENDING,
                 type: TransactionTypes.SELL
             })
-            const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
+            await this._transactionRepository.createTransaction(transaction, session);
 
             const wallet = await this._wallet.findByUserId(userId, session);
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
@@ -136,63 +137,20 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
                 orderType: OrderType.MARKET_ORDER,
                 quantity: execution.filledQty,
                 price: marketPrice,
-                status: OrderStatus.FILLED,
+                status: OrderStatus.PENDING,
                 isAlgoTrade: order.isAlgoTrade ?? false,
             });
-
-            marketOrder.updateFilledQty(execution.filledQty, execution.totalValue);
-            marketOrder.markFilled();
 
             const newOrder = await this._orderRepository.create(marketOrder, session);
 
-            const trade = TradeEntity.create({
-                userId,
-                orderId: newOrder.id as string,
-                symbol: order.symbol,
-                price: execution.avgPrice,
-                quantity: execution.filledQty,
-                side: OrderSide.SELL,
-                profit: execution.profit,
-                isAlgoTrade: order.isAlgoTrade ?? false,
-            });
-            await this._tradeRepository.create(trade, session);
-
-            const newQuantity = (portfolio.quantity ?? 0) - execution.filledQty;
-
-            if (newQuantity <= 0) {
-                await this._portfolioRepository.deleteByUserIdAndSymbol(
-                    userId,
-                    stock.id as string,
-                    session
-                );
-            } else {
-
-                const costOfSharesSold = portfolio.avgPrice * execution.filledQty;
-                const newInvestedAmount = portfolio.investedAmount - costOfSharesSold;
-
-                portfolio.updateQuantityAndPrice(
-                    newQuantity,
-                    portfolio.avgPrice,
-                    newInvestedAmount
-                );
-
-
-                await this._portfolioRepository.update(
-                    portfolio.id as string,
-                    portfolio,
-                    session
-                );
-            }
-
-            newTransaction.markSucess();
-            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
-
             await session.commitTransaction();
+
+            await this._orderQueue.addMarketOrderJob(newOrder.id as string);
 
         } catch (error) {
             await session.abortTransaction();
             if (error instanceof AppError || error instanceof Error) throw error;
-            throw new AppError("Market sell order failed");
+            throw new AppError("Market sell order request failed");
         } finally {
             session.endSession();
         }

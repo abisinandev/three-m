@@ -6,7 +6,7 @@ import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/e
 
 @injectable()
 export class TwelveDataSearchProvider implements IStockSearchProvider {
-    private readonly baseUrl = "https://api.twelvedata.com/symbol_search";
+    private readonly baseUrl = env.TWELVE_DATA_API;
 
     constructor(
         @inject(EXTERNAL_TYPES.HttpClient) private readonly _httpClient: IHttpClient
@@ -20,7 +20,6 @@ export class TwelveDataSearchProvider implements IStockSearchProvider {
             return [];
         }
 
-        // Filter for NSE/BSE stocks and normalize
         return response.data
             .filter(item => item.exchange === "NSE" || item.exchange === "BSE")
             .map(item => ({

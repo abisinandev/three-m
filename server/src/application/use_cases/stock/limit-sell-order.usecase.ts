@@ -49,8 +49,8 @@ export class LimitSellOrderUseCase implements ILimitSellOrderUseCase {
             };
         }
 
-        // if (!isIndianMarketOpen())
-        //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+        if (!isIndianMarketOpen())
+            throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
         const session = await mongoose.startSession();
         try {

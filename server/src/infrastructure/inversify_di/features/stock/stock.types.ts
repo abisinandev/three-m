@@ -25,7 +25,9 @@ export const STOCK_TYPES = {
     //orders
     OrdersController: Symbol.for("OrdersController"),
     MarketBuyOrderUseCase: Symbol.for("MarketBuyOrderUseCase"),
+    ExecuteMarketBuyOrderUseCase: Symbol.for("ExecuteMarketBuyOrderUseCase"),
     MarketSellOrderUseCase: Symbol.for("MarketSellOrderUseCase"),
+    ExecuteMarketSellOrderUseCase: Symbol.for("ExecuteMarketSellOrderUseCase"),
     LimitBuyOrderUseCase: Symbol.for("LimitBuyOrderUseCase"),
     ExecuteLimitBuyOrderUseCase: Symbol.for("ExecuteLimitBuyOrderUseCase"),
     LimitSellOrderUseCase: Symbol.for("LimitSellOrderUseCase"),

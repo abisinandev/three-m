@@ -85,6 +85,10 @@ import { IGetValidStrategiesUseCase } from "@application/use_cases/algo-trading/
 import { GetValidStrategiesUseCase } from "@application/use_cases/algo-trading/get-valid-strategies.usecase";
 import { IEvaluateStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/evaluate-strategy.interface";
 import { EvaluateStrategyUseCase } from "@application/use_cases/algo-trading/evaluate-strategy.usecase";
+import { IExecuteMarketBuyOrderUseCase } from "@application/use_cases/stock/interfaces/execute-market-buy-order.interface";
+import { ExecuteMarketBuyOrderUseCase } from "@application/use_cases/stock/execute-market-buy-order.usecase";
+import { IExecuteMarketSellOrderUseCase } from "@application/use_cases/stock/interfaces/execute-market-sell-order.interface";
+import { ExecuteMarketSellOrderUseCase } from "@application/use_cases/stock/execute-market-sell-order.usecase";
 
 // BullMQ & Queues
 import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy/strategy.queue";
@@ -127,7 +131,9 @@ export const StockModules = new ContainerModule(({ bind }) => {
 
     bind<OrdersController>(STOCK_TYPES.OrdersController).to(OrdersController);
     bind<IMarketBuyOrderUseCase>(STOCK_TYPES.MarketBuyOrderUseCase).to(MarketBuyOrderUseCase);
+    bind<IExecuteMarketBuyOrderUseCase>(STOCK_TYPES.ExecuteMarketBuyOrderUseCase).to(ExecuteMarketBuyOrderUseCase);
     bind<IMarketSellOrderUseCase>(STOCK_TYPES.MarketSellOrderUseCase).to(MarketSellOrderUseCase);
+    bind<IExecuteMarketSellOrderUseCase>(STOCK_TYPES.ExecuteMarketSellOrderUseCase).to(ExecuteMarketSellOrderUseCase);
     bind<ILimitBuyOrderUseCase>(STOCK_TYPES.LimitBuyOrderUseCase).to(LimitBuyOrderUseCase);
     bind<IExecuteLimitBuyOrderUseCase>(STOCK_TYPES.ExecuteLimitBuyOrderUseCase).to(ExecuteLimitBuyOrderUseCase);
     bind<ILimitSellOrderUseCase>(STOCK_TYPES.LimitSellOrderUseCase).to(LimitSellOrderUseCase);

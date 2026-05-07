@@ -14,15 +14,14 @@ export class AddStockUseCase implements IAddStockUseCase {
     ) { }
 
     async execute(stock: ISearchedStock & { logo?: string | null }): Promise<void> {
-        // Append suffix based on exchange if not already present
+
         let symbolWithSuffix = stock.symbol.toUpperCase();
         const suffix = stock.exchange === "NSE" ? ".NS" : stock.exchange === "BSE" ? ".BS" : "";
-        
+
         if (suffix && !symbolWithSuffix.endsWith(suffix)) {
             symbolWithSuffix = `${symbolWithSuffix}${suffix}`;
         }
 
-        // Check for duplicate with suffixed symbol
         const existing = await this._stockRepository.findBySymbol(symbolWithSuffix);
         if (existing) {
             throw new AppError(`Stock with symbol ${symbolWithSuffix} already exists in the system`, HttpStatus.CONFLICT);

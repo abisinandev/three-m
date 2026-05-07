@@ -15,21 +15,21 @@ import { OrderSide } from "@domain/entities/stock/enum/order-side.enum";
 import { TradeEntity } from "@domain/entities/stock/trade.entity";
 import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
+import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
+import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
-import { CurrencyTypes } from "@domain/enum/users/currency-enum";
-import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
+import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
-import { IExecuteLimitBuyOrderUseCase } from "./interfaces/execute-limit-buy-order.interface";
-import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
-import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
+import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
+import { IExecuteMarketBuyOrderUseCase } from "./interfaces/execute-market-buy-order.interface";
 
 @injectable()
-export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase {
+export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCase {
     constructor(
         @inject(STOCK_TYPES.OrderRepository) private readonly _orderRepository: IOrderRepository,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
@@ -51,11 +51,10 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
         const latestQuote = await this._marketDataProvider.getLatestQuote(order.symbol);
         const currentPrice = latestQuote?.price;
 
-        const triggerPrice = order.limitPrice ?? order.price;
-        if (!currentPrice || currentPrice > Number(triggerPrice)) {
+        if (!currentPrice) {
+            console.error(`[ExecuteMarketBuyOrder] Could not get current price for ${order.symbol}`);
             return;
         }
-
 
         const session = await mongoose.startSession();
         try {
@@ -70,8 +69,8 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
                 totalValue: currentPrice * order.quantity,
             };
 
-            const reservedValue = order.price * order.quantity;//user wallet locked amount
-            const refundAmount = reservedValue - execution.totalValue;//execution amount
+            const reservedValue = order.price * order.quantity;
+            const refundAmount = reservedValue - execution.totalValue;
 
             const transaction = TransactionEntity.create({
                 userId: order.userId,
@@ -80,8 +79,9 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
                 currency: CurrencyTypes.INR,
                 referenceType: TransactionReferenceType.WALLET,
                 status: TransactionStatus.PENDING,
-                type: TransactionTypes.BUY
-            })
+                type: TransactionTypes.BUY,
+                referenceId: order.id as string
+            });
             const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
 
             const wallet = await this._wallet.findByUserId(order.userId, session);
@@ -92,7 +92,6 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
             } else if (refundAmount < 0) {
                 wallet.debit(Math.abs(refundAmount));
             }
-
             await this._wallet.update(wallet.id as string, wallet, session);
 
             order.updateFilledQty(execution.filledQty, execution.avgPrice);
@@ -107,7 +106,7 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
                 quantity: execution.filledQty,
                 side: OrderSide.BUY,
                 isAlgoTrade: order.isAlgoTrade ?? false,
-            })
+            });
             await this._tradeRepository.create(trade, session);
 
             const stock = await this._stockRepository.findBySymbol(order.symbol);
@@ -124,21 +123,11 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
                 const newTotalInvested = portfolio.investedAmount + execution.totalValue;
                 const newAvgPrice = newTotalInvested / newTotalQuantity;
 
-                portfolio.updateQuantityAndPrice(
-                    newTotalQuantity,
-                    newAvgPrice,
-                    newTotalInvested
-                );
-
+                portfolio.updateQuantityAndPrice(newTotalQuantity, newAvgPrice, newTotalInvested);
                 if (order.stopLoss || order.takeProfit) {
                     portfolio.updateRiskLevels(order.stopLoss, order.takeProfit);
                 }
-
-                await this._portfolioRepository.update(
-                    portfolio.id as string,
-                    portfolio,
-                    session
-                );
+                await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
             } else {
                 portfolio = PortfolioEntity.create({
                     userId: order.userId,
@@ -148,11 +137,9 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
                     avgPrice: execution.avgPrice,
                     investedAmount: execution.totalValue,
                 });
-
                 if (order.stopLoss || order.takeProfit) {
                     portfolio.updateRiskLevels(order.stopLoss, order.takeProfit);
                 }
-
                 await this._portfolioRepository.create(portfolio, session);
             }
 
@@ -162,19 +149,17 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
             await this._createNotification.execute({
                 userId: order.userId,
                 type: NotificationType.INFO,
-                title: "Limit Order Executed",
-                message: `Your buy order for ${order.quantity} ${order.symbol} at Rs.${execution.totalValue} has been executed.`
-            })
+                title: "Market Order Executed",
+                message: `Your buy order for ${order.quantity} ${order.symbol} has been executed at Rs.${execution.avgPrice.toFixed(2)}.`
+            });
 
             await session.commitTransaction();
-
         } catch (error) {
             await session.abortTransaction();
-            console.error(`Execution failed for order ${orderId}:`, error);
+            console.error(`[ExecuteMarketBuyOrder] Failed for order ${orderId}:`, error);
             throw error;
         } finally {
             session.endSession();
         }
     }
 }
-

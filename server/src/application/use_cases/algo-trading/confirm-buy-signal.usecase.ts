@@ -38,6 +38,7 @@ import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notifi
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { IAlgoStrategyConfigRepository } from "@application/interfaces/repositories/algo/algo-strategy-config-repository.interface";
 import { Features } from "@domain/entities/subscription/enums/features.enum";
+import { isIndianMarketOpen } from "@shared/utils/market/market-time";
 
 @injectable()
 export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
@@ -98,6 +99,9 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
         try {
             session.startTransaction();
 
+            if (!isIndianMarketOpen())
+                throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+
             const user = await this._userRepository.findById(order.userId);
             if (!user) throw new NotFoundError(ErrorMessages.USER.NOT_FOUND);
 
@@ -110,8 +114,6 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
             if (!stock.isTradable)
                 throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
 
-            // if (!isIndianMarketOpen())
-            //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
             if (!order.quantity || order.quantity <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);
