@@ -70,8 +70,6 @@ export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCa
                 totalValue: currentPrice * order.quantity,
             };
 
-            const reservedValue = order.price * order.quantity;
-            const refundAmount = reservedValue - execution.totalValue;
 
             const transaction = TransactionEntity.create({
                 userId: order.userId,
@@ -88,11 +86,7 @@ export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCa
             const wallet = await this._wallet.findByUserId(order.userId, session);
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
 
-            if (refundAmount > 0) {
-                wallet.credit(refundAmount);
-            } else if (refundAmount < 0) {
-                wallet.debit(Math.abs(refundAmount));
-            }
+            wallet.debit(execution.totalValue);
             await this._wallet.update(wallet.id as string, wallet, session);
 
             order.updateFilledQty(execution.filledQty, execution.avgPrice);

@@ -12,4 +12,5 @@ export interface IPortfolioRepository extends IBaseRepository<PortfolioEntity> {
     getUserAssets(userId: string): Promise<PortfolioEntity[]>;
     countUserInvestements(userId: string): Promise<number>;
     countUserStockHoldings(userId: string): Promise<number>;
+    calculateTotalStockAUM(): Promise<number>;
 }

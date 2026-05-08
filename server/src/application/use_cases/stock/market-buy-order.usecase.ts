@@ -20,7 +20,6 @@ import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscr
 import { IFeatureAccessService } from "@application/interfaces/services/subscription/feature-access-service.interface";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { isIndianMarketOpen } from "@shared/utils/market/market-time";
-import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { OrderStatus } from "@domain/entities/stock/enum/order-status.enum";
 import { IOrderQueue } from "@application/interfaces/services/stocks/order-queue.interface";
 

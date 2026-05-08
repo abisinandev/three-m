@@ -143,12 +143,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
         const totalProfit = currentValue - totalInvestment;
         const totalReturns = totalProfit + profitAfterSell;
 
-        console.log('Current: ', currentValue, totalInvestment);
-
-        console.log('Total: ', totalProfit, totalReturns,)
-
         const profitPercentage = totalInvestment > 0 ? (totalReturns / totalInvestment) * 100 : 0;
-        console.log("profitPercentage: ", investments);
 
 
         // XIRR Calculation
@@ -159,6 +154,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             priceMap
         );
 
+        console.log('cashflows: ', cashflows);
         const xirr = this.xirrService.calculate(cashflows);
 
         const allocations = [

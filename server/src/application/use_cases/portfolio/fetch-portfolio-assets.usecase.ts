@@ -93,7 +93,7 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                     !stock.name.toLowerCase().includes(search.toLowerCase())) {
                     return null;
                 }
-
+ 
                 let currentPrice = asset.avgPrice;
                 const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
                 if (quote) currentPrice = quote.price;

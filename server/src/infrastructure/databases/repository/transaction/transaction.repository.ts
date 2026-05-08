@@ -146,12 +146,12 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
                     _id: { $week: "$createdAt" },
                     deposits: {
                         $sum: {
-                            $cond: [{ $eq: ["$type", "DEPOSIT"] }, "$amount", 0]
+                            $cond: [{ $eq: ["$type", "TOPUP"] }, "$amount", 0]
                         }
                     },
                     withdrawals: {
                         $sum: {
-                            $cond: [{ $eq: ["$type", "WITHDRAWAL"] }, "$amount", 0]
+                            $cond: [{ $eq: ["$type", "WITHDRAW"] }, "$amount", 0]
                         }
                     }
                 }

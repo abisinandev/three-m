@@ -35,5 +35,5 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
     findUserInvestmentsForXirr(userId: string): Promise<InvestmentEntity[] | null>;
     countInvestments(userId: string, options: QueryOptions): Promise<number>;
     portfolioGrowthByMonth(userId: string): Promise<PortfolioGrowthPoint[]>;
-    calculateTotalAUM(): Promise<{ mf: number; stocks: number; algo: number }>;
+    calculateTotalAUM(): Promise<number>;
 }

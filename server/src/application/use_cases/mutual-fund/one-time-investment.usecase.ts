@@ -62,7 +62,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                     currency: CurrencyTypes.INR,
                     status: TransactionStatus.PENDING,
                     type: TransactionTypes.INVESTMENT,
-                    referenceType: TransactionReferenceType.SIP,
+                    referenceType: TransactionReferenceType.INVESTMENT,
                     fundId: fund.id,
                 })
                 const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
@@ -101,12 +101,12 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                         investedAmount: amount,
                     });
                     await this._portfolioRepository.create(portfolio, session);
-                } else {
+                } else {    
                     const newTotalInvested = portfolio.investedAmount + amount;
-                    const newQuantity = (portfolio.quantity ?? 0) + (data.units || 0);
+                    const newUnits = (portfolio.units ?? 0) + (data.units || 0);
                     const newAvgPrice = latestNav;
 
-                    portfolio.updateQuantityAndPrice(newQuantity, newAvgPrice, newTotalInvested);
+                    portfolio.updateQuantityAndPrice(newUnits, newAvgPrice, newTotalInvested);
 
                     await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
                 }

@@ -137,4 +137,21 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
     async countDailyAlgoTradesByStrategy(strategyName: string): Promise<number> {
         return 0
     }
+
+    async calculateTotalAlgoAUM(): Promise<number> {
+        const result = await this.model.aggregate([
+            { $match: { isAlgoTrade: true } },
+            {
+                $group: {
+                    _id: null,
+                    total: {
+                        $sum: {
+                            $cond: [{ $eq: ["$side", "BUY"] }, { $multiply: ["$price", "$quantity"] }, { $multiply: ["$price", "$quantity", -1] }]
+                        }
+                    }
+                }
+            }
+        ]);
+        return result.length > 0 ? Math.max(0, result[0].total) : 0;
+    }
 }

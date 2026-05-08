@@ -1,4 +1,4 @@
-import type { AdminDashboardData } from "../../types/dashboard.types";
+import type { AdminDashboardData } from "../types/dashboard.types";
 
 interface RecentTransactionsProps {
     data: AdminDashboardData['recentTransactions'];
@@ -22,11 +22,11 @@ export const RecentTransactions = ({ data, formatCurrency }: RecentTransactionsP
                             <div className="text-[11px] font-bold text-gray-100">{formatCurrency(tx.amount)}</div>
                             <div className="text-[9px] text-gray-500 mt-0.5">{tx.type}</div>
                         </div>
-                        <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium ml-4 ${tx.status === 'VERIFIED'
-                            ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
-                            : tx.status === 'PENDING'
-                                ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
-                                : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                        <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ml-4 ${tx.status === 'SUCCESSFUL'
+                                ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                : tx.status === 'PENDING' || tx.status === 'PROCESSING'
+                                    ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                                    : 'bg-red-500/10 text-red-400 border border-red-500/20'
                             }`}>
                             {tx.status}
                         </span>

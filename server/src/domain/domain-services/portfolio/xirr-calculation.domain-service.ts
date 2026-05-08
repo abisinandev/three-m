@@ -3,7 +3,8 @@ import { CashFlow, IXirrCalculator } from "./xirr-calculation.interface";
 
 /**
  * Portfolio XIRR Domain Service
- *
+ * 
+ * Newton-Raphson logic
  * Responsible for calculating the overall portfolio return using XIRR
  * (Extended Internal Rate of Return).
  *

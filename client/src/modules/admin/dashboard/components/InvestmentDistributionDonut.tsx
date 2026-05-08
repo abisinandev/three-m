@@ -1,5 +1,5 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import type { AdminDashboardData } from "../../types/dashboard.types";
+import type { AdminDashboardData } from '../types/dashboard.types';
 
 interface InvestmentDistributionDonutProps {
     data: AdminDashboardData['charts']['investmentDistribution'];
@@ -20,7 +20,7 @@ export const InvestmentDistributionDonut = ({ data, totalAum, formatCurrency }: 
                 <h3 className="text-[11px] font-semibold text-gray-200 uppercase tracking-wider">Asset Distribution</h3>
                 <span className="text-[10px] text-gray-500 font-medium px-1.5 py-0.5 rounded bg-[#1f1f1f]">AUM</span>
             </div>
-            
+
             <div className="flex-1 relative min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -38,13 +38,20 @@ export const InvestmentDistributionDonut = ({ data, totalAum, formatCurrency }: 
                                 <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
                         </Pie>
-                        <Tooltip 
-                            contentStyle={{ background: '#0f0f0f', border: '1px solid #1f1f1f', borderRadius: '4px', fontSize: '10px' }}
-                            itemStyle={{ padding: '0px' }}
+                        <Tooltip
+                            contentStyle={{
+                                background: '#0f0f0f',
+                                border: '1px solid #1f1f1f',
+                                borderRadius: '4px',
+                                fontSize: '10px',
+                                color: '#fff'
+                            }}
+                            itemStyle={{ color: '#fff', padding: '2px 0' }}
+                            formatter={(value: number) => formatCurrency(value)}
                         />
                     </PieChart>
                 </ResponsiveContainer>
-                
+
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none pt-4">
                     <div className="text-center">
                         <div className="text-sm font-bold text-gray-100 tracking-tight">{formatCurrency(totalAum)}</div>

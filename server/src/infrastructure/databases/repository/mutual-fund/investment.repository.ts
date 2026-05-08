@@ -507,13 +507,11 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         return slots;
     }
 
-    async calculateTotalAUM(): Promise<{ mf: number; stocks: number; algo: number }> {
+    async calculateTotalAUM(): Promise<number> {
         const mfResult = await this.model.aggregate([
             { $match: { status: InvestmentStatus.ALLOTTED } },
             { $group: { _id: null, total: { $sum: "$amount" } } }
         ]);
-        const mf = mfResult.length > 0 ? mfResult[0].total : 0;
-        
-        return { mf, stocks: 0, algo: 0 };
+        return mfResult.length > 0 ? mfResult[0].total : 0;
     }
 }  
