@@ -10,6 +10,7 @@ import {
     Legend,
 } from 'recharts';
 import type { IInvestmentResponse } from '@shared/types/portfolio.types';
+import type { PieChartTooltipProps } from '@/shared/types/user/dashboard.types';
 
 const COLORS = [
     '#3b82f6',
@@ -22,7 +23,7 @@ const COLORS = [
     '#8b5cf6',
 ];
 
-const renderTooltipContent = ({ active, payload, totalValue }: any) => {
+const renderTooltipContent = ({ active, payload, totalValue }: PieChartTooltipProps) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload;
         return (

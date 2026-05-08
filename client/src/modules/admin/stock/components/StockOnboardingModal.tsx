@@ -12,17 +12,18 @@ interface StockOnboardingModalProps {
     onSuccess: () => void;
 }
 
+import type { StockResult } from '@/shared/types/admin/stock-management.types';
+
 type Step = 'search' | 'details';
 
 export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOpen, onClose, onSuccess }) => {
     const adminId = useAdminStore(state => state.data?.adminCode || 'admin');
     const [step, setStep] = useState<Step>('search');
     const [searchQuery, setSearchQuery] = useState('');
-    const [results, setResults] = useState<any[]>([]);
+    const [results, setResults] = useState<StockResult[]>([]);
     const [isSearching, setIsSearching] = useState(false);
-    const [selectedStock, setSelectedStock] = useState<any>(null);
-    
-    // Onboarding Form
+    const [selectedStock, setSelectedStock] = useState<StockResult | null>(null);
+
     const [logoFile, setLogoFile] = useState<File | null>(null);
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,7 +57,7 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
         }
     };
 
-    const handleSelectStock = (stock: any) => {
+    const handleSelectStock = (stock: StockResult) => {
         setSelectedStock(stock);
         setStep('details');
     };
@@ -82,7 +83,7 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
 
     const handleOnboard = async () => {
         if (!selectedStock) return;
-        
+
         setIsSubmitting(true);
         try {
             let logoUrl = null;
@@ -96,7 +97,13 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
             await StockManagementApi.addStock({
                 ...selectedStock,
                 logo: logoUrl,
-                sector: sector
+                sector: sector,
+                exchange: selectedStock.exchange,
+                isTradable: false,
+                isVisible: false,
+                price: 0,
+                name: selectedStock.name,
+                symbol: selectedStock.symbol,
             });
 
             toast.success(`${selectedStock.symbol} onboarded successfully`);
@@ -104,7 +111,8 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
             onClose();
             // Reset
             handleBack();
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { message?: string } } };
             console.error('Onboarding error:', error);
             const msg = error.response?.data?.message || 'Failed to onboard stock';
             toast.error(msg);
@@ -123,7 +131,7 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-            <div 
+            <div
                 className="w-full max-w-lg bg-[#0b0c0e] border border-[#1e2025] rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
                 style={{ fontFamily: 'Inter, sans-serif' }}
             >
@@ -132,7 +140,7 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
                 <div className="flex justify-between items-center px-6 py-4 border-b border-[#1e2025]">
                     <div className="flex items-center gap-3">
                         {step === 'details' && (
-                            <button 
+                            <button
                                 onClick={handleBack}
                                 className="p-1.5 hover:bg-[#1e2025] rounded-lg transition-colors text-[#5a5f6e] hover:text-white"
                             >
@@ -148,7 +156,7 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
                             </p>
                         </div>
                     </div>
-                    <button 
+                    <button
                         onClick={onClose}
                         className="p-2 hover:bg-[#1e2025] rounded-lg transition-colors text-[#5a5f6e] hover:text-white"
                     >
@@ -179,7 +187,7 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
                             <div className="h-[320px] overflow-y-auto custom-scrollbar space-y-2">
                                 {results.length > 0 ? (
                                     results.map((stock) => (
-                                        <div 
+                                        <div
                                             key={`${stock.symbol}-${stock.exchange}`}
                                             onClick={() => handleSelectStock(stock)}
                                             className="group flex items-center justify-between p-3 rounded-lg bg-[#111214] border border-[#1e2025] hover:border-teal-500/30 hover:bg-[#141518] transition-all cursor-pointer"
@@ -218,7 +226,7 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
                             {/* Asset Summary Card */}
                             <div className="p-4 rounded-xl bg-[#111214] border border-[#1e2025] flex items-center gap-4">
                                 <div className="relative group">
-                                    <div 
+                                    <div
                                         onClick={() => fileInputRef.current?.click()}
                                         className="w-16 h-16 rounded-xl bg-[#0b0c0e] border-2 border-dashed border-[#1e2025] group-hover:border-teal-500/50 transition-all flex items-center justify-center cursor-pointer overflow-hidden"
                                     >
@@ -228,11 +236,11 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
                                             <Upload size={20} className="text-[#5a5f6e] group-hover:text-teal-500" />
                                         )}
                                     </div>
-                                    <input 
-                                        type="file" 
-                                        ref={fileInputRef} 
-                                        onChange={handleFileChange} 
-                                        className="hidden" 
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleFileChange}
+                                        className="hidden"
                                         accept="image/*"
                                     />
                                 </div>
@@ -278,7 +286,7 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
 
                                 <div className="p-3 rounded-lg bg-teal-500/5 border border-teal-500/10">
                                     <p className="text-[10px] text-teal-500/80 leading-relaxed">
-                                        Note: This asset will be initialized as <b>Hidden</b> and <b>Non-Tradable</b>. 
+                                        Note: This asset will be initialized as <b>Hidden</b> and <b>Non-Tradable</b>.
                                         You can enable these statuses from the management table after onboarding.
                                     </p>
                                 </div>

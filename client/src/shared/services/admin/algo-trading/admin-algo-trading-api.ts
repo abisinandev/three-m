@@ -1,6 +1,6 @@
 import adminApi from "@/lib/axios-admin";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
-import type { StrategyFilters, StrategyRiskConfig } from "@shared/types/admin/algo-trading.types";
+import type { StrategyFilters, StrategyRiskConfig, AdminStrategy, AdminSignal, AdminAlgoTrade } from "@shared/types/admin/algo-trading.types";
 
 
 export const FetchAdminAlgoStats = async () => {
@@ -12,7 +12,7 @@ export const FetchAdminAlgoStats = async () => {
     return response.data;
 };
 
-export const FetchAdminStrategies = async (filters: StrategyFilters) => {
+export const FetchAdminStrategies = async (filters: StrategyFilters): Promise<{ data: { data: AdminStrategy[]; total: number; totalPages: number } }> => {
     const response = await adminApi.get(API_ROUTES.ADMIN.ALGO_TRADING.GET_STRATEGIES, {
         withCredentials: true,
         params: filters,
@@ -22,7 +22,7 @@ export const FetchAdminStrategies = async (filters: StrategyFilters) => {
     return response.data;
 };
 
-export const FetchAdminSignals = async (filters: StrategyFilters) => {
+export const FetchAdminSignals = async (filters: StrategyFilters): Promise<{ data: { data: AdminSignal[]; total: number; totalPages: number } }> => {
     const response = await adminApi.get(API_ROUTES.ADMIN.ALGO_TRADING.GET_SIGNALS, {
         withCredentials: true,
         params: filters,
@@ -32,7 +32,7 @@ export const FetchAdminSignals = async (filters: StrategyFilters) => {
     return response.data;
 };
 
-export const FetchAdminAlgoTrades = async (filters: StrategyFilters) => {
+export const FetchAdminAlgoTrades = async (filters: StrategyFilters): Promise<{ data: { data: AdminAlgoTrade[]; total: number; totalPages: number } }> => {
     const response = await adminApi.get(API_ROUTES.ADMIN.ALGO_TRADING.GET_TRADES, {
         withCredentials: true,
         params: filters,

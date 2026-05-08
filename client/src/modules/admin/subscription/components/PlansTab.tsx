@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { toast } from "sonner";
 import {
     Lock, Info, AlertTriangle, Save, RefreshCw, CheckCircle2,
@@ -127,7 +128,7 @@ const PremiumPlanCard = ({ plan }: { plan?: Plan }) => {
             toast.success(response?.message || "Plan updated successfully");
             setTimeout(() => setSavedSuccessfully(false), 3000);
         },
-        onError: (error: any) => {
+        onError: (error: AxiosError<{ message?: string }>) => {
             toast.error(error?.response?.data?.message || "Failed to update plan");
         }
     });

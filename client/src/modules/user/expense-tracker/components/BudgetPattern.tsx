@@ -9,8 +9,20 @@ import {
     Sector,
 } from 'recharts';
 import { formatCurrency } from '../helpers/expense-helpers';
+import type { BudgetPatternProps } from '@/shared/types/user/expense.types';
 
-const renderActiveShape = (props: any) => {
+
+interface ActiveShapeProps {
+    cx: number;
+    cy: number;
+    innerRadius: number;
+    outerRadius: number;
+    startAngle: number;
+    endAngle: number;
+    fill: string;
+}
+
+const renderActiveShape = (props: ActiveShapeProps) => {
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
 
     return (
@@ -38,20 +50,6 @@ const renderActiveShape = (props: any) => {
     );
 };
 
-interface BudgetPatternProps {
-    finalChartData: any[];
-    activeChartData: any[];
-    filteredSpent: number;
-    totalIncome: number;
-    needsTarget: number;
-    wantsTarget: number;
-    savingsTarget: number;
-    filteredNeeds: number;
-    filteredWants: number;
-    filteredSavings: number;
-    unspentBalance: number;
-}
-
 export const BudgetPattern = ({
     activeChartData,
     filteredSpent,
@@ -62,7 +60,7 @@ export const BudgetPattern = ({
 }: BudgetPatternProps) => {
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-    const onPieEnter = (_: any, index: number) => {
+    const onPieEnter = (_: unknown, index: number) => {
         setActiveIndex(index);
     };
 

@@ -51,6 +51,10 @@ export interface IPortfolioSummaryResponse {
     currentValue: number;
     profitPercentage: number;
     xirr: number | null;
+    allocations?: {
+        assetType: string;
+        currentValue: number;
+    }[];
 }
 
 export interface IRedeemedInvestment {

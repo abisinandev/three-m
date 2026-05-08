@@ -8,7 +8,7 @@ export interface Notification {
     signalId?: string; 
     data?: {
         signalId?: string;
-        [key: string]: any;
+        [key: string]: unknown;
     };
 }
 

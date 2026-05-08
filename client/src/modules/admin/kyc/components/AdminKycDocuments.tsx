@@ -1,8 +1,10 @@
 import React from 'react';
 import { FileText, ExternalLink } from 'lucide-react';
 
+import type { kycDocuments } from '@shared/types/user/KycUserType';
+
 interface AdminKycDocumentsProps {
-  documents: any[];
+  documents: kycDocuments[];
 }
 
 export const AdminKycDocuments = ({ documents }: AdminKycDocumentsProps) => {
@@ -15,7 +17,7 @@ export const AdminKycDocuments = ({ documents }: AdminKycDocumentsProps) => {
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {documents.map((doc: any) => (
+        {documents.map((doc: kycDocuments) => (
           <div
             key={doc._id || doc.type}
             className="bg-[#0b0c0e] rounded-xl border border-[#1e2025] overflow-hidden hover:border-[#00C853]/50 transition-all duration-300 group flex flex-col shadow-inner"

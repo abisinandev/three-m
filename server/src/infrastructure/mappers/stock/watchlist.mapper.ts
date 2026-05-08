@@ -12,7 +12,7 @@ export const toDomain = (doc: WatchlistDocument): WatchlistEntity => {
 
 export const toPersistance = (entity: WatchlistEntity): Partial<WatchlistDocument> => {
   return {
-    userId: entity.userId as any,
+    userId: entity.userId as unknown,
     symbol: entity.symbol,
     createdAt: entity.createdAt,
   };

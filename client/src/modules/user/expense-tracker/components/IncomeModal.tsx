@@ -5,11 +5,7 @@ import { useAddIncomeMutation } from '../hooks/useExpenseMutations';
 import { toast } from 'sonner';
 import { formatCurrency } from '../../helpers/format';
 
-interface IncomeModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    incomeSources: any[];
-}
+import type { IncomeModalProps } from '@/shared/types/user/expense.types';
 
 export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps) => {
     const [newSourceName, setNewSourceName] = useState('');

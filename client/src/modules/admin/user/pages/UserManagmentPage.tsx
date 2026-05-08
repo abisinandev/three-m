@@ -18,7 +18,7 @@ import type { User } from '@shared/components/interfaces/IUserTable';
 import type { UserFilters } from '@/shared/types/admin/user-management.types';
 
 
-const calculateUserStats = (data: any) => ({
+const calculateUserStats = (data: { total?: number; totalActiveUsersCount?: number; totalInActiveUsersCount?: number; totalVerifiedUsersCount?: number } | undefined) => ({
     total: data?.total ?? 0,
     active: data?.totalActiveUsersCount ?? 0,
     blocked: data?.totalInActiveUsersCount ?? 0,

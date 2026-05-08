@@ -4,7 +4,7 @@ import { OrderDocument } from "@infrastructure/databases/mongo_db/models/schemas
 
 const toDomain = (doc: OrderDocument): OrderEntity => {
     return OrderEntity.fromPersistence({
-        id: doc._id ? doc._id.toString() : (doc as any).id,
+        id: doc._id ? doc._id.toString() : (doc as Record<string, unknown>).id,
         userId: doc.userId,
         symbol: doc.symbol,
         side: doc.side,

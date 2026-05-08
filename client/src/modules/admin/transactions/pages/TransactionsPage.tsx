@@ -83,7 +83,7 @@ export default function TransactionManagementPage() {
                         <select
                             value={statusFilter}
                             onChange={(e) => {
-                                setStatusFilter(e.target.value as any);
+                                setStatusFilter(e.target.value as "ALL" | "SUCCESSFUL" | "FAILED" | "PENDING");
                                 setCurrentPage(1);
                             }}
                             className="px-2.5 py-1 bg-neutral-800/60 border border-neutral-700/80 rounded text-[12px] text-white focus:outline-none focus:border-emerald-500/50 w-[150px] transition-all font-medium"

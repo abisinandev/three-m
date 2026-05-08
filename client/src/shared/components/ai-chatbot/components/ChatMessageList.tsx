@@ -4,7 +4,7 @@ import { ChatBubble } from './ChatBubble';
 import { QuickActions } from './QuickActions';
 import { OrderPreview } from './OrderPreview';
 import { StockSuggestionList } from './StockSuggestionList';
-import type { ChatMessage } from '../types/chatbot.types';
+import type { ChatMessage, BotStock } from '../types/chatbot.types';
 
 interface ChatMessageListProps {
     messages: ChatMessage[];
@@ -12,6 +12,14 @@ interface ChatMessageListProps {
     showQuickActions: boolean;
     onAction: (prompt: string) => void;
     onUpgradeClick: () => void;
+}
+
+interface OrderData {
+    symbol: string;
+    qty: number;
+    price: number;
+    total: number;
+    name: string;
 }
 
 export function ChatMessageList({
@@ -35,8 +43,12 @@ export function ChatMessageList({
                         message={msg}
                         onUpgradeClick={onUpgradeClick}
                     />
-                    {msg.type === 'confirmation' && <OrderPreview data={msg.data} />}
-                    {msg.type === 'suggestion_list' && <StockSuggestionList stocks={msg.data} />}
+                    {msg.type === 'confirmation' && msg.data && (
+                        <OrderPreview data={msg.data as OrderData} />
+                    )}
+                    {msg.type === 'suggestion_list' && msg.data && (
+                        <StockSuggestionList stocks={msg.data as BotStock[]} />
+                    )}
                 </div>
             ))}
 

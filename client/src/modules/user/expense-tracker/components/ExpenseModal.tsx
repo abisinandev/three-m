@@ -3,16 +3,12 @@ import { useState } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import { useAddExpenseMutation } from '../hooks/useExpenseMutations';
 import { toast } from 'sonner';
-
-interface ExpenseModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-}
+import type { ExpenseCategory, ExpenseModalProps } from '@/shared/types/user/expense.types';
 
 export const ExpenseModal = ({ isOpen, onClose }: ExpenseModalProps) => {
     const [amount, setAmount] = useState('');
     const [description, setDescription] = useState('');
-    const [category, setCategory] = useState<'NEED' | 'WANT' | 'SAVING' | ''>('');
+    const [category, setCategory] = useState<ExpenseCategory>('');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
     const { mutate: addExpense, isPending: isAddingExpense } = useAddExpenseMutation();
@@ -91,7 +87,7 @@ export const ExpenseModal = ({ isOpen, onClose }: ExpenseModalProps) => {
                             <select
                                 className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-[12px] text-white outline-none focus:border-blue-500/50 transition-all font-bold appearance-none cursor-pointer"
                                 value={category}
-                                onChange={(e) => setCategory(e.target.value as any)}
+                                onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
                             >
                                 <option value="" disabled>Select</option>
                                 <option value="NEED">Needs</option>

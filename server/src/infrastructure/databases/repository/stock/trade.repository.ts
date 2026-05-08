@@ -41,7 +41,7 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
 
         const finalFilter: Record<string, unknown> = {
             ...filter,
-            userId: userId as any
+            userId: userId as unknown
         };
 
         if (search.trim()) {
@@ -53,7 +53,7 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
 
         const sort: Record<string, 1 | -1> = {
             [sortBy]: sortOrder === "asc" ? 1 : -1,
-        } as any;
+        } as unknown;
 
         const docs = await this.model
             .find(finalFilter)
@@ -68,7 +68,7 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
     async countWithFilters(userId: string, filter: Record<string, unknown>, search: string): Promise<number> {
         const finalFilter: Record<string, unknown> = {
             ...filter,
-            userId: userId as any
+            userId: userId as unknown
         };
 
         if (search.trim()) {

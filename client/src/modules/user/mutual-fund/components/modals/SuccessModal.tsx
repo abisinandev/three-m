@@ -4,7 +4,7 @@ import { Check, X } from 'lucide-react';
 interface SuccessModalProps {
     data: FundDetails;
     investment: number;
-    successData?: any;
+    successData?: { amount?: number; units?: number };
     onClose: () => void;
 }
 

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Trash2, CheckCircle2, AlertTriangle, XCircle, ShieldCheck } from 'lucide-react';
-import type { ExpenseTrackerData } from '../types/expense.types';
+import type { ExpenseTrackerData, BudgetPlanResponse } from '../types/expense.types';
+import { useMutation } from '@tanstack/react-query';
 
 type Step = 0 | 1 | 2 | 3 | 4;
 
@@ -14,7 +15,7 @@ interface BudgetItem {
 
 interface SmartBudgetPlannerProps {
     dashboardData?: ExpenseTrackerData;
-    budgetPlanMutation: any;
+    budgetPlanMutation: ReturnType<typeof useMutation<BudgetPlanResponse, unknown, { income: number; needsTotal: number; wantsTotal: number; savingsTotal: number; month: string }>>;
     month: string;
 }
 
@@ -148,7 +149,6 @@ export const SmartBudgetPlanner = ({ dashboardData, budgetPlanMutation, month }:
                             onChange={e => setIncome(parseFloat(e.target.value) || 0)}
                             className="w-full bg-[#0b0c0e] border border-[#1e2025] rounded-md text-[13px] text-white py-2.5 px-3 outline-none mb-4 text-center tabular-nums" 
                             placeholder="Enter amount"
-                            autoFocus
                         />
                         <div className="w-full flex justify-end">
                             <button 
@@ -226,7 +226,7 @@ export const SmartBudgetPlanner = ({ dashboardData, budgetPlanMutation, month }:
 
                                 <div className="space-y-2">
                                     <p className="text-[11px] font-semibold text-[#e8eaed] mb-3">Insights & Recommendations</p>
-                                    {budgetPlanMutation.data.insights.map((ins: any, i: number) => (
+                                    {budgetPlanMutation.data.insights.map((ins, i) => (
                                         <div key={i} className="flex gap-2.5 items-start bg-[#0b0c0e] border border-[#1e2025] rounded p-3">
                                             {ins.type === 'success' ? <CheckCircle2 size={14} className="text-[#00C853] mt-0.5 shrink-0" /> : 
                                             ins.type === 'critical' ? <XCircle size={14} className="text-[#F43F5E] mt-0.5 shrink-0" /> : 

@@ -17,7 +17,7 @@ export interface ConfirmSignalRequest {
 export interface ApiResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
 export class AlgoTradingApiService {

@@ -53,7 +53,7 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
             console.log("Parsed: ", parsed);
 
             if (parsed.type === "trade") {
-                parsed.data.forEach((t: any) => {
+                parsed.data.forEach((t: Record<string, unknown>) => {
                     const trade: Trade = {
                         symbol: t.s,
                         price: t.p,

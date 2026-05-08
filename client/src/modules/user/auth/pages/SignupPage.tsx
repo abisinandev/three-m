@@ -54,7 +54,7 @@ export const SignupPage: React.FC = () => {
             const singleFieldSchema = SignupValidationSchema.pick({ [name]: true });
             singleFieldSchema.parse({ [name]: value });
             setFormErrors((prev) => ({ ...prev, [name]: "" }));
-        } catch (err: any) {
+        } catch (err: unknown) {
             if (err instanceof z.ZodError) {
                 const fieldError = err.issues[0]?.message || "";
                 setFormErrors((prev) => ({ ...prev, [name]: fieldError }));
@@ -112,7 +112,7 @@ export const SignupPage: React.FC = () => {
         });
 
         signupMutation.mutate(result.data, {
-            onSuccess: (res: any) => {
+            onSuccess: (res: { data: { message: string } }) => {
                 if (res.data) {
                     const { clearData, setData } = useAuthStore.getState();
                     clearData();
@@ -130,7 +130,7 @@ export const SignupPage: React.FC = () => {
                     }, 50);
                 }
             },
-            onError: (err: any) => toast.error(err.response?.data?.message || "Verification failed"),
+            onError: (err: { response?: { data?: { message?: string } } }) => toast.error(err.response?.data?.message || "Verification failed"),
         });
     };
 

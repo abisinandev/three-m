@@ -1,72 +1,17 @@
 import adminApi from "@/lib/axios-admin";
 
-export type Plan = {
-    id: string;
-    code: string;
-    price: number;
-    durationInDays: number;
-    features: string[];
-    isActive: boolean;
-    createdAt: string;
-    updatedAt?: string;
-};
+import type {
+    Plan,
+    PaginatedPlans,
+    PaginatedSubscriptions,
+    SubscriptionStats
+} from "@/shared/types/subscription/subscription.types";
 
-export type PaginatedPlans = {
-    plans: Plan[];
-    totalCount: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-};
-
-export type UserSubscription = {
-    id: string;
-    userId: string;
-    fullName: string;
-    email: string;
-    planCode: string;
-    startDate: string;
-    endDate: string;
-    status: string;
-    createdAt: string;
-};
-
-export type PaginatedSubscriptions = {
-    subscriptions: UserSubscription[];
-    totalCount: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-};
-
-export type SubscriptionStats = {
-    totalRevenue: number;
-    activeSubscriptions: number;
-    totalSubscriptions: number;
-    subscriptionPlans: {
-        code: string;
-        count: number;
-        percentage: number;
-    }[];
-    recentSubscribers: {
-        fullName: string;
-        email: string;
-        planCode: string;
-        amount: number;
-        createdAt: string;
-    }[];
-    monthlyGrowth: {
-        month: string;
-        revenue: number;
-        subscriptions: number;
-    }[];
-};
-
-export const getPlans = async (params: { 
-    page?: number; 
-    limit?: number; 
-    search?: string; 
-    isActive?: boolean 
+export const getPlans = async (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    isActive?: boolean
 }) => {
     const { data } = await adminApi.get("/subscriptions", { params });
     return data.data as PaginatedPlans;

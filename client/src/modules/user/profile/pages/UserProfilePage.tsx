@@ -1,10 +1,11 @@
 import { useUserStore } from '@stores/user/UserStore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Camera, CheckCircle } from 'lucide-react';
 import ChangePasswordModal from '@shared/components/modals/ChangePasswordModal';
 import { format } from 'date-fns';
 import EditProfileModal from '@shared/components/modals/UserProfileEditModal';
 import { useNavigate } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import api from '@lib/axiosUser';
@@ -22,6 +23,11 @@ const UserProfilePage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ['profile'] });
+  }, [queryClient]);
 
   const getInitials = (name: string) =>
     name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -78,8 +84,8 @@ const UserProfilePage = () => {
         badgeBg: "rgba(239, 68, 68, 0.1)",
         badgeBorder: "rgba(239, 68, 68, 0.2)",
         badgeText: "REJECTED",
-        message: "KYC rejected. Please re-upload clear documents.",
-        buttonText: "RE-UPLOAD",
+        message: user?.kyc?.rejectionReason ? `Reason: ${user.kyc.rejectionReason}` : "KYC rejected. Please re-upload clear documents.",
+        buttonText: "RESUBMIT",
         buttonColor: "#ef4444",
       };
     }
@@ -130,7 +136,7 @@ const UserProfilePage = () => {
       paddingBottom: 48,
     }}>
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        
+
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
@@ -144,8 +150,8 @@ const UserProfilePage = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-4">
-          
-          <ProfileSidebar 
+
+          <ProfileSidebar
             uploading={uploading}
             handleImageChange={handleImageChange}
             getInitials={getInitials}
@@ -156,13 +162,13 @@ const UserProfilePage = () => {
           />
 
           <div className="flex flex-col gap-4">
-            <PersonalInfoCard 
+            <PersonalInfoCard
               setShowEditModal={setShowEditModal}
               isKycVerified={isKycVerified}
               maskedAadhar={maskedAadhar}
             />
 
-            <SecurityCard 
+            <SecurityCard
               twoFAEnabled={twoFAEnabled}
               setTwoFAEnabled={setTwoFAEnabled}
               setShowPasswordModal={setShowPasswordModal}

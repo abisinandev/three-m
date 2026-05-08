@@ -74,4 +74,6 @@ export const env = {
 
   TWELVE_DATA_API_KEY: requireEnv("TWELVE_DATA_API_KEY"),
   TWELVE_DATA_API: requireEnv("TWELVE_DATA_API"),
+
+  MF_API_URL: requireEnv("MF_API_URL"),
 };

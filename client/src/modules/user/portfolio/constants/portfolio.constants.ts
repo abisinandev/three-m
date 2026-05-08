@@ -9,7 +9,7 @@ export const PORTFOLIO_TABS: { id: PortfolioTab; label: string }[] = [
 ];
 
 
-export const PORTFOLIO_LIMIT = 20;
+export const PORTFOLIO_LIMIT = 10;
 
 export const TABLE_HEADERS = {
     stocks: ['Symbol & Name', 'Qty & Avg Price', 'Cur. Value', 'P&L', 'LTP (Live)', ''],

@@ -14,7 +14,7 @@ export class TwelveDataSearchProvider implements IStockSearchProvider {
 
     async search(query: string): Promise<ISearchedStock[]> {
         const url = `${this.baseUrl}?symbol=${encodeURIComponent(query)}&apikey=${env.TWELVE_DATA_API_KEY}`;
-        const response = await this._httpClient.get<{ data: any[] }>(url);
+        const response = await this._httpClient.get<{ data: Record<string, unknown>[] }>(url);
 
         if (!response || !response.data) {
             return [];

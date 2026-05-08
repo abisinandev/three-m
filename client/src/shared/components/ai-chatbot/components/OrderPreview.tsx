@@ -28,8 +28,8 @@ export function OrderPreview({ data, onExecuted }: OrderPreviewProps) {
                 duration: 5000,
             });
             onExecuted?.();
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to execute order");
+        } catch (error: unknown) {
+            toast.error((error as { response?: { data?: { message?: string } } }).response?.data?.message || "Failed to execute order");
         } finally {
             setIsExecuting(false);
         }

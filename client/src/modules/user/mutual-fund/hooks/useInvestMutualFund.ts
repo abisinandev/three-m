@@ -9,7 +9,7 @@ interface InvestmentPayload {
     investmentType: 'ONE_TIME';
 }
 
-export const useInvestMutualFund = (onSuccess: (data: any) => void, onError: (msg: string) => void) => {
+export const useInvestMutualFund = <T = { data?: unknown }>(onSuccess: (data: T) => void, onError: (msg: string) => void) => {
 
     const queryClient = useQueryClient();
 
@@ -23,7 +23,7 @@ export const useInvestMutualFund = (onSuccess: (data: any) => void, onError: (ms
             onSuccess(data);
         },
 
-        onError: (error: any) => {
+        onError: (error: { response?: { data?: { message?: string } } }) => {
             const msg = error?.response?.data?.message || 'Investment failed. Please try again.';
             onError(msg);
         },

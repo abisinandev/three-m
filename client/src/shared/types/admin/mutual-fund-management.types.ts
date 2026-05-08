@@ -13,3 +13,7 @@ export type FetchMutualFundsFilters = {
     search: string;
     sort: string;
 };
+export interface MfScheme {
+    schemeCode: number;
+    schemeName: string;
+}

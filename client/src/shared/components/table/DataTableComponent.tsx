@@ -60,13 +60,14 @@ export function DataTable<T>({
                 </thead>
 
                 <tbody className="divide-y divide-neutral-800">
-                    {data.map((row: any, index) => {
+                    {data.map((row, index) => {
+                        const rowWithCommonFields = row as T & { id?: string; schemeCode?: string; status?: string; isBlocked?: boolean };
                         const rowId =
-                            (row as any).id ??
-                            (row as any).schemeCode ??
+                            rowWithCommonFields.id ??
+                            rowWithCommonFields.schemeCode ??
                             index;
 
-                        const status = (row as any).status as FundStatus | undefined;
+                        const status = rowWithCommonFields.status as FundStatus | undefined;
 
                         return (
                             <tr key={rowId} className="hover:bg-neutral-800/40">
@@ -77,7 +78,7 @@ export function DataTable<T>({
                                     >
                                         {col.render
                                             ? col.render(row)
-                                            : String((row as any)[col.key])}
+                                            : String((row as Record<string, unknown>)[col.key as string])}
                                     </td>
                                 ))}
 
@@ -116,13 +117,13 @@ export function DataTable<T>({
                                         {onBlock && (
                                             <button
                                                 onClick={() => onBlock(row)}
-                                                className={`p-1 rounded transition ${row.isBlocked
+                                                className={`p-1 rounded transition ${rowWithCommonFields.isBlocked
                                                     ? 'hover:bg-emerald-500/20 text-emerald-400'
                                                     : 'hover:bg-red-500/20 text-red-400'
                                                     }`}
-                                                title={row.isBlocked ? 'Unblock user' : 'Block user'}
+                                                title={rowWithCommonFields.isBlocked ? 'Unblock user' : 'Block user'}
                                             >
-                                                {row.isBlocked ? (
+                                                {rowWithCommonFields.isBlocked ? (
                                                     <LockKeyhole size={14} />
                                                 ) : (
                                                     <LockKeyholeOpen size={14} />
@@ -133,11 +134,11 @@ export function DataTable<T>({
                                         {onView && (
                                             <button
                                                 onClick={() => onView(row)}
-                                                className={`p-1 rounded transition ${row.isBlocked
+                                                className={`p-1 rounded transition ${rowWithCommonFields.isBlocked
                                                     ? 'hover:bg-emerald-500/20 text-emerald-400'
                                                     : 'hover:bg-red-500/20 text-red-400'
                                                     }`}
-                                                title={row.isBlocked ? 'Unblock user' : 'Block user'}
+                                                title={rowWithCommonFields.isBlocked ? 'Unblock user' : 'Block user'}
                                             >
                                                 {<SquareArrowOutUpRight  size={14}/>}
                                             </button>

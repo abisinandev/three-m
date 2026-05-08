@@ -29,7 +29,7 @@ export class StockDetailsUseCase implements IStockDetailsUseCase {
     }> {
         const stock = await this._stockRepository.findBySymbol(symbol);
 
-        if (!stock || !stock.isVisible) {
+        if (!stock) {
             throw new AppError(
                 ErrorMessages.STOCKS.FAILED_TO_FETCH,
                 HttpStatus.BAD_GATEWAY

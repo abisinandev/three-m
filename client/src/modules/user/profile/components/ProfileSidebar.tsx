@@ -1,14 +1,26 @@
 import { Camera } from 'lucide-react';
 import { useUserStore } from '@stores/user/UserStore';
 
+import { ROUTES } from '@shared/constants/routes';
+
+interface KycInfo {
+  badgeBg: string;
+  badgeBorder: string;
+  badgeColor: string;
+  badgeText: string;
+  message: string;
+  button?: React.ReactNode;
+  buttonText?: string;
+}
+
 interface ProfileSidebarProps {
   uploading: boolean;
   handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   getInitials: (name: string) => string;
   formatJoinDate: (date?: string) => string;
-  kycInfo: any;
-  navigate: any;
-  ROUTES: any;
+  kycInfo: KycInfo;
+  navigate: (path: { to: string }) => void;
+  ROUTES: typeof ROUTES;
 }
 
 export const ProfileSidebar = ({

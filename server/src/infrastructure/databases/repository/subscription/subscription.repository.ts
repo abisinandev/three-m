@@ -138,7 +138,7 @@ export class SubscriptionRepository extends
                     subscriptions: { $sum: 1 }
                 }
             },
-            { $sort: { "_id.year": 1, "_id.month": 1 } as any }
+            { $sort: { "_id.year": 1, "_id.month": 1 } as Record<string, 1 | -1> }
         ];
 
         const aggregated = await this.model.aggregate(pipeline);

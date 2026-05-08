@@ -29,7 +29,7 @@ export const LoginPage: React.FC = () => {
             const singleFieldSchema = LoginValidationSchema.pick({ [name]: true });
             singleFieldSchema.parse({ [name]: value });
             setFormErrors((prev) => ({ ...prev, [name]: "" }));
-        } catch (err: any) {
+        } catch (err: unknown) {
             if (err instanceof z.ZodError) {
                 const fieldError = err.issues[0]?.message || "";
                 setFormErrors((prev) => ({ ...prev, [name]: fieldError }));
@@ -46,7 +46,7 @@ export const LoginPage: React.FC = () => {
             setIs2faModalOpen(true);
             toast.info("Scan QR Code and verify your 2FA");
         },
-        onError: (err: any) => {
+        onError: (err: { response?: { data?: { message?: string } } }) => {
             console.log(err, '==============')
             toast.error(err.response?.data?.message || "Login failed")
         },

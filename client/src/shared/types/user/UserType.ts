@@ -1,3 +1,6 @@
+import { WalletData } from "../../../modules/user/wallet/types/wallet.types";
+import { KycUser } from "./KycUserType";
+
 export type UserType = {
     id: string;
     userCode: string;
@@ -21,8 +24,8 @@ export type UserType = {
         plan: string;
     };
 
-    wallet: any;
-    kyc: any;
+    wallet: WalletData;
+    kyc: KycUser;
     walletId: string;
     kycStatus: string;
 

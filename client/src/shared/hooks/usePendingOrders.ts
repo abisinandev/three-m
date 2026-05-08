@@ -25,8 +25,8 @@ export const useCancelLimitOrder = () => {
       queryClient.invalidateQueries({ queryKey: ["userWallet"] });
       queryClient.invalidateQueries({ queryKey: ["portfolio", variables.symbol] });
     },
-    onError: (error: any) => {
-      const msg = error.response?.data?.message || "Failed to cancel order";
+    onError: (error: unknown) => {
+      const msg = (error as { response?: { data?: { message?: string } } }).response?.data?.message || "Failed to cancel order";
       toast.error(msg);
     },
   });

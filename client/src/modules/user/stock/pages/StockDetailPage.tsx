@@ -33,7 +33,7 @@ const StockDetailPage = () => {
     queryFn: FetchUserWallet,
   });
 
-  const balance = (walletData as any)?.data?.data?.balance ?? 0;
+  const balance = walletData?.data?.data?.balance ?? 0;
 
   const {
     data: queryData,
@@ -54,7 +54,7 @@ const StockDetailPage = () => {
 
   const position = holdingsData?.data?.find(
     (inv) =>
-      (inv.schemeCode === symbol || (inv as any).symbol === symbol) &&
+      (inv.schemeCode === symbol || (inv as { symbol?: string }).symbol === symbol) &&
       (inv.investmentType?.toLowerCase() === "stock" ||
         inv.category?.toLowerCase() === "stock" ||
         !inv.investmentType)
@@ -64,7 +64,8 @@ const StockDetailPage = () => {
   useEffect(() => {
     if (!symbol) return;
 
-    const handleUpdate = (trade: { symbol: string; price: number }) => {
+    const handleUpdate = (raw: unknown) => {
+      const trade = raw as { symbol: string; price: number };
       if (trade.symbol === symbol) {
         setRealtimePrice(trade.price);
       }
@@ -83,7 +84,7 @@ const StockDetailPage = () => {
   const changePercent = responseData?.changePercent ?? 0;
   const isPositive = change >= 0;
 
-  const fmt = (v: any, digits = 2) => {
+  const fmt = (v: number | string | undefined | null, digits = 2) => {
     if (v === undefined || v === null || isNaN(Number(v))) return "0.00";
     return Number(v).toLocaleString("en-IN", {
       minimumFractionDigits: digits,
@@ -119,7 +120,7 @@ const StockDetailPage = () => {
           await buy({
             symbol: tradeData.symbol,
             quantity: tradeData.quantity,
-            orderType: tradeData.orderType as any,
+            orderType: tradeData.orderType as "MARKET_ORDER" | "LIMIT_ORDER",
             price: tradeData.price,
             stopLoss: tradeData.stopLoss,
             takeProfit: tradeData.takeProfit,
@@ -137,7 +138,7 @@ const StockDetailPage = () => {
           await sell({
             symbol: tradeData.symbol,
             quantity: tradeData.quantity,
-            orderType: tradeData.orderType as any,
+            orderType: tradeData.orderType as "MARKET_ORDER" | "LIMIT_ORDER",
             price: tradeData.price,
           });
         }

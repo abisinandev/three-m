@@ -17,6 +17,7 @@ export type FundDetails = {
     navDate: string;
     absoluteReturn: number;
     logo: string;
+    aum?: string;
     navHistory: NavHistory[];
 };
 

@@ -11,4 +11,5 @@ export type KycSummary = {
         state: string;
         pinCode: string;
     };
+    rejectionReason?: string | null;
 };

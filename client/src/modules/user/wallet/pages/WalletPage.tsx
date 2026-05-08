@@ -17,7 +17,7 @@ const WalletPage = () => {
 
     const { data, refetch, isFetching } = useQuery<WalletResponse>({
         queryKey: ['user-wallet-data'],
-        queryFn: FetchUserWallet as any,
+        queryFn: FetchUserWallet,
         placeholderData: keepPreviousData,
     });
 

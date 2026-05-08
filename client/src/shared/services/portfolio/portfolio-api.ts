@@ -1,6 +1,6 @@
 import api from "@lib/axiosUser";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
-import type { IInvestmentBaseResponse, IPortfolioProjectionResponse, IPortfolioSummaryResponse, IRedeemedInvestment } from "@shared/types/portfolio.types";
+import type { IInvestmentBaseResponse, IInvestmentResponse, IPortfolioProjectionResponse, IPortfolioSummaryResponse, IRedeemedInvestment } from "@shared/types/portfolio.types";
 
 export const getPortfolioInvestments = async (
     page = 1,
@@ -37,6 +37,7 @@ export const getPortfolioSummary = async (): Promise<IPortfolioSummaryResponse> 
         currentValue: responseData?.currentValue ?? 0,
         profitPercentage: responseData?.profitPercentage ?? 0,
         xirr: responseData?.xirr ?? null,
+        allocations: responseData?.allocations ?? [],
     };
 };
 
@@ -95,19 +96,16 @@ export const getPortfolioAssets = async (
     const responseData = data?.data;
 
     return {
-        data: responseData?.data.map((item: any) => {
+        data: responseData?.data.map((item: IInvestmentResponse) => {
             const isStock = item.assetType === "STOCK" || item.investmentType === "STOCK";
             return {
                 ...item,
-                // Unified field mapping for UI compatibility
                 assetType: item.assetType || (isStock ? "STOCK" : "MF"),
                 schemeCode: item.symbol || item.schemeCode || item.assetId,
                 schemeName: item.name || item.schemeName || item.symbol || item.assetId,
                 logo: item.logo || "",
                 amount: item.investedAmount || item.amount,
-                // For stocks: quantity is shares; for MF: units are fund units
                 units: item.quantity ?? item.units,
-                // nav = LTP (Last Traded Price) for stocks; NAV for MF
                 nav: isStock ? (item.currentPrice || item.avgPrice || item.nav) : (item.nav || item.avgPrice),
                 navDate: item.navDate || item.updatedAt || item.createdAt,
                 investmentType: item.investmentType || (isStock ? "STOCK" : "MUTUAL_FUND"),
@@ -125,10 +123,10 @@ export const getPortfolioAssets = async (
     };
 };
 
-export const getMFHoldings = (page = 1, limit = 10, search?: string) => 
+export const getMFHoldings = (page = 1, limit = 10, search?: string) =>
     getPortfolioAssets(page, limit, search, "MF");
 
-export const getStockHoldings = (page = 1, limit = 10, search?: string) => 
+export const getStockHoldings = (page = 1, limit = 10, search?: string) =>
     getPortfolioAssets(page, limit, search, "STOCK");
 
 export const getHistories = async (page = 1, limit = 10): Promise<IInvestmentBaseResponse> => {

@@ -18,6 +18,7 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
     countByUser(userId: string): Promise<number>;
     findByUsertotalInvestments(userId: string): Promise<number>;
     findInvestmentsByUser(userId: string): Promise<InvestmentEntity[] | null>;
+    findInvestmentsHistory(userId: string): Promise<InvestmentFundDTO[]>;
     getUserInvestments(userId: string, options: QueryOptions): Promise<InvestmentFundDTO[]>;
     getUserInvestementSummary(userId: string): Promise<InvestmentFundDTO[]>;
     getTotalUnitsByUser(userId: string): Promise<number>;

@@ -8,7 +8,7 @@ interface WalletBalanceBarProps {
     canTransact: boolean;
 }
 
-const fmt = (v: any, digits = 2) => {
+const fmt = (v: number | string | undefined | null, digits = 2) => {
     if (v === undefined || v === null || isNaN(Number(v))) return '0.00';
     return Number(v).toLocaleString('en-IN', {
         minimumFractionDigits: digits,

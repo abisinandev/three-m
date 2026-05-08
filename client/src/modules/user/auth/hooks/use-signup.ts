@@ -14,7 +14,7 @@ export const useSignup = () => {
             console.log('Signup successfull✅: ', res.data);
         },
 
-        onError: (error: any) => {
+        onError: (error: { response?: { data?: unknown }; message?: string }) => {
             console.log(error)
             console.error("Signup failed ❌", error.response?.data || error.message);
         }

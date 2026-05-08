@@ -156,7 +156,7 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
                     }
                 }
             },
-            { $sort: { "_id": 1 } as any }
+            { $sort: { "_id": 1 } as Record<string, 1 | -1> }
         ]);
         return result.map((r, i) => ({ week: `Week ${i + 1}`, deposits: r.deposits, withdrawals: r.withdrawals }));
     }

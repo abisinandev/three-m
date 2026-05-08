@@ -13,7 +13,7 @@ export const toDomain = (doc: ExpenseTrackerDocument): ExpenseTrackerEntity => {
         month: doc.month,
 
         incomes: doc.incomes.map(
-            i => new Income(i.amount, i.source as any)
+            i => new Income(i.amount, i.source as unknown)
         ),
 
         budget: new Budget(

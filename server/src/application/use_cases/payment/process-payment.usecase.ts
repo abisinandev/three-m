@@ -21,7 +21,7 @@ export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase
 
         const paymentIntentId = typeof session.payment_intent === 'string' 
             ? session.payment_intent 
-            : (session.payment_intent as any).id;
+            : (session.payment_intent as { id: string }).id;
 
         const paymentIntent = await this._stripePaymentGateway.PaymentIntent(paymentIntentId);
         

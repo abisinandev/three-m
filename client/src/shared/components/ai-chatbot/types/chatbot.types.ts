@@ -4,7 +4,7 @@ export interface ChatMessage {
     content: string;
     timestamp: Date;
     type?: 'text' | 'confirmation' | 'suggestion_list' | 'portfolio_summary';
-    data?: any;
+    data?: unknown;
     upgradeRequired?: boolean;
 }
 

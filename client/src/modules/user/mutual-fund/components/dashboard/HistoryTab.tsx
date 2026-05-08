@@ -3,9 +3,11 @@ import { History, Search } from 'lucide-react';
 import dayjs from 'dayjs';
 import { Pagination } from '@shared/components/pagination/Pagination';
 
+import type { IInvestmentResponse } from '@shared/types/portfolio.types';
+
 interface HistoryTabProps {
     investmentsLoading: boolean;
-    investments: any[];
+    investments: IInvestmentResponse[];
 }
 
 const HistoryTab: React.FC<HistoryTabProps> = ({
@@ -82,15 +84,23 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                 ) : (
                     <>
                         <div className="divide-y divide-[#1e2025]">
-                            {paginatedData.map((tx: any) => (
+                            {paginatedData.map((tx) => (
                                 <div key={tx.id} className="py-3 flex justify-between items-center text-sm group hover:bg-[#1a1a1a]/50 px-2 rounded-lg transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <div className={`p-2 rounded-lg ${tx.paymentMethod === 'Debit' ? 'bg-red-950/20' : 'bg-green-950/20'}`}>
-                                            <History size={14} className={tx.paymentMethod === 'Debit' ? 'text-red-400' : 'text-green-400'} />
+                                        <div className="w-10 h-10 rounded-lg bg-[#1a1c20] border border-[#1e2025] flex items-center justify-center overflow-hidden flex-shrink-0">
+                                            {tx.logo ? (
+                                                <img src={tx.logo} alt={tx.schemeName} className="w-full h-full object-contain p-1" />
+                                            ) : (
+                                                <History size={16} className={tx.paymentMethod === 'Debit' ? 'text-red-400' : 'text-green-400'} />
+                                            )}
                                         </div>
-                                        <div>
-                                            <p className="font-medium text-gray-200">{tx.investmentType[0] + tx.investmentType.slice(1).toLowerCase() || 'Investment'}</p>
-                                            <p className="text-xs text-gray-500 mt-0.5">{dayjs(tx.createdAt).format('DD MMM YYYY, hh:mm A')}</p>
+                                        <div className="min-w-0">
+                                            <p className="font-semibold text-[13px] text-gray-200 line-clamp-1">{tx.schemeName || 'Mutual Fund Investment'}</p>
+                                            <div className="flex items-center gap-2 mt-0.5 text-[11px] text-gray-500">
+                                                <span className="font-bold text-gray-400 uppercase tracking-tighter">{tx.investmentType}</span>
+                                                <span className="w-1 h-1 bg-gray-700 rounded-full"></span>
+                                                <span>{dayjs(tx.createdAt).format('DD MMM YYYY, hh:mm A')}</span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="text-right">

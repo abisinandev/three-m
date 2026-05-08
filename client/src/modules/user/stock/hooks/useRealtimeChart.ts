@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { createChart, CandlestickSeries } from 'lightweight-charts';
-import type { IChartApi, ISeriesApi, Time, DeepPartial, ChartOptions, IPriceLine } from 'lightweight-charts';
+import type { IChartApi, ISeriesApi, Time, DeepPartial, ChartOptions, IPriceLine, MouseEventParams } from 'lightweight-charts';
 import { socketService } from '@/socket/socket';
 import api from '@lib/axiosUser';
 import { API_ROUTES } from '@shared/constants/apiRoutes';
+import type { IInvestmentResponse } from '@shared/types/portfolio.types';
 
 export interface Candle {
   time: Time;
@@ -49,7 +50,7 @@ export const useRealtimeChart = (
   containerRef: React.RefObject<HTMLDivElement | null>,
   symbol: string,
   timeframe: string = '1',
-  position?: any,
+  position?: IInvestmentResponse,
   showPosition?: boolean
 ) => {
   const chartRef = useRef<IChartApi | null>(null);
@@ -113,7 +114,8 @@ export const useRealtimeChart = (
       default: backendTimeframe = '1m'; break;
     }
 
-    const handleCandleUpdate = (candleUpdate: Candle & { symbol?: string; timeframe?: string }) => {
+    const handleCandleUpdate = (raw: unknown) => {
+      const candleUpdate = raw as Candle & { symbol?: string; timeframe?: string };
       if (!candlestickSeriesRef.current || !isMounted) return;
 
       setCurrentPrice(candleUpdate.close);
@@ -135,7 +137,7 @@ export const useRealtimeChart = (
     socketService.connect();
     socketService.subscribeToCandle(symbol, backendTimeframe);
 
-    const handleReconnect = () => {
+    const handleReconnect = (_: unknown) => {
       socketService.subscribeToCandle(symbol, backendTimeframe);
       console.log(`[Chart] Re-subscribed to ${symbol}:${backendTimeframe} after reconnect`);
     };
@@ -193,7 +195,7 @@ export const useRealtimeChart = (
 
           if (isMounted) setStatus('live');
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('[Chart] Historical data fetch error:', error);
         if (isMounted) setStatus('live');
       } finally {
@@ -351,7 +353,7 @@ export const useRealtimeChart = (
       container.appendChild(toolTip);
     }
 
-    const handleCrosshairMove = (param: any) => {
+    const handleCrosshairMove = (param: MouseEventParams) => {
       if (!param.point || !toolTip) {
         toolTip!.style.display = 'none';
         return;

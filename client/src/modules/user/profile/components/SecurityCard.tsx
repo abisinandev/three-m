@@ -22,7 +22,7 @@ export const SecurityCard = ({
       <div className="p-5 space-y-5">
 
         {/* 2FA Toggle */}
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <div>
             <p style={{ fontSize: 13, fontWeight: 500, color: '#e8eaed', margin: 0 }}>Two-Factor Authentication</p>
             <p style={{ fontSize: 11, color: '#5a5f6e', margin: '2px 0 0 0' }}>Add an extra layer of security to your account.</p>
@@ -41,7 +41,7 @@ export const SecurityCard = ({
               transition: 'all 0.2s'
             }} />
           </button>
-        </div>
+        </div> */}
 
         {/* Password Change */}
         <div style={{ borderTop: '1px solid #1e2025' }} className="pt-5 flex items-center justify-between">

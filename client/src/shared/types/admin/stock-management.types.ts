@@ -6,3 +6,10 @@ export interface StockFilters {
     isTradable?: boolean | string;
     isVisible?: boolean | string;
 }
+export interface StockResult {
+    symbol: string;
+    name: string;
+    exchange: string;
+    country: string;
+    currency: string;
+}

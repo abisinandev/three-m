@@ -1,4 +1,3 @@
-// Interface for adding an expense
 export interface AddExpenseRequest {
     amount: number;
     category: string;
@@ -11,7 +10,7 @@ export interface AddExpenseRequest {
 export interface AddExpenseResponse {
     success: boolean;
     message: string;
-    data?: any;
+    data?: unknown;
 }
 
 export interface AddIncomeRequest {
@@ -38,9 +37,9 @@ export interface ExpenseTrackerData {
     walletBalance?: number;
     mutualFundInvestedAmount?: number;
     sipInvestedAmount?: number;
-    stocks?: any[];
+    stocks?: unknown[];
     totalInvestedAmount?: number;
-    investments?: any[];
+    investments?: unknown[];
     income: number;
     incomeSources: IncomeSource[];
     expenses?: Expense[];
@@ -53,6 +52,7 @@ export interface ExpenseTrackerData {
     totalSpent: number;
     currentMonthBalance: number;
     healthScore?: number;
+    isSavingsGoalMet?: boolean;
 }
 
 export type AdjustmentType = 'INCOME' | 'CATEGORY';
@@ -79,3 +79,27 @@ export interface SimulationResult {
     };
 }
 
+export interface BudgetPlanRequest {
+    income: number;
+    needsTotal: number;
+    wantsTotal: number;
+    savingsTotal: number;
+    month: string;
+}
+
+export interface BudgetPlanResponse {
+    health: {
+        color: string;
+        label: string;
+        score: number;
+    };
+    allocation: {
+        totalSpent: number;
+        remaining: number;
+    };
+    insights: {
+        type: 'success' | 'critical' | 'warning' | 'info';
+        title: string;
+        message: string;
+    }[];
+}

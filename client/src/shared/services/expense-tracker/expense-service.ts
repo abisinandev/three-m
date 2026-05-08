@@ -1,5 +1,5 @@
 import api from "@lib/axiosUser";
-import type { AddExpenseRequest, AddExpenseResponse, AddIncomeRequest, ExpenseTrackerData } from "../../../modules/user/expense-tracker/types/expense.types";
+import type { AddExpenseRequest, AddExpenseResponse, AddIncomeRequest, ExpenseTrackerData, BudgetPlanRequest, BudgetPlanResponse } from "../../../modules/user/expense-tracker/types/expense.types";
 
 export const fetchExpenseTrackerData = async (month?: string): Promise<ExpenseTrackerData> => {
     const response = await api.get('/user/expense-tracker', { params: { month } });
@@ -45,7 +45,7 @@ export const fetchAnalyticsData = async (month?: string) => {
     return response.data.data;
 };
 
-export const calculateBudgetPlan = async (data: any) => {
+export const calculateBudgetPlan = async (data: BudgetPlanRequest): Promise<BudgetPlanResponse> => {
     const response = await api.post('/user/expense-tracker/budget-plan', data);
     return response.data.data;
 };

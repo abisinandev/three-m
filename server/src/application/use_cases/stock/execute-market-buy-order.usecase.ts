@@ -27,6 +27,7 @@ import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notifi
 import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
 import { IExecuteMarketBuyOrderUseCase } from "./interfaces/execute-market-buy-order.interface";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 
 @injectable()
 export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCase {
@@ -154,6 +155,8 @@ export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCa
             });
 
             await session.commitTransaction();
+
+            logger.info(`[ExecuteMarketBuyOrder] market buy order placed`)
         } catch (error) {
             await session.abortTransaction();
             console.error(`[ExecuteMarketBuyOrder] Failed for order ${orderId}:`, error);

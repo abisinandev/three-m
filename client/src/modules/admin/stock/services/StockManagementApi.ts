@@ -1,6 +1,6 @@
 import adminApi from '@/lib/axios-admin';
 import { API_ROUTES } from '@shared/constants/apiRoutes';
-import type { StockFilters } from '../types/stock-management.types';
+import type { Stock, StockFilters } from '../types/stock-management.types';
 
 export const StockManagementApi = {
     fetchStocks: async (filters: StockFilters) => {
@@ -37,7 +37,7 @@ export const StockManagementApi = {
         }
     },
 
-    addStock: async (stock: any) => {
+    addStock: async (stock: Omit<Stock, '_id' | 'createdAt' | 'updatedAt'>) => {
         try {
             const response = await adminApi.post(API_ROUTES.ADMIN.STOCKS.ADD, stock);
             return response.data;

@@ -1,8 +1,9 @@
-import adminApi from "@/lib/axios-admin"
-import { API_ROUTES } from "@shared/constants/apiRoutes"
+import adminApi from "@/lib/axios-admin";
+import { API_ROUTES } from "@shared/constants/apiRoutes";
 import type { KycFilters } from "@shared/types/admin/user-management.types";
+import type { KycUser } from "@shared/types/user/KycUserType";
 
-export const fetchKycUsers = async ({ page = 1, status = "pending" }: KycFilters) => {
+export const fetchKycUsers = async ({ page = 1, status = "pending" }: KycFilters): Promise<{ users: KycUser[]; total: number }> => {
 
     const res = await adminApi.get(API_ROUTES.ADMIN.KYC.GET_ALL,
         {
@@ -12,7 +13,7 @@ export const fetchKycUsers = async ({ page = 1, status = "pending" }: KycFilters
     return res.data.data;
 };
 
-export const FetchUserKycApi = async (kycId: string) => {
+export const FetchUserKycApi = async (kycId: string): Promise<{ data: KycUser }> => {
     console.log("kyc: ", kycId)
     const response = await adminApi.get(API_ROUTES.ADMIN.KYC.VIEW(kycId));
     console.log("FetchUserKycApi: ", response.data)

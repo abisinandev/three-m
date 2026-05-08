@@ -1,8 +1,9 @@
 import React from 'react';
 import { User, Mail, Hash, FileText, MapPin, AlertCircle } from 'lucide-react';
+import type { KycUser } from '@shared/types/user/KycUserType';
 
 interface AdminKycUserInfoProps {
-  kyc: any;
+  kyc: KycUser;
   status: string;
 }
 
@@ -46,15 +47,14 @@ export const AdminKycUserInfo = ({ kyc, status }: AdminKycUserInfoProps) => {
 
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-[#0b0c0e] border border-[#1e2025] flex items-center justify-center shadow-inner">
-             <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: status === "VERIFIED" ? '#00C853' : status === "REJECTED" ? '#F44336' : '#FFB300' }} />
+            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: status === "VERIFIED" ? '#00C853' : status === "REJECTED" ? '#F44336' : '#FFB300' }} />
           </div>
           <div>
             <p className="text-[#5a5f6e] text-[11px] font-medium tracking-wider uppercase mb-0.5">Status</p>
-            <span className={`inline-block px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md border ${
-              status === "VERIFIED" ? "bg-[#00C853]/10 text-[#00C853] border-[#00C853]/20 shadow-[0_0_10px_rgba(0,200,83,0.1)]" :
-              status === "REJECTED" ? "bg-[#F44336]/10 text-[#F44336] border-[#F44336]/20 shadow-[0_0_10px_rgba(244,67,54,0.1)]" :
-              "bg-[#FFB300]/10 text-[#FFB300] border-[#FFB300]/20"
-            }`}>
+            <span className={`inline-block px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md border ${status === "VERIFIED" ? "bg-[#00C853]/10 text-[#00C853] border-[#00C853]/20 shadow-[0_0_10px_rgba(0,200,83,0.1)]" :
+                status === "REJECTED" ? "bg-[#F44336]/10 text-[#F44336] border-[#F44336]/20 shadow-[0_0_10px_rgba(244,67,54,0.1)]" :
+                  "bg-[#FFB300]/10 text-[#FFB300] border-[#FFB300]/20"
+              }`}>
               {status}
             </span>
           </div>
@@ -88,7 +88,7 @@ export const AdminKycUserInfo = ({ kyc, status }: AdminKycUserInfoProps) => {
         <div>
           <p className="text-[#5a5f6e] text-[11px] font-medium tracking-wider uppercase mb-1">Registered Address</p>
           <p className="text-[#e8eaed] text-[13px] font-medium leading-relaxed">
-            {kyc.address?.fullAddress}, {kyc.address?.city}, {kyc.address?.state} - {kyc.address?.pincode || kyc.address?.pinCode}
+            {kyc.address?.fullName}, {kyc.address?.city}, {kyc.address?.state} - {kyc.address?.pincode}
           </p>
         </div>
       </div>

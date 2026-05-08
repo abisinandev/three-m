@@ -13,9 +13,8 @@ import {
   FetchAdminStrategies,
   FetchAdminAlgoTrades
 } from '@/shared/services/admin/algo-trading/admin-algo-trading-api';
-import BaseStrategiesRiskTable from '../algo-trading/components/BaseStrategiesRiskTable';
-
-type TabName = 'Strategies' | 'Signals' | 'Trades' | 'Risk Settings' ;
+import BaseStrategiesRiskTable from '../components/BaseStrategiesRiskTable';
+import type { AdminStrategy, AdminSignal, AdminAlgoTrade, AlgoTabName as TabName } from '@/shared/types/admin/algo-trading.types';
 
 const AlgoTradingAdminPage = () => {
   const [activeTab, setActiveTab] = useState<TabName>('Strategies');
@@ -236,83 +235,89 @@ const AlgoTradingAdminPage = () => {
                       </td>
                     </tr>
                   ) : (
-                    items.map((item: any) => (
-                      <tr key={item.id} className="border-b border-neutral-800 hover:bg-neutral-800/30 transition-colors group">
-                        {activeTab === 'Strategies' ? (
-                          <>
-                            <td className="px-6 py-4">
-                              <div className="text-[13px] font-semibold text-white mb-0.5">{item.strategyName}</div>
-                              <div className="text-[11px] text-neutral-500 font-mono tracking-tight">ID: {item.id}</div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className={`w-9 h-5 rounded-full flex items-center p-0.5 cursor-pointer transition-colors ${item.isActive ? 'bg-emerald-500' : 'bg-neutral-700'}`}>
-                                <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200 ${item.isActive ? 'translate-x-4' : 'translate-x-0'}`} />
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-3 w-40">
-                                <div className="flex-1 h-1 bg-neutral-800 rounded-full overflow-hidden">
-                                  <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${Math.min((item.usersCount || 0) * 10, 100)}%` }} />
+                    items.map((item: AdminStrategy | AdminSignal | AdminAlgoTrade) => {
+                      const strategy = item as AdminStrategy;
+                      const signal = item as AdminSignal;
+                      const trade = item as AdminAlgoTrade;
+
+                      return (
+                        <tr key={item.id} className="border-b border-neutral-800 hover:bg-neutral-800/30 transition-colors group">
+                          {activeTab === 'Strategies' ? (
+                            <>
+                              <td className="px-6 py-4">
+                                <div className="text-[13px] font-semibold text-white mb-0.5">{strategy.strategyName}</div>
+                                <div className="text-[11px] text-neutral-500 font-mono tracking-tight">ID: {strategy.id}</div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className={`w-9 h-5 rounded-full flex items-center p-0.5 cursor-pointer transition-colors ${strategy.isActive ? 'bg-emerald-500' : 'bg-neutral-700'}`}>
+                                  <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200 ${strategy.isActive ? 'translate-x-4' : 'translate-x-0'}`} />
                                 </div>
-                                <span className="text-[13px] text-white font-medium w-4">{item.usersCount || 0}</span>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 text-[13px] text-neutral-400">
-                              {item.lastSignalTime ? dayjs(item.lastSignalTime).format('MMM DD, YYYY HH:mm') : '—'}
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex items-center justify-end gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                                <button className="p-1.5 bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-white rounded-md transition-colors border border-transparent hover:border-neutral-600"><Edit2 size={14} /></button>
-                                <button className="p-1.5 bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-white rounded-md transition-colors border border-transparent hover:border-neutral-600"><ExternalLink size={14} /></button>
-                              </div>
-                            </td>
-                          </>
-                        ) : activeTab === 'Signals' ? (
-                          <>
-                            <td className="px-6 py-4">
-                              <div className="text-[13px] font-semibold text-white mb-0.5">{item.symbol}</div>
-                              <div className="text-[11px] text-neutral-500 font-mono tracking-tight">{item.id}</div>
-                            </td>
-                            <td className="px-6 py-4 text-[13px] text-neutral-300 font-medium">{item.strategyName}</td>
-                            <td className="px-6 py-4">
-                              <span className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${item.action === 'BUY' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>{item.action}</span>
-                            </td>
-                            <td className="px-6 py-4 text-[13px] font-mono text-white">₹{parseFloat(item.price).toLocaleString()}</td>
-                            <td className="px-6 py-4">
-                              <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${item.status === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-500' : item.status === 'REJECTED' ? 'bg-red-500/10 text-red-500' : item.status === 'EXPIRED' ? 'bg-neutral-700 text-neutral-300' : 'bg-amber-500/10 text-amber-500'}`}>{item.status}</span>
-                            </td>
-                            <td className="px-6 py-4 text-[12px] text-neutral-400">{dayjs(item.createdAt).format('MMM DD, HH:mm')}</td>
-                          </>
-                        ) : activeTab === 'Trades' ? (
-                          <>
-                            <td className="px-6 py-4">
-                              <div className="text-[11px] text-neutral-500 font-mono tracking-tight">{item.id}</div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <span className="text-[13px] font-bold text-white">{item.symbol}</span>
-                            </td>
-                            <td className="px-6 py-4">
-                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${item.side === 'BUY' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
-                                {item.side === 'BUY' ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                                {item.side}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 text-[13px] text-neutral-300">{item.quantity}</td>
-                            <td className="px-6 py-4 text-[13px] font-mono text-white">₹{parseFloat(item.price).toLocaleString()}</td>
-                            <td className="px-6 py-4">
-                              {item.profit != null ? (
-                                <span className={`text-[13px] font-bold font-mono ${item.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                                  {item.profit >= 0 ? '+' : ''}₹{parseFloat(item.profit).toLocaleString()}
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-3 w-40">
+                                  <div className="flex-1 h-1 bg-neutral-800 rounded-full overflow-hidden">
+                                    <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${Math.min((strategy.usersCount || 0) * 10, 100)}%` }} />
+                                  </div>
+                                  <span className="text-[13px] text-white font-medium w-4">{strategy.usersCount || 0}</span>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 text-[13px] text-neutral-400">
+                                {strategy.lastSignalTime ? dayjs(strategy.lastSignalTime).format('MMM DD, YYYY HH:mm') : '—'}
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center justify-end gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                                  <button className="p-1.5 bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-white rounded-md transition-colors border border-transparent hover:border-neutral-600"><Edit2 size={14} /></button>
+                                  <button className="p-1.5 bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-white rounded-md transition-colors border border-transparent hover:border-neutral-600"><ExternalLink size={14} /></button>
+                                </div>
+                              </td>
+                            </>
+                          ) : activeTab === 'Signals' ? (
+                            <>
+                              <td className="px-6 py-4">
+                                <div className="text-[13px] font-semibold text-white mb-0.5">{signal.symbol}</div>
+                                <div className="text-[11px] text-neutral-500 font-mono tracking-tight">{signal.id}</div>
+                              </td>
+                              <td className="px-6 py-4 text-[13px] text-neutral-300 font-medium">{signal.strategyName}</td>
+                              <td className="px-6 py-4">
+                                <span className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${signal.action === 'BUY' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>{signal.action}</span>
+                              </td>
+                              <td className="px-6 py-4 text-[13px] font-mono text-white">₹{parseFloat(String(signal.price)).toLocaleString()}</td>
+                              <td className="px-6 py-4">
+                                <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${signal.status === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-500' : signal.status === 'REJECTED' ? 'bg-red-500/10 text-red-500' : signal.status === 'EXPIRED' ? 'bg-neutral-700 text-neutral-300' : 'bg-amber-500/10 text-amber-500'}`}>{signal.status}</span>
+                              </td>
+                              <td className="px-6 py-4 text-[12px] text-neutral-400">{dayjs(signal.createdAt).format('MMM DD, HH:mm')}</td>
+                            </>
+                          ) : activeTab === 'Trades' ? (
+                            <>
+                              <td className="px-6 py-4">
+                                <div className="text-[11px] text-neutral-500 font-mono tracking-tight">{trade.id}</div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className="text-[13px] font-bold text-white">{trade.symbol}</span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${trade.side === 'BUY' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
+                                  {trade.side === 'BUY' ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                                  {trade.side}
                                 </span>
-                              ) : (
-                                <span className="text-[12px] text-neutral-600">—</span>
-                              )}
-                            </td>
-                            <td className="px-6 py-4 text-[12px] text-neutral-400">{dayjs(item.createdAt).format('MMM DD, HH:mm')}</td>
-                          </>
-                        ) : null}
-                      </tr>
-                    ))
+                              </td>
+                              <td className="px-6 py-4 text-[13px] text-neutral-300">{trade.quantity}</td>
+                              <td className="px-6 py-4 text-[13px] font-mono text-white">₹{parseFloat(String(trade.price)).toLocaleString()}</td>
+                              <td className="px-6 py-4">
+                                {trade.profit != null ? (
+                                  <span className={`text-[13px] font-bold font-mono ${trade.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    {trade.profit >= 0 ? '+' : ''}₹{parseFloat(String(trade.profit)).toLocaleString()}
+                                  </span>
+                                ) : (
+                                  <span className="text-[12px] text-neutral-600">—</span>
+                                )}
+                              </td>
+                              <td className="px-6 py-4 text-[12px] text-neutral-400">{dayjs(trade.createdAt).format('MMM DD, HH:mm')}</td>
+                            </>
+                          ) : null}
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>

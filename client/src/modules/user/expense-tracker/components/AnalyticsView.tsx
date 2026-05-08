@@ -7,7 +7,13 @@ import { TrendingUp, ArrowUpRight, ArrowDownLeft, Activity, TrendingDown, AlertC
 import { useState } from 'react';
 
 interface AnalyticsViewProps {
-    data: any;
+    data: {
+        comparison?: { thisMonth: number; lastMonth: number; difference: number; percentageChange: number };
+        categoryComparison?: { name: string; thisMonth: number; lastMonth: number }[];
+        spendingTrend?: { day: string; thisMonth: number; lastMonth: number }[];
+        insights?: { type: 'critical' | 'success' | 'warning'; title: string; text: string }[];
+        healthScore?: number;
+    } | undefined;
     formatCurrency: (val?: number) => string;
     selectedMonth: string;
 }
@@ -108,7 +114,7 @@ export const AnalyticsView = ({ data, formatCurrency, selectedMonth }: Analytics
                                             itemStyle={{ fontSize: 10, fontWeight: 700 }}
                                         />
                                         <Bar dataKey="thisMonth" fill="#3B82F6" radius={[3, 3, 0, 0]} barSize={16}>
-                                            {categoryComparison.map((entry: any, index: number) => (
+                                            {categoryComparison.map((entry: { name: string }, index: number) => (
                                                 <Cell key={index} fill={entry.name === 'SAVING' ? '#00C853' : entry.name === 'WANT' ? '#f59e0b' : '#3B82F6'} />
 
                                             ))}
@@ -142,7 +148,7 @@ export const AnalyticsView = ({ data, formatCurrency, selectedMonth }: Analytics
                             {insights.length === 0 && (
                                 <p className="text-[10px] text-[#5a5f6e] italic m-0">No critical trends identified.</p>
                             )}
-                            {insights.map((insight: any, idx: number) => {
+                            {insights.map((insight: { type: 'critical' | 'success' | 'warning'; title: string; text: string }, idx: number) => {
                                 const s = getInsightStyle(insight.type);
                                 return (
                                     <div key={idx} className={`rounded-md py-2.5 px-3 ${s.boxClass}`}>

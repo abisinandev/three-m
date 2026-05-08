@@ -22,8 +22,8 @@ export const useWatchlistMutation = (onUpgradeRequired?: () => void) => {
                 queryClient.invalidateQueries({ queryKey: ['user-watchlist'] });
             }
         },
-        onError: (error: any) => {
-            toast.error(error.response?.data?.message || 'Failed to add to watchlist');
+        onError: (error: unknown) => {
+            toast.error((error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to add to watchlist');
         }
     });
 
@@ -33,8 +33,8 @@ export const useWatchlistMutation = (onUpgradeRequired?: () => void) => {
             toast.success('Removed from watchlist');
             queryClient.invalidateQueries({ queryKey: ['user-watchlist'] });
         },
-        onError: (error: any) => {
-            toast.error(error.response?.data?.message || 'Failed to remove from watchlist');
+        onError: (error: unknown) => {
+            toast.error((error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to remove from watchlist');
         }
     });
 

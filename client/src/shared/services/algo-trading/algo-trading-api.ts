@@ -15,17 +15,17 @@ export const getAlgoStrategies = async (): Promise<StrategyMetadata[]> => {
   return response.data?.data || [];
 };
 
-export const saveAlgoStrategy = async (data: { symbol: string, strategyName: string, config: any }): Promise<any> => {
+export const saveAlgoStrategy = async (data: { symbol: string, strategyName: string, config: Record<string, unknown> }): Promise<unknown> => {
   const response = await api.post('/user/stock/algo-trading/strategy', data);
   return response.data;
 };
 
-export const getActiveStrategyBySymbol = async (symbol: string): Promise<any> => {
+export const getActiveStrategyBySymbol = async (symbol: string): Promise<unknown> => {
   const response = await api.get(`/user/stock/algo-trading/active/${symbol}`);
   return response.data?.data;
 };
 
-export const toggleAlgoStrategyStatus = async (strategyId: string, isActive: boolean): Promise<any> => {
+export const toggleAlgoStrategyStatus = async (strategyId: string, isActive: boolean): Promise<unknown> => {
   const response = await api.post(`/user/stock/algo-trading/toggle-status/${strategyId}`, { isActive });
   return response.data;
 };

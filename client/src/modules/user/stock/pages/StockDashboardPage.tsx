@@ -33,7 +33,7 @@ const StockDashboardPage = () => {
   const { onOpen: openPremiumModal } = usePremiumModalStore();
   const [filters, setFilters] = useState<UserStockFilters>({
     page: 1,
-    limit: 20,
+    limit: 10,
     search: '',
   });
 

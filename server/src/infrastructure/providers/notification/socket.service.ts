@@ -83,7 +83,7 @@ export class SocketService implements ISocketService {
         this.io.to(userId).emit("notification", payload);
     }
 
-    emitStockUpdate(trade: any): void {
+    emitStockUpdate(trade: unknown): void {
         if (this.io) {
             this.io.emit("stock-update", trade);
         }

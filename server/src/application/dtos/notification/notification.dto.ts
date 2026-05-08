@@ -8,5 +8,5 @@ export interface NotificationDTO {
     message: string;
     read: boolean;
     createdAt: string;
-    data?: any;
+    data?: Record<string, unknown>;
 }

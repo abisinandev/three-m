@@ -1,4 +1,5 @@
 import React from 'react';
+import type { FundDetails } from '../../types/details.types';
 import { Search, TrendingUp } from 'lucide-react';
 import { toggleFundFilter } from '../../../helpers/toggle-filter';
 import { FUND_FILTERS } from '../../constants/mutualfund-constants';
@@ -9,7 +10,7 @@ interface FundsTabProps {
     selectedFilters: string[];
     setSelectedFilters: React.Dispatch<React.SetStateAction<string[]>>;
     fundsLoading: boolean;
-    funds: any[];
+    funds: FundDetails[];
     onFundClick: (schemeCode: string) => void;
 }
 

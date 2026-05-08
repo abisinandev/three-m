@@ -29,7 +29,7 @@ const ForgotPasswordForm: React.FC = () => {
       });
     },
 
-    onError: (err: any) => {
+    onError: (err: { response?: { data?: { message?: string } } }) => {
       toast.error(err.response?.data?.message || "Forgot password failed");
     },
   });

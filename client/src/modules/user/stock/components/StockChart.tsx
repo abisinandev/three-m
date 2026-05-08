@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useRealtimeChart } from '../hooks/useRealtimeChart';
+import type { IInvestmentResponse } from '@shared/types/portfolio.types';
 
 import { Eye, EyeOff } from 'lucide-react';
 
 interface StockChartProps {
   symbol: string;
-  position?: any;
+  position?: IInvestmentResponse;
 }
 
 const timeframes = [

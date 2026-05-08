@@ -11,7 +11,10 @@ interface SipPayload {
     paymentMethod: 'WALLET';
 }
 
-export const useStartSip = (onSuccess: (data: any) => void, onError: (msg: string, error?: any) => void) => {
+export const useStartSip = <T = { message?: string; data?: unknown }>(
+    onSuccess: (data: T) => void, 
+    onError: (msg: string, error?: unknown) => void
+) => {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -24,7 +27,7 @@ export const useStartSip = (onSuccess: (data: any) => void, onError: (msg: strin
             queryClient.invalidateQueries({ queryKey: ['sip-investments'] }); // Assuming there might be a sip list query
             onSuccess(data);
         },
-        onError: (error: any) => {
+        onError: (error: { response?: { status?: number; data?: { message?: string } } }) => {
             if (error.response?.status === 402) {
                 usePremiumModalStore.getState().onOpen();
             }

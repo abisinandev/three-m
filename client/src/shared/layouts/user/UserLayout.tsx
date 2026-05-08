@@ -13,6 +13,7 @@ import AiAssistantPanel from '@shared/components/ai-chatbot/AiChatbot';
 import { ROUTES } from '@shared/constants/routes';
 import PremiumPaymentModal from '@shared/components/modals/premium-payment/PremiumPaymentModal';
 import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
+import type { UserType } from '@/shared/types/user/UserType';
 
 const UserLayout = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -23,12 +24,13 @@ const UserLayout = () => {
     const { isOpen: isPremiumModalOpen, onClose: closePremiumModal } = usePremiumModalStore();
     const navigate = useNavigate();
 
-    const { data } = useProfileQuery()
+    const { data } = useProfileQuery();
     useEffect(() => {
         if (data) {
-            setUser(data);
+            const userData = ('data' in data ? data.data : data) as UserType;
+            setUser(userData);
         }
-    }, []);
+    }, [data, setUser]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -80,7 +82,7 @@ const UserLayout = () => {
                             { to: ROUTES.USER.PORTFOLIO.ROOT, label: 'Portfolio' },
                             { to: ROUTES.USER.MARKET_NEWS, label: "News" },
                             // { to: ROUTES.USER.AI_BOT, label: "AI bot" }
-                        ] as any[]).map((item) => (
+                        ] as { to: string; label: string }[]).map((item) => (
                             <Link
                                 key={item.to}
                                 to={item.to}
@@ -98,7 +100,7 @@ const UserLayout = () => {
 
                         <div className="hidden sm:flex items-center gap-2 bg-[#171717] px-3 py-1.5 rounded-full border border-[#2a2a2a] text-xs font-medium">
                             <Wallet className="w-3.5 h-3.5 text-[#22C55E]" />
-                            <span>₹1,24,500</span>
+                            <span>₹{user?.wallet?.balance?.toLocaleString() || '0'}</span>
                         </div>
 
                         <NotificationDropdown />
@@ -165,9 +167,9 @@ const UserLayout = () => {
             <AiAssistantPanel />
             <Footer />
 
-            <PremiumPaymentModal 
-                isOpen={isPremiumModalOpen} 
-                onClose={closePremiumModal} 
+            <PremiumPaymentModal
+                isOpen={isPremiumModalOpen}
+                onClose={closePremiumModal}
             />
 
             <ConfirmModal

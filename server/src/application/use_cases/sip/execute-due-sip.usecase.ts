@@ -27,6 +27,11 @@ import { NotificationType } from "@domain/entities/notification/enums/notificati
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
+import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
+import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
+import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
+import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
+import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 
 @injectable()
 export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
@@ -39,6 +44,8 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotificationUseCase: ICreateNotificationUseCase,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
+        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
+        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
     ) { }
 
     async execute(): Promise<void> {
@@ -57,14 +64,13 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
             if (!sip || sip.status !== SipStatus.ACTIVE) return;
 
             const user = await this._userRepository.findById(installment.userId);
-            if (!user) return
+            if (!user) return;
 
             const fund = await this._mutualfundRepo.findBySchemeCode(installment.schemeCode);
             if (!fund) return;
 
             const wallet = await this._walletRepository.findById(user.walletId as string);
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
-
 
             if ((wallet?.balance ?? 0) < installment.amount) {
                 await this._sipInstallmentRepository.markFailed(
@@ -112,6 +118,37 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
 
             await this._investmentRepository.create(investment, session);
 
+            const navHistory = await this._navUpdateProvider.fetchNavHistories(installment.schemeCode);
+            const latestNav = navHistory[0]?.nav ?? 0;
+            const unitsAllotted = latestNav > 0 ? installment.amount / latestNav : 0;
+
+            let portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
+                installment.userId,
+                fund.id as string,
+                session
+            );
+
+            if (!portfolio) {
+                portfolio = PortfolioEntity.create({
+                    userId: user.id as string,
+                    assetId: fund.id as string,
+                    assetType: AssetType.MUTUAL_FUND,
+                    units: unitsAllotted,
+                    avgPrice: latestNav,
+                    investedAmount: installment.amount,
+                });
+                await this._portfolioRepository.create(portfolio, session);
+            } else {
+                const newTotalInvested = portfolio.investedAmount + installment.amount;
+                const newUnits = (portfolio.units ?? 0) + unitsAllotted;
+
+                const newAvgPrice = newUnits > 0 ? newTotalInvested / newUnits : latestNav;
+
+                portfolio.updateQuantityAndPrice(newUnits, newAvgPrice, newTotalInvested);
+
+                await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
+            }
+
             const nextDate = calculateNextExecutionDate(
                 sip.nextExecutionDate,
                 sip.frequency
@@ -124,12 +161,12 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 investment.id as string
             );
 
-            //Notification
+            // Notification
             await this._createNotificationUseCase.execute({
                 userId: user.id!,
                 type: NotificationType.SIP,
                 title: "SIP Installment Executed",
-                message: `Your SIP installment of ₹${installment.amount} has been successfully invested.`,
+                message: `Your SIP installment of ₹${installment.amount} has been successfully invested in ${fund.schemeName}.`,
             });
 
             if (updatedSip.status === SipStatus.ACTIVE) {
@@ -147,7 +184,7 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
             newTransaction.markSucess();
             await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
 
-            await session.commitTransaction()
+            await session.commitTransaction();
 
         } catch (error) {
             await session.abortTransaction();
@@ -157,9 +194,7 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
             );
 
         } finally {
-
             session.endSession();
         }
-
     }
-} 
+}

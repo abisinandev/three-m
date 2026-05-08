@@ -7,6 +7,6 @@ export interface ChatHistoryMessage {
 export interface ChatResponse {
     message: string;
     type?: 'text' | 'confirmation' | 'suggestion_list' | 'portfolio_summary';
-    data?: any;
+    data?: unknown;
     upgradeRequired?: boolean;
 }

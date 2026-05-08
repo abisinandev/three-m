@@ -15,7 +15,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ trades, onNavigate }) =
         {trades.length === 0 ? (
           <div style={{ fontSize: 11, color: '#5a5f6e' }} className="py-4 text-center">No recent activity</div>
         ) : (
-          trades.map((trade: any, i) => (
+          trades.map((trade, i) => (
             <div 
               key={i} 
               onClick={() => onNavigate(trade.symbol)}

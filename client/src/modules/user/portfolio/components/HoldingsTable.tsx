@@ -3,9 +3,10 @@ import { TABLE_HEADERS, type PortfolioTab } from '../constants/portfolio.constan
 import { HoldingsTableRow } from './HoldingsTableRow';
 import { Pagination } from '@shared/components/pagination/Pagination';
 import { formatCurrency, getPnlColor } from '../utils/portfolio.utils';
+import type { IInvestmentResponse } from '@shared/types/portfolio.types';
 
 interface HoldingsTableProps {
-    items: any[];
+    items: IInvestmentResponse[];
     total: number;
     page: number;
     limit: number;
@@ -14,7 +15,7 @@ interface HoldingsTableProps {
     returnType: 'Absolute' | 'XIRR';
     isLoading: boolean;
     isError: boolean;
-    error: any;
+    error: unknown;
     search: string;
     onNavigate: (symbol: string) => void;
 }

@@ -6,7 +6,7 @@ import type { AddFundPayload, FetchMutualFundsFilters } from "@shared/types/admi
 
 export const addFundApi = async (
     payload: AddFundPayload
-): Promise<any> => {
+): Promise<unknown> => {
     const response = await adminApi.post(
         API_ROUTES.ADMIN.MUTUAL_FUNDS.ADD,
         payload

@@ -43,8 +43,9 @@ export function PortfolioProjection() {
             try {
                 const result = await getPortfolioProjection(returnRate, years);
                 setData(result);
-            } catch (e: any) {
-                setError(e?.response?.data?.message || 'Failed to load projection.');
+            } catch (e: unknown) {
+                const error = e as { response?: { data?: { message?: string } } };
+                setError(error?.response?.data?.message || 'Failed to load projection.');
             } finally {
                 setIsLoading(false);
             }

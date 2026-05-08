@@ -65,11 +65,11 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
             const stock = await this._stockRepository.findBySymbol(order.symbol);
             if (!stock) throw new NotFoundError(ErrorMessages.STOCKS.NOT_FOUND);
 
-            if (!stock.isVisible)
-                throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_AVAILABLE);
+            // if (!stock.isVisible)
+            //     throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_AVAILABLE);
 
-            if (!stock.isTradable)
-                throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
+            // if (!stock.isTradable)
+            //     throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
 
 
             if (!order.quantity || order.quantity <= 0)

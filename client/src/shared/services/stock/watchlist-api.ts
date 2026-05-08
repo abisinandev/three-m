@@ -17,7 +17,7 @@ export const FetchWatchlistApi = async (): Promise<WatchlistResponse> => {
     }
 };
 
-export const AddToWatchlistApi = async (symbol: string): Promise<any> => {
+export const AddToWatchlistApi = async (symbol: string): Promise<WatchlistResponse> => {
     try {
         const response = await api.post(API_ROUTES.USER.STOCKS.WATCHLIST, { symbol });
         return response.data;
@@ -26,7 +26,7 @@ export const AddToWatchlistApi = async (symbol: string): Promise<any> => {
     }
 };
 
-export const RemoveFromWatchlistApi = async (symbol: string): Promise<any> => {
+export const RemoveFromWatchlistApi = async (symbol: string): Promise<WatchlistResponse> => {
     try {
         const response = await api.delete(API_ROUTES.USER.STOCKS.WATCHLIST, { data: { symbol } });
         return response.data;

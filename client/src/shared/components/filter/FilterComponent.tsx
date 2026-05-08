@@ -4,7 +4,7 @@ import type { UserFilters } from "@shared/types/admin/user-management.types";
 
 interface FiltersRowProps {
   onSearch: (search: string) => void;
-  onFilterChange: (key: keyof UserFilters, value: any) => void;
+  onFilterChange: <K extends keyof UserFilters>(key: K, value: UserFilters[K]) => void;
   onRefresh?: () => void;
   currentFilters: UserFilters;
 }

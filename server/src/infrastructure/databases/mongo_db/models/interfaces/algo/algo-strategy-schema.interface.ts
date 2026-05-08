@@ -5,7 +5,7 @@ export interface IAlgoStrategySchema {
   userId: string;
   symbol: string;
   strategyName: string;
-  config: any;
+  config: Record<string, unknown>;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

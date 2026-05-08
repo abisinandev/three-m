@@ -35,7 +35,7 @@ export interface LimitSellOrderRequest {
 export interface OrderResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
 export interface PendingOrder {
@@ -50,4 +50,25 @@ export interface PendingOrder {
   takeProfit?: number | null;
   status: "PENDING";
   createdAt: string;
+}
+export interface StockInfo {
+  logo?: string;
+  symbol?: string;
+  name?: string;
+  exchange?: string;
+}
+
+export interface StockDetailHeaderProps {
+  symbol: string;
+  stockInfo: StockInfo;
+  currentPrice: number;
+  change: number;
+  changePercent: number;
+  isPositive: boolean;
+  onTradeClick: (type: "buy" | "sell") => void;
+}
+
+export interface AlgoConsoleProps {
+  symbol: string;
+  onPremiumModalOpen: () => void;
 }

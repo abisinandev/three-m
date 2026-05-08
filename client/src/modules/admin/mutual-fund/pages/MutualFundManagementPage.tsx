@@ -270,7 +270,7 @@ export default function MutualFundsPage() {
                 message={
                     <>
                         Are you sure you want to change the status of <br/>
-                        <span className="text-white">{(confirmModal.fund as any)?.name}</span> <br/>
+                        <span className="text-white">{(confirmModal.fund as MutualFundType)?.schemeName}</span> <br/>
                         to <span className={confirmModal.newStatus === 'Active' ? 'text-[#00C853]' : 'text-amber-500'}>{confirmModal.newStatus}</span>?
                     </>
                 }

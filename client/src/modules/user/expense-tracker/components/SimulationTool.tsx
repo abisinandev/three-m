@@ -60,7 +60,7 @@ export const SimulationTool = ({ month }: SimulationToolProps) => {
     const handleSimulate = async () => {
         setIsSimulating(true);
         try {
-            const adjustments: any[] = [];
+            const adjustments: { type: string; amount: number; categoryType?: string }[] = [];
             if (incomeAdj !== 0) adjustments.push({ type: 'INCOME', amount: incomeAdj });
             if (needsAdj !== 0) adjustments.push({ type: 'CATEGORY', categoryType: 'NEED', amount: -needsAdj });
             if (wantsAdj !== 0) adjustments.push({ type: 'CATEGORY', categoryType: 'WANT', amount: -wantsAdj });

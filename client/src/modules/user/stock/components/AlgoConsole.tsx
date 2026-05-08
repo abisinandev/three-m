@@ -10,10 +10,7 @@ import {
   toggleAlgoStrategyStatus,
 } from "@/shared/services/algo-trading/algo-trading-api";
 
-interface AlgoConsoleProps {
-  symbol: string;
-  onPremiumModalOpen: () => void;
-}
+import type { AlgoConsoleProps } from "@/shared/types/stock/stock.types";
 
 export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) => {
   const [algoStep, setAlgoStep] = useState<"idle" | "selecting" | "active">(
@@ -51,7 +48,7 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
       setAlgoStep("active");
       toast.success("Algo trading started successfully.");
     },
-    onError: (error: any) => {
+    onError: (error: { response?: { status: number } }) => {
       if (error.response?.status === 402) {
         onPremiumModalOpen();
         return;
@@ -74,7 +71,7 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
       setAlgoStep("idle");
       toast.info("Algo strategy stopped.");
     },
-    onError: (error: any) => {
+    onError: (error: { response?: { status: number } }) => {
       if (error.response?.status === 402) {
         onPremiumModalOpen();
         return;
@@ -88,7 +85,7 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
     if (!selectedStrategy || !symbol) return;
 
     const strategy = strategies.find((s) => s.name === selectedStrategy);
-    const config: Record<string, any> = {};
+    const config: Record<string, string | number | boolean> = {};
     strategy?.configSchema.forEach((field) => {
       config[field.key] = field.default;
     });
@@ -125,9 +122,8 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
   return (
     <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 flex flex-col relative overflow-hidden">
       <div
-        className={`absolute top-0 right-0 w-24 h-24 blur-[60px] opacity-20 ${
-          algoStep === "active" ? "bg-[#00C853]" : "bg-[#2962ff]"
-        }`}
+        className={`absolute top-0 right-0 w-24 h-24 blur-[60px] opacity-20 ${algoStep === "active" ? "bg-[#00C853]" : "bg-[#2962ff]"
+          }`}
       ></div>
 
       <div className="flex items-center justify-between mb-5 relative z-10">

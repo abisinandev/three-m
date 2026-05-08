@@ -172,7 +172,7 @@ const PortfolioDashboard = () => {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                         <PortfolioXirrCard xirrValue={xirrValue} />
                         
-                        <AssetAllocationDonut investments={investments} />
+                        <AssetAllocationDonut allocations={summaryData?.allocations} />
 
                         <PortfolioProjection />
 

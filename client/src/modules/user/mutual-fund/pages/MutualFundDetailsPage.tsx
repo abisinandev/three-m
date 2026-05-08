@@ -48,11 +48,11 @@ const MutualFundDetailsPage = () => {
     [investment, latestNav]
   );
 
-  const [successData, setSuccessData] = useState<any>(null);
+  const [successData, setSuccessData] = useState<{ amount?: number; units?: number } | null>(null);
  
    const { mutate: invest, isPending: isSubmitting } = useInvestMutualFund(
-     (data) => {
-       setSuccessData(data.data);
+     (data: { data?: { amount?: number; units?: number } }) => {
+       setSuccessData(data.data as { amount?: number; units?: number });
        setShowConfirmModal(false);
        setShowInvestModal(false);
        setShowSuccessModal(true);
@@ -70,8 +70,9 @@ const MutualFundDetailsPage = () => {
         setShowSuccessModal(true);
         setErrorMsg('');
     },
-    (msg, error: any) => {
-      if (error?.response?.status === 402) {
+    (msg, error: unknown) => {
+      const err = error as { response?: { status?: number } };
+      if (err?.response?.status === 402) {
         setShowSipModal(false);
         openPremiumModal();
       } else {
@@ -244,7 +245,7 @@ const MutualFundDetailsPage = () => {
               </div>
               <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-4">
                 <div className="text-[11px] text-[#6a7182] font-semibold uppercase tracking-wider mb-2">AUM</div>
-                <div className="text-sm text-[#e8eaed] font-medium tracking-wide">₹{(data as any).aum || 'N/A'}</div>
+                <div className="text-sm text-[#e8eaed] font-medium tracking-wide">₹{data.aum || 'N/A'}</div>
               </div>
             </div>
           </div>

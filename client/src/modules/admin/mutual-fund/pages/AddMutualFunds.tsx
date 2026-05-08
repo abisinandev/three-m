@@ -30,12 +30,7 @@ import { addFundApi, } from '@shared/services/admin/mutual-fund-management/mutua
 import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { useAdminStore } from '@/stores/admin/useAdminStore';
-import type { AddFundPayload } from '@/shared/types/admin/mutual-fund-management.types';
-
-type MfScheme = {
-    schemeCode: number;
-    schemeName: string;
-};
+import type { AddFundPayload, MfScheme } from '@/shared/types/admin/mutual-fund-management.types';
 
 export default function AddMutualFundPage() {
     const adminId = useAdminStore(state => state.data?.adminCode || 'admin');
@@ -90,7 +85,7 @@ export default function AddMutualFundPage() {
             setSubmitError(null);
         },
 
-        onError: (error: AxiosError<any>) => {
+        onError: (error: AxiosError<{ message?: string }>) => {
             const message =
                 error.response?.data?.message ||
                 error.message ||
@@ -130,8 +125,9 @@ export default function AddMutualFundPage() {
             const signatureData = await GetSignatureApi(adminId, 'fund-logo');
             const result = await uploadToCloudinary(file, signatureData.data);
             setLogoUrl(result.secure_url);
-        } catch (err: any) {
-            toast.error(err.message || 'Failed to upload logo');
+        } catch (err: unknown) {
+            const error = err as Error;
+            toast.error(error.message || 'Failed to upload logo');
             removeLogo();
         } finally {
             setIsUploading(false);
@@ -244,7 +240,7 @@ export default function AddMutualFundPage() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                    {/* Left Column: Search & Selection */}
+
                     <div className="bg-[#111214] border border-[#1e2025] rounded-xl p-5 shadow-sm">
                         <label className="text-xs font-semibold text-[#e8eaed] mb-2 block">
                             Search Scheme
@@ -304,7 +300,6 @@ export default function AddMutualFundPage() {
                         )}
                     </div>
 
-                    {/* Right Column: Configuration */}
                     {selectedScheme ? (
                         <div className="bg-[#111214] border border-[#1e2025] rounded-xl p-5 shadow-sm">
                             <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#1e2025]">
@@ -320,7 +315,6 @@ export default function AddMutualFundPage() {
                                 </button>
                             </div>
 
-                            {/* Info display - Read Only */}
                             <div className="space-y-4 mb-6">
                                 <div>
                                     <label className="text-[10px] text-[#5a5f6e] uppercase tracking-wider font-bold mb-1 block">Full Scheme Name</label>
@@ -363,7 +357,6 @@ export default function AddMutualFundPage() {
                                 </div>
                             </div>
 
-                            {/* Logo Upload - The only editable action */}
                             <div className="mb-6 pt-4 border-t border-[#1e2025]">
                                 <label className="text-[11px] font-semibold flex items-center gap-2 mb-3 text-white">
                                     <Image size={14} className="text-emerald-500" />

@@ -40,7 +40,7 @@ const MutualFundDashboard = () => {
     const recentNAVUpdates = useMemo(() => {
         const currentFunds = fundsData?.data ?? [];
         if (!currentFunds || currentFunds.length === 0) return [];
-        return currentFunds.slice(0, 5).map((fund: any) => {
+        return currentFunds.slice(0, 5).map((fund) => {
             const hash = fund.schemeName?.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) || 0;
             const change = ((hash % 400) / 100) - 2;
 
@@ -60,7 +60,7 @@ const MutualFundDashboard = () => {
         enabled: activeTab === 'sips',
     });
 
-    const sips = (sipsData as any)?.data?.data as SipDto[] ?? [];
+    const sips = (sipsData as { data?: { data?: SipDto[] } } | undefined)?.data?.data ?? [];
 
     const { data: investmentsData, isLoading: investmentsLoading } = useQuery({
         queryKey: ['investments-listing'],
@@ -68,7 +68,7 @@ const MutualFundDashboard = () => {
         enabled: activeTab === 'transactions',
     });
 
-    const investments = (investmentsData as any)?.data?.data ?? [];
+    const investments = (investmentsData as { data?: { data?: unknown[] } } | undefined)?.data?.data ?? [];
 
     const pauseMutation = useMutation({
         mutationFn: PauseSipStatus,
@@ -129,7 +129,7 @@ const MutualFundDashboard = () => {
                                 return (
                                     <button
                                         key={tab}
-                                        onClick={() => setActiveTab(tab as any)}
+                                        onClick={() => setActiveTab(tab as 'funds' | 'sips' | 'transactions')}
                                         className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-colors ${isActive
                                                 ? 'bg-[#1a1c20] text-[#e8eaed] shadow-sm'
                                                 : 'text-[#6a7182] hover:text-[#e8eaed] hover:bg-[#1a1c20]/50'

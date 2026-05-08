@@ -1,6 +1,7 @@
 import { fetchAnalyticsData, fetchExpenseTrackerData, calculateBudgetPlan } from '@/shared/services/expense-tracker/expense-service';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { format } from 'date-fns';
+import type { BudgetPlanRequest } from '../types/expense.types';
 
 export const useExpenseTracker = (selectedMonth: Date) => {
     const apiMonth = format(selectedMonth, 'yyyy-MM');
@@ -17,7 +18,7 @@ export const useExpenseTracker = (selectedMonth: Date) => {
     });
 
     const budgetPlanMutation = useMutation({
-        mutationFn: (data: any) => calculateBudgetPlan(data),
+        mutationFn: (data: BudgetPlanRequest) => calculateBudgetPlan(data),
     });
 
     return {

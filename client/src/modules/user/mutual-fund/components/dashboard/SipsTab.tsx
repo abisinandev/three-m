@@ -65,10 +65,8 @@ const SipsTab: React.FC<SipsTabProps> = ({
     return (
         <div className="bg-[#111214] border border-[#1e2025] rounded-xl p-6 space-y-6 shadow-2xl">
             <div className="flex justify-between items-center">
-                <h3 className="text-lg font-bold flex items-center gap-3 text-white">
-                    <div className="p-2 bg-green-500/10 rounded-lg">
-                        <CalendarCheck size={20} className="text-green-400" />
-                    </div>
+                <h3 className="text-[13px] font-semibold flex items-center gap-2 text-gray-200 uppercase tracking-wider">
+                    <CalendarCheck size={16} className="text-green-500" />
                     Active SIPs
                 </h3>
                 <span className="text-[10px] bg-[#1e2025] px-2.5 py-1 rounded-full text-gray-400 font-bold uppercase tracking-wider">
@@ -115,24 +113,24 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                     </div>
                                     
                                     <div>
-                                        <h4 className="font-bold text-white text-sm line-clamp-1 mb-1 group-hover:text-green-400 transition-colors">
+                                        <h4 className="text-[12px] font-semibold text-gray-200 line-clamp-1 mb-1 group-hover:text-green-400 transition-colors">
                                             {sip.schemeName || sip.schemeCode}
                                         </h4>
-                                        <div className="flex items-center gap-2 text-[11px] font-bold">
-                                            <span className="text-white tracking-wide">₹{sip.amount.toLocaleString('en-IN')}</span>
-                                            <span className="w-1 h-1 bg-[#1e2025] rounded-full"></span>
-                                            <span className="text-gray-500 uppercase tracking-tighter">{sip.frequency}</span>
-                                            <span className="w-1 h-1 bg-[#1e2025] rounded-full"></span>
-                                            <span className="text-[#4b505c]">{dayjs(sip.startDate).format('MMM D, YYYY')}</span>
+                                        <div className="flex items-center gap-2 text-[10px] font-medium text-gray-400">
+                                            <span className="text-gray-200 font-semibold">₹{sip.amount.toLocaleString('en-IN')}</span>
+                                            <span>•</span>
+                                            <span className="uppercase">{sip.frequency}</span>
+                                            <span>•</span>
+                                            <span>{dayjs(sip.startDate).format('MMM D, YYYY')}</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="w-full md:w-auto flex items-center justify-between md:justify-end gap-6 bg-[#111214] md:bg-transparent p-3 md:p-0 rounded-xl border border-[#1e2025] md:border-0">
                                     <div className="text-right">
-                                        <p className="text-[9px] text-[#4b505c] font-black uppercase tracking-[0.1em] mb-1">Next Installment</p>
-                                        <div className="flex items-center gap-2 text-xs font-mono font-bold text-green-400">
-                                            <Clock size={12} strokeWidth={3} />
+                                        <p className="text-[10px] text-gray-500 font-medium mb-1">Next Installment</p>
+                                        <div className="flex items-center justify-end gap-1.5 text-[11px] font-semibold text-green-400">
+                                            <Clock size={12} />
                                             {dayjs(sip.nextExecutionDate).format('DD MMM YYYY')}
                                         </div>
                                     </div>
@@ -177,9 +175,9 @@ const SipsTab: React.FC<SipsTabProps> = ({
                             </div>
 
                             <details className="mt-5 border-t border-[#1e2025] pt-3 group">
-                                <summary className="text-[10px] font-black text-[#4b505c] uppercase tracking-widest cursor-pointer hover:text-gray-300 list-none flex items-center justify-between">
+                                <summary className="text-[11px] font-semibold text-gray-400 cursor-pointer hover:text-gray-300 list-none flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <ChevronDown size={12} className="group-open:rotate-180 transition-transform" />
+                                        <ChevronDown size={14} className="group-open:rotate-180 transition-transform" />
                                         Payment History ({sip.installments?.length || 0})
                                     </div>
                                     {sip.executedInstallments > 0 && (
@@ -194,11 +192,11 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                                     inst.status === 'success' ? 'bg-green-500' :
                                                     inst.status === 'failed' ? 'bg-red-500' : 'bg-amber-500'
                                                 }`} />
-                                                <span className="text-xs font-mono font-bold text-gray-300">{dayjs(inst.executionDate).format('DD MMM YYYY')}</span>
+                                                <span className="text-[11px] font-medium text-gray-400">{dayjs(inst.executionDate).format('DD MMM YYYY')}</span>
                                             </div>
                                             <div className="flex items-center gap-3">
-                                                <span className="text-xs font-black text-white">₹{inst.amount.toLocaleString('en-IN')}</span>
-                                                <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${
+                                                <span className="text-[11px] font-semibold text-gray-200">₹{inst.amount.toLocaleString('en-IN')}</span>
+                                                <span className={`text-[9px] font-medium uppercase px-2 py-0.5 rounded-md ${
                                                     inst.status === 'success' ? 'bg-green-500/10 text-green-500' :
                                                     inst.status === 'failed' ? 'bg-red-500/10 text-red-500' : 'bg-amber-500/10 text-amber-500'
                                                 }`}>

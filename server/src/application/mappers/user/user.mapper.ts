@@ -65,6 +65,7 @@ export function toUserResponse(user: UserEntity): UserDTO {
             pinCode: user.kyc.address.pinCode,
           }
           : undefined,
+        rejectionReason: user.kyc.rejectionReason ?? null,
       }
       : undefined,
 

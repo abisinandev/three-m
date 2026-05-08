@@ -2,15 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import stockCurrencyService from "@/shared/services/external/stock-currency.service";
 
-interface StockDetailHeaderProps {
-  symbol: string;
-  stockInfo: any;
-  currentPrice: number;
-  change: number;
-  changePercent: number;
-  isPositive: boolean;
-  onTradeClick: (type: "buy" | "sell") => void;
-}
+import type { StockDetailHeaderProps } from "@/shared/types/stock/stock.types";
 
 export const StockDetailHeader = ({
   symbol,
@@ -21,7 +13,7 @@ export const StockDetailHeader = ({
   isPositive,
   onTradeClick,
 }: StockDetailHeaderProps) => {
-  const fmt = (v: any, digits = 2) => {
+  const fmt = (v: number | string | null | undefined, digits = 2) => {
     if (v === undefined || v === null || isNaN(Number(v))) return "0.00";
     return Number(v).toLocaleString("en-IN", {
       minimumFractionDigits: digits,
@@ -76,9 +68,8 @@ export const StockDetailHeader = ({
               {stockCurrencyService.formatCurrency(currentPrice, "INR")}
             </div>
             <div
-              className={`text-[10px] font-bold flex items-center justify-end gap-1 ${
-                isPositive ? "text-[#00C853]" : "text-[#FF1744]"
-              }`}
+              className={`text-[10px] font-bold flex items-center justify-end gap-1 ${isPositive ? "text-[#00C853]" : "text-[#FF1744]"
+                }`}
             >
               <span>
                 {isPositive ? "+" : ""}

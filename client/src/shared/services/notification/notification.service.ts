@@ -9,7 +9,7 @@ export const getNotifications = async (
         params: filter ? { filter } : undefined,
     });
 
-    return response.data.data.map((item: any) => ({
+    return response.data.data.map((item: Notification) => ({
         id: item.id,
         type: item.type,
         title: item.title,

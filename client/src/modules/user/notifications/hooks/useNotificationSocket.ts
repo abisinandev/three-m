@@ -3,11 +3,13 @@ import { socket } from '@socket';
 import { useNotificationStore } from '@stores/notification/useNotificationStore';
 import { toast } from 'sonner';
 
+import type { Notification } from '../types/notification.types';
+
 export const useNotificationSocket = () => {
     const addNotification = useNotificationStore((state) => state.addNotification);
 
     useEffect(() => {
-        const handler = (data: any) => {
+        const handler = (data: Notification) => {
             addNotification(data);
             
             // Trigger visual toast

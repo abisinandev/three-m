@@ -69,9 +69,9 @@ const PremiumPaymentModal = ({ isOpen, onClose }: PremiumPaymentModalProps) => {
             } else {
                 throw new Error("Checkout URL not found");
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Payment error", err);
-            toast.error(err.response?.data?.message || "Failed to initiate payment", { id: toastId });
+            toast.error((err as { response?: { data?: { message?: string } } }).response?.data?.message || "Failed to initiate payment", { id: toastId });
             setLoading(false);
         }
     };

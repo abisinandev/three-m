@@ -8,6 +8,7 @@ import { IAddStockUseCase } from "@application/use_cases/admin/stocks-management
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
+import { StockEntity } from "@domain/entities/stock/stock.entity";
 
 @injectable()
 export class AdminStocksController {
@@ -32,7 +33,7 @@ export class AdminStocksController {
                 isVisible 
             } = req.query;
 
-            const filter: any = {};
+            const filter: Record<string, unknown> = {};
             if (exchange) filter.exchange = exchange;
             if (isTradable !== undefined && isTradable !== "") filter.isTradable = isTradable === 'true';
             if (isTracked !== undefined && isTracked !== "") filter.isTracked = isTracked === 'true';
@@ -51,7 +52,7 @@ export class AdminStocksController {
                 res,
                 SuccessMessages.STOCK.STOCK_FETCHED,
                 {
-                    data: result.data.map((stock: any) => stock.toPersistence ? stock.toPersistence() : stock),
+                    data: result.data.map((stock: StockEntity) => stock.toPersistence ? stock.toPersistence() : stock),
                     page: Number(page),
                     limit: Number(limit),
                     total: result.total,

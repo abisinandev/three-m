@@ -2,9 +2,9 @@ export interface AlgoStrategyDTO {
     userId: string;
     symbol: string;
     strategyName: string;
-    config: any;
+    config: Record<string, unknown>;
 }
 
 export interface ISaveAlgoStrategyUseCase {
-    execute(data: AlgoStrategyDTO): Promise<any>;
+    execute(data: AlgoStrategyDTO): Promise<void>;
 }

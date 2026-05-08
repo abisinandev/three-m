@@ -15,7 +15,7 @@ export class FetchPremiumPlanUseCase implements IFetchPremiumPlanUseCase {
     ) { }
 
     async execute(): Promise<PlanDTO> {
-        const plan = await this.planRepo.findOne({ code: SubscriptionPlans.PREMIUM } as any);
+        const plan = await this.planRepo.findOne({ code: SubscriptionPlans.PREMIUM } as Record<string, unknown>);
         
         if (!plan) throw new NotFoundError(ErrorMessages.SUBSCRIPTION.PLAN_UNAVAILABLE)
 

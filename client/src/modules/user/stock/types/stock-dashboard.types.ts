@@ -23,8 +23,15 @@ export interface MarketMoverProps {
   onNavigate: (symbol: string) => void;
 }
 
+export interface TradeActivity {
+  symbol: string;
+  type: string;
+  quantity: number;
+  totalPrice: number;
+}
+
 export interface RecentActivityProps {
-  trades: any[];
+  trades: TradeActivity[];
   onNavigate: (symbol: string) => void;
 }
 

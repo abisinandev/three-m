@@ -7,7 +7,7 @@ const StockDashboardTabs: React.FC<StockDashboardTabsProps> = ({ activeTab, setA
       {tabs.map((tab) => (
         <button
           key={tab.id}
-          onClick={() => setActiveTab(tab.id as any)}
+          onClick={() => setActiveTab(tab.id)}
           style={{
             padding: '8px 16px',
             fontSize: 12,

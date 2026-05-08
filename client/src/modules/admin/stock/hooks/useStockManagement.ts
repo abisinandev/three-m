@@ -22,7 +22,7 @@ export const useStockManagement = () => {
             await queryClient.cancelQueries({ queryKey: ['admin-stocks', filters] });
             const previousData = queryClient.getQueryData(['admin-stocks', filters]);
 
-            queryClient.setQueryData(['admin-stocks', filters], (old: any) => {
+            queryClient.setQueryData(['admin-stocks', filters], (old: { data: Stock[]; total: number } | undefined) => {
                 if (!old) return old;
                 return {
                     ...old,

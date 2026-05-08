@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Search, Filter, List, DollarSign, Activity, XOctagon, PauseCircle } from 'lucide-react';
-import type { SIP, SipStatus } from '../types/SipTypes';
+import type { SIP, SipStatus, SipFilters } from '@/shared/types/admin/sip-management.types';
 import { SipStatusBadge } from '../components/SipStatusBadges';
 import { useNavigate } from '@tanstack/react-router';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
@@ -8,7 +8,6 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { ROUTES } from '@shared/constants/routes';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchSipsApi } from '@shared/services/admin/sip-management/sip-management-admin-api';
-import type { SipFilters } from '@/shared/types/admin/sip-management.types';
 
 const SipManagementPage = () => {
   const navigate = useNavigate();
@@ -180,7 +179,7 @@ const SipManagementPage = () => {
                     key={sip.id}
                     className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
                     onClick={() => {
-                      navigate({ to: ROUTES.ADMIN.SIP_MANAGEMENT.DETAILS(sip.id) as any });
+                      navigate({ to: ROUTES.ADMIN.SIP_MANAGEMENT.DETAILS(sip.id) });
                     }}
                   >
                     <td className="px-5 py-4">
@@ -223,7 +222,7 @@ const SipManagementPage = () => {
                           className="p-1.5 hover:bg-blue-500/10 rounded text-blue-400 transition-all"
                           title="View Details"
                           onClick={() => {
-                            navigate({ to: ROUTES.ADMIN.SIP_MANAGEMENT.DETAILS(sip.id) as any });
+                            navigate({ to: ROUTES.ADMIN.SIP_MANAGEMENT.DETAILS(sip.id) });
                           }}
                         >
                           <List size={16} />

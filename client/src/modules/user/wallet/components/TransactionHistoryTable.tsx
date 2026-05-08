@@ -1,11 +1,10 @@
 import React from 'react';
-import type { WalletTransaction } from '../../types/wallet.types';
-
+import type { WalletTransaction } from '../types/wallet.types';
 interface TransactionHistoryTableProps {
     transactions: WalletTransaction[];
 }
 
-const fmt = (v: any, digits = 2) => {
+const fmt = (v: number | string | undefined | null, digits = 2) => {
     if (v === undefined || v === null || isNaN(Number(v))) return '0.00';
     return Number(v).toLocaleString('en-IN', {
         minimumFractionDigits: digits,
@@ -27,7 +26,7 @@ const getStatusStyle = (status: string = '') => {
 const TransactionStatusBadge: React.FC<{ status: string }> = ({ status }) => {
     const style = getStatusStyle(status);
     return (
-        <span 
+        <span
             className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border"
             style={{ color: style.color, backgroundColor: style.bg, borderColor: style.border }}
         >

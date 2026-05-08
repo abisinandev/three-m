@@ -89,7 +89,7 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
 
         onSuccess: (res) => {
             toast.success(res.message || "Profile updated")
-            queryClient.invalidateQueries({ queryKey: ['user'] });
+            queryClient.invalidateQueries({ queryKey: ['profile'] });
             onClose();
         },
 

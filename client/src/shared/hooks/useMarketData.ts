@@ -46,7 +46,7 @@ export const useMarketData = (
     const chartRef = useRef<IChartApi | null>(null);
     const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
     const latestCandleRef = useRef<Candle | null>(null);
-    
+
     // For Interpolation
     const targetPriceRef = useRef<number | null>(null);
     const animationFrameId = useRef<number | null>(null);
@@ -100,7 +100,16 @@ export const useMarketData = (
 
             try {
                 const now = Math.floor(Date.now() / 1000);
-                const from = now - (14 * 24 * 60 * 60); // 14 days baseline
+
+                const lookbackByTimeframe: Record<string, number> = {
+                    '1': 5 * 24 * 60 * 60,        // 1m  → 5 days
+                    '5': 7 * 24 * 60 * 60,         // 5m  → 7 days
+                    '15': 14 * 24 * 60 * 60,        // 15m → 14 days
+                    '30': 30 * 24 * 60 * 60,        // 30m → 30 days
+                    '60': 60 * 24 * 60 * 60,        // 1h  → 60 days
+                    'D': 365 * 24 * 60 * 60,       // 1D  → 1 year
+                };
+                const from = now - (lookbackByTimeframe[timeframe] ?? 14 * 24 * 60 * 60);
 
                 const response = await marketDataService.getHistoricalCandles(symbol, timeframe, from, now);
 
@@ -132,7 +141,6 @@ export const useMarketData = (
 
         fetchHistoricalData();
 
-        // WS Connection
         socketService.connect();
         let backendTimeframe = '1m';
         switch (timeframe) {
@@ -147,7 +155,8 @@ export const useMarketData = (
 
         socketService.subscribeToCandle(symbol, backendTimeframe);
 
-        const handleCandleUpdate = (update: Candle & { symbol?: string, timeframe?: string }) => {
+        const handleCandleUpdate = (raw: unknown) => {
+            const update = raw as Candle & { symbol?: string; timeframe?: string };
             if (!seriesRef.current || !update) return;
 
             const formattedUpdate: Candle = {
@@ -157,24 +166,20 @@ export const useMarketData = (
                 low: update.low,
                 close: update.close
             };
-            
-            // For interpolation, we set the target price instead of immediate visual jump
+
             targetPriceRef.current = formattedUpdate.close;
-            // Immediate update for the rest of the candle structure
             latestCandleRef.current = formattedUpdate;
-            
+
             if (isMounted) setCurrentPrice(formattedUpdate.close);
         };
 
         socketService.on('candle-update', handleCandleUpdate);
 
-        // Smooth Interpolation Loop
         const animatePrice = () => {
             if (latestCandleRef.current && seriesRef.current && targetPriceRef.current !== null) {
                 const current = latestCandleRef.current.close;
                 const target = targetPriceRef.current;
-                
-                // Diff and interpolation step (~10% gap closure per frame at 60fps)
+
                 if (Math.abs(target - current) > 0.01) {
                     const step = (target - current) * 0.1;
                     const interpolatedPrice = current + step;
@@ -185,12 +190,12 @@ export const useMarketData = (
                         high: Math.max(latestCandleRef.current.high, interpolatedPrice),
                         low: Math.min(latestCandleRef.current.low, interpolatedPrice)
                     };
-                    
+
                     seriesRef.current.update(latestCandleRef.current);
                 } else if (current !== target) {
-                     // Snap to target if very close
-                     latestCandleRef.current.close = targetPriceRef.current;
-                     seriesRef.current.update(latestCandleRef.current);
+
+                    latestCandleRef.current.close = targetPriceRef.current;
+                    seriesRef.current.update(latestCandleRef.current);
                 }
             }
             animationFrameId.current = requestAnimationFrame(animatePrice);

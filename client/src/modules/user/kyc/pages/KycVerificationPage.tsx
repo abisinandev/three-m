@@ -7,12 +7,13 @@ import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { KYC_SUMBIT_URL } from '@shared/constants/userContants';
 import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { ROUTES } from '@shared/constants/routes';
 import { KycDetailsForm } from '../components/KycDetailsForm';
 import { KycAddressForm } from '../components/KycAddressForm';
 import { KycDocumentUpload } from '../components/KycDocumentUpload';
 import { KycSelfieCapture } from '../components/KycSelfieCapture';
-import type { AddressData, DetailsData, KycFiles, KycPreviews } from '../components/KycTypes';
+import type { AddressData, DetailsData, KycFiles, KycPreviews } from '@/shared/types/user/KycUserType';
 
 const steps = [
     { id: 1, title: 'Your Details', field: 'details', isForm: true },
@@ -26,6 +27,7 @@ const KYCVerificationPage = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const { user, setUser } = useUserStore();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
 
     const [files, setFiles] = useState<KycFiles>({
@@ -226,9 +228,11 @@ const KYCVerificationPage = () => {
 
             toast.success('KYC submitted successfully!');
             setSubmitStatus('success');
+            queryClient.invalidateQueries({ queryKey: ['profile'] });
             setTimeout(() => navigate({ to: ROUTES.USER.PROFILE }), 2000);
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Upload failed. Please try again.');
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: { message?: string } } };
+            toast.error(err.response?.data?.message || 'Upload failed. Please try again.');
             setSubmitStatus('error');
         } finally {
             setIsSubmitting(false);
