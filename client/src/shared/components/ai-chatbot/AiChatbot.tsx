@@ -27,12 +27,13 @@ export default function AiAssistantPanel() {
             <div
                 className={`
                     fixed inset-y-0 right-0 z-[200] w-[400px]
-                    bg-neutral-950/95 backdrop-blur-2xl border-l border-neutral-800/50
-                    flex flex-col shadow-2xl
-                    transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]
+                    bg-neutral-950/98 backdrop-blur-3xl border-l border-neutral-800/80
+                    flex flex-col shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)]
+                    transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]
                     ${isOpen ? 'translate-x-0' : 'translate-x-full'}
                 `}
             >
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.03),transparent_40%)] pointer-events-none" />
                 <ChatHeader onClose={toggleOpen} />
 
                 <ChatMessageList

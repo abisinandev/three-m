@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FetchAdminBaseStrategies, UpdateAdminStrategyRiskConfig } from '@/shared/services/admin/algo-trading/AdminAlgoTradingApi';
+import { FetchAdminBaseStrategies, UpdateAdminStrategyRiskConfig } from '@/shared/services/admin/algo-trading/admin-algo-trading-api';
 import { Edit2, Shield, Target, TrendingDown, TrendingUp, Info, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
+import type { StrategyRiskConfig, BaseStrategy } from '@/shared/types/admin/algo-trading.types';
 
 const BaseStrategiesRiskTable = () => {
     const queryClient = useQueryClient();
     const [editingStrategy, setEditingStrategy] = useState<string | null>(null);
-    const [editData, setEditData] = useState<any>(null);
+    const [editData, setEditData] = useState<StrategyRiskConfig | null>(null);
 
-    const { data: baseStrategies, isLoading } = useQuery({
+    const { data: baseStrategies, isLoading } = useQuery<{ data: BaseStrategy[] }>({
         queryKey: ['admin-base-strategies'],
         queryFn: FetchAdminBaseStrategies
     });
@@ -27,7 +28,7 @@ const BaseStrategiesRiskTable = () => {
         }
     });
 
-    const handleEdit = (strategy: any) => {
+    const handleEdit = (strategy: BaseStrategy) => {
         setEditingStrategy(strategy.name);
         setEditData({
             strategyName: strategy.name,
@@ -39,7 +40,9 @@ const BaseStrategiesRiskTable = () => {
     };
 
     const handleSave = () => {
-        updateMutation.mutate(editData);
+        if (editData) {
+            updateMutation.mutate(editData);
+        }
     };
 
     if (isLoading) {
@@ -68,7 +71,7 @@ const BaseStrategiesRiskTable = () => {
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-                {baseStrategies?.data?.map((strategy: any) => (
+                {baseStrategies?.data?.map((strategy: BaseStrategy) => (
                     <div key={strategy.name} className="bg-[#111214] border border-[#1e2025] rounded-lg overflow-hidden transition-all">
                         <div className="px-4 py-3 border-b border-[#1e2025] flex justify-between items-center bg-[#111214]">
                             <div className="flex items-center gap-3">
@@ -78,7 +81,7 @@ const BaseStrategiesRiskTable = () => {
                                 <div>
                                     <h3 className="font-bold text-white text-[13px]">{strategy.displayName}</h3>
                                     <div className="flex gap-1.5 mt-0.5">
-                                        {strategy.configSchema.map((schema: any) => (
+                                        {strategy.configSchema.map((schema: { key: string; default: string | number }) => (
                                             <span key={schema.key} className="px-1.5 py-0.5 bg-[#1e2025] text-neutral-500 rounded text-[9px] uppercase font-bold">
                                                 {schema.key}: {schema.default}
                                             </span>
@@ -120,7 +123,7 @@ const BaseStrategiesRiskTable = () => {
                                     <Target size={12} />
                                     <label className="text-[10px] font-bold uppercase tracking-wider">Risk Amount</label>
                                 </div>
-                                {editingStrategy === strategy.name ? (
+                                {editingStrategy === strategy.name && editData ? (
                                     <input 
                                         type="number"
                                         value={editData.riskAmount}
@@ -138,7 +141,7 @@ const BaseStrategiesRiskTable = () => {
                                     <TrendingDown size={12} />
                                     <label className="text-[10px] font-bold uppercase tracking-wider">Stop Loss</label>
                                 </div>
-                                {editingStrategy === strategy.name ? (
+                                {editingStrategy === strategy.name && editData ? (
                                     <input 
                                         type="number"
                                         value={editData.stopLoss}
@@ -156,7 +159,7 @@ const BaseStrategiesRiskTable = () => {
                                     <TrendingUp size={12} />
                                     <label className="text-[10px] font-bold uppercase tracking-wider">Take Profit</label>
                                 </div>
-                                {editingStrategy === strategy.name ? (
+                                {editingStrategy === strategy.name && editData ? (
                                     <input 
                                         type="number"
                                         value={editData.takeProfit}
@@ -174,7 +177,7 @@ const BaseStrategiesRiskTable = () => {
                                     <Info size={12} />
                                     <label className="text-[10px] font-bold uppercase tracking-wider">Daily Trades</label>
                                 </div>
-                                {editingStrategy === strategy.name ? (
+                                {editingStrategy === strategy.name && editData ? (
                                     <input 
                                         type="number"
                                         value={editData.maxTradesPerDay}
@@ -195,3 +198,4 @@ const BaseStrategiesRiskTable = () => {
 };
 
 export default BaseStrategiesRiskTable;
+

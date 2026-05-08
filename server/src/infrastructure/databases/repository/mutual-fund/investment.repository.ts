@@ -297,6 +297,50 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         return docs.map(doc => this.mapper.toDomain(doc));
     }
 
+    async findInvestmentsHistory(userId: string): Promise<InvestmentFundDTO[]> {
+        const docs = await this.model.aggregate([
+            {
+                $match: {
+                    userId: new Types.ObjectId(userId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "mutualfunds",
+                    localField: "schemeCode",
+                    foreignField: "schemeCode",
+                    as: "fund",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$fund",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            { $sort: { createdAt: -1 } },
+        ]);
+
+        return docs.map(doc => ({
+            id: doc._id.toString(),
+            userId: doc.userId.toString(),
+            schemeCode: doc.schemeCode,
+            amount: doc.amount,
+            units: doc.units,
+            nav: doc.nav,
+            navDate: doc.navDate,
+            status: doc.status,
+            investmentType: doc.investmentType,
+            paymentMethod: doc.paymentMethod,
+            remainingUnits: doc.remainingUnits,
+            redeemedUnits: doc.redeemedUnits,
+            redeemedAmount: doc.redeemedAmount,
+            createdAt: doc.createdAt,
+            updatedAt: doc.updatedAt,
+            fund: doc.fund
+        }));
+    }
+
 
     async findGroupedInvestmentsByUser(userId: string): Promise<GroupedSchemeInvestments[]> {
 
@@ -463,13 +507,11 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         return slots;
     }
 
-    async calculateTotalAUM(): Promise<{ mf: number; stocks: number; algo: number }> {
+    async calculateTotalAUM(): Promise<number> {
         const mfResult = await this.model.aggregate([
             { $match: { status: InvestmentStatus.ALLOTTED } },
             { $group: { _id: null, total: { $sum: "$amount" } } }
         ]);
-        const mf = mfResult.length > 0 ? mfResult[0].total : 0;
-        
-        return { mf, stocks: 0, algo: 0 };
+        return mfResult.length > 0 ? mfResult[0].total : 0;
     }
 }  

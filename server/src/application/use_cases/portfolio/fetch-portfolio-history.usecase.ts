@@ -5,15 +5,14 @@ import { ITradeRepository } from "@application/interfaces/repositories/stock/tra
 import { QueryOptions } from "mongoose";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
-import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
+import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 
 @injectable()
 export class FetchPortfolioHistoryUseCase implements IFetchPortfolioHistoryUseCase {
     constructor(
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
-        @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
     ) { }
 
@@ -26,22 +25,20 @@ export class FetchPortfolioHistoryUseCase implements IFetchPortfolioHistoryUseCa
     }> {
         const { page = 1, limit = 10, search = "" } = options;
 
-        // Increase limit slightly to ensure we have enough data to merge and sort
-        // In a real production app, you might use a more complex pagination strategy
-        const fetchOptions = { ...options, limit: Number(limit) * Number(page) };
+        const fetchOptions = { ...options, page: 1, limit: Number(limit) * Number(page) };
+        const mfOptions = { ...fetchOptions, filter: { status: { $ne: InvestmentStatus.INITIATED } } };
 
         const [trades, totalTrades, investments, totalInvestments] = await Promise.all([
             this._tradeRepository.findWithFilters(userId, fetchOptions),
             this._tradeRepository.countWithFilters(userId, {}, search as string),
-            this._investmentRepository.getUserInvestments(userId, fetchOptions),
-            this._investmentRepository.countInvestments(userId, fetchOptions)
+            this._investmentRepository.getUserInvestments(userId, mfOptions),
+            this._investmentRepository.countInvestments(userId, mfOptions)
         ]);
 
         const history: PortfolioHistoryDTO[] = [];
 
-        // Map Stock Trades
         for (const trade of trades) {
-            // Check if search matches symbol
+
             if (search && !trade.symbol.toLowerCase().includes(search.toLowerCase())) continue;
 
             const stock = await this._stockRepository.findBySymbol(trade.symbol);
@@ -51,7 +48,7 @@ export class FetchPortfolioHistoryUseCase implements IFetchPortfolioHistoryUseCa
                 assetId: trade.symbol,
                 assetName: stock?.name || trade.symbol,
                 assetType: "STOCK",
-                side: trade.side as any,
+                side: trade.side,
                 quantity: trade.quantity,
                 price: trade.price,
                 totalAmount: trade.quantity * trade.price,
@@ -60,14 +57,14 @@ export class FetchPortfolioHistoryUseCase implements IFetchPortfolioHistoryUseCa
             });
         }
 
-        // Map MF Investments
         for (const inv of investments) {
-            // Check if search matches schemeCode or schemeName
+ 
             const matchesSearch = !search || 
                 inv.schemeCode.toLowerCase().includes(search.toLowerCase()) || 
                 inv.fund?.schemeName.toLowerCase().includes(search.toLowerCase());
             
             if (!matchesSearch) continue;
+            if (inv.status === InvestmentStatus.INITIATED) continue;
 
             history.push({
                 id: inv.id,
@@ -84,10 +81,8 @@ export class FetchPortfolioHistoryUseCase implements IFetchPortfolioHistoryUseCa
             });
         }
 
-        // Sort by date descending
         history.sort((a, b) => b.date.getTime() - a.date.getTime());
 
-        // Paginate the combined list
         const startIndex = (Number(page) - 1) * Number(limit);
         const paginatedData = history.slice(startIndex, startIndex + Number(limit));
 

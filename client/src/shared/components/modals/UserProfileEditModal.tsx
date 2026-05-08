@@ -2,7 +2,7 @@ import { X, CheckCircle, Send, Loader2 } from 'lucide-react';
 import { useState, useEffect, type FormEvent } from 'react';
 import { useUserStore } from '@stores/user/UserStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { UpdateProfileApi, SendEmailOtpApi, VerifyEmailOtpApi } from '@shared/services/user/UpdateProfileApi';
+import { UpdateProfileApi, SendEmailOtpApi, VerifyEmailOtpApi } from '@shared/services/user/update-profile-api';
 import { toast } from 'sonner';
 
 interface EditProfileModalProps {
@@ -89,7 +89,7 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
 
         onSuccess: (res) => {
             toast.success(res.message || "Profile updated")
-            queryClient.invalidateQueries({ queryKey: ['user'] });
+            queryClient.invalidateQueries({ queryKey: ['profile'] });
             onClose();
         },
 

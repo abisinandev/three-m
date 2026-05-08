@@ -8,10 +8,6 @@ export class TradeExecutionAgent {
         @inject(AI_SYSTEM_TYPES.ConfirmBotBuyOrderUseCase) private readonly _confirmBotBuyOrder: IConfirmBotBuyOrderUseCase,
     ) { }
 
-    /**
-     * Strictly deterministic order preparation.
-     * No LLM is involved in the actual confirmation logic.
-     */
     async prepareOrder(userId: string, symbol: string, quantity: number): Promise<string> {
         console.log(`[TradeExecutionAgent] Preparing order for ${userId}: ${quantity} shares of ${symbol}`);
         
@@ -21,7 +17,6 @@ export class TradeExecutionAgent {
             return result.message;
         }
 
-        // Return the signal that the frontend uses to show the confirmation modal
         return `CONFIRM_TRADE:${symbol}:${quantity}`;
     }
 }

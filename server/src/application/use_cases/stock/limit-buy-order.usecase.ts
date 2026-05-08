@@ -48,7 +48,10 @@ export class LimitBuyOrderUseCase implements ILimitBuyOrderUseCase {
                 upgrade: true
             };
         }
-
+        
+        if (!isIndianMarketOpen())
+            throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+        
         const session = await mongoose.startSession();
         try {
             session.startTransaction();
@@ -65,8 +68,6 @@ export class LimitBuyOrderUseCase implements ILimitBuyOrderUseCase {
             if (!stock.isTradable)
                 throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
 
-            // if (!isIndianMarketOpen())
-            //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
             if (!order.quantity || order.quantity <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);
@@ -108,7 +109,6 @@ export class LimitBuyOrderUseCase implements ILimitBuyOrderUseCase {
             await this._wallet.update(wallet.id as string, wallet, session);
 
             await this._orderRepository.create(limitOrder, session);
-
 
             await session.commitTransaction();
         } catch (error) {

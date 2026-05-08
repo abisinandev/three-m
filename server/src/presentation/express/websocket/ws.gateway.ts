@@ -38,7 +38,7 @@ export class WsGateway implements IWsGateway {
             socket.on("subscribe-candle", (data: { symbol: string, timeframe: string }) => {
                 if (!data || !data.symbol || !data.timeframe) return;
 
-                const room = `${data.symbol}:${data.timeframe}`;
+                const room = `${data.symbol}:${data.timeframe}`;//creating room
                 socket.join(room);
 
                 this.marketDataService.subscribeToSymbol(data.symbol);
@@ -46,6 +46,7 @@ export class WsGateway implements IWsGateway {
                 if (!this.subscriptions.has(room)) {
                     this.subscriptions.set(room, new Set());
                 }
+                
                 this.subscriptions.get(room)!.add(socket.id);
                 console.log(`Socket ${socket.id} subscribed to ${room}`);
             });

@@ -5,6 +5,6 @@ export enum ExpenseRoutes {
     DELETE_EXPENSE = '/delete-expense/:index',
     MINIMAL_EXPENSE = '/expenses',
     FETCH_ANALYTICS = '/analytics',
-    SIMULATE = '/simulate'
+    BUDGET_PLAN = '/budget-plan'
 }
 

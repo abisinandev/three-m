@@ -21,17 +21,6 @@ import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/e
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 
 
-/**
- * Handles portfolio summary calculation.
- *
- * Includes:
- * - Total investment, current value, profit, and returns
- *
- * XIRR:
- * - Calculates true annual return using combined cash flows (MF + Stocks)
- * - Considers timing of investments for accurate performance measurement
- */
-
 @injectable()
 export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
 
@@ -74,6 +63,8 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
 
         let totalInvestment = 0;
         let currentValue = 0;
+        let stockAllocation = 0;
+        let mfAllocation = 0;
 
         const assetInfoMap = new Map<string, { symbol?: string, schemeCode?: string, name: string }>();
         const priceMap = new Map<string, number>();
@@ -121,7 +112,14 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             totalInvestment += asset.investedAmount;
             const currentPrice = priceMap.get(asset.assetId) ?? asset.avgPrice;
             const quantity = asset.quantity || asset.units || 0;
-            currentValue += quantity * currentPrice;
+            const value = quantity * currentPrice;
+            currentValue += value;
+
+            if (asset.assetType === "STOCK") {
+                stockAllocation += value;
+            } else if (asset.assetType === "MUTUAL_FUND") {
+                mfAllocation += value;
+            }
         }
 
         const stockRealizedProfit = trades.reduce((acc, trade) => {
@@ -141,9 +139,12 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
         }, 0);
 
         const profitAfterSell = stockRealizedProfit + mfRealizedProfit;
+
         const totalProfit = currentValue - totalInvestment;
         const totalReturns = totalProfit + profitAfterSell;
+
         const profitPercentage = totalInvestment > 0 ? (totalReturns / totalInvestment) * 100 : 0;
+
 
         // XIRR Calculation
         const cashflows = await this.buildCashFlows(
@@ -153,7 +154,13 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             priceMap
         );
 
+        console.log('cashflows: ', cashflows);
         const xirr = this.xirrService.calculate(cashflows);
+
+        const allocations = [
+            { assetType: "STOCK", currentValue: stockAllocation },
+            { assetType: "MUTUAL_FUND", currentValue: mfAllocation }
+        ].filter(a => a.currentValue > 0);
 
         return {
             totalCount: portfolioAssets.length,
@@ -164,11 +171,12 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             currentValue,
             profitPercentage,
             xirr,
+            allocations,
         };
     }
 
     private buildCashFlows(
-        investments: any[],
+        investments: Record<string, unknown>[],
         trades: TradeEntity[],
         portfolioAssets: PortfolioEntity[],
         priceMap: Map<string, number>
@@ -177,18 +185,19 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
 
         // Mutual Funds Cashflows
         for (const inv of investments) {
-            // Inflow: Investment amount
+
+            // Inflow
             cashFlows.push({
-                date: new Date(inv.createdAt),
-                amount: -inv.amount,
+                date: new Date(inv.createdAt as string),
+                amount: -(inv.amount as number),
             });
 
-            // Outflow: Redemption amount
+            // Outflow
             if (inv.status === InvestmentStatus.REDEEMED || inv.status === InvestmentStatus.PARTIALLY_REDEEMED) {
                 if (inv.redeemedAmount && inv.redeemedAt) {
                     cashFlows.push({
-                        date: new Date(inv.redeemedAt),
-                        amount: inv.redeemedAmount,
+                        date: new Date(inv.redeemedAt as string),
+                        amount: Number(inv.redeemedAmount),
                     });
                 }
             }
@@ -210,7 +219,6 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             }
         }
 
-        // Final Outflow: Current Value of all assets
         let totalCurrentValue = 0;
         for (const asset of portfolioAssets) {
             const currentPrice = priceMap.get(asset.assetId) ?? asset.avgPrice;

@@ -12,7 +12,7 @@ export class MfInvestmentHistoryUseCase implements IMfInvestmentHistoryUseCase {
 
     async execute(userId: string): Promise<InvestmentResponseDTO[]> {
         const investments =
-            (await this._investmentRepository.findInvestmentsByUser(userId)) ?? [];
+            (await this._investmentRepository.findInvestmentsHistory(userId)) ?? [];
 
         const grouped: InvestmentResponseDTO[] = [];
 
@@ -34,9 +34,9 @@ export class MfInvestmentHistoryUseCase implements IMfInvestmentHistoryUseCase {
                 profit: invest.amount,
                 createdAt: invest.createdAt,
                 updatedAt: invest.updatedAt,
-                category: "",
-                logo: "",
-                schemeName:""
+                category: invest.fund?.category || "",
+                logo: invest.fund?.logo || "",
+                schemeName: invest.fund?.schemeName || ""
             });
         }
 

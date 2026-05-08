@@ -13,11 +13,6 @@ import { OrderSide } from "@domain/entities/stock/enum/order-side.enum";
 import { OrderType } from "@domain/entities/stock/enum/order-type.enum";
 import { OrderEntity } from "@domain/entities/stock/order.entity";
 import AppError from "@presentation/express/utils/error-handling/app.error";
-import { TradeEntity } from "@domain/entities/stock/trade.entity";
-import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
-import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
-import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
-import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import mongoose from "mongoose";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { Features } from "@domain/entities/subscription/enums/features.enum";
@@ -25,16 +20,8 @@ import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscr
 import { IFeatureAccessService } from "@application/interfaces/services/subscription/feature-access-service.interface";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { isIndianMarketOpen } from "@shared/utils/market/market-time";
-import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
-import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
-import { CurrencyTypes } from "@domain/enum/users/currency-enum";
-import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
-import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
-import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
-import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { OrderStatus } from "@domain/entities/stock/enum/order-status.enum";
-import { ISubscription } from "@infrastructure/databases/mongo_db/models/interfaces/subscriptions/subscription-schema.interface";
-import { ISubscriptionRepository } from "@application/interfaces/repositories/subscriptions/subscriptions-repository.interface";
+import { IOrderQueue } from "@application/interfaces/services/stocks/order-queue.interface";
 
 @injectable()
 export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
@@ -44,12 +31,9 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
         @inject(STOCK_TYPES.OrderRepository) private readonly _orderRepository: IOrderRepository,
-        @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
-        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
-        @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
-        @inject(SUBSCRIPTION_TYPES.SubscriptionRepository) private readonly _subscriptionRepository: ISubscriptionRepository,
+        @inject(STOCK_TYPES.OrderQueue) private readonly _orderQueue: IOrderQueue,
     ) { }
 
     async execute(order: BuyOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
@@ -66,8 +50,8 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
             };
         }
 
-        // if (!isIndianMarketOpen())
-        //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+        if (!isIndianMarketOpen())
+            throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
         const session = await mongoose.startSession()
 
@@ -107,111 +91,32 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
             if (wallet.availableBalance < execution.totalValue)
                 throw new ValidationError(ErrorMessages.WALLET.INSUFFICIENT_BALANCE);
 
-
-            const transaction = TransactionEntity.create({
-                userId,
-                userCode: user.userCode,
-                amount: execution.totalValue,
-                currency: CurrencyTypes.INR,
-                referenceType: TransactionReferenceType.WALLET,
-                status: TransactionStatus.PENDING,
-                type: TransactionTypes.BUY
-            })
-            const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
-
-            wallet.debit(execution.totalValue);
-            await this._wallet.update(wallet.id as string, wallet, session);
-
-
             const marketOrder = OrderEntity.create({
                 userId,
                 symbol: order.symbol,
                 side: OrderSide.BUY,
                 orderType: OrderType.MARKET_ORDER,
                 quantity: execution.filledQty,
-                price: execution.avgPrice,
-                status: OrderStatus.FILLED,
+                price: marketPrice,
+                status: OrderStatus.PENDING,
                 stopLoss: order.stopLoss,
                 takeProfit: order.takeProfit,
                 isAlgoTrade: order.isAlgoTrade ?? false,
-            })
+            });
 
-            marketOrder.updateFilledQty(
-                execution.filledQty,
-                execution.totalValue
-            );
-            marketOrder.markFilled();
-
-            const newOrder = await this._orderRepository.create(
-                marketOrder,
-                session
-            );
-
-            const trade = TradeEntity.create({
-                userId,
-                orderId: newOrder.id as string,
-                symbol: order.symbol,
-                price: execution.avgPrice,
-                quantity: execution.filledQty,
-                side: OrderSide.BUY,
-                isAlgoTrade: order.isAlgoTrade ?? false,
-            })
-            await this._tradeRepository.create(trade, session);
-
-            let portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
-                userId,
-                stock.id as string,
-                session
-            );
-
-            if (portfolio) {
-                const newTotalQuantity = (portfolio.quantity ?? 0) + execution.filledQty;
-                const newTotalInvested = portfolio.investedAmount + execution.totalValue;
-                const newAvgPrice = newTotalInvested / newTotalQuantity;
-
-                portfolio.updateQuantityAndPrice(
-                    newTotalQuantity,
-                    newAvgPrice,
-                    newTotalInvested
-                );
-
-                if (order.stopLoss || order.takeProfit) {
-                    portfolio.updateRiskLevels(order.stopLoss, order.takeProfit);
-                }
-
-                await this._portfolioRepository.update(
-                    portfolio.id as string,
-                    portfolio,
-                    session
-                );
-            } else {
-                portfolio = PortfolioEntity.create({
-                    userId,
-                    assetId: stock.id as string,
-                    assetType: AssetType.STOCK,
-                    quantity: execution.filledQty,
-                    avgPrice: execution.avgPrice,
-                    investedAmount: execution.totalValue,
-                });
-
-                if (order.stopLoss || order.takeProfit) {
-                    portfolio.updateRiskLevels(order.stopLoss, order.takeProfit);
-                }
-
-                await this._portfolioRepository.create(portfolio, session);
-            }
-
-            newTransaction.markSucess();
-            await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
+            const newOrder = await this._orderRepository.create(marketOrder, session);
 
             await session.commitTransaction();
+
+            await this._orderQueue.addMarketOrderJob(newOrder.id as string);
 
         } catch (error) {
             await session.abortTransaction();
             if (error instanceof AppError || error instanceof Error) throw error;
-            throw new AppError("Buy order transaction failed");
+            throw new AppError("Buy order request failed");
         } finally {
             session.endSession();
         }
     }
-}  
+}
+  

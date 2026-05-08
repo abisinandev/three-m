@@ -6,21 +6,21 @@ import {
   DollarSign,
   TrendingUp,
   Receipt,
-  Bell,
-  Settings,
-  Bot,
+  
+  
+  
   LogOut,
   Menu,
   X,
   Search,
   BadgeCheck,
-  ChevronDown,
-  User,
+  
+  
   AlignHorizontalDistributeCenter,
   Cpu,
   CreditCard
 } from 'lucide-react';
-import adminApi from '@lib/axiosAdmin';
+import adminApi from '@/lib/axios-admin';
 import { LOGOUT } from '@shared/constants/adminConstants';
 import { toast } from 'sonner';
 import { useAdminStore } from '@stores/admin/useAdminStore';
@@ -47,7 +47,7 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  // const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();

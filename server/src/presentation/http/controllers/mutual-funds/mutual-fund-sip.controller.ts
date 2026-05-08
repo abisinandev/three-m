@@ -26,10 +26,10 @@ export class MutualFundSipController {
             const userId = req?.user?.id
             const result = await this._sipCreationUseCase.execute(dto, userId as string);
             
-            if (result && (result as any).upgrade) {
+            if (result && (result as Record<string, unknown>).upgrade) {
                 return ResponseHelper.success(
                     res,
-                    (result as any).message,
+                    (result as Record<string, unknown>).message,
                     null,
                     HttpStatus.PAYMENT_REQUIRED
                 )

@@ -13,12 +13,13 @@ export const useTradeMutation = () => {
     queryClient.invalidateQueries({ queryKey: ["portfolio"] });
   };
 
-  const handleTradeError = (error: any, defaultMessage: string) => {
-    if (error.response?.status === 402) {
+  const handleTradeError = (error: unknown, defaultMessage: string) => {
+    const apiError = error as { response?: { status?: number; data?: { message?: string } }; message?: string };
+    if (apiError.response?.status === 402) {
       openPremiumModal();
       return;
     }
-    const errorMessage = error.response?.data?.message || error.message || defaultMessage;
+    const errorMessage = apiError.response?.data?.message || apiError.message || defaultMessage;
     toast.error(errorMessage);
   };
 
@@ -32,7 +33,7 @@ export const useTradeMutation = () => {
         toast.error(response.message || "Failed to execute buy order");
       }
     },
-    onError: (error: any) => handleTradeError(error, "An error occurred during the trade"),
+    onError: (error: unknown) => handleTradeError(error, "An error occurred during the trade"),
   });
 
   const sellMutation = useMutation<OrderResponse, Error, SellOrderRequest>({
@@ -45,7 +46,7 @@ export const useTradeMutation = () => {
         toast.error(response.message || "Failed to execute sell order");
       }
     },
-    onError: (error: any) => handleTradeError(error, "An error occurred during the trade"),
+    onError: (error: unknown) => handleTradeError(error, "An error occurred during the trade"),
   });
 
   const limitBuyMutation = useMutation<OrderResponse, Error, LimitBuyOrderRequest>({
@@ -58,7 +59,7 @@ export const useTradeMutation = () => {
         toast.error(response.message || "Failed to place limit order");
       }
     },
-    onError: (error: any) => handleTradeError(error, "An error occurred placing limit order"),
+    onError: (error: unknown) => handleTradeError(error, "An error occurred placing limit order"),
   });
 
   const limitSellMutation = useMutation<OrderResponse, Error, LimitSellOrderRequest>({
@@ -71,7 +72,7 @@ export const useTradeMutation = () => {
         toast.error(response.message || "Failed to place limit sell order");
       }
     },
-    onError: (error: any) => handleTradeError(error, "An error occurred placing limit sell order"),
+    onError: (error: unknown) => handleTradeError(error, "An error occurred placing limit sell order"),
   });
 
   return {

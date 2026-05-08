@@ -140,14 +140,14 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
           }
         }
       },
-      { $sort: { "_id.year": 1, "_id.month": 1 } as any }
+      { $sort: { "_id.year": 1, "_id.month": 1 } as Record<string, 1 | -1> }
     ];
 
     const result = await this.model.aggregate(pipeline);
     
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     
-    return result.map((item: any) => ({
+    return result.map((item: Record<string, unknown>) => ({
       month: monthNames[item._id.month - 1],
       users: item.users,
       premium: item.premium

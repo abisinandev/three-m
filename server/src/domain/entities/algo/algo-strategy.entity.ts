@@ -3,7 +3,7 @@ export class AlgoStrategyEntity {
   private readonly _userId: string;
   private readonly _symbol: string;
   private readonly _strategyName: string;
-  private readonly _config: any;
+  private readonly _config: Record<string, unknown>;
   private _isActive: boolean;
   private readonly _createdAt: Date;
   private readonly _updatedAt: Date;
@@ -13,7 +13,7 @@ export class AlgoStrategyEntity {
     userId: string;
     symbol: string;
     strategyName: string;
-    config: any;
+    config: Record<string, unknown>;
     isActive: boolean;
     createdAt?: Date;
     updatedAt?: Date;
@@ -32,7 +32,7 @@ export class AlgoStrategyEntity {
     userId: string;
     symbol: string;
     strategyName: string;
-    config: any;
+    config: Record<string, unknown>;
     isActive?: boolean;
   }): AlgoStrategyEntity {
     return new AlgoStrategyEntity({
@@ -49,7 +49,7 @@ export class AlgoStrategyEntity {
     userId: string;
     symbol: string;
     strategyName: string;
-    config: any;
+    config: Record<string, unknown>;
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;

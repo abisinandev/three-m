@@ -15,6 +15,9 @@ export class TransactionEntity {
     private readonly _referenceId?: string;
     private readonly _paymentIntentId?: string;
     private _status: TransactionStatus;
+    private readonly _profit?: number;
+    private readonly _quantity?: number;
+    private readonly _price?: number;
     private readonly _fundId?: string;
     private readonly _receipt_url?: string;
     private readonly _createdAt: Date;
@@ -31,6 +34,9 @@ export class TransactionEntity {
         referenceId?: string;
         paymentIntentId?: string;
         status: TransactionStatus;
+        profit?: number;
+        quantity?: number;
+        price?: number;
         fundId?: string;
         receipt_url?: string;
         createdAt?: Date;
@@ -46,6 +52,9 @@ export class TransactionEntity {
         this._referenceId = props.referenceId;
         this._paymentIntentId = props.paymentIntentId;
         this._status = props.status;
+        this._profit = props.profit;
+        this._quantity = props.quantity;
+        this._price = props.price;
         this._fundId = props.fundId;
         this._receipt_url = props.receipt_url;
         this._createdAt = props.createdAt ?? new Date();
@@ -61,12 +70,13 @@ export class TransactionEntity {
         referenceId?: string;
         paymentIntentId?: string;
         status: TransactionStatus;
+        profit?: number;
+        quantity?: number;
+        price?: number;
         fundId?: string;
         receipt_url?: string;
     }): TransactionEntity {
         if (data.amount <= 0) throw new Error("Transaction amount must be positive");
-        // if (data.type === TransactionTypes.INVESTMENT && !data.fundId)
-        //     throw new Error("FundId is required for investment transactions");
 
         return new TransactionEntity({
             userId: data.userId,
@@ -79,6 +89,9 @@ export class TransactionEntity {
             referenceId: data.referenceId,
             paymentIntentId: data.paymentIntentId,
             status: data.status,
+            profit: data.profit,
+            quantity: data.quantity,
+            price: data.price,
             fundId: data.fundId,
             receipt_url: data.receipt_url,
         });
@@ -96,6 +109,9 @@ export class TransactionEntity {
         referenceId?: string;
         paymentIntentId: string;
         status: TransactionStatus;
+        profit?: number;
+        quantity?: number;
+        price?: number;
         fundId?: string;
         receipt_url?: string;
         createdAt: Date;
@@ -113,6 +129,9 @@ export class TransactionEntity {
             referenceId: props.referenceId,
             paymentIntentId: props.paymentIntentId,
             status: props.status,
+            profit: props.profit,
+            quantity: props.quantity,
+            price: props.price,
             fundId: props.fundId,
             receipt_url: props.receipt_url,
             createdAt: props.createdAt,
@@ -131,6 +150,9 @@ export class TransactionEntity {
     get referenceId() { return this._referenceId; }
     get paymentIntentId() { return this._paymentIntentId; };
     get status() { return this._status; };
+    get profit() { return this._profit; };
+    get quantity() { return this._quantity; };
+    get price() { return this._price; };
     get fundId() { return this._fundId; };
     get receipt_url() { return this._receipt_url; };
     get createdAt() { return this._createdAt; };

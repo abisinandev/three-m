@@ -29,7 +29,7 @@ export class YahooProvider implements IMarketDataProvider {
             const p1 = new Date(clampedPeriod1 * 1000);
             const p2 = new Date(period2 * 1000);
 
-            const result: any = await yahooFinance.chart(symbol, {
+            const result: Record<string, unknown> = await yahooFinance.chart(symbol, {
                 period1: p1,
                 period2: p2,
                 interval,
@@ -38,8 +38,8 @@ export class YahooProvider implements IMarketDataProvider {
             if (!result?.quotes?.length) return [];
 
             return result.quotes
-                .filter((q: any) => q.open != null && q.close != null)
-                .map((quote: any) => ({
+                .filter((q: Record<string, unknown>) => q.open != null && q.close != null)
+                .map((quote: Record<string, unknown>) => ({
                     symbol,
                     timeframe: interval,
                     time: Math.floor(new Date(quote.date).getTime() / 1000),

@@ -7,3 +7,4 @@ export const Route = createFileRoute('/admin/settings')({
 function Settings() {
     return <div>Settings Page</div>
 }
+

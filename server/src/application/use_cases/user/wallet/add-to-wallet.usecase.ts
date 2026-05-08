@@ -13,18 +13,6 @@ import mongoose from "mongoose";
 import AppError from "@presentation/express/utils/error-handling/app.error";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 
-/**
- * Adds funds to a user's wallet after a successful payment.
- *
- * Validates the user and wallet, ensures the transaction is processed
- * only once using the payment intent ID, and records the transaction (idempotency).
- *
- * @param data - The wallet top-up details.
- * @returns Promise<void>
- * @throws NotFoundError - If the user is not found.
- * @throws ValidationError - If the user is not verified or wallet limits are exceeded.
- */
-
 
 @injectable()
 export class AddToWalletUseCase implements IAddToWalletUseCase {
@@ -38,7 +26,7 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
         const session = await mongoose.startSession();
 
         try {
-
+ 
             await session.startTransaction();
 
             const user = await this._userRepository.findById(data.userId);
@@ -53,10 +41,7 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
 
             if (wallet && data.amount > 10_0000)
                 throw new ValidationError(ErrorMessages.TRANSACTIONS.MAX_TRANSACTION);
-
-            console.log("DATAL ", data);
             
-
             const transactionEntity = toTransactionEntity({ ...data, userCode: user.userCode });
 
             const isExists = await this._transactionRepository.findByPaymentId(

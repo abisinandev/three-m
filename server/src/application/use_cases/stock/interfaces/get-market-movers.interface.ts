@@ -1,6 +1,6 @@
 export interface IMarketMoversResponse {
-    gainers: any[];
-    losers: any[];
+    gainers: unknown[];
+    losers: unknown[];
 }
 
 export interface IGetMarketMoversUseCase {

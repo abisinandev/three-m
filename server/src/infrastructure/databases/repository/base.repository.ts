@@ -27,7 +27,7 @@ export abstract class BaseRepository<TDomain, TDocument>
 
   async findOne(data: Partial<TDomain>, session?: ClientSession): Promise<TDomain | null> {
 
-    const query = this.model.findOne(data as any);
+    const query = this.model.findOne(data as import("mongoose").FilterQuery<T>);
     if (session) query.session(session);
 
     const doc = await query.exec();

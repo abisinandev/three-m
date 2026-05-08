@@ -41,7 +41,7 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
 
         const finalFilter: Record<string, unknown> = {
             ...filter,
-            userId: userId as any
+            userId: userId as unknown
         };
 
         if (search.trim()) {
@@ -53,7 +53,7 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
 
         const sort: Record<string, 1 | -1> = {
             [sortBy]: sortOrder === "asc" ? 1 : -1,
-        } as any;
+        } as unknown;
 
         const docs = await this.model
             .find(finalFilter)
@@ -68,7 +68,7 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
     async countWithFilters(userId: string, filter: Record<string, unknown>, search: string): Promise<number> {
         const finalFilter: Record<string, unknown> = {
             ...filter,
-            userId: userId as any
+            userId: userId as unknown
         };
 
         if (search.trim()) {
@@ -136,5 +136,22 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
 
     async countDailyAlgoTradesByStrategy(strategyName: string): Promise<number> {
         return 0
+    }
+
+    async calculateTotalAlgoAUM(): Promise<number> {
+        const result = await this.model.aggregate([
+            { $match: { isAlgoTrade: true } },
+            {
+                $group: {
+                    _id: null,
+                    total: {
+                        $sum: {
+                            $cond: [{ $eq: ["$side", "BUY"] }, { $multiply: ["$price", "$quantity"] }, { $multiply: ["$price", "$quantity", -1] }]
+                        }
+                    }
+                }
+            }
+        ]);
+        return result.length > 0 ? Math.max(0, result[0].total) : 0;
     }
 }

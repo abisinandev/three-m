@@ -7,3 +7,4 @@ export const Route = createFileRoute('/admin/bot-management')({
 function RouteComponent() {
   return <div>Hello "/admin/bot-management"!</div>
 }
+

@@ -143,11 +143,7 @@ const OTPVerification: React.FC<OTPProps> = ({
                     )}
                 </button>
 
-                {!canResend && (
-                    <p className="text-center text-gray-400 text-xs mt-3">
-                        OTP expires in <span className="text-white">{timeLeft}s</span>
-                    </p>
-                )}
+
             </div>
         </div>
     );

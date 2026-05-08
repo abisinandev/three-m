@@ -169,4 +169,12 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
             assetType: AssetType.STOCK,
         });
     }
+
+    async calculateTotalStockAUM(): Promise<number> {
+        const result = await this.model.aggregate([
+            { $match: { assetType: AssetType.STOCK } },
+            { $group: { _id: null, total: { $sum: "$investedAmount" } } }
+        ]);
+        return result.length > 0 ? result[0].total : 0;
+    }
 }

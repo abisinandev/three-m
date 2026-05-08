@@ -1,6 +1,5 @@
 import { AddIncomeDTO } from '@application/dto/expense-tracker/add-income.dto';
 import { AddExpenseDTO } from '@application/dto/expense-tracker/add-expense.dto';
-import { SimulationRequestDTO } from '@application/dto/expense-tracker/simulation-request.dto';
 
 import { container } from '@infrastructure/inversify_di/container';
 import { EXPENSE_TRACKER_TYPE } from '@infrastructure/inversify_di/features/expense-tracker/expense-tracker.type';
@@ -9,6 +8,7 @@ import { ExpenseTrackerController } from '@presentation/http/controllers/expense
 import { ExpenseRoutes } from '@shared/routes/expense.routes';
 
 import { Router } from 'express';
+import { BudgetPlanRequestDTO } from '@application/dto/expense-tracker/budget-plan.dto';
 const router = Router();
 const expenseTrackerController = container.get<ExpenseTrackerController>(EXPENSE_TRACKER_TYPE.ExpenseTrackerController);
 
@@ -17,7 +17,7 @@ router.post(ExpenseRoutes.ADD_INCOME, validateDTO(AddIncomeDTO), expenseTrackerC
 router.post(ExpenseRoutes.ADD_EXPENSE, validateDTO(AddExpenseDTO), expenseTrackerController.addExpense.bind(expenseTrackerController));
 router.delete(ExpenseRoutes.DELETE_EXPENSE, expenseTrackerController.deleteExpense.bind(expenseTrackerController));
 router.get(ExpenseRoutes.FETCH_ANALYTICS, expenseTrackerController.fetchAnalytics.bind(expenseTrackerController));
-router.post(ExpenseRoutes.SIMULATE, validateDTO(SimulationRequestDTO), expenseTrackerController.simulate.bind(expenseTrackerController));
+router.post(ExpenseRoutes.BUDGET_PLAN, validateDTO(BudgetPlanRequestDTO), expenseTrackerController.calculateBudgetPlan.bind(expenseTrackerController));
 
 
 export default router;

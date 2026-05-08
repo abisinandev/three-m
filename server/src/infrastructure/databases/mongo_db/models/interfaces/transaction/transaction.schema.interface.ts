@@ -19,6 +19,9 @@ export interface ITransactionSchema {
   referenceType: | TransactionReferenceType;
   referenceId: string;
   paymentIntentId: string;
+  profit?: number;
+  quantity?: number;
+  price?: number;
   receipt_url?: string | null;
   createdAt: Date;
   updatedAt: Date;

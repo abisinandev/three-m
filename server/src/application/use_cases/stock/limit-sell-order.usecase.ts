@@ -49,8 +49,8 @@ export class LimitSellOrderUseCase implements ILimitSellOrderUseCase {
             };
         }
 
-        // if (!isIndianMarketOpen())
-        //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+        if (!isIndianMarketOpen())
+            throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
         const session = await mongoose.startSession();
         try {
@@ -62,11 +62,11 @@ export class LimitSellOrderUseCase implements ILimitSellOrderUseCase {
             const stock = await this._stockRepository.findBySymbol(order.symbol);
             if (!stock) throw new NotFoundError(ErrorMessages.STOCKS.NOT_FOUND);
 
-            if (!stock.isVisible)
-                throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_AVAILABLE);
+            // if (!stock.isVisible)
+            //     throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_AVAILABLE);
 
-            if (!stock.isTradable)
-                throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
+            // if (!stock.isTradable)
+            //     throw new ValidationError(ErrorMessages.STOCKS.STOCK_NOT_TRADABLE);
 
             if (!order.quantity || order.quantity <= 0)
                 throw new ValidationError(ErrorMessages.STOCKS.QTY_VALIDATION);

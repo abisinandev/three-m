@@ -35,7 +35,7 @@ export class AiChatbotController {
                 res,
                 SuccessMessages.AI_CHATBOT.DATA,
                 result,
-                HttpStatus.OK
+                HttpStatus.OK  
             );
         } catch (error) {
             next(error);

@@ -57,8 +57,9 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
             });
             setConfirmed(true);
             onMarkAsRead(notif.id);
-        } catch (err: any) {
-            setError(err?.response?.data?.message ?? 'Order failed. Try again.');
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { message?: string } } };
+            setError(error?.response?.data?.message ?? 'Order failed. Try again.');
         } finally {
             setConfirming(false);
         }
@@ -68,7 +69,7 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
 
     return (
         <div
-            onClick={(e) => !notif.read && onMarkAsRead(notif.id, e as any)}
+            onClick={(e) => !notif.read && onMarkAsRead(notif.id, e as React.MouseEvent)}
             className={`px-4 py-4 flex gap-4 transition-all cursor-pointer ${
                 notif.read ? 'bg-transparent opacity-60' : 'bg-neutral-900/60 hover:bg-neutral-900'
             }`}

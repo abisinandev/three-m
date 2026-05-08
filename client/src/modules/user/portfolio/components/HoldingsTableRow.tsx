@@ -2,6 +2,7 @@ import React from 'react';
 import { ChevronRight, ArrowUpRight, TrendingUp, TrendingDown } from 'lucide-react';
 import { formatCurrency, getPnlColor, getStatusStyle } from '../utils/portfolio.utils';
 import { formatDateTime } from '@utils/date-converter/DateConverter';
+import type { IInvestmentResponse } from '@shared/types/portfolio.types';
 
 interface DetailRowProps {
     k: string;
@@ -55,7 +56,7 @@ const AssetLogo = ({ logo, name }: { logo?: string; name?: string }) => (
 );
 
 interface HoldingsTableRowProps {
-    inv: any;
+    inv: IInvestmentResponse;
     idx: number;
     isLast: boolean;
     isExpanded: boolean;

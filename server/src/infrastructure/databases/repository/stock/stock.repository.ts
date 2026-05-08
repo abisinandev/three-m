@@ -5,7 +5,7 @@ import { StockDocument, StockModel } from "@infrastructure/databases/mongo_db/mo
 import { BaseRepository } from "@infrastructure/databases/repository/base.repository";
 import { StockMapper } from "@infrastructure/mappers/stock/stock.mapper";
 import { injectable } from "inversify";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, QueryOptions } from "mongoose";
 
 @injectable()
 export class StockRepository extends BaseRepository<StockEntity, StockDocument> implements IStockRepository {
@@ -20,6 +20,7 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
             name: stock.name,
             exchange: stock.exchange,
             sector: stock.sector,
+            logo: stock.logo,
             isTradable: stock.isTradable,
             isVisible: stock.isVisible,
         }));
@@ -55,7 +56,7 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
         const sortOrder = sort ?? { symbol: 1 };
 
         const [documents, total] = await Promise.all([
-            StockModel.find(query).skip(skip).limit(limit).sort(sortOrder).lean(),
+            StockModel.find(query).skip(skip).limit(limit).sort(sortOrder).exec(),
             StockModel.countDocuments(query),
         ]);
 
@@ -65,7 +66,7 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
         };
     }
 
-    async findWithFiltersAdmin(options: any): Promise<{ data: StockEntity[], total: number }> {
+    async findWithFiltersAdmin(options: QueryOptions): Promise<{ data: StockEntity[], total: number }> {
         const {
             page = 1,
             limit = 10,
@@ -78,7 +79,7 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
 
         const skip = (page - 1) * limit;
 
-        const finalFilter: any = { ...filter };
+        const finalFilter: Record<string, unknown> = { ...filter };
 
         if (search.trim()) {
             const searchRegex = { $regex: search.trim(), $options: "i" };
@@ -87,7 +88,7 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
             }));
         }
 
-        const sort: any = {
+        const sort: Record<string, 1 | -1> = {
             [sortBy]: sortOrder === "asc" ? 1 : -1,
         };
 

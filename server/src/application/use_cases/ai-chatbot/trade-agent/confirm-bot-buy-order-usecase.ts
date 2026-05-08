@@ -15,6 +15,8 @@ import { ITradeRepository } from "@application/interfaces/repositories/stock/tra
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
+import { IChatHistoryService } from "@application/interfaces/services/ai-chatbot/chat-history-service.interface";
+import { AI_SYSTEM_TYPES } from "@infrastructure/inversify_di/features/ai-system/ai-system.type";
 import mongoose from "mongoose";
 import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
@@ -46,6 +48,7 @@ export class ConfirmBotBuyOrderUseCase implements IConfirmBotBuyOrderUseCase {
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
+        @inject(AI_SYSTEM_TYPES.ChatHistoryService) private readonly _chatHistory: IChatHistoryService,
     ) { }
 
     async execute(order: ConfirmBotOrderDTO): Promise<void | { message: string, upgrade: boolean }> {
@@ -180,9 +183,15 @@ export class ConfirmBotBuyOrderUseCase implements IConfirmBotBuyOrderUseCase {
             }
 
             newTransaction.markSucess();
-            await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
+            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL,session);
 
             await session.commitTransaction();
+
+            await this._chatHistory.saveMessage(
+                userId,
+                'assistant',
+                `Trade Executed: Successfully purchased **${quantity}** shares of **${symbol}** at **₹${marketPrice.toFixed(2)}**. Total: ₹${totalValue.toFixed(2)}.`
+            );
 
         } catch (error) {
             await session.abortTransaction();

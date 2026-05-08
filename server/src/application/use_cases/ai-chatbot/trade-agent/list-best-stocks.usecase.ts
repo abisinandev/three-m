@@ -13,15 +13,18 @@ export class ListBestStockUseCase implements IListBestStocksUseCase {
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
     ) { }
-    
+
     async execute(): Promise<StockDTO[]> {
-        const result = await this._stockRepository.findAllStocks({ 
+        const result = await this._stockRepository.findAllStocks({
             isVisible: true,
+            isTradable: true,
             page: 1,
             limit: 10
         });
 
+        console.log("result list: ", result);
         
+
         const subset = result.data.slice(0, 5);
         const dtos = StockMapper.toDTOList(subset);
 

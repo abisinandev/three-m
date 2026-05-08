@@ -1,16 +1,17 @@
 import { injectable } from "inversify";
 import { IEducationAgent } from "@application/interfaces/services/ai-chatbot/education-agent.interface";
 import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
-import { model } from "../../ollama.config";
+import { groqModel } from "../../groq.config";
 import { FinancialIntelligentTool } from "../../langchain/tools/financial-intelligent";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { AgentResponse } from "@application/interfaces/services/ai-chatbot/agent-response.interface";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 
 @injectable()
 export class EducationAgent implements IEducationAgent {
 
-    async handle(input: string, history: ChatMessage[]): Promise<AgentResponse> {
-        console.log(`[EducationAgent] Querying Knowledge Base for: ${input}`);
+    async handle(input: string, _history: ChatMessage[]): Promise<AgentResponse> {
+        logger.info("EDUCATION AGENT WORKING...");
 
         const context = await FinancialIntelligentTool.invoke({ query: input });
 
@@ -30,7 +31,7 @@ export class EducationAgent implements IEducationAgent {
             YOUR RESPONSE:
         `;
 
-        const response = await model.invoke([
+        const response = await groqModel.invoke([
             new SystemMessage("You are a strict context-based financial assistant."),
             new HumanMessage(prompt)
         ]);

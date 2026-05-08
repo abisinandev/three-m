@@ -28,15 +28,8 @@ export function mapIntentToDTO(intent: Stripe.PaymentIntent): PaymentDataDTO {
     const userId = intent.metadata?.userId;
     const purpose = intent.metadata?.purpose;
 
-    if (!userId || !purpose) {
-        throw new Error("Missing payment metadata");
-    }
-
     const amountInPaise = intent.amount_received ?? intent.amount;
-    if (!amountInPaise || amountInPaise <= 0) {
-        throw new Error("Invalid payment amount");
-    }
-
+    
     return {
         userId,
         purpose: purpose as PaymentDataDTO["purpose"],
@@ -44,7 +37,6 @@ export function mapIntentToDTO(intent: Stripe.PaymentIntent): PaymentDataDTO {
         amount: amountInPaise / 100,
         currency: intent.currency,
         status: intent.status,
-        
     };
 }
 

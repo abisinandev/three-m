@@ -49,7 +49,7 @@ export const SuccessMessages = {
         UPGRADE_PREMIUM: "Upgrade to Premium to use SIP investment feature",
     },
     MUTUAL_FUND: {
-        // Add specific mutual fund success messages here if any in future
+      
     },
     NOTIFICATION: {
         MARK_AS_READ: "Notification marked as read",

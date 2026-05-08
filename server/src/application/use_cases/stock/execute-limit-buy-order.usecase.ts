@@ -20,7 +20,7 @@ import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
-import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
+import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { IExecuteLimitBuyOrderUseCase } from "./interfaces/execute-limit-buy-order.interface";
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
@@ -157,7 +157,7 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
             }
 
             newTransaction.markSucess();
-            await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
+            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
 
             await this._createNotification.execute({
                 userId: order.userId,

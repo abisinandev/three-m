@@ -1,5 +1,5 @@
 export interface Action<T> {
-    label: any;
+    label: React.ReactNode;
     className?: string | ((row: T) => string);
     onClick: (row: T) => void;
 }

@@ -1,4 +1,4 @@
-import { IFulfillPaymentUseCase } from "@application/use_cases/payment/fulfill-payment.usecase";
+import { IFulfillPaymentUseCase } from "@application/use_cases/payment/interfaces/full-fill-payment-usecase.interface";
 import { PAYMENT_TYPES } from "@infrastructure/inversify_di/features/payment/payment.types";
 import stripe from "@infrastructure/providers/payment/stripe/stripe.client";
 import { env } from "@presentation/express/utils/constants/env.constants";

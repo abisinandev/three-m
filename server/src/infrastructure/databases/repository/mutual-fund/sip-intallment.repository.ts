@@ -60,7 +60,7 @@ export class SipInstallmentRepository extends BaseRepository<SipInstallmentEntit
     ): Promise<SipInstallmentEntity[] | null> {
         const { sipId, status, limit, skip, sort, ...otherFilters } = options || {};
 
-        const filter: any = { userId: new Types.ObjectId(userId) };
+        const filter: Record<string, unknown> = { userId: new Types.ObjectId(userId) };
 
         if (status) {
             filter.status = status;
@@ -126,7 +126,7 @@ export class SipInstallmentRepository extends BaseRepository<SipInstallmentEntit
     ): Promise<number> {
         const { sipId, status, ...otherFilters } = options || {};
 
-        const filter: any = { userId: new Types.ObjectId(userId) };
+        const filter: Record<string, unknown> = { userId: new Types.ObjectId(userId) };
 
         if (status) {
             filter.status = status;

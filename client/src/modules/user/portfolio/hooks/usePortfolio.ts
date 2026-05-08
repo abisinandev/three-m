@@ -6,7 +6,7 @@ import {
     getStockHoldings,
     getPortfolioSummary,
     getHistories,
-} from '@shared/services/feature/portfolio/PortfolioApi';
+} from '@/shared/services/portfolio/portfolio-api';
 import type {
     IPortfolioSummaryResponse,
 } from '@shared/types/portfolio.types';
@@ -21,7 +21,6 @@ export const usePortfolio = () => {
 
     const limit = PORTFOLIO_LIMIT;
 
-    // ── All Assets (Tab: all) ──────────────────────────────────────────────
     const { data: allAssetsData, isLoading: isAllLoading, isError: isAllError, error: allError } =
         useQuery({
             queryKey: ['portfolio', 'assets', 'all', page, limit, search],
@@ -30,7 +29,6 @@ export const usePortfolio = () => {
             staleTime: 5 * 60 * 1000,
         });
 
-    // ── Stock Holdings (Tab: stocks) ───────────────────────────────────────
     const { data: stockData, isLoading: isStockLoading, isError: isStockError, error: stockError } =
         useQuery({
             queryKey: ['portfolio', 'assets', 'stocks', page, limit, search],
@@ -39,7 +37,6 @@ export const usePortfolio = () => {
             staleTime: 5 * 60 * 1000,
         });
 
-    // ── MF Holdings (Tab: mf) ──────────────────────────────────────────────
     const { data: mfData, isLoading: isMFLoading, isError: isMFError, error: mfError } =
         useQuery({
             queryKey: ['portfolio', 'assets', 'mf', page, limit, search],
@@ -48,7 +45,6 @@ export const usePortfolio = () => {
             staleTime: 5 * 60 * 1000,
         });
 
-    // ── Trade History (Tab: history) ───────────────────────────────────────
     const { data: historyData, isLoading: isHistoryLoading, isError: isHistoryError, error: historyError } =
         useQuery({
             queryKey: ['portfolio', 'history', page, limit],
@@ -57,7 +53,6 @@ export const usePortfolio = () => {
             staleTime: 5 * 60 * 1000,
         });
 
-    // ── Portfolio Summary ──────────────────────────────────────────────────
     const { data: summaryData, isLoading: isSummaryLoading } =
         useQuery<IPortfolioSummaryResponse>({
             queryKey: ['portfolio', 'summary'],
@@ -65,7 +60,6 @@ export const usePortfolio = () => {
             staleTime: 5 * 60 * 1000,
         });
 
-    // ── Derived state ──────────────────────────────────────────────────────
     const activeData = useMemo(() => {
         if (activeTab === 'all') return allAssetsData;
         if (activeTab === 'stocks') return stockData;
@@ -137,3 +131,4 @@ export const usePortfolio = () => {
         handlePageChange,
     };
 };
+

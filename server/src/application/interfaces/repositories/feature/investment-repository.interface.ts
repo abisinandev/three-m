@@ -18,6 +18,7 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
     countByUser(userId: string): Promise<number>;
     findByUsertotalInvestments(userId: string): Promise<number>;
     findInvestmentsByUser(userId: string): Promise<InvestmentEntity[] | null>;
+    findInvestmentsHistory(userId: string): Promise<InvestmentFundDTO[]>;
     getUserInvestments(userId: string, options: QueryOptions): Promise<InvestmentFundDTO[]>;
     getUserInvestementSummary(userId: string): Promise<InvestmentFundDTO[]>;
     getTotalUnitsByUser(userId: string): Promise<number>;
@@ -34,5 +35,5 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
     findUserInvestmentsForXirr(userId: string): Promise<InvestmentEntity[] | null>;
     countInvestments(userId: string, options: QueryOptions): Promise<number>;
     portfolioGrowthByMonth(userId: string): Promise<PortfolioGrowthPoint[]>;
-    calculateTotalAUM(): Promise<{ mf: number; stocks: number; algo: number }>;
+    calculateTotalAUM(): Promise<number>;
 }

@@ -3,9 +3,9 @@ import { IProcessStripePaymentUseCase } from "./interfaces/process-payment-useca
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 import { ValidationError } from "@presentation/express/utils/error-handling";
 import { PAYMENT_TYPES } from "@infrastructure/inversify_di/features/payment/payment.types";
-import { IPaymentGateway } from "@application/interfaces/services/payment/payment-gateway";
-import { IFulfillPaymentUseCase } from "./fulfill-payment.usecase";
+import { IPaymentGateway } from "@application/interfaces/services/payment/payment-gateway.interface";
 import { PaymentDataDTO } from "@application/dto/user/stripe-payment-dto";
+import { IFulfillPaymentUseCase } from "./interfaces/full-fill-payment-usecase.interface";
 
 @injectable()
 export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase {
@@ -21,7 +21,7 @@ export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase
 
         const paymentIntentId = typeof session.payment_intent === 'string' 
             ? session.payment_intent 
-            : (session.payment_intent as any).id;
+            : (session.payment_intent as { id: string }).id;
 
         const paymentIntent = await this._stripePaymentGateway.PaymentIntent(paymentIntentId);
         

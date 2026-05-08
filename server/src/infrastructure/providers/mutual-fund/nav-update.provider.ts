@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import { IMutualFundNavUpdateProvider, MfApiNavResponse } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IHttpClient } from "@application/interfaces/services/externals/http-client-interface";
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
+import { env } from "@presentation/express/utils/constants/env.constants";
 
 @injectable()
 export class NavUpdateProvider implements IMutualFundNavUpdateProvider {
@@ -16,7 +17,7 @@ export class NavUpdateProvider implements IMutualFundNavUpdateProvider {
         navDate: string;
     }[]> {
         const response = await this.httpClient.get<MfApiNavResponse>(
-            `https://api.mfapi.in/mf/${schemeCode}`
+            `${env.MF_API_URL}${schemeCode}`
         );
         if (!response?.data?.length) {
             throw new Error(`NAV data not found for schemeCode ${schemeCode}`);
@@ -35,7 +36,7 @@ export class NavUpdateProvider implements IMutualFundNavUpdateProvider {
         navDate: string;
     }[]> {
         const response = await this.httpClient.get<MfApiNavResponse>(
-            `https://api.mfapi.in/mf/${schemeCode}`
+            `${env.MF_API_URL}${schemeCode}`
         );
 
         if (!response?.data?.length) {
@@ -49,7 +50,7 @@ export class NavUpdateProvider implements IMutualFundNavUpdateProvider {
         }));
 
         if (!lastNavDate) {
-            return normalizedData; 
+            return normalizedData;
         }
 
         const lastDateStr = lastNavDate.toISOString().split("T")[0];

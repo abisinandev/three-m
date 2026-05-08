@@ -8,7 +8,7 @@ import { loadTxtFiles } from "./text.loader";
 
 
 const BATCH_SIZE = 50;
-async function upsertBatch(docs: any[]) {
+async function upsertBatch(docs: Record<string, unknown>[]) {
     const texts = docs.map((d) => d.pageContent);
 
     const vectors = await embeddings.embedDocuments(texts);
@@ -28,7 +28,7 @@ async function upsertBatch(docs: any[]) {
     });
 }
 
-async function processInBatches(docs: any[]) {
+async function processInBatches(docs: Record<string, unknown>[]) {
     for (let i = 0; i < docs.length; i += BATCH_SIZE) {
         const batch = docs.slice(i, i + BATCH_SIZE);
 

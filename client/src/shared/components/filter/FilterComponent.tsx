@@ -1,11 +1,11 @@
 import { Search, RotateCw } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
-import type { UserFilters } from "@shared/services/admin/user-management/FetchUserDataApi";
+import type { UserFilters } from "@shared/types/admin/user-management.types";
 
 interface FiltersRowProps {
   onSearch: (search: string) => void;
-  onFilterChange: (key: keyof UserFilters, value: any) => void;
-  onRefresh?: () => void; // new optional callback
+  onFilterChange: <K extends keyof UserFilters>(key: K, value: UserFilters[K]) => void;
+  onRefresh?: () => void;
   currentFilters: UserFilters;
 }
 

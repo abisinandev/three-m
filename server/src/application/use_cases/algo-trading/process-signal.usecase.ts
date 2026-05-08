@@ -34,7 +34,7 @@ export class ProcessSignalUseCase implements IProcessSignalUseCase {
             symbol
         );
 
-        if (action === null || !lastAction || lastAction !== action) {
+        if (action === null || lastAction === action) {
             console.log(`[ProcessSignalUseCase] Signal (Duplicate/Non-crossover) for ${input.symbol}`);
             return;
         }
@@ -46,8 +46,6 @@ export class ProcessSignalUseCase implements IProcessSignalUseCase {
             input.action,
             5
         );
-        console.log('existi: ', exists);
-
 
         if (exists) {
             console.log(`[ProcessSignalUseCase] Duplicate signal skipped (5-min cooldown) for ${input.symbol}`);

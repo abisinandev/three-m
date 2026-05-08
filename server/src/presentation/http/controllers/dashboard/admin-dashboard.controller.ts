@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { DASHBOARD_TYPES } from "@infrastructure/inversify_di/features/dashboard/dashboard.types";
-import { IAdminDashboardUseCase } from "@application/use_cases/dashboard/interface/admin-dashboard-usecase.interface";
+import { IAdminDashboardUseCase } from "@application/use_cases/admin/dashboard/admin-dashboard-usecase.interface";
 
 @injectable()
 export class AdminDashboardController {

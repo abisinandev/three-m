@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
-import { FetchAdminAlgoStats, FetchAdminSignals, FetchAdminStrategies, FetchAdminAlgoTrades } from '@/shared/services/admin/algo-trading/AdminAlgoTradingApi';
+import { FetchAdminAlgoStats, FetchAdminSignals, FetchAdminStrategies, FetchAdminAlgoTrades } from '@/shared/services/admin/algo-trading/admin-algo-trading-api';
 
 
 export const useAlgoTrading = () => {
@@ -118,3 +118,4 @@ export const useAlgoTrading = () => {
     };
 
 };
+

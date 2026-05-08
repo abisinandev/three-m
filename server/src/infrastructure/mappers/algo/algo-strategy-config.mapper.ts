@@ -14,7 +14,7 @@ export class AlgoStrategyConfigMapper {
         });
     }
 
-    public static toPersistence(entity: AlgoStrategyRiskConfig): any {
+    public static toPersistence(entity: AlgoStrategyRiskConfig): Record<string, unknown> {
         return {
             strategyName: entity.strategyName,
             riskAmount: entity.riskAmount,

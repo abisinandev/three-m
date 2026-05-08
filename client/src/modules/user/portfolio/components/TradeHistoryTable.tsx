@@ -3,8 +3,26 @@ import { formatCurrency } from '../utils/portfolio.utils';
 import { Pagination } from '@shared/components/pagination/Pagination';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 
+interface TradeHistoryItem {
+    id: string;
+    side: string;
+    totalAmount: number;
+    price: number;
+    quantity: number;
+    date?: string;
+    createdAt?: string;
+    assetType?: string;
+    assetName?: string;
+    symbol?: string;
+    assetId?: string;
+    orderType?: string;
+    exchange?: string;
+    productType?: string;
+    triggerPrice?: number;
+}
+
 interface TradeHistoryTableProps {
-    data: any[];
+    data: TradeHistoryItem[];
     total: number;
     page: number;
     limit: number;
@@ -102,7 +120,7 @@ export const TradeHistoryTable = ({
                 </div>
             ) : (
                 <>
-                    {data.map((item: any, idx: number) => {
+                    {data.map((item, idx) => {
                         const side = item.side || 'BUY';
                         const isSell = side.toLowerCase() === 'sell' || side.toLowerCase() === 'redeemed';
                         const tradeValue = item.totalAmount || (item.price ?? 0) * (item.quantity ?? 0);

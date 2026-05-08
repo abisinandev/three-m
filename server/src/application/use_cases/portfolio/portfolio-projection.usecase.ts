@@ -1,17 +1,22 @@
-import { inject, injectable } from "inversify"; import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
-import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
+import { inject, injectable } from "inversify";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
+import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
+import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
+import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import { IPortfolioProjectionUseCase } from "./interfaces/portfolio-projection-usecase.interface";
-import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
+import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { PortfolioProjectionDTO, PortfolioProjectionResponseDTO } from "@application/dto/portfolio/portfolio-projection.dto";
 import { ValidationError } from "@presentation/express/utils/error-handling";
+import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 
 @injectable()
 export class PortfolioProjectionUseCase implements IPortfolioProjectionUseCase {
 
     constructor(
-        @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
+        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
+        @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
     ) { }
 
     async execute(data: PortfolioProjectionDTO, userId: string): Promise<PortfolioProjectionResponseDTO> {
@@ -25,39 +30,35 @@ export class PortfolioProjectionUseCase implements IPortfolioProjectionUseCase {
             throw new ValidationError("Invalid expected return rate");
         }
 
-        const investments = await this._investmentRepository.getUserInvestementSummary(userId) ?? [];
-        if (!investments.length) return {
+        const portfolioAssets = await this._portfolioRepository.findByUserId(userId) ?? [];
+        if (!portfolioAssets.length) return {
             projectedValue: 0,
             projectedProfit: 0,
             futureTotalInvestment: 0,
             yearlyBreakdown: []
         };
 
-
         let totalInvestment = 0;
         let currentValue = 0;
 
-        const schemeCodes = [...new Set(investments.map(i => i.schemeCode))];
-        const navMap = new Map<string, number>();
-
-        //setting latest nav
         await Promise.all(
-            schemeCodes.map(async (schemeCode) => {
-                const navHistory = await this._navUpdateProvider.fetchNavHistories(schemeCode);
-                if (navHistory?.length) {
-                    navMap.set(schemeCode, Number(navHistory[0].nav));
+            portfolioAssets.map(async (asset) => {
+                totalInvestment += asset.investedAmount;
+                const qty = asset.assetType === AssetType.STOCK ? asset.quantity : asset.units;
+                
+                if (!qty || qty <= 0) return;
+
+                if (asset.assetType === AssetType.STOCK) {
+                    const quote = await this._marketDataProvider.getLatestQuote(asset.assetId); // Assuming assetId is the symbol
+                    const price = quote?.price || asset.avgPrice;
+                    currentValue += qty * price;
+                } else if (asset.assetType === AssetType.MUTUAL_FUND) {
+                    const navHistory = await this._navUpdateProvider.fetchNavHistories(asset.assetId); // Assuming assetId is schemeCode
+                    const nav = navHistory?.length ? Number(navHistory[0].nav) : asset.avgPrice;
+                    currentValue += qty * nav;
                 }
             })
         );
-
-        for (const inv of investments) {
-            totalInvestment += inv.amount;
-            if (inv.status === InvestmentStatus.ALLOTTED && Number(inv.units) > 0) {
-                const nav = navMap.get(inv.schemeCode);
-                if (!nav) continue;
-                currentValue += Number(inv.units) * nav;
-            }
-        }
 
         const monthlyRate = data.expectedReturnRate / 100 / 12;
         const totalMonths = years * 12;

@@ -42,6 +42,10 @@ import { IAdminStocksUseCase } from "@application/use_cases/admin/stocks-managem
 import { AdminStocksUseCase } from "@application/use_cases/admin/stocks-management/admin-stocks.usecase";
 import { IAdminStockUpdateUseCase } from "@application/use_cases/admin/stocks-management/interface/admin-stock-update-usecase.interface";
 import { AdminStockUpdateUseCase } from "@application/use_cases/admin/stocks-management/admin-stock-update.usecase";
+import { ISearchStocksUseCase } from "@application/use_cases/admin/stocks-management/interface/search-stocks.interface";
+import { SearchStocksUseCase } from "@application/use_cases/admin/stocks-management/search-stocks.usecase";
+import { IAddStockUseCase } from "@application/use_cases/admin/stocks-management/interface/add-stock.interface";
+import { AddStockUseCase } from "@application/use_cases/admin/stocks-management/add-stock.usecase";
 import { AdminStocksController } from "@presentation/http/controllers/admin/admin-stocks.controller";
 import { AdminAuthMiddleware } from "@presentation/express/middlewares/admin-auth.middleware";
 
@@ -64,6 +68,8 @@ export const AdminModule = new ContainerModule(({ bind }) => {
   bind<ISipManagementUseCase>(ADMIN_TYPES.SipManagementUseCase).to(SipManagementUseCase);
   bind<IAdminStocksUseCase>(ADMIN_TYPES.AdminStocksUseCase).to(AdminStocksUseCase);
   bind<IAdminStockUpdateUseCase>(ADMIN_TYPES.AdminStockUpdateUseCase).to(AdminStockUpdateUseCase);
+  bind<ISearchStocksUseCase>(ADMIN_TYPES.SearchStocksUseCase).to(SearchStocksUseCase);
+  bind<IAddStockUseCase>(ADMIN_TYPES.AddStockUseCase).to(AddStockUseCase);
 
 
   //Repository

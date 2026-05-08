@@ -11,10 +11,9 @@ import {
 } from 'recharts';
 import { formatCurrency } from '../utils/portfolio.utils';
 
-// Modern, high-end financial dashboard palette
 const COLORS: Record<string, string> = {
-    'STOCK': '#10b981',        // Vibrant Emerald
-    'MUTUAL_FUND': '#3b82f6',  // Modern Sky Blue
+    'STOCK': '#10b981',
+    'MUTUAL_FUND': '#3b82f6',
     'MF': '#3b82f6',
     'OTHERS': '#6b7280',
 };
@@ -26,7 +25,7 @@ const ALT_COLORS = [
     '#06b6d4', // Cyan
 ];
 
-const renderActiveShape = (props: any) => {
+const renderActiveShape = (props: { cx: number; cy: number; innerRadius: number; outerRadius: number; startAngle: number; endAngle: number; fill: string }) => {
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
 
     return (
@@ -55,43 +54,36 @@ const renderActiveShape = (props: any) => {
 };
 
 interface AssetAllocationProps {
-    investments?: any[];
+    allocations?: { assetType: string; currentValue: number }[];
 }
 
-export const AssetAllocationDonut = ({ investments = [] }: AssetAllocationProps) => {
+export const AssetAllocationDonut = ({ allocations = [] }: AssetAllocationProps) => {
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     const data = useMemo(() => {
-        if (!investments.length) return [];
+        if (!allocations.length) return [];
 
-        const grouped = investments.reduce((acc, curr) => {
-            let key = curr.assetType || curr.investmentType || 'OTHERS';
-            if (key === 'MUTUAL_FUND') key = 'MF';
-            
-            const value = curr.currentValue || curr.amount || 0;
-
-            acc[key] = (acc[key] || 0) + value;
-            return acc;
-        }, {} as Record<string, number>);
-
-        const total = Object.values(grouped).reduce((sum, val) => sum + val, 0);
+        const total = allocations.reduce((sum, val) => sum + val.currentValue, 0);
 
         if (total === 0) return [];
 
-        return Object.entries(grouped)
-            .map(([name, value], index) => ({
-                name: name === 'STOCK' ? 'Stocks' : name === 'MF' ? 'Mutual Funds' : name,
-                value,
-                percent: (value / total) * 100,
-                color: COLORS[name] || ALT_COLORS[index % ALT_COLORS.length]
-            }))
+        return allocations
+            .map((item, index) => {
+                const nameKey = item.assetType === 'MUTUAL_FUND' ? 'MF' : item.assetType;
+                return {
+                    name: nameKey === 'STOCK' ? 'Stocks' : nameKey === 'MF' ? 'Mutual Funds' : nameKey,
+                    value: item.currentValue,
+                    percent: (item.currentValue / total) * 100,
+                    color: COLORS[nameKey] || ALT_COLORS[index % ALT_COLORS.length]
+                };
+            })
             .sort((a, b) => b.value - a.value);
-    }, [investments]);
+    }, [allocations]);
 
     const totalValue = data.reduce((sum, item) => sum + item.value, 0);
     const activeItem = activeIndex !== null ? data[activeIndex] : null;
 
-    const onPieEnter = (_: any, index: number) => {
+    const onPieEnter = (_: unknown, index: number) => {
         setActiveIndex(index);
     };
 
@@ -143,7 +135,7 @@ export const AssetAllocationDonut = ({ investments = [] }: AssetAllocationProps)
             </h3>
 
             <div style={{ flex: 1, position: 'relative' }}>
-                {/* Dynamic Center Display */}
+
                 <div style={{
                     position: 'absolute',
                     top: '50%',
@@ -154,36 +146,36 @@ export const AssetAllocationDonut = ({ investments = [] }: AssetAllocationProps)
                     zIndex: 10,
                     marginTop: -10,
                 }}>
-                    <p style={{ 
-                        fontSize: 10, 
-                        fontWeight: 600, 
-                        color: activeItem ? activeItem.color : '#5a5f6e', 
-                        textTransform: 'uppercase', 
-                        letterSpacing: '0.05em', 
+                    <p style={{
+                        fontSize: 10,
+                        fontWeight: 600,
+                        color: activeItem ? activeItem.color : '#5a5f6e',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
                         margin: 0,
                         transition: 'color 0.2s'
                     }}>
                         {activeItem ? activeItem.name : 'Total Value'}
                     </p>
-                    <p style={{ 
-                        fontSize: 16, 
-                        fontWeight: 800, 
-                        color: '#e8eaed', 
-                        margin: '2px 0 0' 
+                    <p style={{
+                        fontSize: 16,
+                        fontWeight: 800,
+                        color: '#e8eaed',
+                        margin: '2px 0 0'
                     }}>
-                        ₹{activeItem 
-                            ? formatCurrency(activeItem.value, 0) 
+                        ₹{activeItem
+                            ? formatCurrency(activeItem.value, 0)
                             : formatCurrency(totalValue, 0)
                         }
                     </p>
-                    <p style={{ 
-                        fontSize: 10, 
-                        fontWeight: 600, 
-                        color: '#5a5f6e', 
-                        margin: 0 
+                    <p style={{
+                        fontSize: 10,
+                        fontWeight: 600,
+                        color: '#5a5f6e',
+                        margin: 0
                     }}>
-                        {activeItem 
-                            ? `${activeItem.percent.toFixed(1)}%` 
+                        {activeItem
+                            ? `${activeItem.percent.toFixed(1)}%`
                             : 'Portfolio'
                         }
                     </p>
@@ -216,29 +208,29 @@ export const AssetAllocationDonut = ({ investments = [] }: AssetAllocationProps)
             </div>
 
             {/* Custom Legend */}
-            <div style={{ 
-                display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: '12px 20px', 
-                marginTop: 16, 
-                justifyContent: 'center' 
+            <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '12px 20px',
+                marginTop: 16,
+                justifyContent: 'center'
             }}>
                 {data.map((item, i) => (
-                    <div 
-                        key={i} 
+                    <div
+                        key={i}
                         onMouseEnter={() => setActiveIndex(i)}
                         onMouseLeave={() => setActiveIndex(null)}
-                        style={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: 8, 
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
                             cursor: 'pointer',
                             opacity: activeIndex === null || activeIndex === i ? 1 : 0.4,
                             transition: 'opacity 0.2s'
                         }}
                     >
-                        <div style={{ 
-                            width: 8, height: 8, borderRadius: '50%', 
+                        <div style={{
+                            width: 8, height: 8, borderRadius: '50%',
                             background: item.color,
                             boxShadow: `0 0 8px ${item.color}66`
                         }} />

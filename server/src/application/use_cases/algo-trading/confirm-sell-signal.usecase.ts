@@ -36,6 +36,7 @@ import { IAlgoStrategyConfigRepository } from "@application/interfaces/repositor
 import { IFeatureAccessService } from "@application/interfaces/services/subscription/feature-access-service.interface";
 import { Features } from "@domain/entities/subscription/enums/features.enum";
 import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
+import { isIndianMarketOpen } from "@shared/utils/market/market-time";
 
 @injectable()
 export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
@@ -60,16 +61,16 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
             order.userId,
             Features.STOCK_TRADING,
         );
-
+        
         if (!hasAccess) {
             return {
                 message: SuccessMessages.SUBSCRIPTION.UPGRADE_PREMIUM,
                 upgrade: true
             };
         }
-
-        // if (!isIndianMarketOpen())
-        //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+        
+        if (!isIndianMarketOpen())
+            throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
         const { userId } = order;
         const signal = await this._signalRepository.findById(order.signalId);
@@ -225,7 +226,7 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
             }
 
             newTransaction.markSucess();
-            await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
+            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
 
             signal.approve();
             await this._signalRepository.update(signal.id as string, signal, session);

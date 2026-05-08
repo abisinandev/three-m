@@ -13,10 +13,10 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
         super(TransactionModel, TransactionMapper)
     }
 
-    async createTransaction(entity: TransactionEntity): Promise<TransactionEntity> {
+    async createTransaction(entity: TransactionEntity, session: ClientSession): Promise<TransactionEntity> {
         const persistenceData = this.mapper.toPersistance(entity);
-        const createdDoc = await this.model.create(persistenceData);
-        return this.mapper.toDomain(createdDoc);
+        const createdDoc = await this.model.create([persistenceData], { session });
+        return this.mapper.toDomain(createdDoc[0]);
     }
 
 
@@ -36,11 +36,9 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
     }
 
     async updateStatus(id: string, status: string, session: ClientSession): Promise<void> {
-        const isVerified = (status === TransactionStatus.SUCCESSFUL);
         await this.model.findByIdAndUpdate(
             id, {
             $set: {
-                isVerified,
                 status,
             },
         },
@@ -148,17 +146,17 @@ export class TransactionRepository extends BaseRepository<TransactionEntity, Tra
                     _id: { $week: "$createdAt" },
                     deposits: {
                         $sum: {
-                            $cond: [{ $eq: ["$type", "DEPOSIT"] }, "$amount", 0]
+                            $cond: [{ $eq: ["$type", "TOPUP"] }, "$amount", 0]
                         }
                     },
                     withdrawals: {
                         $sum: {
-                            $cond: [{ $eq: ["$type", "WITHDRAWAL"] }, "$amount", 0]
+                            $cond: [{ $eq: ["$type", "WITHDRAW"] }, "$amount", 0]
                         }
                     }
                 }
             },
-            { $sort: { "_id": 1 } as any }
+            { $sort: { "_id": 1 } as Record<string, 1 | -1> }
         ]);
         return result.map((r, i) => ({ week: `Week ${i + 1}`, deposits: r.deposits, withdrawals: r.withdrawals }));
     }

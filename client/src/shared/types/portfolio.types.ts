@@ -6,7 +6,6 @@ export interface IInvestmentResponse {
     name?: string;
     assetType?: "MF" | "STOCK";
     
-    // Legacy mapping support for existing UI
     schemeCode: string;
     amount: number;
     units?: number;
@@ -52,6 +51,10 @@ export interface IPortfolioSummaryResponse {
     currentValue: number;
     profitPercentage: number;
     xirr: number | null;
+    allocations?: {
+        assetType: string;
+        currentValue: number;
+    }[];
 }
 
 export interface IRedeemedInvestment {

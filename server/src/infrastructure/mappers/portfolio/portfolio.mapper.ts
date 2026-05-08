@@ -22,8 +22,8 @@ export const toDomain = (doc: PortfolioDocument): PortfolioEntity => {
 export const toPersistance = (entity: PortfolioEntity): Partial<PortfolioDocument> => {
     const data = entity.toPersistence();
     return {
-        userId: data.userId as any,
-        assetId: data.assetId as any,
+        userId: data.userId as unknown,
+        assetId: data.assetId as unknown,
         assetType: data.assetType,
         quantity: data.quantity,
         units: data.units,

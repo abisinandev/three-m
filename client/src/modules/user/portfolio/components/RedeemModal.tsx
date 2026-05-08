@@ -37,11 +37,11 @@ export const RedeemModal = ({
 
             <div className="relative w-full max-w-[360px] bg-[#0b0c0e] border border-[#1e2025] rounded-2xl shadow-2xl overflow-hidden">
                 {/* Header */}
-                <div className="flex items-center justify-between px-5 py-4 bg-[#FF1744]">
+                <div className="flex items-center justify-between px-5 py-4 bg-green-600">
                     <div className="flex items-center gap-3">
-                        <span className="text-[12px] font-black text-black uppercase tracking-widest">Redeem Fund</span>
+                        <span className="text-[12px] font-black text-white uppercase tracking-widest">Redeem Fund</span>
                     </div>
-                    <button onClick={onClose} className="text-black/60 hover:text-black transition-colors">
+                    <button onClick={onClose} className="text-white/60 hover:text-white transition-colors">
                         <X size={16} />
                     </button>
                 </div>
@@ -76,7 +76,6 @@ export const RedeemModal = ({
                             </div>
                         </div>
 
-                        {/* Selection Tabs */}
                         <div className="grid grid-cols-2 gap-2 mb-5">
                             {(['full', 'partial'] as const).map(t => (
                                 <button
@@ -92,7 +91,6 @@ export const RedeemModal = ({
                             ))}
                         </div>
 
-                        {/* Partial Controls */}
                         {redeemType === 'partial' && (
                             <div className="mb-5 space-y-3">
                                 <div className="flex gap-4 border-b border-[#1e2025] pb-2">
@@ -125,7 +123,6 @@ export const RedeemModal = ({
                             </div>
                         )}
 
-                        {/* Info Banner */}
                         <div className="flex gap-2.5 p-3 mb-6 bg-blue-500/5 border border-blue-500/10 rounded-xl">
                             <AlertCircle size={12} className="text-blue-400 shrink-0 mt-0.5" />
                             <p className="text-[9px] text-[#5a5f6e] font-bold leading-relaxed uppercase tracking-tight">
@@ -133,11 +130,10 @@ export const RedeemModal = ({
                             </p>
                         </div>
 
-                        {/* Action Button */}
                         <button
                             onClick={onConfirm}
                             disabled={!isValid || confirmStep === 'processing'}
-                            className="w-full py-3.5 bg-red-600 hover:bg-red-500 disabled:opacity-30 text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-red-500/10 flex items-center justify-center gap-2"
+                            className="w-full py-3.5 bg-green-600 hover:bg-green-500 disabled:opacity-30 text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-red-500/10 flex items-center justify-center gap-2"
                         >
                             {confirmStep === 'processing' ? (
                                 <>

@@ -11,6 +11,7 @@ interface TradeModalProps {
   onConfirm: (data: TradeData) => void;
   isLoading?: boolean;
   availableQuantity?: number;
+  balance?: number;
 }
 
 export interface TradeData {
@@ -24,6 +25,11 @@ export interface TradeData {
   takeProfit?: number;
 }
 
+const orderModes: { value: 'MARKET_ORDER' | 'LIMIT_ORDER'; label: string }[] = [
+  { value: 'MARKET_ORDER', label: 'Market' },
+  { value: 'LIMIT_ORDER', label: 'Limit' },
+];
+
 const TradeModal: React.FC<TradeModalProps> = ({
   isOpen,
   onClose,
@@ -33,6 +39,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
   onConfirm,
   isLoading = false,
   availableQuantity,
+  balance = 0,
 }) => {
   const [type, setType] = useState<'buy' | 'sell'>(initialType);
   const [quantity, setQuantity] = useState<string>('');
@@ -40,9 +47,6 @@ const TradeModal: React.FC<TradeModalProps> = ({
   const [limitPrice, setLimitPrice] = useState<string>('');
   const [stopLoss, setStopLoss] = useState<string>('');
   const [takeProfit, setTakeProfit] = useState<string>('');
-
-  const balance = 100000;
-
   useEffect(() => {
     if (isOpen) {
       setType(initialType);
@@ -52,7 +56,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
       setStopLoss('');
       setTakeProfit('');
     }
-  }, [isOpen, symbol, initialType, currentPrice]);
+  }, [isOpen, symbol]);
 
   if (!isOpen) return null;
 
@@ -132,17 +136,14 @@ const TradeModal: React.FC<TradeModalProps> = ({
             <div>
               <label className="block text-[10px] text-[#5a5f6e] font-bold uppercase tracking-wider mb-2.5">Order Type</label>
               <div className="grid grid-cols-2 gap-2">
-                {[
-                  { label: 'MARKET', value: 'MARKET_ORDER' },
-                  { label: 'LIMIT', value: 'LIMIT_ORDER' }
-                ].map((mode) => (
+                {orderModes.map((mode) => (
                   <button
                     key={mode.value}
                     type="button"
-                    onClick={() => setOrderType(mode.value as any)}
+                    onClick={() => setOrderType(mode.value)}
                     className={`py-2 px-3 text-[10px] font-black border transition-all rounded-xl ${orderType === mode.value
-                      ? `${borderColor} ${textColor} bg-[#111214]`
-                      : 'border-[#1e2025] text-[#5a5f6e] hover:border-[#333]'
+                        ? `${borderColor} ${textColor} bg-[#111214]`
+                        : 'border-[#1e2025] text-[#5a5f6e] hover:border-[#333]'
                       }`}
                   >
                     {mode.label}

@@ -19,6 +19,8 @@ import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
+import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
+import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 
 @injectable()
 export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
@@ -29,6 +31,7 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
         @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navProvider: IMutualFundNavUpdateProvider,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
+        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
     ) { }
 
     async execute(data: ConfirmRedeemDTO): Promise<void> {
@@ -136,6 +139,34 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
                 redeemAmount,
                 session
             );
+
+
+            const portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
+                data.userId,
+                fund.id as string,
+                session
+            );
+
+            if (portfolio) {
+                const currentUnits = portfolio.units ?? 0;
+                const newUnits = Number((currentUnits - unitsToRedeem).toFixed(4));
+
+                if (newUnits <= 0) {
+                    await this._portfolioRepository.deleteByUserIdAndSymbol(
+                        data.userId,
+                        fund.id as string,
+                        session
+                    );
+                } else {
+
+                    const ratio = unitsToRedeem / currentUnits;
+                    const amountToReduce = portfolio.investedAmount * ratio;
+                    const newInvestedAmount = portfolio.investedAmount - amountToReduce;
+
+                    portfolio.updateQuantityAndPrice(newUnits, portfolio.avgPrice, newInvestedAmount);
+                    await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
+                }
+            }
 
             await session.commitTransaction();
         } catch (error) {

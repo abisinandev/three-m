@@ -23,6 +23,8 @@ export const ADMIN_TYPES = {
   SipManagementUseCase: Symbol.for("SipManagementUseCase"),
   AdminStocksUseCase: Symbol.for("AdminStocksUseCase"),
   AdminStockUpdateUseCase: Symbol.for("AdminStockUpdateUseCase"),
+  SearchStocksUseCase: Symbol.for("SearchStocksUseCase"),
+  AddStockUseCase: Symbol.for("AddStockUseCase"),
 
   AdminAuthController: Symbol.for("AdminAuthController"),
   AdminController: Symbol.for("AdminController"),

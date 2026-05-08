@@ -27,9 +27,6 @@ export class RSIStrategy implements Strategy {
         // const prevRSI = 40
         // const currentRSI = 25
 
-        console.log(currentRSI, prevRSI); 
-
-         
         // Store new state
         await redisClient.set(
             key,

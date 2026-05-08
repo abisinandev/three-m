@@ -94,9 +94,11 @@ export class PortFolioController {
     async returnProjection(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req?.user?.id;
+            const expectedReturnRate = parseFloat(req.query.expectedReturnRate as string) || 12;
+            const years = parseInt(req.query.years as string) || 10;
             const result = await this._portfolioProjection.execute({
-                expectedReturnRate: 12,
-                years: 10,
+                expectedReturnRate,
+                years,
             }, userId as string);
             return ResponseHelper.success(
                 res,

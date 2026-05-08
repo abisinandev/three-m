@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { sendChatMessage, getChatHistory } from '@shared/services/chatbot/chatbotApi';
+import { sendChatMessage, getChatHistory } from '@shared/services/chatbot/chatbot-api';
 import type { ChatMessage } from '../types/chatbot.types';
 
 export function useAiChatbot() {
@@ -68,6 +68,8 @@ export function useAiChatbot() {
                 role: 'assistant',
                 content: reply.message,
                 timestamp: new Date(),
+                type: reply.type,
+                data: reply.data,
                 upgradeRequired: reply.upgradeRequired,
             };
             setMessages(prev => [...prev, aiMsg]);
@@ -102,3 +104,4 @@ export function useAiChatbot() {
         closePremiumModal,
     };
 }
+
