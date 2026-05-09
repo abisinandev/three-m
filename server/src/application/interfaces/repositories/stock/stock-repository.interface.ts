@@ -8,4 +8,5 @@ export interface IStockRepository extends IBaseRepository<StockEntity> {
     findAllStocks(options: StockQueryOptions): Promise<{ data: StockEntity[], total: number }>;
     findWithFiltersAdmin(options: Record<string, unknown>): Promise<{ data: StockEntity[], total: number }>;
     updateStatus(symbol: string, statusUpdate: Partial<{ isTradable: boolean; isTracked: boolean; isVisible: boolean }>): Promise<boolean>;
+    findBestStocks(): Promise<StockEntity[] | []>;
 }

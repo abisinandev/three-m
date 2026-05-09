@@ -15,18 +15,9 @@ export class ListBestStockUseCase implements IListBestStocksUseCase {
     ) { }
 
     async execute(): Promise<StockDTO[]> {
-        const result = await this._stockRepository.findAllStocks({
-            isVisible: true,
-            isTradable: true,
-            page: 1,
-            limit: 10
-        });
+        const result = await this._stockRepository.findBestStocks();
 
-        console.log("result list: ", result);
-        
-
-        const subset = result.data.slice(0, 5);
-        const dtos = StockMapper.toDTOList(subset);
+        const dtos = StockMapper.toDTOList(result);
 
         const data = await Promise.all(dtos.map(async (stock) => {
             const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);

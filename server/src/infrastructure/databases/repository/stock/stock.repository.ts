@@ -109,8 +109,17 @@ export class StockRepository extends BaseRepository<StockEntity, StockDocument> 
     }
 
     async updateStatus(symbol: string, statusUpdate: Partial<{ isTradable: boolean; isTracked: boolean; isVisible: boolean }>): Promise<boolean> {
-        const result = await StockModel.updateOne({ symbol }, { $set: statusUpdate });
+        const result = await this.model.updateOne({ symbol }, { $set: statusUpdate });
         return result.modifiedCount > 0;
+    }
+
+    async findBestStocks(): Promise<StockEntity[] | []> {
+        const docs = await this.model.aggregate([
+            { $match: { isVisible: true, isTradable: true } },
+            { $limit: 5 },
+        ])
+        if (!docs) return []
+        return docs.map(doc => this.mapper.toDomain(doc));
     }
 }
 

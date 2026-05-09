@@ -17,6 +17,9 @@ interface OrderPreviewProps {
 export function OrderPreview({ data, onExecuted }: OrderPreviewProps) {
     const [isExecuting, setIsExecuting] = useState(false);
     const [isDone, setIsDone] = useState(false);
+    const [isHidden, setIsHidden] = useState(false);
+
+    if (isHidden) return null;
 
     const handleExecute = async () => {
         setIsExecuting(true);
@@ -98,6 +101,7 @@ export function OrderPreview({ data, onExecuted }: OrderPreviewProps) {
 
             <div className="grid grid-cols-2 bg-neutral-900/30">
                 <button
+                    onClick={() => setIsHidden(true)}
                     disabled={isExecuting}
                     className="py-4 text-[11px] font-black tracking-widest text-neutral-500 hover:text-neutral-200 hover:bg-neutral-800/50 transition-all border-r border-neutral-800 disabled:opacity-50 uppercase"
                 >

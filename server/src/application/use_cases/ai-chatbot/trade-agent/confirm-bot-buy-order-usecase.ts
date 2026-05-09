@@ -65,15 +65,15 @@ export class ConfirmBotBuyOrderUseCase implements IConfirmBotBuyOrderUseCase {
             };
         }
 
+        if (!isIndianMarketOpen())
+            throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
+
         const { userId, symbol, quantity } = order;
 
         const session = await mongoose.startSession();
 
         try {
             session.startTransaction();
-
-            // if (!isIndianMarketOpen())
-            //     throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
 
             const user = await this._userRepository.findById(userId);
             if (!user) throw new NotFoundError(ErrorMessages.USER.NOT_FOUND);
@@ -183,7 +183,7 @@ export class ConfirmBotBuyOrderUseCase implements IConfirmBotBuyOrderUseCase {
             }
 
             newTransaction.markSucess();
-            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL,session);
+            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
 
             await session.commitTransaction();
 
