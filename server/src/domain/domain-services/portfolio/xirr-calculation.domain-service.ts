@@ -34,55 +34,47 @@ export class PortfolioXirrService implements IXirrCalculator {
         if (cleaned.length < 2) return null;
 
         const firstDate = cleaned[0].date;
+        const lastDate = cleaned[cleaned.length - 1].date;
+
         const portfolioAgeDays =
-            (Date.now() - firstDate.getTime()) / (1000 * 60 * 60 * 24);
+            (lastDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24);
 
-        if (portfolioAgeDays < 7) return null;
+        if (portfolioAgeDays < 30) return null;
 
-        return this.solveXirr(cleaned);
+        const rate = this.solveXirr(cleaned);
+
+        if (rate === null) return null;
+
+        let percentage = rate * 100;
+
+        if (percentage > 1000000) return 999999.99;
+        if (percentage < -100) return -100;
+
+        return percentage;
     }
 
-
     private cleanCashFlows(cashFlows: CashFlow[]): CashFlow[] {
-        const sorted = [...cashFlows].sort(
-            (a, b) => a.date.getTime() - b.date.getTime()
-        );
+        if (cashFlows.length === 0) return [];
 
-        const cleaned: CashFlow[] = [];
-        const skip = new Set<number>();
+        // Map to group by date string (YYYY-MM-DD)
+        const dailyGroups = new Map<string, number>();
 
-        for (let i = 0; i < sorted.length; i++) {
-            if (skip.has(i)) continue;
+        for (const cf of cashFlows) {
+            const date = new Date(cf.date);
+            date.setHours(0, 0, 0, 0);
+            const dateKey = date.toISOString().split('T')[0];
 
-            const current = sorted[i];
-
-            if (current.amount > 0) {
-                for (let j = i + 1; j < sorted.length; j++) {
-                    if (skip.has(j)) continue;
-
-                    const candidate = sorted[j];
-
-                    const timeDiff = Math.abs(
-                        candidate.date.getTime() - current.date.getTime()
-                    );
-
-                    const sameAmount =
-                        Math.abs(candidate.amount - current.amount) < 0.01;
-
-                    // remove duplicate positive cashflows
-                    if (
-                        timeDiff <= 1000 &&
-                        candidate.amount > 0 &&
-                        sameAmount
-                    ) {
-                        skip.add(j);
-                    }
-                }
-            }
-
-            cleaned.push(current);
-            skip.add(i);
+            const currentAmount = dailyGroups.get(dateKey) || 0;
+            dailyGroups.set(dateKey, currentAmount + cf.amount);
         }
+
+        const cleaned = Array.from(dailyGroups.entries())
+            .map(([dateStr, amount]) => ({
+                date: new Date(dateStr),
+                amount: amount
+            }))
+            .filter(cf => Math.abs(cf.amount) > 0.001) // Ignore zero net cashflows
+            .sort((a, b) => a.date.getTime() - b.date.getTime());
 
         return cleaned;
     }
@@ -96,41 +88,54 @@ export class PortfolioXirrService implements IXirrCalculator {
 
         const firstDate = cashFlows[0].date;
 
-        let rate = 0.1;
-        const tolerance = 1e-7;
-        const maxIterations = 1000;
+        const guesses = [0.1, 0.5, -0.1, 0.01, 1.0];
 
-        for (let i = 0; i < maxIterations; i++) {
-            let npv = 0;
-            let derivative = 0;
+        for (const guess of guesses) {
+            let rate = guess;
+            const tolerance = 1e-7;
+            const maxIterations = 100;
 
-            for (const cf of cashFlows) {
-                const years =
-                    (cf.date.getTime() - firstDate.getTime()) /
-                    (1000 * 60 * 60 * 24 * 365);
+            for (let i = 0; i < maxIterations; i++) {
+                let npv = 0;
+                let derivative = 0;
 
-                const discount = Math.pow(1 + rate, years);
+                for (const cf of cashFlows) {
+                    const years =
+                        (cf.date.getTime() - firstDate.getTime()) /
+                        (1000 * 60 * 60 * 24 * 365);
 
-                if (!isFinite(discount) || discount === 0) return null;
+                    const base = 1 + rate;
 
-                npv += cf.amount / discount;
+                    if (base <= 0) {
+                        npv = NaN;
+                        break;
+                    }
 
-                derivative -=
-                    (years * cf.amount) /
-                    (discount * (1 + rate));
+                    const discount = Math.pow(base, years);
+
+                    if (!isFinite(discount) || discount === 0) {
+                        npv = NaN;
+                        break;
+                    }
+
+                    npv += cf.amount / discount;
+                    derivative -= (years * cf.amount) / (discount * base);
+                }
+
+                if (isNaN(npv) || !isFinite(derivative) || derivative === 0) break;
+
+                const newRate = rate - npv / derivative;
+
+                if (!isFinite(newRate)) break;
+
+                if (Math.abs(newRate - rate) < tolerance) {
+                    return newRate;
+                }
+
+                rate = newRate;
+
+                if (Math.abs(rate) > 1000000) break;
             }
-
-            if (!isFinite(derivative) || derivative === 0) return null;
-
-            const newRate = rate - npv / derivative;
-
-            if (!isFinite(newRate)) return null;
-
-            if (Math.abs(newRate - rate) < tolerance) {
-                return newRate;
-            }
-
-            rate = newRate;
         }
 
         return null;

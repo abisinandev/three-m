@@ -18,6 +18,7 @@ import { MarketDepthCard } from "../components/MarketDepthCard";
 import { CompanyInfoCard } from "../components/CompanyInfoCard";
 import PendingOrdersTable from "../components/PendingOrdersTable";
 import { usePremiumModalStore } from "@stores/user/PremiumModalStore";
+import { toast } from "sonner";
 
 const StockDetailPage = () => {
   const user = useUserStore((state) => state.user);
@@ -95,6 +96,10 @@ const StockDetailPage = () => {
   const { buy, sell, limitBuy, limitSell, isTrading } = useTradeMutation();
 
   const handleTradeClick = (type: "buy" | "sell") => {
+    if (!user?.isVerified) {
+      toast.error("Complete your KYC to enable trading features");
+      return;
+    }
     if (!user?.isSubscribed) {
       openPremiumModal();
       return;
@@ -180,6 +185,7 @@ const StockDetailPage = () => {
         changePercent={changePercent}
         isPositive={isPositive}
         onTradeClick={handleTradeClick}
+        isVerified={user?.isVerified ?? false}
       />
 
       <div className="max-w-[1600px] mx-auto px-6 py-6">

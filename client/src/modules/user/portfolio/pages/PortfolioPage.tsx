@@ -13,6 +13,7 @@ import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 import { usePortfolio } from '../hooks/usePortfolio';
 import PendingOrdersTable from '../../stock/components/PendingOrdersTable';
 import { PortfolioProjection } from '../components/PortfolioProjection';
+import { toast } from 'sonner';
 
 
 const PortfolioDashboard = () => {
@@ -178,16 +179,26 @@ const PortfolioDashboard = () => {
 
 
                         <button
-                            onClick={() => navigate({ to: ROUTES.USER.PORTFOLIO.REDEEM_PROFIT })}
+                            onClick={() => {
+                                if (!user?.isVerified) {
+                                    toast.error("Complete your KYC to enable redemption features");
+                                    return;
+                                }
+                                navigate({ to: ROUTES.USER.PORTFOLIO.REDEEM_PROFIT });
+                            }}
                             style={{
                                 width: '100%', padding: '10px 0',
-                                background: 'rgba(0,200,83,0.1)', border: '1px solid rgba(0,200,83,0.25)',
-                                borderRadius: 6, color: '#00C853', fontSize: 12, fontWeight: 700,
-                                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                background: !user?.isVerified ? 'rgba(50,50,50,0.1)' : 'rgba(0,200,83,0.1)',
+                                border: !user?.isVerified ? '1px solid rgba(50,50,50,0.25)' : '1px solid rgba(0,200,83,0.25)',
+                                borderRadius: 6,
+                                color: !user?.isVerified ? '#5a5f6e' : '#00C853',
+                                fontSize: 12, fontWeight: 700,
+                                cursor: !user?.isVerified ? 'not-allowed' : 'pointer',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 gap: 6, transition: 'all 0.15s', letterSpacing: '0.03em',
+                                filter: !user?.isVerified ? 'grayscale(1)' : 'none',
+                                opacity: !user?.isVerified ? 0.6 : 1
                             }}
-                            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,200,83,0.18)'; }}
-                            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,200,83,0.1)'; }}
                         >
                             <TrendingUp size={14} />
                             Redeem Profit

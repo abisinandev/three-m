@@ -87,7 +87,7 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
 
         const matchStage: Record<string, unknown> = {
             ...filter,
-            userId: new Types.ObjectId(userId),
+            userId: new Types.ObjectId(userId)
         };
 
         const sort: Record<string, 1 | -1> = {
@@ -175,7 +175,7 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             fund: doc.fund
         }));
     }
-    
+
 
     async getUserInvestementSummary(userId: string): Promise<InvestmentFundDTO[]> {
 

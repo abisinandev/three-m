@@ -8,6 +8,7 @@ import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ValidationError } from "@presentation/express/utils/error-handling";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
@@ -95,7 +96,7 @@ export class AdminAuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.AUTHENTICATION_DONE,
+        SuccessMessages.AUTH.RESEND_OTP,
         { accessToken: "created" },
         HttpStatus.OK,
       );

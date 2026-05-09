@@ -66,6 +66,7 @@ export interface StockDetailHeaderProps {
   changePercent: number;
   isPositive: boolean;
   onTradeClick: (type: "buy" | "sell") => void;
+  isVerified: boolean;
 }
 
 export interface AlgoConsoleProps {

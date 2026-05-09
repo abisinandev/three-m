@@ -195,13 +195,23 @@ const MutualFundDetailsPage = () => {
                   <Star size={16} />
                 </button>
                 <button
-                  onClick={() => setShowInvestModal(true)}
-                  className="px-6 py-[6px] bg-[#00C853] hover:bg-[#00B248] text-white font-bold text-xs uppercase tracking-wide rounded-[4px] transition-colors"
+                  onClick={() => {
+                    if (!user?.isVerified) {
+                      toast.error("Complete your KYC to enable investment features");
+                      return;
+                    }
+                    setShowInvestModal(true);
+                  }}
+                  className={`px-6 py-[6px] bg-[#00C853] hover:bg-[#00B248] text-white font-bold text-xs uppercase tracking-wide rounded-[4px] transition-all ${!user?.isVerified ? 'opacity-50 grayscale cursor-not-allowed active:scale-100' : ''}`}
                 >
                   One-time Invest
                 </button>
                 <button
                   onClick={() => {
+                    if (!user?.isVerified) {
+                      toast.error("Complete your KYC to enable investment features");
+                      return;
+                    }
                     if (!user?.isSubscribed) {
                       toast.warning("Upgrade to Premium to use SIP investment feature");
                       openPremiumModal();
@@ -209,7 +219,7 @@ const MutualFundDetailsPage = () => {
                       setShowSipModal(true);
                     }
                   }}
-                  className="px-6 py-[6px] bg-[#2962ff] hover:bg-[#2054e6] text-white font-bold text-xs uppercase tracking-wide rounded-[4px] transition-colors"
+                  className={`px-6 py-[6px] bg-[#2962ff] hover:bg-[#2054e6] text-white font-bold text-xs uppercase tracking-wide rounded-[4px] transition-all ${!user?.isVerified ? 'opacity-50 grayscale cursor-not-allowed active:scale-100' : ''}`}
                 >
                   Start SIP
                 </button>

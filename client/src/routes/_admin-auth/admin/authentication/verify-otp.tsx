@@ -1,6 +1,6 @@
-import OtpVerificationPage from '@modules/admin/page/OtpVerificationPage'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useAuthStore } from '@stores/user/UserAuthStore';
+import OtpVerificationPage from '@/modules/admin/auth/pages/OtpVerificationPage';
 
 export const Route = createFileRoute('/_admin-auth/admin/authentication/verify-otp')({
   beforeLoad: () => {

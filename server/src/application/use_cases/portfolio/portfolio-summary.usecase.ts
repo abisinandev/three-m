@@ -154,7 +154,6 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             priceMap
         );
 
-        console.log('cashflows: ', cashflows);
         const xirr = this.xirrService.calculate(cashflows);
 
         const allocations = [
@@ -176,7 +175,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
     }
 
     private buildCashFlows(
-        investments: Record<string, unknown>[],
+        investments: any[],
         trades: TradeEntity[],
         portfolioAssets: PortfolioEntity[],
         priceMap: Map<string, number>
@@ -185,18 +184,19 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
 
         // Mutual Funds Cashflows
         for (const inv of investments) {
+            // Outflow (Investment)
+            if (inv.amount) {
+                cashFlows.push({
+                    date: new Date(inv.createdAt),
+                    amount: -Number(inv.amount),
+                });
+            }
 
-            // Inflow
-            cashFlows.push({
-                date: new Date(inv.createdAt as string),
-                amount: -(inv.amount as number),
-            });
-
-            // Outflow
+            // Inflow (Redemption)
             if (inv.status === InvestmentStatus.REDEEMED || inv.status === InvestmentStatus.PARTIALLY_REDEEMED) {
                 if (inv.redeemedAmount && inv.redeemedAt) {
                     cashFlows.push({
-                        date: new Date(inv.redeemedAt as string),
+                        date: new Date(inv.redeemedAt),
                         amount: Number(inv.redeemedAmount),
                     });
                 }
@@ -219,6 +219,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             }
         }
 
+        // Add current valuation as final inflow
         let totalCurrentValue = 0;
         for (const asset of portfolioAssets) {
             const currentPrice = priceMap.get(asset.assetId) ?? asset.avgPrice;

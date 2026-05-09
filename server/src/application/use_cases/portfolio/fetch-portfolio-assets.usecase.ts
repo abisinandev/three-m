@@ -36,6 +36,14 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                 const fund = await this._mutualFundRepository.findById(asset.assetId);
                 if (!fund) return null;
 
+                if (search && !fund.schemeCode.toLowerCase().includes(search.toLowerCase()) &&
+                    !fund.schemeName?.toLowerCase().includes(search.toLowerCase())) {
+                    return null;
+                }
+
+                const latestNav = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
+                const currentNav = latestNav?.[0]?.nav;
+
                 const investments = await this._investmentRepository.getUserInvestments(userId, {
                     filter: { schemeCode: fund.schemeCode },
                     page: 1,
@@ -47,15 +55,8 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                 const investment = investments?.[0];
                 if (!investment) return null;
 
-                if (search && !fund.schemeCode.toLowerCase().includes(search.toLowerCase()) &&
-                    !fund.schemeName?.toLowerCase().includes(search.toLowerCase())) {
-                    return null;
-                }
 
-                const latestNav = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
-                const currentNav = latestNav?.[0]?.nav || investment.nav || 0;
-
-                const holdingUnits = asset.units ?? asset.quantity ?? investment.units ?? 0;
+                const holdingUnits = asset.units ?? 0;
                 const currentValue = holdingUnits * currentNav;
                 const investedAmount = asset.investedAmount;
                 const profit = currentValue - investedAmount;
@@ -70,13 +71,13 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                     schemeName: fund.schemeName || fund.schemeCode,
                     assetType: "MF",
                     quantity: holdingUnits,
-                    avgPrice: investment.nav || asset.avgPrice || 0,
+                    avgPrice: asset.avgPrice || 0,
                     investedAmount,
                     currentPrice: currentNav,
                     currentValue,
                     profit,
                     profitPercentage: investedAmount > 0 ? (profit / investedAmount) * 100 : 0,
-                    status: investment.status || InvestmentStatus.ALLOTTED,
+                    status: investment.status,
                     logo: fund.logo || "",
                     category: fund.category || "",
                     nav: currentNav ?? 0,
@@ -93,7 +94,7 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                     !stock.name.toLowerCase().includes(search.toLowerCase())) {
                     return null;
                 }
- 
+
                 let currentPrice = asset.avgPrice;
                 const quote = await this._marketDataProvider.getLatestQuote(stock.symbol);
                 if (quote) currentPrice = quote.price;
@@ -122,7 +123,7 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                 };
             }
         });
- 
+
         const allResults = (await Promise.all(assetProcessingPromises)).filter(a => a !== null) as PortfolioAssetDTO[];
 
         const totalCount = allResults.length;
@@ -138,4 +139,3 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
         };
     }
 }
-   

@@ -111,6 +111,10 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
   const user = useUserStore((state) => state.user);
 
   const handleSetupClick = () => {
+    if (!user?.isVerified) {
+      toast.error("Complete your KYC to enable algorithmic trading.");
+      return;
+    }
     if (!user?.isSubscribed) {
       toast.warning("Upgrade to Premium to unlock algorithmic trading.");
       onPremiumModalOpen();
@@ -152,7 +156,7 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
             </p>
             <button
               onClick={handleSetupClick}
-              className="w-full py-2 bg-[#1e2025] hover:bg-[#272b33] text-[#e8eaed] text-[11px] font-bold rounded transition-colors uppercase tracking-widest border border-[#272b33] flex items-center justify-center gap-2 group"
+              className={`w-full py-2 bg-[#1e2025] hover:bg-[#272b33] text-[#e8eaed] text-[11px] font-bold rounded transition-all uppercase tracking-widest border border-[#272b33] flex items-center justify-center gap-2 group ${!user?.isVerified ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
             >
               Setup Algo
               <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />

@@ -9,4 +9,5 @@ export interface PortfolioSummaryDTO {
     profitPercentage: number;
     currentValue: number;
     xirr: number | null;
+    allocations?: { assetType: string; currentValue: number }[];
 }

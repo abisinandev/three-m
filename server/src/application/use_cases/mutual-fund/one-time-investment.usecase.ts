@@ -47,6 +47,8 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                 const user = await this._userRepository.findById(userId, session);
                 if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
+                if (!user.isVerified) throw new ValidationError(ErrorMessages.AUTH.COMPLETE_KYC);
+
                 const wallet = await this._walletRepository.findOne({ userId });
                 if (!wallet) throw new NotFoundError(ErrorMessages.PAYMENT.WALLET_NOT_FOUND);
 
@@ -101,7 +103,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                         investedAmount: amount,
                     });
                     await this._portfolioRepository.create(portfolio, session);
-                } else {    
+                } else {
                     const newTotalInvested = portfolio.investedAmount + amount;
                     const newUnits = (portfolio.units ?? 0) + (data.units || 0);
                     const newAvgPrice = latestNav;

@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 import { fetchMutualFunds, fetchSips } from '@/shared/services/mutual-fund/mutual-fund-apis-user-side';
 import { useNavigate } from '@tanstack/react-router';
+import { useUserStore } from '@stores/user/UserStore';
 import type { SipDto } from '../types/dashboard.types';
 import api from '@lib/axiosUser';
 
@@ -15,6 +16,7 @@ import HistoryTab from '../components/dashboard/HistoryTab';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 
 const MutualFundDashboard = () => {
+    const user = useUserStore((state) => state.user);
     const [selectedFilters, setSelectedFilters] = useState<string[]>(['All Funds']);
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearch] = useDebounce(searchTerm, 400);
@@ -168,6 +170,7 @@ const MutualFundDashboard = () => {
                                 handleResume={handleResume}
                                 handleEdit={handleEdit}
                                 handleCancel={handleCancel}
+                                isVerified={user?.isVerified ?? false}
                             />
                         )}
 

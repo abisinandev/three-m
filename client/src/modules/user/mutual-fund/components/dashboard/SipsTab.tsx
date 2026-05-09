@@ -3,6 +3,7 @@ import { CalendarCheck, Pause, Play, Trash2, AlertCircle, ChevronDown, ChevronUp
 import dayjs from 'dayjs';
 import type { SipDto } from '../../types/dashboard.types';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
+import { toast } from 'sonner';
 
 interface SipsTabProps {
     sipsLoading: boolean;
@@ -11,6 +12,7 @@ interface SipsTabProps {
     handleResume: (id: string) => void;
     handleEdit: (id: string) => void;
     handleCancel: (id: string) => void;
+    isVerified: boolean;
 }
 
 const SipsTab: React.FC<SipsTabProps> = ({
@@ -18,7 +20,8 @@ const SipsTab: React.FC<SipsTabProps> = ({
     sips,
     handlePause,
     handleResume,
-    handleCancel
+    handleCancel,
+    isVerified
 }) => {
     const [confirmModal, setConfirmModal] = useState<{
         isOpen: boolean;
@@ -33,6 +36,10 @@ const SipsTab: React.FC<SipsTabProps> = ({
     });
 
     const openConfirmModal = (type: 'pause' | 'cancel', sipId: string, sipName: string) => {
+        if (!isVerified) {
+            toast.error("Complete your KYC to manage SIP plans");
+            return;
+        }
         setConfirmModal({
             isOpen: true,
             type,
@@ -141,15 +148,21 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                                 {sip.status === 'ACTIVE' ? (
                                                     <button
                                                         onClick={() => openConfirmModal('pause', sip.id, sip.schemeName || sip.schemeCode)}
-                                                        className="w-9 h-9 flex items-center justify-center bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-xl hover:bg-amber-500 hover:text-black transition-all duration-300"
+                                                        className={`w-9 h-9 flex items-center justify-center bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-xl hover:bg-amber-500 hover:text-black transition-all duration-300 ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
                                                         title="Pause SIP"
                                                     >
                                                         <Pause size={16} strokeWidth={2.5} />
                                                     </button>
                                                 ) : (
                                                     <button
-                                                        onClick={() => handleResume(sip.id)}
-                                                        className="w-9 h-9 flex items-center justify-center bg-green-500/10 text-green-500 border border-green-500/20 rounded-xl hover:bg-green-500 hover:text-black transition-all duration-300"
+                                                        onClick={() => {
+                                                            if (!isVerified) {
+                                                                toast.error("Complete your KYC to manage SIP plans");
+                                                                return;
+                                                            }
+                                                            handleResume(sip.id);
+                                                        }}
+                                                        className={`w-9 h-9 flex items-center justify-center bg-green-500/10 text-green-500 border border-green-500/20 rounded-xl hover:bg-green-500 hover:text-black transition-all duration-300 ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
                                                         title="Resume SIP"
                                                     >
                                                         <Play size={16} strokeWidth={2.5} />
@@ -158,7 +171,7 @@ const SipsTab: React.FC<SipsTabProps> = ({
 
                                                 <button
                                                     onClick={() => openConfirmModal('cancel', sip.id, sip.schemeName || sip.schemeCode)}
-                                                    className="w-9 h-9 flex items-center justify-center bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-300"
+                                                    className={`w-9 h-9 flex items-center justify-center bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-300 ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
                                                     title="Cancel SIP"
                                                 >
                                                     <Trash2 size={16} strokeWidth={2.5} />

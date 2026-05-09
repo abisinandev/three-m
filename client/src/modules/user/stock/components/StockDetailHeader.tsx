@@ -12,6 +12,7 @@ export const StockDetailHeader = ({
   changePercent,
   isPositive,
   onTradeClick,
+  isVerified,
 }: StockDetailHeaderProps) => {
   const fmt = (v: number | string | null | undefined, digits = 2) => {
     if (v === undefined || v === null || isNaN(Number(v))) return "0.00";
@@ -82,13 +83,13 @@ export const StockDetailHeader = ({
           <div className="flex gap-2">
             <button
               onClick={() => onTradeClick("buy")}
-              className="px-5 py-1.5 bg-[#00C853] text-white text-[11px] font-bold rounded hover:bg-[#00e676] transition-all active:scale-95 uppercase tracking-wider"
+              className={`px-5 py-1.5 bg-[#00C853] text-white text-[11px] font-bold rounded hover:bg-[#00e676] transition-all active:scale-95 uppercase tracking-wider ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed active:scale-100' : ''}`}
             >
               Buy
             </button>
             <button
               onClick={() => onTradeClick("sell")}
-              className="px-5 py-1.5 bg-[#FF1744] text-[#e8eaed] text-[11px] font-bold rounded hover:bg-[#ff5252] transition-all active:scale-95 uppercase tracking-wider"
+              className={`px-5 py-1.5 bg-[#FF1744] text-[#e8eaed] text-[11px] font-bold rounded hover:bg-[#ff5252] transition-all active:scale-95 uppercase tracking-wider ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed active:scale-100' : ''}`}
             >
               Sell
             </button>
