@@ -1,6 +1,6 @@
-import { LandingPage } from '@modules/user/components/LandingPageComponent'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { ROUTES } from '@shared/constants/routes';
+import { LandingPage } from '@/modules/user/dashboard/components/LandingPageComponent';
 
 export const Route = createFileRoute('/')({
   beforeLoad: async ({ context }) => {
