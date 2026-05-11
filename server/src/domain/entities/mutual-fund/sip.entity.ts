@@ -1,4 +1,5 @@
 import { SipFrequency, SipStatus } from "@domain/enum/funds/sip.enums";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 export class SipEntity {
     private readonly _id?: string;
@@ -16,11 +17,11 @@ export class SipEntity {
     private readonly _totalInstallments: number;
     private readonly _executedInstallments: number;
 
-    private readonly _status: SipStatus;
+    private _status: SipStatus;
     private readonly _failureReason?: string;
 
     private readonly _createdAt: Date;
-    private readonly _updatedAt?: Date;
+    private _updatedAt?: Date;
 
     private constructor(props: {
         id?: string;
@@ -187,4 +188,20 @@ export class SipEntity {
     get failureReason() { return this._failureReason; }
     get createdAt() { return this._createdAt; }
     get updatedAt() { return this._updatedAt; }
+
+    cancel() {
+
+        if (
+            this.status !== SipStatus.ACTIVE
+        ) {
+
+            throw new ValidationError(
+                "Only active SIP can cancel"
+            );
+        }
+
+        this._status = SipStatus.CANCELLED;
+
+        this._updatedAt = new Date();
+    }
 }
