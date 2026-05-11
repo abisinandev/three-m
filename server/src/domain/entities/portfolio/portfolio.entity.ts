@@ -1,3 +1,4 @@
+import { ValidationError } from "@presentation/express/utils/error-handling";
 import { AssetType } from "./enum/asset-type";
 
 export class PortfolioEntity {
@@ -167,7 +168,7 @@ export class PortfolioEntity {
     lockQuantity(qty: number) {
         const currentQty = this._quantity ?? 0;
         if (currentQty - this._lockQty < qty) {
-            throw new Error("Insufficient unlocked quantity");
+            throw new ValidationError("Insufficient unlocked quantity");
         }
 
         this._lockQty += qty;
@@ -176,7 +177,7 @@ export class PortfolioEntity {
 
     unlockQuantity(qty: number) {
         if (this._lockQty < qty) {
-            throw new Error("Cannot unlock more than locked quantity");
+            throw new ValidationError("Cannot unlock more than locked quantity");
         }
 
         this._lockQty -= qty;

@@ -1,3 +1,4 @@
+import { ValidationError } from "@presentation/express/utils/error-handling";
 import { Features } from "./enums/features.enum";
 import { SubscriptionPlans } from "./enums/plans.enum";
 
@@ -101,13 +102,13 @@ export class PlanEntity {
     }
 
     updatePrice(price: number) {
-        if (price < 0) throw new Error("Invalid price");
+        if (price < 0) throw new ValidationError("Invalid price");
         this._price = price;
         this._updatedAt = new Date();
     }
 
     updateDuration(days: number) {
-        if (days <= 0) throw new Error("Invalid duration");
+        if (days <= 0) throw new ValidationError("Invalid duration");
         this._durationInDays = days;
         this._updatedAt = new Date();
     }
@@ -133,16 +134,16 @@ export class PlanEntity {
         isActive?: boolean;
     }) {
         if (this._code === SubscriptionPlans.FREE) {
-            throw new Error("Base FREE plan cannot be modified.");
+            throw new ValidationError("Base FREE plan cannot be modified.");
         }
 
         if (props.price !== undefined) {
-            if (props.price < 0) throw new Error("Price cannot be negative.");
+            if (props.price < 0) throw new ValidationError("Price cannot be negative.");
             this._price = props.price;
         }
 
         if (props.durationInDays !== undefined) {
-            if (props.durationInDays <= 0) throw new Error("Duration must be greater than zero.");
+            if (props.durationInDays <= 0) throw new ValidationError("Duration must be greater than zero.");
             this._durationInDays = props.durationInDays;
         }
 

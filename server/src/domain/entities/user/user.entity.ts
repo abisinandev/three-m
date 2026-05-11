@@ -10,6 +10,7 @@ import { WalletSummary } from "@domain/types/wallet-summery";
 import { KycSummary } from "@domain/types/kyc-summery";
 import { SubscriptionPlans } from "../subscription/enums/plans.enum";
 import { SubscriptionStatus } from "../subscription/enums/subscription-status.enums";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 export class UserEntity {
   private readonly _id: string | null;
@@ -83,7 +84,7 @@ export class UserEntity {
     googleId?: string | null;
   }) {
     if (props.fullName.length < 2) {
-      throw new Error("Full name must be at least 2 characters");
+      throw new ValidationError("Full name must be at least 2 characters");
     }
 
     this._id = props.id ?? null;

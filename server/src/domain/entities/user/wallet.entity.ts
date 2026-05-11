@@ -1,5 +1,6 @@
 import { CurrencyTypes } from "@domain/enum/users/currency-enum";
 import { WalletStatus } from "@domain/enum/wallet/wallet-status.enum";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 export class WalletEntity {
   private readonly _id: string | null;
@@ -43,7 +44,7 @@ export class WalletEntity {
     const balance = data.balance ?? 0;
 
     if (balance > this.MAX_BALANCE) {
-      throw new Error("Wallet balance cannot exceed ₹100,000.");
+      throw new ValidationError("Wallet balance cannot exceed ₹100,000.");
     }
 
     return new WalletEntity({
@@ -115,10 +116,10 @@ export class WalletEntity {
 
 
   credit(amount: number) {
-    if (amount <= 0) throw new Error("Credit amount must be positive");
+    if (amount <= 0) throw new ValidationError("Credit amount must be positive");
 
     if (this._balance + amount > WalletEntity.MAX_BALANCE) {
-      throw new Error("Wallet balance cannot exceed ₹100,000.");
+      throw new ValidationError("Wallet balance cannot exceed ₹100,000.");
     }
 
     this._balance += amount;
@@ -126,10 +127,10 @@ export class WalletEntity {
   }
 
   debit(amount: number) {
-    if (amount <= 0) throw new Error("Debit amount must be positive");
+    if (amount <= 0) throw new ValidationError("Debit amount must be positive");
 
     if (amount > this.availableBalance) {
-      throw new Error("Insufficient available balance");
+      throw new ValidationError("Insufficient available balance");
     }
 
     this._balance -= amount;
@@ -137,10 +138,10 @@ export class WalletEntity {
   }
 
   lock(amount: number) {
-    if (amount <= 0) throw new Error("Amount must be positive");
+    if (amount <= 0) throw new ValidationError("Amount must be positive");
 
     if (amount > this.availableBalance) {
-      throw new Error("Insufficient available balance to lock");
+      throw new ValidationError("Insufficient available balance to lock");
     }
 
     this._lockedBalance += amount;
@@ -148,10 +149,10 @@ export class WalletEntity {
   }
 
   unlock(amount: number) {
-    if (amount <= 0) throw new Error("Amount must be positive");
+    if (amount <= 0) throw new ValidationError("Amount must be positive");
 
     if (amount > this._lockedBalance) {
-      throw new Error("Insufficient locked balance");
+      throw new ValidationError("Insufficient locked balance");
     }
 
     this._lockedBalance -= amount;

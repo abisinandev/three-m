@@ -1,3 +1,4 @@
+import { ValidationError } from "@presentation/express/utils/error-handling";
 import { Budget } from "./value-objects/budget.vo";
 import { ExpenseSummary } from "./value-objects/expense-summery.vo";
 import { Expense } from "./value-objects/expense.vo";
@@ -141,7 +142,7 @@ export class ExpenseTrackerEntity {
 
     removeExpenseAt(index: number): void {
         if (index < 0 || index >= this._expenses.length) {
-            throw new Error('Invalid expense index');
+            throw new ValidationError('Invalid expense index');
         }
         this._expenses.splice(index, 1);
         this.recalculate();

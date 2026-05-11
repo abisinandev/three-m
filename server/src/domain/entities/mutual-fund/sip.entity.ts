@@ -83,11 +83,11 @@ export class SipEntity {
     ): SipEntity {
 
         if (sip._status !== SipStatus.ACTIVE) {
-            throw new Error("SIP is not active");
+            throw new ValidationError("SIP is not active");
         }
 
         if (sip._executedInstallments >= sip._totalInstallments) {
-            throw new Error("SIP already completed");
+            throw new ValidationError("SIP already completed");
         }
 
         const executedInstallments = sip._executedInstallments + 1;
@@ -114,7 +114,7 @@ export class SipEntity {
 
     static pause(sip: SipEntity): SipEntity {
         if (sip._status !== SipStatus.ACTIVE) {
-            throw new Error("Only active SIP can be paused");
+            throw new ValidationError("Only active SIP can be paused");
         }
 
         return new SipEntity({
@@ -126,7 +126,7 @@ export class SipEntity {
 
     static cancel(sip: SipEntity): SipEntity {
         if (sip._status === SipStatus.COMPLETED) {
-            throw new Error("Completed SIP cannot be cancelled");
+            throw new ValidationError("Completed SIP cannot be cancelled");
         }
 
         return new SipEntity({

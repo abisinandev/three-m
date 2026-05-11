@@ -2,6 +2,7 @@ import { TransactionReferenceType } from "@domain/enum/wallet/transaction-refere
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { TransactionId } from "@domain/entities/user/wallet-value-objects/transaction_id.vo";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 export class TransactionEntity {
     private readonly _id?: string;
@@ -76,7 +77,7 @@ export class TransactionEntity {
         fundId?: string;
         receipt_url?: string;
     }): TransactionEntity {
-        if (data.amount <= 0) throw new Error("Transaction amount must be positive");
+        if (data.amount <= 0) throw new ValidationError("Transaction amount must be positive");
 
         return new TransactionEntity({
             userId: data.userId,
