@@ -1,7 +1,6 @@
 import { inject, injectable } from "inversify";
-import { IExecuteDueSipsUseCase } from "./interfaces/execute-due-sip-usecase.interface";
-import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
+import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
 import { SipInstallmentEntity } from "@domain/entities/mutual-fund/sip-intallment.entity";
 import { ISipRepository } from "@application/interfaces/repositories/feature/sip-repository.interface";
 import { SipStatus } from "@domain/enum/funds/sip.enums";
@@ -10,13 +9,10 @@ import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity
 import { InvestmentType, PaymentMethod } from "@domain/enum/funds/investment.enums";
 import { calculateNextExecutionDate } from "@shared/utils/sip/sip-installment.utils";
 import { SipEntity } from "@domain/entities/mutual-fund/sip.entity";
-import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
-import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
-import { CurrencyTypes } from "@domain/enum/users/currency-enum";
+import { ITransactionService } from "@application/services/transaction/interfaces/transaction.service.interface";
+import { IWalletService } from "@application/services/wallet/interfaces/wallet.service.interface";
+import { IPortfolioService } from "@application/services/portfolio/interfaces/portfolio.service.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
-import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
-import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
-import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import mongoose from "mongoose";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
@@ -24,14 +20,13 @@ import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
-import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
-import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
-import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
+import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
+import { IExecuteDueSipsUseCase } from "./interfaces/execute-due-sip-usecase.interface";
 
 @injectable()
 export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
@@ -39,14 +34,16 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
         @inject(SIP_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
         @inject(SIP_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
-        @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualfundRepo: IMutualFundRepository,
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
-        @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotificationUseCase: ICreateNotificationUseCase,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
-        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
+        @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotificationUseCase: ICreateNotificationUseCase,
         @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
+        @inject(USER_TYPES.TransactionService) private readonly _transactionService: ITransactionService,
+        @inject(USER_TYPES.WalletService) private readonly _walletService: IWalletService,
+        @inject(PORTFOLIO_TYPES.PortfolioService) private readonly _portfolioService: IPortfolioService,
     ) { }
+
 
     async execute(): Promise<void> {
         const dueInstallments = await this._sipInstallmentRepository.findActiveDueSips() ?? [];
@@ -69,8 +66,8 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
             const fund = await this._mutualfundRepo.findBySchemeCode(installment.schemeCode);
             if (!fund) return;
 
-            const wallet = await this._walletRepository.findById(user.walletId as string);
-            if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
+            const wallet = await this._walletRepository.findOne({ userId: user.id as string });
+            if (!wallet) throw new NotFoundError(ErrorMessages.PAYMENT.WALLET_NOT_FOUND);
 
             if ((wallet?.balance ?? 0) < installment.amount) {
                 await this._sipInstallmentRepository.markFailed(
@@ -88,24 +85,15 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 return;
             }
 
-            const transaction = TransactionEntity.create({
-                userId: user.id as string,
-                userCode: user.userCode,
-                amount: installment.amount,
-                currency: CurrencyTypes.INR,
-                status: TransactionStatus.PENDING,
-                type: TransactionTypes.SIP_INSTALLMENT,
-                referenceType: TransactionReferenceType.SIP,
-                referenceId: installment.id,
-                fundId: fund.id,
-            });
-            const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
+            const newTransaction = await this._transactionService.createSipTransaction(
+                user,
+                installment.amount,
+                fund.id as string,
+                installment.id!,
+                session
+            );
 
-            wallet.lock(installment.amount);
-            wallet.debit(installment.amount);
-            wallet.unlock(installment.amount);
-
-            await this._walletRepository.update(wallet.id as string, wallet, session);
+            await this._walletService.debit(wallet, installment.amount, session);
 
             const investment = InvestmentEntity.create({
                 amount: installment.amount,
@@ -116,38 +104,20 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 sipInstallmentId: installment.id,
             });
 
-            await this._investmentRepository.create(investment, session);
+            await this._investmentRepository.createInvestment(investment, session);
 
             const navHistory = await this._navUpdateProvider.fetchNavHistories(installment.schemeCode);
             const latestNav = navHistory[0]?.nav ?? 0;
-            const unitsAllotted = latestNav > 0 ? installment.amount / latestNav : 0;
 
-            let portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
-                installment.userId,
+            await this._portfolioService.updateOrCreatePortfolio(
+                user.id as string,
                 fund.id as string,
+                AssetType.MUTUAL_FUND,
+                installment.amount,
+                latestNav,
                 session
             );
 
-            if (!portfolio) {
-                portfolio = PortfolioEntity.create({
-                    userId: user.id as string,
-                    assetId: fund.id as string,
-                    assetType: AssetType.MUTUAL_FUND,
-                    units: unitsAllotted,
-                    avgPrice: latestNav,
-                    investedAmount: installment.amount,
-                });
-                await this._portfolioRepository.create(portfolio, session);
-            } else {
-                const newTotalInvested = portfolio.investedAmount + installment.amount;
-                const newUnits = (portfolio.units ?? 0) + unitsAllotted;
-
-                const newAvgPrice = newUnits > 0 ? newTotalInvested / newUnits : latestNav;
-
-                portfolio.updateQuantityAndPrice(newUnits, newAvgPrice, newTotalInvested);
-
-                await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
-            }
 
             const nextDate = calculateNextExecutionDate(
                 sip.nextExecutionDate,
@@ -181,8 +151,8 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 await this._sipInstallmentRepository.create(nextInstallment, session);
             }
 
-            newTransaction.markSucess();
-            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
+            await this._transactionService.markSuccess(newTransaction, session);
+
 
             await session.commitTransaction();
 

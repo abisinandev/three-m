@@ -61,4 +61,48 @@ export class TransactionService implements ITransactionService {
             session
         );
     }
+
+    async createSipTransaction(
+        user: UserEntity,
+        amount: number,
+        fundId: string,
+        referenceId: string,
+        session: ClientSession
+    ): Promise<TransactionEntity> {
+        const transaction = TransactionEntity.create({
+            userId: user.id!,
+            userCode: user.userCode!,
+            amount,
+            currency: CurrencyTypes.INR,
+            status: TransactionStatus.PENDING,
+            type: TransactionTypes.SIP_INSTALLMENT,
+            referenceType: TransactionReferenceType.SIP,
+            referenceId: referenceId,
+            fundId: fundId,
+        });
+
+        return await this._transactionRepository.createTransaction(transaction, session);
+    }
+
+    async createStockTransaction(
+        user: UserEntity,
+        amount: number,
+        type: TransactionTypes.BUY | TransactionTypes.SELL,
+        referenceId: string,
+        session: ClientSession
+    ): Promise<TransactionEntity> {
+        const transaction = TransactionEntity.create({
+            userId: user.id!,
+            userCode: user.userCode!,
+            amount,
+            currency: CurrencyTypes.INR,
+            status: TransactionStatus.PENDING,
+            type,
+            referenceType: TransactionReferenceType.WALLET,
+            referenceId,
+        });
+
+        return await this._transactionRepository.createTransaction(transaction, session);
+    }
 }
+

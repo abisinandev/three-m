@@ -18,7 +18,8 @@ export class PortfolioService implements IPortfolioService {
         assetType: AssetType,
         amount: number,
         price: number,
-        session: ClientSession
+        session: ClientSession,
+        riskLevels?: { stopLoss?: number | null, takeProfit?: number | null }
     ): Promise<void> {
         let portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
             userId,
@@ -26,24 +27,59 @@ export class PortfolioService implements IPortfolioService {
             session
         );
 
+        const quantityOrUnits = assetType === AssetType.STOCK ? amount : amount / price;
+
         if (!portfolio) {
             portfolio = PortfolioEntity.create({
                 userId,
                 assetId,
                 assetType,
-                units: amount / price,
+                quantity: assetType === AssetType.STOCK ? quantityOrUnits : undefined,
+                units: assetType === AssetType.MUTUAL_FUND ? quantityOrUnits : undefined,
                 avgPrice: price,
-                investedAmount: amount,
+                investedAmount: assetType === AssetType.STOCK ? (quantityOrUnits * price) : amount,
             });
+            
+            if (riskLevels) {
+                portfolio.updateRiskLevels(riskLevels.stopLoss, riskLevels.takeProfit);
+            }
+            
             await this._portfolioRepository.create(portfolio, session);
         } else {
-            const newTotalInvested = portfolio.investedAmount + amount;
-            const investmentUnits = amount / price;
-            const newUnits = (portfolio.units ?? 0) + investmentUnits;
-            const newAvgPrice = price;
+            const currentQty = assetType === AssetType.STOCK ? (portfolio.quantity ?? 0) : (portfolio.units ?? 0);
+            const newTotalQuantity = currentQty + quantityOrUnits;
+            
+            const addedInvestment = assetType === AssetType.STOCK ? (quantityOrUnits * price) : amount;
+            const newTotalInvested = portfolio.investedAmount + addedInvestment;
+            const newAvgPrice = newTotalInvested / newTotalQuantity;
 
-            portfolio.updateQuantityAndPrice(newUnits, newAvgPrice, newTotalInvested);
+            portfolio.updateQuantityAndPrice(newTotalQuantity, newAvgPrice, newTotalInvested);
 
+            if (riskLevels) {
+                portfolio.updateRiskLevels(riskLevels.stopLoss, riskLevels.takeProfit);
+            }
+
+            await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
+        }
+    }
+
+    async decreaseOrDeletePortfolio(
+        userId: string,
+        assetId: string,
+        quantity: number,
+        session: ClientSession
+    ): Promise<void> {
+        const portfolio = await this._portfolioRepository.findByUserIdAndSymbol(userId, assetId, session);
+        if (!portfolio) return;
+
+        const newQuantity = (portfolio.quantity ?? 0) - quantity;
+
+        if (newQuantity <= 0) {
+            await this._portfolioRepository.deleteByUserIdAndSymbol(userId, assetId, session);
+        } else {
+            const costOfSharesSold = portfolio.avgPrice * quantity;
+            const newInvestedAmount = portfolio.investedAmount - costOfSharesSold;
+            portfolio.updateQuantityAndPrice(newQuantity, portfolio.avgPrice, newInvestedAmount);
             await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
         }
     }

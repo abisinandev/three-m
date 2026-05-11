@@ -8,6 +8,14 @@ export interface IPortfolioService {
         assetType: AssetType,
         amount: number,
         price: number,
+        session: ClientSession,
+        riskLevels?: { stopLoss?: number | null, takeProfit?: number | null }
+    ): Promise<void>;
+
+    decreaseOrDeletePortfolio(
+        userId: string,
+        assetId: string,
+        quantity: number,
         session: ClientSession
     ): Promise<void>;
 }

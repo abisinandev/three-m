@@ -2,45 +2,42 @@ import { inject, injectable } from "inversify";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
+import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { IOrderRepository } from "@application/interfaces/repositories/stock/order-repository.interface";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
-import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
+import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
-import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
-import mongoose from "mongoose";
-import { OrderStatus } from "@domain/entities/stock/enum/order-status.enum";
-import { OrderSide } from "@domain/entities/stock/enum/order-side.enum";
+import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
+import { ITransactionService } from "@application/services/transaction/interfaces/transaction.service.interface";
+import { IWalletService } from "@application/services/wallet/interfaces/wallet.service.interface";
+import { IPortfolioService } from "@application/services/portfolio/interfaces/portfolio.service.interface";
+import { IExecuteMarketBuyOrderUseCase } from "./interfaces/execute-market-buy-order.interface";
 import { TradeEntity } from "@domain/entities/stock/trade.entity";
-import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
-import { CurrencyTypes } from "@domain/enum/users/currency-enum";
-import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
-import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
-import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
+import { OrderStatus } from "@domain/entities/stock/enum/order-status.enum";
+import { OrderSide } from "@domain/entities/stock/enum/order-side.enum";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
-import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
-import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
-import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
-import { IExecuteMarketBuyOrderUseCase } from "./interfaces/execute-market-buy-order.interface";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
+import mongoose from "mongoose";
 
 @injectable()
 export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCase {
     constructor(
         @inject(STOCK_TYPES.OrderRepository) private readonly _orderRepository: IOrderRepository,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
-        @inject(USER_TYPES.WalletRepository) private readonly _wallet: IWalletRepository,
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
+        @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
-        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
-        @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotification: ICreateNotificationUseCase,
+        @inject(USER_TYPES.TransactionService) private readonly _transactionService: ITransactionService,
+        @inject(USER_TYPES.WalletService) private readonly _walletService: IWalletService,
+        @inject(PORTFOLIO_TYPES.PortfolioService) private readonly _portfolioService: IPortfolioService,
     ) { }
 
     async execute(orderId: string): Promise<void> {
@@ -70,24 +67,18 @@ export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCa
                 totalValue: currentPrice * order.quantity,
             };
 
+            const newTransaction = await this._transactionService.createStockTransaction(
+                user,
+                execution.totalValue,
+                TransactionTypes.BUY,
+                order.id as string,
+                session
+            );
 
-            const transaction = TransactionEntity.create({
-                userId: order.userId,
-                userCode: user.userCode,
-                amount: execution.totalValue,
-                currency: CurrencyTypes.INR,
-                referenceType: TransactionReferenceType.WALLET,
-                status: TransactionStatus.PENDING,
-                type: TransactionTypes.BUY,
-                referenceId: order.id as string
-            });
-            const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
-
-            const wallet = await this._wallet.findByUserId(order.userId, session);
+            const wallet = await this._walletRepository.findOne({ userId: order.userId as string });
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
 
-            wallet.debit(execution.totalValue);
-            await this._wallet.update(wallet.id as string, wallet, session);
+            await this._walletService.debit(wallet, execution.totalValue, session);
 
             order.updateFilledQty(execution.filledQty, execution.avgPrice);
             order.markFilled();
@@ -107,39 +98,17 @@ export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCa
             const stock = await this._stockRepository.findBySymbol(order.symbol);
             if (!stock) throw new NotFoundError(ErrorMessages.STOCKS.NOT_FOUND);
 
-            let portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
+            await this._portfolioService.updateOrCreatePortfolio(
                 order.userId,
                 stock.id as string,
-                session
+                AssetType.STOCK,
+                execution.filledQty,
+                execution.avgPrice,
+                session,
+                { stopLoss: order.stopLoss, takeProfit: order.takeProfit }
             );
 
-            if (portfolio) {
-                const newTotalQuantity = (portfolio.quantity ?? 0) + execution.filledQty;
-                const newTotalInvested = portfolio.investedAmount + execution.totalValue;
-                const newAvgPrice = newTotalInvested / newTotalQuantity;
-
-                portfolio.updateQuantityAndPrice(newTotalQuantity, newAvgPrice, newTotalInvested);
-                if (order.stopLoss || order.takeProfit) {
-                    portfolio.updateRiskLevels(order.stopLoss, order.takeProfit);
-                }
-                await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
-            } else {
-                portfolio = PortfolioEntity.create({
-                    userId: order.userId,
-                    assetId: stock.id as string,
-                    assetType: AssetType.STOCK,
-                    quantity: execution.filledQty,
-                    avgPrice: execution.avgPrice,
-                    investedAmount: execution.totalValue,
-                });
-                if (order.stopLoss || order.takeProfit) {
-                    portfolio.updateRiskLevels(order.stopLoss, order.takeProfit);
-                }
-                await this._portfolioRepository.create(portfolio, session);
-            }
-
-            newTransaction.markSucess();
-            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
+            await this._transactionService.markSuccess(newTransaction, session);
 
             await this._createNotification.execute({
                 userId: order.userId,
@@ -150,7 +119,7 @@ export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCa
 
             await session.commitTransaction();
 
-            logger.info(`[ExecuteMarketBuyOrder] market buy order placed`)
+            logger.info(`[ExecuteMarketBuyOrder] market buy order placed`);
         } catch (error) {
             await session.abortTransaction();
             console.error(`[ExecuteMarketBuyOrder] Failed for order ${orderId}:`, error);

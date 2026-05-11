@@ -89,6 +89,8 @@ import { IExecuteMarketBuyOrderUseCase } from "@application/use_cases/stock/inte
 import { ExecuteMarketBuyOrderUseCase } from "@application/use_cases/stock/execute-market-buy-order.usecase";
 import { IExecuteMarketSellOrderUseCase } from "@application/use_cases/stock/interfaces/execute-market-sell-order.interface";
 import { ExecuteMarketSellOrderUseCase } from "@application/use_cases/stock/execute-market-sell-order.usecase";
+import { IStockValidationService } from "@application/services/stock/interfaces/stock-validation.service.interface";
+import { StockValidationService } from "@application/services/stock/stock-validation.service";
 
 // BullMQ & Queues
 import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy/strategy.queue";
@@ -134,6 +136,8 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IExecuteMarketBuyOrderUseCase>(STOCK_TYPES.ExecuteMarketBuyOrderUseCase).to(ExecuteMarketBuyOrderUseCase);
     bind<IMarketSellOrderUseCase>(STOCK_TYPES.MarketSellOrderUseCase).to(MarketSellOrderUseCase);
     bind<IExecuteMarketSellOrderUseCase>(STOCK_TYPES.ExecuteMarketSellOrderUseCase).to(ExecuteMarketSellOrderUseCase);
+    bind<IStockValidationService>(STOCK_TYPES.StockValidationService).to(StockValidationService);
+
     bind<ILimitBuyOrderUseCase>(STOCK_TYPES.LimitBuyOrderUseCase).to(LimitBuyOrderUseCase);
     bind<IExecuteLimitBuyOrderUseCase>(STOCK_TYPES.ExecuteLimitBuyOrderUseCase).to(ExecuteLimitBuyOrderUseCase);
     bind<ILimitSellOrderUseCase>(STOCK_TYPES.LimitSellOrderUseCase).to(LimitSellOrderUseCase);

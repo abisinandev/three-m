@@ -6,15 +6,10 @@ import { IOrderRepository } from "@application/interfaces/repositories/stock/ord
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
-import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
-import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
+import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import mongoose from "mongoose";
-import { CurrencyTypes } from "@domain/enum/users/currency-enum";
-import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
-import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
-import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { OrderSide } from "@domain/entities/stock/enum/order-side.enum";
@@ -26,19 +21,24 @@ import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notifi
 import { IExecuteMarketSellOrderUseCase } from "./interfaces/execute-market-sell-order.interface";
 import { ICreateNotificationUseCase } from "../notification/interfaces/create-notification-usecase.interface";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
+import { ITransactionService } from "@application/services/transaction/interfaces/transaction.service.interface";
+import { IWalletService } from "@application/services/wallet/interfaces/wallet.service.interface";
+import { IPortfolioService } from "@application/services/portfolio/interfaces/portfolio.service.interface";
 
 @injectable()
 export class ExecuteMarketSellOrderUseCase implements IExecuteMarketSellOrderUseCase {
     constructor(
         @inject(STOCK_TYPES.OrderRepository) private readonly _orderRepository: IOrderRepository,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
-        @inject(USER_TYPES.WalletRepository) private readonly _wallet: IWalletRepository,
+        @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
-        @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotification: ICreateNotificationUseCase,
+        @inject(USER_TYPES.TransactionService) private readonly _transactionService: ITransactionService,
+        @inject(USER_TYPES.WalletService) private readonly _walletService: IWalletService,
+        @inject(PORTFOLIO_TYPES.PortfolioService) private readonly _portfolioService: IPortfolioService,
     ) { }
 
     async execute(orderId: string): Promise<void> {
@@ -85,23 +85,18 @@ export class ExecuteMarketSellOrderUseCase implements IExecuteMarketSellOrderUse
                 profit: (currentPrice - portfolio.avgPrice) * order.quantity,
             };
 
-            const transaction = TransactionEntity.create({
-                userId: order.userId,
-                userCode: user.userCode,
-                amount: execution.totalValue,
-                currency: CurrencyTypes.INR,
-                referenceType: TransactionReferenceType.WALLET,
-                status: TransactionStatus.PENDING,
-                type: TransactionTypes.SELL,
-                referenceId: order.id as string
-            });
-            const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
+            const newTransaction = await this._transactionService.createStockTransaction(
+                user,
+                execution.totalValue,
+                TransactionTypes.SELL,
+                order.id as string,
+                session
+            );
 
-            const wallet = await this._wallet.findByUserId(order.userId, session);
+            const wallet = await this._walletRepository.findOne({ userId: order.userId as string });
             if (!wallet) throw new NotFoundError(ErrorMessages.WALLET.NOT_FOUND);
 
-            wallet.credit(execution.totalValue);
-            await this._wallet.update(wallet.id as string, wallet, session);
+            await this._walletService.credit(wallet, execution.totalValue, session);
 
             order.updateFilledQty(execution.filledQty, execution.totalValue);
             order.markFilled();
@@ -119,18 +114,14 @@ export class ExecuteMarketSellOrderUseCase implements IExecuteMarketSellOrderUse
             });
             await this._tradeRepository.create(trade, session);
 
-            const newQuantity = (portfolio.quantity ?? 0) - execution.filledQty;
-            if (newQuantity <= 0) {
-                await this._portfolioRepository.deleteByUserIdAndSymbol(order.userId, stock.id as string, session);
-            } else {
-                const costOfSharesSold = portfolio.avgPrice * execution.filledQty;
-                const newInvestedAmount = portfolio.investedAmount - costOfSharesSold;
-                portfolio.updateQuantityAndPrice(newQuantity, portfolio.avgPrice, newInvestedAmount);
-                await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
-            }
+            await this._portfolioService.decreaseOrDeletePortfolio(
+                order.userId,
+                stock.id as string,
+                execution.filledQty,
+                session
+            );
 
-            newTransaction.markSucess();
-            await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
+            await this._transactionService.markSuccess(newTransaction, session);
 
             await this._createNotification.execute({
                 userId: order.userId,
