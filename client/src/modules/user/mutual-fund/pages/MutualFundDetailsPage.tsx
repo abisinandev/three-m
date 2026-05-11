@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Star, Loader2, ArrowUpRight, ArrowDownRight, TrendingUp, ArrowLeft } from 'lucide-react';
+import { Star, ArrowUpRight, ArrowDownRight, ArrowLeft } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from '@tanstack/react-router';
 import type { FundDetails } from '../types/details.types';
@@ -42,6 +42,7 @@ const MutualFundDetailsPage = () => {
   });
 
   const latestNav = data?.nav ?? 0;
+  console.log('Latest: ', latestNav);
 
   const units = useMemo(
     () => (investment > 0 && latestNav > 0 ? calculateUnitPrice(investment, latestNav) : 0),
@@ -49,26 +50,26 @@ const MutualFundDetailsPage = () => {
   );
 
   const [successData, setSuccessData] = useState<{ amount?: number; units?: number } | null>(null);
- 
-   const { mutate: invest, isPending: isSubmitting } = useInvestMutualFund(
-     (data: { data?: { amount?: number; units?: number } }) => {
-       setSuccessData(data.data as { amount?: number; units?: number });
-       setShowConfirmModal(false);
-       setShowInvestModal(false);
-       setShowSuccessModal(true);
-       setErrorMsg('');
-     },
-     (msg) => {
-       alert(msg);
-     }
-   );
+
+  const { mutate: invest, isPending: isSubmitting } = useInvestMutualFund(
+    (data: { data?: { amount?: number; units?: number } }) => {
+      setSuccessData(data.data as { amount?: number; units?: number });
+      setShowConfirmModal(false);
+      setShowInvestModal(false);
+      setShowSuccessModal(true);
+      setErrorMsg('');
+    },
+    (msg) => {
+      alert(msg);
+    }
+  );
 
 
   const { mutate: startSipMutate, isPending: isSipSubmitting } = useStartSip(
     (result) => {
-        setShowSipModal(false);
-        setShowSuccessModal(true);
-        setErrorMsg('');
+      setShowSipModal(false);
+      setShowSuccessModal(true);
+      setErrorMsg('');
     },
     (msg, error: unknown) => {
       const err = error as { response?: { status?: number } };
@@ -143,7 +144,7 @@ const MutualFundDetailsPage = () => {
       <div className="sticky top-0 z-40 bg-[#0b0c0e]/95 backdrop-blur-md border-b border-[#1f1f1f]">
         <div className="max-w-[1600px] mx-auto px-6 py-4">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            
+
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate({ to: '/user/mutual-funds' })}
@@ -187,7 +188,7 @@ const MutualFundDetailsPage = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-			          <button
+                <button
                   type="button"
                   className="p-1.5 rounded-md text-gray-500 hover:text-white hover:bg-white/5 transition-all outline-none"
                   title="Add to Watchlist"
@@ -231,13 +232,13 @@ const MutualFundDetailsPage = () => {
       </div>
       <div className="max-w-[1600px] mx-auto px-6 py-6">
         <div className="grid grid-cols-12 gap-6">
-          
+
           <div className="col-span-12 lg:col-span-9 space-y-6">
-            <MutualFundChart 
-              chartData={chartData} 
-              activePeriod={activePeriod} 
-              setActivePeriod={setActivePeriod} 
-              periods={periods} 
+            <MutualFundChart
+              chartData={chartData}
+              activePeriod={activePeriod}
+              setActivePeriod={setActivePeriod}
+              periods={periods}
             />
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

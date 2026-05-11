@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { startSip } from '@/shared/services/mutual-fund/mutual-fund-apis-user-side';
 import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
+import api from '@lib/axiosUser';
+import { createIdempotencyKey } from '@/utils/uuid/generate-idempotency-key';
 
 interface SipPayload {
     schemeCode: string;
@@ -19,12 +20,17 @@ export const useStartSip = <T = { message?: string; data?: unknown }>(
 
     return useMutation({
         mutationFn: async (payload: SipPayload) => {
-            const res = await startSip(payload);
+            const res = await api.post('/user/mutual-funds/sip/create', 
+                payload,
+                {
+                    headers: { 'x-idempotency-key': createIdempotencyKey(payload as any) }
+                }
+            );
             return res.data;
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['portfolio'] });
-            queryClient.invalidateQueries({ queryKey: ['sip-investments'] }); // Assuming there might be a sip list query
+            queryClient.invalidateQueries({ queryKey: ['sip-investments'] });
             onSuccess(data);
         },
         onError: (error: { response?: { status?: number; data?: { message?: string } } }) => {
@@ -36,4 +42,3 @@ export const useStartSip = <T = { message?: string; data?: unknown }>(
         },
     });
 };
-
