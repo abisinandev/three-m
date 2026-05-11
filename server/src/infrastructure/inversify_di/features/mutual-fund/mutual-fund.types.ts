@@ -29,4 +29,5 @@ export const MUTUAL_FUND_TYPES = {
     NavDailyScheduler: Symbol.for("NavDailyScheduler"),
     CagrUpdateScheduler: Symbol.for("CagrUpdateScheduler"),
     NavAllocationScheduler: Symbol.for("NavAllocationScheduler"),
+    InvestmentValidationService: Symbol.for("InvestmentValidationService"),
 };

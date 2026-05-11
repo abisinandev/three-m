@@ -21,6 +21,8 @@ import { MfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/m
 
 // Providers
 import { NavUpdateProvider } from "@infrastructure/providers/mutual-fund/nav-update.provider";
+import { InvestmentValidationService } from "@application/services/mutual-fund/investment-validation.service";
+
 
 // Controllers
 import { MutualFundsAdminController } from "@presentation/http/controllers/mutual-funds/mutual-fund-admin.controller";
@@ -47,6 +49,8 @@ import { IOneTimeInvestmentUseCase } from "@application/use_cases/mutual-fund/in
 import { INavAllocateUseCase } from "@application/use_cases/mutual-fund/interfaces/nav-allocate-usecase.interface";
 import { IMfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-investment-history-usecase.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
+import { IInvestmentValidationService } from "@application/services/mutual-fund/interfaces/investment-validation.service.interface";
+
 
 
 export const MutualFundModule = new ContainerModule(({ bind }) => {
@@ -70,6 +74,8 @@ export const MutualFundModule = new ContainerModule(({ bind }) => {
 
     // Providers
     bind<IMutualFundNavUpdateProvider>(MUTUAL_FUND_TYPES.NavUpdateProvider).to(NavUpdateProvider);
+    bind<IInvestmentValidationService>(MUTUAL_FUND_TYPES.InvestmentValidationService).to(InvestmentValidationService);
+
 
     // Controllers
     bind<MutualFundsAdminController>(MUTUAL_FUND_TYPES.MutualFundsAdminController).to(MutualFundsAdminController);

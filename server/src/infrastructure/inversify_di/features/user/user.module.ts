@@ -36,6 +36,12 @@ import { IUserRepository } from "@application/interfaces/repositories/user/user-
 import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
 import { EditProfileUseCase } from "@application/use_cases/user/profile/edit-profile.usecase";
 import { CheckUserBlockedUseCase } from "@application/use_cases/user/profile/check-user-blocked.usecase";
+import { TransactionService } from "@application/services/transaction/transaction.service";
+import { ITransactionService } from "@application/services/transaction/interfaces/transaction.service.interface";
+import { WalletService } from "@application/services/wallet/wallet.service";
+import { IWalletService } from "@application/services/wallet/interfaces/wallet.service.interface";
+
+
 
 export const UserModule = new ContainerModule(({ bind }) => {
   //Repository
@@ -63,4 +69,8 @@ export const UserModule = new ContainerModule(({ bind }) => {
   bind<IUserWalletUseCase>(USER_TYPES.UserWalletUseCase).to(UserWalletUseCase);
   bind<ITransactionRepository>(USER_TYPES.TransactionRepository).to(TransactionRepository);
   bind<IAddToWalletUseCase>(USER_TYPES.AddToWalletUseCase).to(AddToWalletUseCase);
+  bind<ITransactionService>(USER_TYPES.TransactionService).to(TransactionService);
+  bind<IWalletService>(USER_TYPES.WalletService).to(WalletService);
+
+
 });

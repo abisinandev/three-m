@@ -157,9 +157,14 @@ export class TransactionEntity {
     get receipt_url() { return this._receipt_url; };
     get createdAt() { return this._createdAt; };
 
-    markSucess() {
+    markSuccess() {
         this._status = TransactionStatus.SUCCESSFUL;
     }
+
+    markFailed() {
+        this._status = TransactionStatus.FAILED;
+    }
+
 
     markAsRefunded() {
         this._status = TransactionStatus.REFUNDED;
