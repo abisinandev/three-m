@@ -1,8 +1,9 @@
 import api from "@lib/axiosUser";
+import { API_ROUTES } from "@shared/constants/apiRoutes";
 import type { AddExpenseRequest, AddExpenseResponse, AddIncomeRequest, ExpenseTrackerData, BudgetPlanRequest, BudgetPlanResponse } from "../../../modules/user/expense-tracker/types/expense.types";
 
 export const fetchExpenseTrackerData = async (month?: string): Promise<ExpenseTrackerData> => {
-    const response = await api.get('/user/expense-tracker', { params: { month } });
+    const response = await api.get(API_ROUTES.USER.EXPENSE_TRACKER.GET_DATA, { params: { month } });
     return {
         walletBalance: response.data.data.walletBalance,
         mutualFundInvestedAmount: response.data.data.mutualFundInvestedAmount,
@@ -26,27 +27,26 @@ export const fetchExpenseTrackerData = async (month?: string): Promise<ExpenseTr
 };
 
 export const addExpenseApi = async (data: AddExpenseRequest) => {
-    const response = await api.post<AddExpenseResponse>('/user/expense-tracker/add-expense', data);
+    const response = await api.post<AddExpenseResponse>(API_ROUTES.USER.EXPENSE_TRACKER.ADD_EXPENSE, data);
     return response.data;
 };
 
 export const addIncomeApi = async (data: AddIncomeRequest) => {
-    const response = await api.post('/user/expense-tracker/add-income', data);
+    const response = await api.post(API_ROUTES.USER.EXPENSE_TRACKER.ADD_INCOME, data);
     return response.data;
 };
 
 export const deleteExpenseApi = async (index: number) => {
-    const response = await api.delete(`/user/expense-tracker/delete-expense/${index}`);
+    const response = await api.delete(API_ROUTES.USER.EXPENSE_TRACKER.DELETE_EXPENSE(index));
     return response.data;
 };
 
 export const fetchAnalyticsData = async (month?: string) => {
-    const response = await api.get('/user/expense-tracker/analytics', { params: { month } });
+    const response = await api.get(API_ROUTES.USER.EXPENSE_TRACKER.ANALYTICS, { params: { month } });
     return response.data.data;
 };
 
 export const calculateBudgetPlan = async (data: BudgetPlanRequest): Promise<BudgetPlanResponse> => {
-    const response = await api.post('/user/expense-tracker/budget-plan', data);
+    const response = await api.post(API_ROUTES.USER.EXPENSE_TRACKER.BUDGET_PLAN, data);
     return response.data.data;
 };
-

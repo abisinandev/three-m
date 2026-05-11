@@ -38,11 +38,9 @@ export const FetchUserStocksApi = async (filters: UserStockFilters): Promise<Sto
  
 export const FetchMarketMoversApi = async (): Promise<{ success: boolean, data: { gainers: Stock[], losers: Stock[] } }> => {
     try {
-        const response = await api.get(`${API_ROUTES.USER.STOCKS.GET_ALL}/market/movers`);
+        const response = await api.get(API_ROUTES.USER.STOCKS.MARKET_MOVERS);
         return response.data;
     } catch (error) {
         throw error;
     }
 };
-
-

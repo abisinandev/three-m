@@ -1,7 +1,8 @@
 import api from "@lib/axiosUser";
+import { API_ROUTES } from "@shared/constants/apiRoutes";
 import type { DashboardData } from "../../../modules/user/dashboard/types/dashboard.types";
 
 export const fetchDashboardData = async (): Promise<DashboardData> => {
-    const response = await api.get("/user/dashboard/overview");
+    const response = await api.get(API_ROUTES.USER.DASHBOARD.OVERVIEW);
     return response.data.data;
 };

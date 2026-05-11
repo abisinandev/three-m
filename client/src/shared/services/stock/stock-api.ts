@@ -1,4 +1,5 @@
 import api from "@lib/axiosUser";
+import { API_ROUTES } from "@shared/constants/apiRoutes";
 import type { 
   BuyOrderRequest, 
   LimitBuyOrderRequest, 
@@ -18,7 +19,7 @@ export const ORDER_TYPES: Record<string, OrderType> = {
 export class StockApiService {
   static async buyOrder(data: BuyOrderRequest): Promise<OrderResponse> {
     const response = await api.post<OrderResponse>(
-      `/user/stock/order/${data.symbol}/buy`,
+      API_ROUTES.USER.STOCKS.ORDERS.BUY(data.symbol),
       data
     );
     return response.data;
@@ -26,7 +27,7 @@ export class StockApiService {
 
   static async sellOrder(data: SellOrderRequest): Promise<OrderResponse> {
     const response = await api.post<OrderResponse>(
-      `/user/stock/order/${data.symbol}/sell`,
+      API_ROUTES.USER.STOCKS.ORDERS.SELL(data.symbol),
       data
     );
     return response.data;
@@ -34,7 +35,7 @@ export class StockApiService {
 
   static async limitBuyOrder(data: LimitBuyOrderRequest): Promise<OrderResponse> {
     const response = await api.post<OrderResponse>(
-      `/user/stock/order/${data.symbol}/limit-buy`,
+      API_ROUTES.USER.STOCKS.ORDERS.LIMIT_BUY(data.symbol),
       data
     );
     return response.data;
@@ -42,14 +43,14 @@ export class StockApiService {
 
   static async limitSellOrder(data: LimitSellOrderRequest): Promise<OrderResponse> {
     const response = await api.post<OrderResponse>(
-      `/user/stock/order/${data.symbol}/limit-sell`,
+      API_ROUTES.USER.STOCKS.ORDERS.LIMIT_SELL(data.symbol),
       data
     );
     return response.data;
   }
 
   static async getPendingOrders(symbol?: string): Promise<{ data: PendingOrder[] }> {
-    const response = await api.get(`/user/stock/order/pending`, {
+    const response = await api.get(API_ROUTES.USER.STOCKS.ORDERS.PENDING, {
       params: symbol ? { symbol } : {},
     });
     return response.data;
@@ -57,11 +58,8 @@ export class StockApiService {
 
   static async cancelLimitOrder(symbol: string, orderId: string): Promise<OrderResponse> {
     const response = await api.delete<OrderResponse>(
-      `/user/stock/order/${symbol}/cancel/${orderId}`
+      API_ROUTES.USER.STOCKS.ORDERS.CANCEL(symbol, orderId)
     );
     return response.data;
   }
 }
-
-
-
