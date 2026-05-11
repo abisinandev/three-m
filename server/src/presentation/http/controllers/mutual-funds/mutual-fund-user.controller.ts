@@ -74,11 +74,15 @@ export class MutualFundUserController {
     async investment(req: Request, res: Response, next: NextFunction) {
         try {
             const dto = { ...req.body };
-            const userId = req.user?.id
-            await this._investmentUseCase.execute(dto, userId as string);
+            const userId = req.user?.id;
+            const idempotencyKey = req.headers['x-idempotency-key'] as string;
+
+            await this._investmentUseCase.execute(dto, userId as string, idempotencyKey);
+
             return ResponseHelper.success(
                 res,
                 SuccessMessage.INVESTMENT_SUCCESS,
+                null,
                 HttpStatus.CREATED
             )
         } catch (error) {

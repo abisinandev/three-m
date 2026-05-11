@@ -18,9 +18,15 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
         super(InvestmentModel, InvestmentMapper);
     }
 
-    async createInvestment(entity: InvestmentEntity): Promise<InvestmentEntity | null> {
+    async createInvestment(entity: InvestmentEntity, session?: ClientSession): Promise<InvestmentEntity | null> {
         const persistenceData = this.mapper.toPersistance(entity);
-        const createdDoc = await this.model.create(persistenceData);
+        let createdDoc;
+        if (session) {
+            const docs = await this.model.create([persistenceData], { session });
+            createdDoc = docs[0];
+        } else {
+            createdDoc = await this.model.create(persistenceData);
+        }
         return this.mapper.toDomain(createdDoc);
     }
 

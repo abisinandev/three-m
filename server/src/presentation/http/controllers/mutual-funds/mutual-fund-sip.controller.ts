@@ -23,16 +23,19 @@ export class MutualFundSipController {
     async createSip(req: Request, res: Response, next: NextFunction) {
         try {
             const dto = { ...req.body };
-            const userId = req?.user?.id
-            const result = await this._sipCreationUseCase.execute(dto, userId as string);
-            
-            if (result && (result as Record<string, unknown>).upgrade) {
+            const userId = req?.user?.id;
+            const idempotencyKey = req.headers['x-idempotency-key'] as string;
+
+            const result = await this._sipCreationUseCase.execute(dto, userId as string, idempotencyKey);
+
+            if (result && (result as { upgrade: boolean }).upgrade) {
+                const upgradeResult = result as { message: string; upgrade: boolean };
                 return ResponseHelper.success(
                     res,
-                    (result as Record<string, unknown>).message,
+                    upgradeResult.message,
                     null,
                     HttpStatus.PAYMENT_REQUIRED
-                )
+                );
             }
 
             return ResponseHelper.success(
@@ -40,7 +43,7 @@ export class MutualFundSipController {
                 SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
-            )
+            );
         } catch (error) {
             next(error)
         }

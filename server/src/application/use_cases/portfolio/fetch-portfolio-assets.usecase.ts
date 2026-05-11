@@ -12,7 +12,6 @@ import { IMarketDataProvider } from "@application/interfaces/repositories/stock/
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
-import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 
 @injectable()
 export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecase {
@@ -29,10 +28,11 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
         const { page = 1, limit = 10, search = "" } = query;
 
         const userAssets = await this._portfolioRepository.getUserAssets(userId);
-
+ 
         const assetProcessingPromises = userAssets.map(async (asset): Promise<PortfolioAssetDTO | null> => {
 
             if (asset.assetType === AssetType.MUTUAL_FUND) {
+                 
                 const fund = await this._mutualFundRepository.findById(asset.assetId);
                 if (!fund) return null;
 
@@ -44,17 +44,10 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                 const latestNav = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
                 const currentNav = latestNav?.[0]?.nav;
 
-                const investments = await this._investmentRepository.getUserInvestments(userId, {
-                    filter: { schemeCode: fund.schemeCode },
-                    page: 1,
-                    limit: 1,
-                    sortBy: "createdAt",
-                    sortOrder: "desc",
-                });
+                const investments = await this._investmentRepository.findGroupedInvestmentsByUser(userId);
 
-                const investment = investments?.[0];
+                const investment = investments?.[0].investments;
                 if (!investment) return null;
-
 
                 const holdingUnits = asset.units ?? 0;
                 const currentValue = holdingUnits * currentNav;
@@ -77,11 +70,11 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                     currentValue,
                     profit,
                     profitPercentage: investedAmount > 0 ? (profit / investedAmount) * 100 : 0,
-                    status: investment.status,
+                    status: investment[0].status,
                     logo: fund.logo || "",
                     category: fund.category || "",
                     nav: currentNav ?? 0,
-                    navDate: latestNav?.[0]?.navDate || investment.navDate,
+                    navDate: latestNav?.[0]?.navDate || investment[0].navDate,
                     units: holdingUnits,
                     createdAt: asset.createdAt,
                     updatedAt: asset.updatedAt,
@@ -125,12 +118,12 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
         });
 
         const allResults = (await Promise.all(assetProcessingPromises)).filter(a => a !== null) as PortfolioAssetDTO[];
-
+ 
         const totalCount = allResults.length;
         const startIndex = (Number(page) - 1) * Number(limit);
         const paginatedData = allResults.slice(startIndex, startIndex + Number(limit));
 
-        return {
+        return { 
             data: paginatedData,
             total: totalCount,
             page: Number(page),

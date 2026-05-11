@@ -21,7 +21,6 @@ import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 import { SipWorker } from "@infrastructure/providers/sip/queue/workers/sip.worker";
 import { SipScheduler } from "@infrastructure/providers/sip/queue/sip.scheduler";
 import { SlTpOrderScheduler } from "@infrastructure/providers/stocks/queue/sl-tp-order.scheduler";
-import { IngestDocuments } from "@infrastructure/providers/ai-agents/langchain/RAG/ingest-docs";
 
 const bootstrap = async () => {
   try { 

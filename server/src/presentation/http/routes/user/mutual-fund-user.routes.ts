@@ -4,6 +4,7 @@ import { validateDTO } from '@presentation/express/middlewares/validation-dto.mi
 import { UserMutualFundRoutes, UserRoutes } from '@shared/routes/user.routes';
 import { MutualFundUserController } from '@presentation/http/controllers/mutual-funds/mutual-fund-user.controller';
 import { Router } from 'express'
+import { idempotencyMiddleware } from '@presentation/express/middlewares/idempotency.middleware';
 const router = Router();
 
 const mutualFundUserController = container.get<MutualFundUserController>(MutualFundUserController);
@@ -11,6 +12,11 @@ const mutualFundUserController = container.get<MutualFundUserController>(MutualF
 router.get(UserMutualFundRoutes.LISTS, mutualFundUserController.fetchFunds.bind(mutualFundUserController));
 router.get(UserMutualFundRoutes.INVESTMENTS, mutualFundUserController.listInvestments.bind(mutualFundUserController));
 router.get(UserRoutes.MF_FUND, mutualFundUserController.fetchFundDetails.bind(mutualFundUserController));
-router.post(UserMutualFundRoutes.INVESTMENT_ONE_TIME, validateDTO(InvestmentDTO), mutualFundUserController.investment.bind(mutualFundUserController));
+
+router.post(UserMutualFundRoutes.INVESTMENT_ONE_TIME,
+    idempotencyMiddleware,
+    validateDTO(InvestmentDTO),
+    mutualFundUserController.investment.bind(mutualFundUserController)
+);
 
 export default router; 

@@ -8,5 +8,6 @@ declare module "express-serve-static-core" {
       email: string;
       role?: string;
     };
+    idempotencyKey: string;
   }
 }

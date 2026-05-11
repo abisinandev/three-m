@@ -31,7 +31,7 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
         update: InvestmentRedeemResult,
         session: ClientSession
     ): Promise<void>;
-    createInvestment(entity: InvestmentEntity): Promise<InvestmentEntity | null>;
+    createInvestment(entity: InvestmentEntity, session?: ClientSession): Promise<InvestmentEntity | null>;
     findUserInvestmentsForXirr(userId: string): Promise<InvestmentEntity[] | null>;
     countInvestments(userId: string, options: QueryOptions): Promise<number>;
     portfolioGrowthByMonth(userId: string): Promise<PortfolioGrowthPoint[]>;

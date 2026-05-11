@@ -23,6 +23,8 @@ import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 import mongoose from "mongoose";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
+import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
+import { IIdempotencyService } from "@application/services/idempotency/interface/idempotency-service.interface";
 
 
 @injectable()
@@ -34,15 +36,22 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
         @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
-        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider
+        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
+        @inject(EXTERNAL_TYPES.IdempotencyService) private readonly _idempotencyService: IIdempotencyService,
     ) { }
 
-    async execute(data: InvestmentDTO, userId: string): Promise<void> {
+    async execute(data: InvestmentDTO, userId: string, idempotencyKey: string): Promise<void> {
+
+        const { amount, schemeCode, investmentType, paymentMethod } = data;
+
+        await this._idempotencyService.checkAndLock(idempotencyKey, data);
+
+        const latestNav = (await this._navUpdateProvider.fetchNavHistories(schemeCode))[0].nav;
+
         const session = await mongoose.startSession();
 
         try {
             await session.withTransaction(async () => {
-                const { amount, schemeCode, investmentType, paymentMethod } = data;
 
                 const user = await this._userRepository.findById(userId, session);
                 if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
@@ -54,8 +63,6 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
 
                 const fund = await this._mutualFundRepository.findBySchemeCode(data.schemeCode);
                 if (!fund || fund.status === FundStatus.INACTIVE) throw new ValidationError(ErrorMessages.MUTUAL_FUND.FUND_INACTIVE);
-
-                const latestNav = (await this._navUpdateProvider.fetchNavHistories(schemeCode))[0].nav;
 
                 const transaction = TransactionEntity.create({
                     userId: user.id!,
@@ -72,9 +79,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                 if (wallet.availableBalance < amount)
                     throw new ValidationError(ErrorMessages.PAYMENT.INSUFFICIENT_BALANCE);
 
-                wallet.lock(amount);
                 wallet.debit(amount);
-                wallet.unlock(amount);
 
                 await this._walletRepository.update(wallet.id as string, wallet, session);
 
@@ -85,7 +90,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                     investmentType,
                     paymentMethod,
                 });
-                await this._investmentRepository.createInvestment(investment);
+                await this._investmentRepository.createInvestment(investment, session);
 
                 let portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
                     userId,
@@ -98,15 +103,17 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                         userId,
                         assetId: fund.id as string,
                         assetType: AssetType.MUTUAL_FUND,
-                        units: data.units,
+                        units: amount / latestNav,
                         avgPrice: latestNav,
                         investedAmount: amount,
                     });
                     await this._portfolioRepository.create(portfolio, session);
                 } else {
                     const newTotalInvested = portfolio.investedAmount + amount;
-                    const newUnits = (portfolio.units ?? 0) + (data.units || 0);
+                    const investmentUnits = amount / latestNav;
+                    const newUnits = (portfolio.units ?? 0) + investmentUnits;
                     const newAvgPrice = latestNav;
+
 
                     portfolio.updateQuantityAndPrice(newUnits, newAvgPrice, newTotalInvested);
 
@@ -118,7 +125,6 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
 
             });
 
-            await session.commitTransaction();
 
         } finally {
             await session.endSession();

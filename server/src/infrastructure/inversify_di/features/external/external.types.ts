@@ -5,7 +5,8 @@ export const EXTERNAL_TYPES = {
     // providers
     HttpClient: Symbol.for("HttpClient"),
     CloudinaryStorageProvider: Symbol.for("CloudinaryStorageProvider"),
-    InternalTransactionVerificationService: Symbol.for("InternalTransactionVerificationService"),
     RedisCacheProvider: Symbol.for("RedisCacheProvider"),
-    SystemVerifyTransactionUseCase: Symbol.for("SystemVerifyTransactionUseCase"),
+
+    IdempotencyService: Symbol.for("IdempotencyService"),
+
 };

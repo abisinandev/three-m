@@ -37,7 +37,8 @@ export class MutualFundNavUpdate implements IMutualFundNavUpdatesUseCase {
                 logger.info("Nav updation done");
 
             } catch (error) {
-                logger.info("Nav updation failed");
+                console.log('Nav updation: ', error);
+                logger.info(`Nav updation failed: ${error}`);
                 return
             }
         }

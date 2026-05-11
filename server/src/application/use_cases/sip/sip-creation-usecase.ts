@@ -20,6 +20,9 @@ import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscr
 import { IFeatureAccessService } from "@application/interfaces/services/subscription/feature-access-service.interface";
 import { Features } from "@domain/entities/subscription/enums/features.enum";
 import { SuccessMessages } from "@shared/constants/success.messages";
+import { IIdempotencyService } from "@application/services/idempotency/interface/idempotency-service.interface";
+import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
+
 
 @injectable()
 export class SipCreationUseCase implements ISipCreationUseCase {
@@ -31,8 +34,10 @@ export class SipCreationUseCase implements ISipCreationUseCase {
         @inject(SIP_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
         @inject(SIP_TYPES.SipInstallmentRepository) private readonly _sipInstallmentRepository: ISipInstallmentRepository,
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
+        @inject(EXTERNAL_TYPES.IdempotencyService) private readonly _idempotencyService: IIdempotencyService,
     ) { }
-    async execute(data: SipCreationDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
+    async execute(data: SipCreationDTO, userId: string, idempotencyKey: string): Promise<void | { message: string, upgrade: boolean }> {
+
 
         const hasAccess = await this._featureAccess.hasAccess(
             userId,
@@ -45,6 +50,8 @@ export class SipCreationUseCase implements ISipCreationUseCase {
                 upgrade: true
             };
         }
+
+        await this._idempotencyService.checkAndLock(idempotencyKey, data);
 
         const session = await mongoose.startSession();
 
