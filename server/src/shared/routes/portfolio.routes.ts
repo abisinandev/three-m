@@ -11,4 +11,5 @@ export enum PortfolioRoutes {
     ASSETS = "/assets",
     MF_ASSETS = "/assets/mf",
     STOCK_ASSETS = "/assets/stock",
+    PROJECTION = "/projection",
 }

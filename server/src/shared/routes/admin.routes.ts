@@ -47,3 +47,16 @@ export enum AdminSubscriptionRoutes {
     FETCH_SUBSCRIPTIONS = "/all-subscriptions",
     UPDATE_PLAN = "/:code"
 }
+
+export enum AdminDashboardRoutes {
+    OVERVIEW = "/overview",
+}
+
+export enum AdminAlgoTradingRoutes {
+    STATS = "/",
+    BASE_STRATEGIES = "/base-strategies",
+    RISK_CONFIG = "/risk-config",
+    STRATEGIES = "/strategies",
+    SIGNALS = "/signals",
+    TRADES = "/trades",
+}
