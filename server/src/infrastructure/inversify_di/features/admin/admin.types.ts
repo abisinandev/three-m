@@ -26,6 +26,12 @@ export const ADMIN_TYPES = {
   SearchStocksUseCase: Symbol.for("SearchStocksUseCase"),
   AddStockUseCase: Symbol.for("AddStockUseCase"),
 
+  // SYSTEM LOGS
+  SystemJobLogRepository: Symbol.for("SystemJobLogRepository"),
+  JobLoggerService: Symbol.for("JobLoggerService"),
+  GetSystemJobLogsUseCase: Symbol.for("GetSystemJobLogsUseCase"),
+  GetSystemJobLogDetailUseCase: Symbol.for("GetSystemJobLogDetailUseCase"),
+
   AdminAuthController: Symbol.for("AdminAuthController"),
   AdminController: Symbol.for("AdminController"),
   AdminUserController: Symbol.for("AdminUserController"),
@@ -33,5 +39,5 @@ export const ADMIN_TYPES = {
   AdminTransactionsController: Symbol.for("adminTransactionsController"),
   AdminSipController: Symbol.for("AdminSipController"),
   AdminStocksController: Symbol.for("AdminStocksController"),
-  
+  AdminSystemController: Symbol.for("AdminSystemController"),
 };

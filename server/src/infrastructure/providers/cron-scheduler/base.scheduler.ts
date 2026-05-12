@@ -2,16 +2,23 @@ import cron, { ScheduledTask } from 'node-cron';
 import { injectable } from 'inversify';
 import { IScheduler } from '@application/interfaces/services/common/scheduler.interface';
 
+import { ADMIN_TYPES } from '@infrastructure/inversify_di/features/admin/admin.types';
+import { container } from '@infrastructure/inversify_di/container';
+import { IJobLoggerService } from '@application/services/admin/interfaces/job-logger.service.interface';
+
 @injectable()
 export abstract class BaseScheduler implements IScheduler {
     protected cronJob: ScheduledTask | null = null;
     protected isRunning = false;
+    private _jobLogger: IJobLoggerService;
 
     constructor(
         protected readonly name: string,
         protected readonly schedule: string,
         protected readonly timezone: string = "Asia/Kolkata"
-    ) {}
+    ) {
+        this._jobLogger = container.get<IJobLoggerService>(ADMIN_TYPES.JobLoggerService);
+    }
 
     protected abstract execute(): Promise<void>;
 
@@ -27,10 +34,13 @@ export abstract class BaseScheduler implements IScheduler {
             }
 
             this.isRunning = true;
+            const log = await this._jobLogger.start(this.name);
             try {
                 await this.execute();
-            } catch (error) {
+                await this._jobLogger.complete(log, 1); // Default to 1 processed if no specific count
+            } catch (error: any) {
                 console.error(`[${this.name}] Execution failed:`, error);
+                await this._jobLogger.fail(log, error.message || "Unknown error");
             } finally {
                 this.isRunning = false;
             }

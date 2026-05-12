@@ -60,3 +60,8 @@ export enum AdminAlgoTradingRoutes {
     SIGNALS = "/signals",
     TRADES = "/trades",
 }
+
+export enum AdminSystemRoutes {
+    FETCH_LOGS = "/logs",
+    FETCH_LOG_DETAIL = "/logs/:id",
+}

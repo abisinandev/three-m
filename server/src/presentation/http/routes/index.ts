@@ -28,6 +28,7 @@ import adminSubscriptionsRoutes from '@presentation/http/routes/admin/admin-subs
 import userSubscriptionRoutes from '@presentation/http/routes/user/user-subscription.routes';
 import userDashboardRoutes from '@presentation/http/routes/user/user-dashboard.routes';
 import adminDashboardRoutes from '@presentation/http/routes/admin/admin-dashboard.routes';
+import adminSystemRoutes from '@presentation/http/routes/admin/admin-system.routes';
 import { BaseRoutes } from "@shared/routes";
 
 export const RegisterRoutes = (app: Application) => {
@@ -66,5 +67,6 @@ export const RegisterRoutes = (app: Application) => {
 
 
   app.use(BaseRoutes.ADMIN_ALGO_TRADING, (req, res, next) => authAdminMiddleware.handle(req, res, next), adminAlgoTradingRoutes);
-  app.use(BaseRoutes.ADMIN_SUBSCRIPTIONS, (req, res, next) => authAdminMiddleware.handle(req, res, next), adminSubscriptionsRoutes)
+  app.use(BaseRoutes.ADMIN_SUBSCRIPTIONS, (req, res, next) => authAdminMiddleware.handle(req, res, next), adminSubscriptionsRoutes);
+  app.use(BaseRoutes.ADMIN_SYSTEM, (req, res, next) => authAdminMiddleware.handle(req, res, next), adminSystemRoutes);
 };

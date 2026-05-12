@@ -41,5 +41,6 @@ export enum BaseRoutes {
     USER_STOCK_ORDER = "/api/user/stock/order",
     ALGO_TRADING = "/api/user/stock/algo-trading",
     ADMIN_ALGO_TRADING = "/api/admin/algo-trading",
-    ADMIN_SUBSCRIPTIONS = "/api/admin/subscriptions"
+    ADMIN_SUBSCRIPTIONS = "/api/admin/subscriptions",
+    ADMIN_SYSTEM = "/api/admin/system"
 }

@@ -34,6 +34,7 @@ export const STOCK_TYPES = {
     ExecuteLimitSellOrderUseCase: Symbol.for("ExecuteLimitSellOrderUseCase"),
     CancelLimitOrderUseCase: Symbol.for("CancelLimitOrderUseCase"),
     FetchPendingOrdersUseCase: Symbol.for("FetchPendingOrdersUseCase"),
+    ProcessOrderJobUseCase: Symbol.for("ProcessOrderJobUseCase"),
     OrderRepository: Symbol.for("OrderRepository"),
     TradeRepository: Symbol.for("TradeRepository"),
 

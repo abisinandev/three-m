@@ -47,7 +47,12 @@ import { SearchStocksUseCase } from "@application/use_cases/admin/stocks-managem
 import { IAddStockUseCase } from "@application/use_cases/admin/stocks-management/interface/add-stock.interface";
 import { AddStockUseCase } from "@application/use_cases/admin/stocks-management/add-stock.usecase";
 import { AdminStocksController } from "@presentation/http/controllers/admin/admin-stocks.controller";
+import { AdminSystemController } from "@presentation/http/controllers/admin/admin-system.controller";
 import { AdminAuthMiddleware } from "@presentation/express/middlewares/admin-auth.middleware";
+import { SystemJobLogRepository } from "@infrastructure/databases/repository/admin/system-job-log.repository";
+import { JobLoggerService } from "@application/services/admin/job-logger.service";
+import { GetSystemJobLogsUseCase } from "@application/use_cases/admin/system-logs/get-system-job-logs.usecase";
+import { GetSystemJobLogDetailUseCase } from "@application/use_cases/admin/system-logs/get-system-job-log-detail.usecase";
 
 export const AdminModule = new ContainerModule(({ bind }) => {
   //Usecases
@@ -71,6 +76,11 @@ export const AdminModule = new ContainerModule(({ bind }) => {
   bind<ISearchStocksUseCase>(ADMIN_TYPES.SearchStocksUseCase).to(SearchStocksUseCase);
   bind<IAddStockUseCase>(ADMIN_TYPES.AddStockUseCase).to(AddStockUseCase);
 
+  // SYSTEM LOGS
+  bind<SystemJobLogRepository>(ADMIN_TYPES.SystemJobLogRepository).to(SystemJobLogRepository);
+  bind<JobLoggerService>(ADMIN_TYPES.JobLoggerService).to(JobLoggerService);
+  bind<GetSystemJobLogsUseCase>(ADMIN_TYPES.GetSystemJobLogsUseCase).to(GetSystemJobLogsUseCase);
+  bind<GetSystemJobLogDetailUseCase>(ADMIN_TYPES.GetSystemJobLogDetailUseCase).to(GetSystemJobLogDetailUseCase);
 
   //Repository
   bind<IAdminRepository>(ADMIN_TYPES.AdminRepository).to(AdminRepository);
@@ -82,6 +92,7 @@ export const AdminModule = new ContainerModule(({ bind }) => {
   bind<AdminTransactionsController>(ADMIN_TYPES.AdminTransactionsController).to(AdminTransactionsController);
   bind<AdminSipController>(ADMIN_TYPES.AdminSipController).to(AdminSipController);
   bind<AdminStocksController>(ADMIN_TYPES.AdminStocksController).to(AdminStocksController);
+  bind<AdminSystemController>(ADMIN_TYPES.AdminSystemController).to(AdminSystemController);
 
   bind<AdminAuthMiddleware>(ADMIN_TYPES.AdminAuthMiddleware).to(AdminAuthMiddleware);
 });
