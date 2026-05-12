@@ -18,7 +18,8 @@ import {
   
   AlignHorizontalDistributeCenter,
   Cpu,
-  CreditCard
+  CreditCard,
+  Activity
 } from 'lucide-react';
 import adminApi from '@/lib/axios-admin';
 import { LOGOUT } from '@shared/constants/adminConstants';
@@ -38,6 +39,7 @@ const navItems = [
   { to: ROUTES.ADMIN.ALGO_TRADING, label: 'Algo Trading', icon: Cpu },
   { to: ROUTES.ADMIN.SUBSCRIPTIONS, label: 'Subscriptions', icon: CreditCard },
   { to: ROUTES.ADMIN.TRANSACTIONS_MANAGEMENT, label: 'Transactions', icon: Receipt },
+  { to: ROUTES.ADMIN.SYSTEM_LOGS, label: 'System Logs', icon: Activity },
 ];
 
 interface AdminLayoutProps {
