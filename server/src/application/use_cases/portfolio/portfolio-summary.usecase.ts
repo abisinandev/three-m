@@ -219,7 +219,6 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             }
         }
 
-        // Add current valuation as final inflow
         let totalCurrentValue = 0;
         for (const asset of portfolioAssets) {
             const currentPrice = priceMap.get(asset.assetId) ?? asset.avgPrice;

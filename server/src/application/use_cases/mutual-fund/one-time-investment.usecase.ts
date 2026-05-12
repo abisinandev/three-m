@@ -7,7 +7,7 @@ import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 import mongoose from "mongoose";
-import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
+import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 import { IIdempotencyService } from "@application/services/idempotency/interface/idempotency-service.interface";
 import { IInvestmentValidationService } from "@application/services/mutual-fund/interfaces/investment-validation.service.interface";
@@ -20,7 +20,7 @@ import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.type
 export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
     constructor(
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
-        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
+        @inject(MUTUAL_FUND_TYPES.MutualFundNavService) private readonly _navService: IMutualFundNavService,
         @inject(EXTERNAL_TYPES.IdempotencyService) private readonly _idempotencyService: IIdempotencyService,
         @inject(MUTUAL_FUND_TYPES.InvestmentValidationService) private readonly _validationService: IInvestmentValidationService,
         @inject(USER_TYPES.TransactionService) private readonly _transactionService: ITransactionService,
@@ -33,7 +33,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
 
         await this._idempotencyService.checkAndLock(idempotencyKey, data);
 
-        const latestNav = (await this._navUpdateProvider.fetchNavHistories(schemeCode))[0].nav;
+        const { nav: latestNav } = await this._navService.getLatestNav(schemeCode);
 
         const session = await mongoose.startSession();
 

@@ -71,7 +71,6 @@ export const usePortfolio = () => {
     const totalCount = useMemo(() => activeData?.total ?? 0, [activeData]);
 
     const isAssetsLoading = isAllLoading || isStockLoading || isMFLoading;
-    const isLoading = isAssetsLoading || isSummaryLoading;
 
     const isError = useMemo(() => {
         if (activeTab === 'all') return isAllError;
@@ -121,7 +120,6 @@ export const usePortfolio = () => {
         historyData,
 
         // Loading / error
-        isLoading: activeTab === 'history' ? false : isLoading,
         isAssetsLoading,
         isHistoryLoading,
         isSummaryLoading,

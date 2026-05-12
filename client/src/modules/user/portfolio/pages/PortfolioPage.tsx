@@ -25,7 +25,7 @@ const PortfolioDashboard = () => {
         page, setPage, search, setSearch, status, setStatus,
         activeTab, setActiveTab, returnType, setReturnType, limit,
         summaryData, investments, totalCount, historyData,
-        isLoading, isAssetsLoading, isHistoryLoading, isError, error, handlePageChange
+        isAssetsLoading, isHistoryLoading, isSummaryLoading, isError, error, handlePageChange
     } = usePortfolio();
 
     const xirrValue = summaryData?.xirr ? Number(summaryData.xirr).toFixed(2) : '0.00';
@@ -124,7 +124,7 @@ const PortfolioDashboard = () => {
                     profitAfterSell={summaryData?.profitAfterSell ?? 0}
                     totalReturns={summaryData?.totalReturns ?? 0}
                     profitPercentage={summaryData?.profitPercentage ?? 0}
-                    isLoading={isLoading}
+                    isLoading={isSummaryLoading}
                 />
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>

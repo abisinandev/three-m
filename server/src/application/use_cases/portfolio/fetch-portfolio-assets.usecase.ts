@@ -1,41 +1,42 @@
 import { inject, injectable } from "inversify";
 import { IFetchPortfolioAssetsUsecase } from "./interfaces/fetch-portfolio-assets.usecase.interface";
-import { PortfolioAssetQueryDTO } from "@application/dto/portfolio/portfolio-asset-query.dto";
 import { PortfolioAssetsResponseDTO, PortfolioAssetDTO } from "@application/dto/portfolio/portfolio-asset-response.dto";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
-import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
+import { QueryOptions } from "mongoose";
+
+import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
 
 @injectable()
 export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecase {
     constructor(
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
-        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
+        @inject(MUTUAL_FUND_TYPES.MutualFundNavService) private readonly _navService: IMutualFundNavService,
     ) { }
 
-    async execute(userId: string, query: PortfolioAssetQueryDTO): Promise<PortfolioAssetsResponseDTO> {
+    async execute(userId: string, query: QueryOptions): Promise<PortfolioAssetsResponseDTO> {
         const { page = 1, limit = 10, search = "" } = query;
 
         const [userAssets, groupedInvestments] = await Promise.all([
             this._portfolioRepository.getUserAssets(userId),
             this._investmentRepository.findGroupedInvestmentsByUser(userId)
         ]);
- 
+
         const assetProcessingPromises = userAssets.map(async (asset): Promise<PortfolioAssetDTO | null> => {
 
             if (asset.assetType === AssetType.MUTUAL_FUND) {
-                 
+
                 const fund = await this._mutualFundRepository.findById(asset.assetId);
                 if (!fund) return null;
 
@@ -44,12 +45,11 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                     return null;
                 }
 
-                const latestNav = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
-                const currentNav = latestNav?.[0]?.nav || 0;
+                const { nav: currentNav, navDate } = await this._navService.getLatestNav(fund.schemeCode);
 
                 const fundGroup = groupedInvestments?.find(g => g.schemeCode === fund.schemeCode);
                 const investmentList = fundGroup?.investments;
-                
+
                 if (!investmentList || investmentList.length === 0) return null;
 
                 const holdingUnits = asset.units ?? 0;
@@ -77,7 +77,7 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                     logo: fund.logo || "",
                     category: fund.category || "",
                     nav: currentNav,
-                    navDate: latestNav?.[0]?.navDate || investmentList[0].navDate,
+                    navDate: navDate || investmentList[0].navDate,
                     units: holdingUnits,
                     createdAt: asset.createdAt,
                     updatedAt: asset.updatedAt,
@@ -120,13 +120,20 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
             }
         });
 
-        const allResults = (await Promise.all(assetProcessingPromises)).filter(a => a !== null) as PortfolioAssetDTO[];
- 
+        const settledResults = await Promise.allSettled(assetProcessingPromises);
+
+        const allResults = settledResults
+            .filter((r): r is PromiseFulfilledResult<PortfolioAssetDTO> =>
+                r.status === "fulfilled"
+            )
+            .map((r) => r.value)
+            .filter((v): v is PortfolioAssetDTO => v !== null);
+
         const totalCount = allResults.length;
         const startIndex = (Number(page) - 1) * Number(limit);
         const paginatedData = allResults.slice(startIndex, startIndex + Number(limit));
 
-        return { 
+        return {
             data: paginatedData,
             total: totalCount,
             page: Number(page),

@@ -26,6 +26,8 @@ import { NavUpdateWorker } from "@infrastructure/providers/mutual-fund/queue/wor
 import { INavUpdateQueue } from "@application/interfaces/services/mutual-fund/nav-update.queue";
 import { SyncSingleFundNavUseCase } from "@application/use_cases/mutual-fund/sync-single-fund-nav.usecase";
 import { ISyncSingleFundNavUseCase } from "@application/use_cases/mutual-fund/interfaces/sync-single-fund-nav.usecase.interface";
+import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
+import { MutualFundNavService } from "@application/services/mutual-fund/mutual-fund-nav.service";
 
 
 // Controllers
@@ -83,6 +85,7 @@ export const MutualFundModule = new ContainerModule(({ bind }) => {
     bind<IInvestmentValidationService>(MUTUAL_FUND_TYPES.InvestmentValidationService).to(InvestmentValidationService);
     bind<INavUpdateQueue>(MUTUAL_FUND_TYPES.NavUpdateQueue).to(NavUpdateQueue);
     bind<NavUpdateWorker>(MUTUAL_FUND_TYPES.NavUpdateWorker).to(NavUpdateWorker).inSingletonScope();
+    bind<IMutualFundNavService>(MUTUAL_FUND_TYPES.MutualFundNavService).to(MutualFundNavService);
 
 
     // Controllers
