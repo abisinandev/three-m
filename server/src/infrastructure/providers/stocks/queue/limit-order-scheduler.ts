@@ -1,48 +1,28 @@
-import cron, { ScheduledTask } from 'node-cron';
 import { injectable, inject } from 'inversify';
 import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.types';
-import { IOrderRepository } from '@application/interfaces/repositories/stock/order-repository.interface';
-import { IOrderQueue } from '@application/interfaces/services/stocks/order-queue.interface';
 import { isIndianMarketOpen } from '@shared/utils/market/market-time';
+import { BaseScheduler } from '../../cron-scheduler/base.scheduler';
+import { IDispatchLimitOrdersUseCase } from '@application/use_cases/stock/interfaces/dispatch-limit-orders.interface';
+import { logger } from '../../logger/pino.logger';
 
 @injectable()
-export class LimitOrderScheduler {
-    private cronJob: ScheduledTask | null = null;
+export class LimitOrderScheduler extends BaseScheduler {
 
     constructor(
-        @inject(STOCK_TYPES.OrderRepository) private readonly _orderRepository: IOrderRepository,
-        @inject(STOCK_TYPES.OrderQueue) private readonly _orderQueue: IOrderQueue,
-    ) { }
-
-    private async execute(): Promise<void> {
-
-        try {
-            const pendingOrders = await this._orderRepository.findPendingLimitOrders();
-
-            for (const order of pendingOrders) {
-                await this._orderQueue.addLimitOrderJob(order.id as string);
-            }
-        } catch (error) {
-            console.error('[LimitOrderScheduler] Error during execution:', error);
-        }
+        @inject(STOCK_TYPES.DispatchLimitOrdersUseCase) private readonly _dispatchLimitOrders: IDispatchLimitOrdersUseCase,
+    ) { 
+        super("LIMIT-ORDER-SCHEDULER", "* * * * *");
     }
 
-    public start(): void {
-        if (this.cronJob) return;
-
-        if (!isIndianMarketOpen()) return;
-        // console.log("Limit Order Scheduler started (every minute)");
-
-        this.cronJob = cron.schedule('* * * * *', async () => {
-            await this.execute();
-        });
-    }
-
-    public stop(): void {
-        if (this.cronJob) {
-            this.cronJob.stop();
-            this.cronJob = null;
-            // console.log("Limit Order Scheduler stopped");
+    protected async execute(): Promise<void> {
+        if (!isIndianMarketOpen()) {
+            return;
         }
+
+        // logger.info("[LIMIT-ORDER-SCHEDULER] sync started");
+        await this._dispatchLimitOrders.execute();
+        // logger.info("[LIMIT-ORDER-SCHEDULER] sync completed");
     }
 }
+
+

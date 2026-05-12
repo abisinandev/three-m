@@ -27,7 +27,10 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
     async execute(userId: string, query: PortfolioAssetQueryDTO): Promise<PortfolioAssetsResponseDTO> {
         const { page = 1, limit = 10, search = "" } = query;
 
-        const userAssets = await this._portfolioRepository.getUserAssets(userId);
+        const [userAssets, groupedInvestments] = await Promise.all([
+            this._portfolioRepository.getUserAssets(userId),
+            this._investmentRepository.findGroupedInvestmentsByUser(userId)
+        ]);
  
         const assetProcessingPromises = userAssets.map(async (asset): Promise<PortfolioAssetDTO | null> => {
 
@@ -42,12 +45,12 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                 }
 
                 const latestNav = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
-                const currentNav = latestNav?.[0]?.nav;
+                const currentNav = latestNav?.[0]?.nav || 0;
 
-                const investments = await this._investmentRepository.findGroupedInvestmentsByUser(userId);
-
-                const investment = investments?.[0].investments;
-                if (!investment) return null;
+                const fundGroup = groupedInvestments?.find(g => g.schemeCode === fund.schemeCode);
+                const investmentList = fundGroup?.investments;
+                
+                if (!investmentList || investmentList.length === 0) return null;
 
                 const holdingUnits = asset.units ?? 0;
                 const currentValue = holdingUnits * currentNav;
@@ -70,11 +73,11 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                     currentValue,
                     profit,
                     profitPercentage: investedAmount > 0 ? (profit / investedAmount) * 100 : 0,
-                    status: investment[0].status,
+                    status: investmentList[0].status,
                     logo: fund.logo || "",
                     category: fund.category || "",
-                    nav: currentNav ?? 0,
-                    navDate: latestNav?.[0]?.navDate || investment[0].navDate,
+                    nav: currentNav,
+                    navDate: latestNav?.[0]?.navDate || investmentList[0].navDate,
                     units: holdingUnits,
                     createdAt: asset.createdAt,
                     updatedAt: asset.updatedAt,

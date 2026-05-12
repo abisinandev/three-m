@@ -48,7 +48,7 @@ export const STOCK_TYPES = {
     ConfirmBuySignalUseCase: Symbol.for("ConfirmBuySignalUseCase"),
     ConfirmSellSignalUseCase: Symbol.for("ConfirmSellSignalUseCase"),
     SignalManager: Symbol.for("SignalManager"),
-    GetValidStrategiesUseCase: Symbol.for("GetValidStrategiesUseCase"),
+    StrategiesUseCase: Symbol.for("StrategiesUseCase"),
     AlgoStrategyConfigRepository: Symbol.for("AlgoStrategyConfigRepository"),
     AdminGetBaseStrategiesUseCase: Symbol.for("AdminGetBaseStrategiesUseCase"),
     AdminUpdateStrategyRiskConfigUseCase: Symbol.for("AdminUpdateStrategyRiskConfigUseCase"),
@@ -68,6 +68,8 @@ export const STOCK_TYPES = {
     SlTpOrderWorker: Symbol.for("SlTpOrderWorker"),
     SlTpOrderScheduler: Symbol.for("SlTpOrderScheduler"),
     ExecuteSlTpUseCase: Symbol.for("ExecuteSlTpUseCase"),
+    DispatchLimitOrdersUseCase: Symbol.for("DispatchLimitOrdersUseCase"),
+    DispatchSlTpOrdersUseCase: Symbol.for("DispatchSlTpOrdersUseCase"),
 
 
     WatchlistRepository: Symbol.for("WatchlistRepository"),
