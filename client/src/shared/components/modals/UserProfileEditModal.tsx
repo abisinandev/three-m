@@ -107,9 +107,8 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
     if (!isOpen) return null;
 
     const isKycVerified = user?.kycStatus === 'verified';
-    const maskedAadhar = user?.aadharNumber
-        ? `XXXX-XXXX-${user.aadharNumber.slice(-4)}`
-        : 'Not added';
+    const maskedAadhar = user?.aadharNumber || 'Not added';
+    const maskedPan = user?.panNumber || 'Not added';
 
     return (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
@@ -222,7 +221,7 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
                             <div className="flex justify-between items-center">
                                 <span className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-widest">PAN Card</span>
                                 <span className="text-white text-[11px] font-black flex items-center gap-1.5 tracking-wider">
-                                    {user?.panNumber}
+                                    {maskedPan}
                                     <CheckCircle className="w-3 h-3 text-[#00C853]" />
                                 </span>
                             </div>

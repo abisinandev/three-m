@@ -25,9 +25,6 @@ const UserProfilePage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ['profile'] });
-  }, [queryClient]);
 
   const getInitials = (name: string) =>
     name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -102,9 +99,7 @@ const UserProfilePage = () => {
   })();
 
   const isKycVerified = user?.kycStatus === "verified";
-  const maskedAadhar = user?.kyc?.aadharNumber
-    ? `XXXX-XXXX-${user?.kyc?.aadharNumber.slice(-4)}`
-    : "Not added";
+  const maskedAadhar = user?.kyc?.aadharNumber || "Not added";
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

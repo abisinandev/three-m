@@ -15,6 +15,8 @@ export const useProfileQuery = () =>
     useQuery({
         queryKey: ['profile'],
         queryFn: ProfileApi,
-        staleTime: 1000 * 60 * 5,
+        staleTime: 1000 * 60 * 30, // 30 minutes
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
         retry: false,
     });
