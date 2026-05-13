@@ -90,16 +90,6 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
     return { totalVerifiedUsersCount }
   };
 
-  async findAllWithRelations(userId: string): Promise<UserEntity | null> {
-    const user = await this.model
-      .findById(userId)
-      .populate("kycId")
-      .populate("walletId")
-      .exec();
-
-    if (!user) return null;
-    return this.mapper.toDomain(user);
-  };
 
   async getTotalUsersCount(): Promise<number> {
     return this.model.countDocuments({});
@@ -147,7 +137,7 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
     
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     
-    return result.map((item: Record<string, unknown>) => ({
+    return result.map((item: { _id: { month: number }; users: number; premium: number }) => ({
       month: monthNames[item._id.month - 1],
       users: item.users,
       premium: item.premium
