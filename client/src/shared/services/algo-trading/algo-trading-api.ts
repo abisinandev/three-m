@@ -1,4 +1,4 @@
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 
 export interface StrategyMetadata {
   name: string;

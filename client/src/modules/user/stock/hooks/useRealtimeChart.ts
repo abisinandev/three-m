@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createChart, CandlestickSeries } from 'lightweight-charts';
 import type { IChartApi, ISeriesApi, Time, DeepPartial, ChartOptions, IPriceLine, MouseEventParams } from 'lightweight-charts';
 import { socketService } from '@/socket/socket';
-import api from '@lib/axiosUser';
+import api from '@/lib/axios-user';
 import { API_ROUTES } from '@shared/constants/apiRoutes';
 import type { IInvestmentResponse } from '@shared/types/portfolio.types';
 

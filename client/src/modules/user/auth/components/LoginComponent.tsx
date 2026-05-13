@@ -3,7 +3,7 @@ import { Button } from "@shared/components/auth/ButtonField";
 import type { LoginType } from "@shared/types/user/LoginTypes";
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { GOOGLE_AUTH } from "@shared/constants/userContants";
 import { useGoogleLogin } from "@react-oauth/google";
 import { ROUTES } from "@shared/constants/routes";

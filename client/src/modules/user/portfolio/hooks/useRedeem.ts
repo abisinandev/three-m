@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { getRedeemableInvestments } from '@/shared/services/portfolio/portfolio-api';
 import type { IRedeemedInvestment } from '@shared/types/portfolio.types';
-import api from '@lib/axiosUser';
+import api from '@/lib/axios-user';
 import { API_ROUTES } from '@shared/constants/apiRoutes';
 
 export const useRedeem = () => {

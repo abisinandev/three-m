@@ -91,7 +91,7 @@ export const SummaryStats = ({
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 0 }}>
                 <StatCol
                     label="Invested"
-                    value={`₹${formatCurrency(totalInvestment, 0)}`}
+                    value={`₹${formatCurrency(totalInvestment, 2)}`}
                     sub=""
                     plain
                 />

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Camera, CheckCircle, ArrowRight, ArrowLeft, MapPin, Loader2, User, AlertCircle } from 'lucide-react';
-import api from '@lib/axiosUser';
+import api from '@/lib/axios-user';
 import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import { useUserStore } from '@stores/user/UserStore';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';

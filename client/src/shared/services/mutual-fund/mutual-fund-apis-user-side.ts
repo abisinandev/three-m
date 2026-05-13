@@ -1,4 +1,4 @@
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
 import type { IFundDetails, PaginatedMutualFundsResponse } from "@shared/types/mutual-funds/MutualFundType";
 

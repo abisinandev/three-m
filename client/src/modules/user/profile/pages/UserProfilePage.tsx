@@ -8,7 +8,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { GetSignatureApi } from '@shared/services/user/get-signature-api';
-import api from '@lib/axiosUser';
+import api from '@/lib/axios-user';
 import { UPLOAD_PROFILE_IMAGE } from '@shared/constants/userContants';
 import { ROUTES } from '@shared/constants/routes';
 

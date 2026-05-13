@@ -1,4 +1,4 @@
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
 import type { AddExpenseRequest, AddExpenseResponse, AddIncomeRequest, ExpenseTrackerData, BudgetPlanRequest, BudgetPlanResponse } from "../../../modules/user/expense-tracker/types/expense.types";
 

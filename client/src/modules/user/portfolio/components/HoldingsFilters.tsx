@@ -21,13 +21,13 @@ export const HoldingsFilters = ({
     setPage,
 }: HoldingsFiltersProps) => {
     const showFilters = activeTab === 'all' || activeTab === 'stocks' || activeTab === 'mf';
-    // MF only filter: status makes sense; for stocks there's no "status" concept
+  
     const showStatusFilter = activeTab === 'all' || activeTab === 'mf';
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
-            {/* Tab Bar */}
+        
             <div style={{ display: 'flex', borderBottom: '1px solid #1e2025', gap: 0 }}>
                 {PORTFOLIO_TABS.map(tab => (
                     <button
@@ -51,7 +51,6 @@ export const HoldingsFilters = ({
                 ))}
             </div>
 
-            {/* Search + Status filters — only for holdings tabs */}
             {showFilters && (
                 <div style={{ display: 'flex', gap: 8 }}>
                     <div style={{ position: 'relative', flex: 1 }}>

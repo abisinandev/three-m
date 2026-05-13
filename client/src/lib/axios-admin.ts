@@ -1,6 +1,6 @@
 import { REFRESH_TOKEN_URL } from "@shared/constants/adminConstants";
 import { useAdminStore } from "@stores/admin/useAdminStore";
-import { redirect } from '@tanstack/react-router'
+import { notFound, redirect } from '@tanstack/react-router'
 import axios from "axios";
 import { ROUTES } from "@shared/constants/routes";
 
@@ -51,8 +51,7 @@ adminApi.interceptors.response.use(
         }
 
         if (err.response.status === 403) {
-            useAdminStore.getState().logout();
-            throw redirect({ to: ROUTES.ADMIN.AUTH.LOGIN })
+            throw notFound();
         }
 
         if (err.response.status === 401 && !originalRequest._retry) {
@@ -63,6 +62,9 @@ adminApi.interceptors.response.use(
 
                 try {
                     await adminApi.post(REFRESH_TOKEN_URL, {}, { withCredentials: true });
+                } catch (error) {
+                    useAdminStore.getState().logout();
+                    throw redirect({ to: ROUTES.ADMIN.AUTH.LOGIN })
                 } finally {
                     isRefreshing = false
                 }

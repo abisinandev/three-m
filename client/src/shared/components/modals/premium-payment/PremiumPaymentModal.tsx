@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { usePremiumPlan } from '@/shared/services/admin/subscription/subscription-api';
 import { toast } from 'sonner';
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
 
 import { FEATURE_LABELS, FREE_FEATURES } from './types/constants';

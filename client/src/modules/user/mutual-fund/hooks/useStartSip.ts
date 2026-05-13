@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
-import api from '@lib/axiosUser';
+import api from '@/lib/axios-user';
 import { createIdempotencyKey } from '@/utils/uuid/generate-idempotency-key';
 
 interface SipPayload {

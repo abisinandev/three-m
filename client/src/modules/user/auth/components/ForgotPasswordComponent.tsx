@@ -5,7 +5,7 @@ import { InputField } from "@shared/components/auth/InputFields";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "@stores/user/UserAuthStore";
 import { useMutation } from "@tanstack/react-query";
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { FORGOT_PASSWORD } from "@shared/constants/userContants";
 import { ROUTES } from "@shared/constants/routes";
 

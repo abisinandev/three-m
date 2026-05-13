@@ -1,4 +1,4 @@
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
 import { useQuery } from "@tanstack/react-query";
 import type { UserType } from "@shared/types/user/UserType";

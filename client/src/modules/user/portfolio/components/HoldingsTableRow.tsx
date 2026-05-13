@@ -187,7 +187,7 @@ export const HoldingsTableRow = ({
                         </>
                     ) : (
                         <>
-                            <p style={{ fontSize: 12, color: '#e8eaed', margin: 0 }}>₹{formatCurrency(investedAmount, 0)}</p>
+                            <p style={{ fontSize: 12, color: '#e8eaed', margin: 0 }}>₹{formatCurrency(investedAmount, 2)}</p>
                             {quantity > 0 && (
                                 <p style={{ fontSize: 10, color: '#5a5f6e', margin: '2px 0 0' }}>
                                     {Number(quantity).toFixed(3)} units
@@ -209,7 +209,7 @@ export const HoldingsTableRow = ({
                     {returnType === 'Absolute' ? (
                         <>
                             <p style={{ fontSize: 12, fontWeight: 700, margin: 0, color: pnlColor }}>
-                                {profit >= 0 ? '+' : ''}₹{formatCurrency(Math.abs(profit), 1)}
+                                {profit >= 0 ? '+' : ''}₹{formatCurrency(Math.abs(profit), 2)}
                             </p>
                             <p style={{ fontSize: 10, color: pnlColor, margin: '1px 0 0', opacity: 0.85 }}>
                                 {profit >= 0 ? '+' : ''}{profitPct.toFixed(2)}%
@@ -244,7 +244,7 @@ export const HoldingsTableRow = ({
                     ) : (
                         <>
                             <p style={{ fontSize: 12, color: '#9ca3af', margin: 0 }}>
-                                {ltp ? `₹${formatCurrency(ltp, 4)}` : '—'}
+                                {ltp ? `₹${formatCurrency(ltp, 2)}` : '—'}
                             </p>
                             {inv.navDate && (
                                 <p style={{ fontSize: 10, color: '#5a5f6e', margin: '1px 0 0' }}>
@@ -302,7 +302,7 @@ export const HoldingsTableRow = ({
 
                     <DetailGroup label="Units & NAV">
                         <DetailRow k="Units Held" v={Number(quantity).toFixed(4)} />
-                        <DetailRow k="NAV" v={ltp ? `₹${formatCurrency(ltp, 4)}` : '—'} />
+                        <DetailRow k="NAV" v={ltp ? `₹${formatCurrency(ltp, 2)}` : '—'} />
                         <DetailRow
                             k="NAV Date"
                             v={inv.navDate

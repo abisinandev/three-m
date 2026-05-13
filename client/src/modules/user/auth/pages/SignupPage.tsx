@@ -9,7 +9,7 @@ import { RightSidePanel } from "@shared/components/auth/RightSidePanel";
 import { useSignup } from "../hooks/use-signup";
 import z from "zod";
 import { useGoogleLogin } from "@react-oauth/google";
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { useMutation } from "@tanstack/react-query";
 import { GOOGLE_AUTH } from "@shared/constants/userContants";
 import { useUserStore } from "@stores/user/UserStore";

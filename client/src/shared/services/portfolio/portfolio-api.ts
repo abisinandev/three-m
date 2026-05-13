@@ -1,4 +1,4 @@
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
 import type { IInvestmentBaseResponse, IInvestmentResponse, IPortfolioProjectionResponse, IPortfolioSummaryResponse, IRedeemedInvestment, IPortfolioHistoryResponse } from "@shared/types/portfolio.types";
 

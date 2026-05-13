@@ -9,7 +9,7 @@ import { LoginForm } from "../components/LoginComponent";
 import { RightSidePanel } from "@shared/components/auth/RightSidePanel";
 import { TwoFAModal } from "@shared/components/modals/TwoFaModal";
 import { useMutation } from "@tanstack/react-query";
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { LOGIN_API } from "@shared/constants/userContants";
 import { ROUTES } from "@shared/constants/routes";
 

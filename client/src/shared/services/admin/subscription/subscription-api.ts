@@ -1,4 +1,4 @@
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { useQuery } from "@tanstack/react-query";
 import type { Plan } from "@shared/types/subscription/subscription.types";
 import { API_ROUTES } from "@shared/constants/apiRoutes";

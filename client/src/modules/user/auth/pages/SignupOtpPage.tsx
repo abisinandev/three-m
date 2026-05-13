@@ -5,7 +5,7 @@ import { useOtpControls } from "@shared/hooks/auth/useOtpControls";
 import { useAuthStore } from "@stores/user/UserAuthStore";
 import OTPVerification from "@shared/components/otp/OtpComponet";
 import { RESEND_OTP, VERIFY_OTP } from "@shared/constants/userContants";
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { toast } from "sonner";
 import { ROUTES } from "@shared/constants/routes";
 
