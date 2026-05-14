@@ -5,7 +5,7 @@ import { ISipInstallmentRepository } from "@application/interfaces/repositories/
 import { SipInstallmentModel } from "@infrastructure/databases/mongo_db/models/schemas/mutual-fund/sip-intallment.schema";
 import { SipInstallmentMapper } from "@infrastructure/mappers/mutual-fund/sip-intallment.mapper";
 import { SipInstallmentStatus } from "@domain/enum/funds/sip-intallment-status";
-import { QueryOptions, Types } from "mongoose";
+import { ClientSession, QueryOptions, Types } from "mongoose";
 
 export class SipInstallmentRepository extends BaseRepository<SipInstallmentEntity, SipInstallmentDocument>
     implements ISipInstallmentRepository {
@@ -139,5 +139,26 @@ export class SipInstallmentRepository extends BaseRepository<SipInstallmentEntit
         Object.assign(filter, otherFilters);
 
         return await this.model.countDocuments(filter).exec();
+    }
+
+    async findActiveAndPendingInstallments(
+        userId: string,
+        sipId: string,
+        session: ClientSession
+    ): Promise<SipInstallmentEntity[]> {
+
+        const docs = await this.model.find(
+            {
+                status: {
+                    $in: [
+                        SipInstallmentStatus.PENDING,
+                        SipInstallmentStatus.SUCCESS
+                    ]
+                }
+            },
+            null,
+            { session }
+        );
+        return docs.map(doc => this.mapper.toDomain(doc));
     }
 }

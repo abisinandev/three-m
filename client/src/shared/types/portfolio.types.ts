@@ -83,3 +83,28 @@ export interface IPortfolioProjectionResponse {
     futureTotalInvestment: number;
     yearlyBreakdown: { year: number; value: number }[];
 }
+export interface IPortfolioHistoryItem {
+    id: string;
+    userId: string;
+    assetId: string;
+    assetName: string;
+    assetType: "STOCK" | "MF";
+    side: string;
+    quantity: number;
+    price: number;
+    totalAmount: number;
+    status: string;
+    date: Date | string;
+    orderType?: string;
+    exchange?: string;
+    productType?: string;
+    triggerPrice?: number;
+}
+
+export interface IPortfolioHistoryResponse {
+    data: IPortfolioHistoryItem[];
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+}

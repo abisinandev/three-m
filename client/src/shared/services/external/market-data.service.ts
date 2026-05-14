@@ -1,4 +1,4 @@
-import api from '@lib/axiosUser';
+import api from '@/lib/axios-user';
 import { API_ROUTES } from '@shared/constants/apiRoutes';
 import type { MarketDataCandles } from '@shared/types/external/market-data.types';
 
@@ -11,12 +11,12 @@ class MarketDataService {
             to: String(to)
         });
 
-        const response = await api.get(`${API_ROUTES.USER.STOCKS.GET_ALL}/${symbol}/candles?${params.toString()}`);
+        const response = await api.get(`${API_ROUTES.USER.STOCKS.CANDLES(symbol)}?${params.toString()}`);
         return response.data?.data || response.data; 
     }
 
     async getQuote(symbol: string) {
-        const response = await api.get(`${API_ROUTES.USER.STOCKS.GET_ALL}/${symbol}`);
+        const response = await api.get(API_ROUTES.USER.STOCKS.DETAILS(symbol));
         return response.data?.data || response.data;
     }
 }

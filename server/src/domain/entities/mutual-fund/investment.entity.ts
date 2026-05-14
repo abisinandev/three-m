@@ -1,5 +1,6 @@
 import { InvestmentStatus, InvestmentType, PaymentMethod } from "@domain/enum/funds/investment.enums";
 import { InvestmentRedeemResult } from "@domain/types/radeem-units.types";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 export class InvestmentEntity {
     private readonly _id?: string;
@@ -95,11 +96,11 @@ export class InvestmentEntity {
     ): InvestmentEntity {
 
         if (investment._status !== InvestmentStatus.INITIATED) {
-            throw new Error("Invalid investment state");
+            throw new ValidationError("Invalid investment state");
         }
 
         if (data.nav <= 0) {
-            throw new Error("Invalid NAV");
+            throw new ValidationError("Invalid NAV");
         }
 
         const units = Number((investment._amount / data.nav).toFixed(4));
@@ -130,7 +131,7 @@ export class InvestmentEntity {
     ): InvestmentRedeemResult {
 
         if (unitsToRedeem <= 0 || unitsToRedeem > remainingUnits) {
-            throw new Error("Invalid redeem units");
+            throw new ValidationError("Invalid redeem units");
         }
 
         const newRemaining = Number(

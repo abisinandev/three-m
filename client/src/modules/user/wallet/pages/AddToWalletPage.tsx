@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { PAYMENT_ROUTE } from "@shared/constants/userContants";
 import { useUserStore } from "@stores/user/UserStore";
 import { ROUTES } from "@shared/constants/routes";

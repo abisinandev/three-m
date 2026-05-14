@@ -15,4 +15,5 @@ export const PORTFOLIO_TYPES = {
 
     // controllers
     PortFolioController: Symbol.for("PortFolioController"),
+    PortfolioService: Symbol.for("PortfolioService"),
 };

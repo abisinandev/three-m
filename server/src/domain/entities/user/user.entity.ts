@@ -6,10 +6,9 @@ import { Email } from "@domain/entities/user/user-value-objects/email.vo";
 import { Password } from "@domain/entities/user/user-value-objects/password.vo";
 import { Phone } from "@domain/entities/user/user-value-objects/phone.vo";
 import { UserCode } from "@domain/entities/user/user-value-objects/user-code.vo";
-import { WalletSummary } from "@domain/types/wallet-summery";
-import { KycSummary } from "@domain/types/kyc-summery";
 import { SubscriptionPlans } from "../subscription/enums/plans.enum";
 import { SubscriptionStatus } from "../subscription/enums/subscription-status.enums";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 export class UserEntity {
   private readonly _id: string | null;
@@ -35,9 +34,6 @@ export class UserEntity {
   private _kycStatus: KycStatusType;
 
   private _walletId: string | null;
-
-  private readonly _wallet?: WalletSummary | null;
-  private readonly _kyc?: KycSummary | null;
 
   private _isTwoFactorEnabled: boolean;
   private _twoFactorSecret: string | null;
@@ -70,8 +66,6 @@ export class UserEntity {
     kycId?: string | null;
     kycStatus: KycStatusType;
     walletId?: string | null;
-    kyc?: KycSummary | null;
-    wallet?: WalletSummary | null;
     isTwoFactorEnabled: boolean;
     twoFactorSecret?: string | null;
     qrCodeUrl?: string | null;
@@ -83,7 +77,7 @@ export class UserEntity {
     googleId?: string | null;
   }) {
     if (props.fullName.length < 2) {
-      throw new Error("Full name must be at least 2 characters");
+      throw new ValidationError("Full name must be at least 2 characters");
     }
 
     this._id = props.id ?? null;
@@ -109,8 +103,6 @@ export class UserEntity {
     this._kycStatus = props.kycStatus;
 
     this._walletId = props.walletId ?? null;
-    this._wallet = props.wallet;
-    this._kyc = props.kyc;
     this._isTwoFactorEnabled = props.isTwoFactorEnabled;
     this._twoFactorSecret = props.twoFactorSecret ?? null;
     this._qrCodeUrl = props.qrCodeUrl ?? null;
@@ -197,11 +189,9 @@ export class UserEntity {
     subscriptionId?: string;
     currency: CurrencyTypes;
     kycId?: string | null;
-    kyc?: KycSummary | null;
     kycStatus: KycStatusType;
 
     walletId?: string | null;
-    wallet?: WalletSummary | null;
 
     isTwoFactorEnabled: boolean;
     twoFactorSecret?: string | null;
@@ -280,14 +270,6 @@ export class UserEntity {
 
   get walletId(): string | null {
     return this._walletId ?? null;
-  }
-
-  get wallet(): WalletSummary | null {
-    return this._wallet ?? null;
-  }
-
-  get kyc() {
-    return this._kyc;
   }
   get twoFactorSecret() {
     return this._twoFactorSecret ?? null;

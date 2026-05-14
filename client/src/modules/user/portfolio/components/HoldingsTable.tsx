@@ -36,7 +36,6 @@ export const HoldingsTable = ({
 }: HoldingsTableProps) => {
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
-    // Pick tab-appropriate headers
     const headers = activeTab === 'stocks'
         ? TABLE_HEADERS.stocks
         : activeTab === 'mf'
@@ -134,16 +133,16 @@ export const HoldingsTable = ({
                             {items.length} holding{items.length !== 1 ? 's' : ''}
                         </p>
                         <p style={{ textAlign: 'right', fontSize: 11, fontWeight: 600, color: '#9ca3af', margin: 0 }}>
-                            ₹{formatCurrency(totalInvested, 0)}
+                            ₹{formatCurrency(totalInvested, 2)}
                         </p>
                         <p style={{ textAlign: 'right', fontSize: 11, fontWeight: 600, color: '#e8eaed', margin: 0 }}>
-                            ₹{formatCurrency(totalValue, 0)}
+                            ₹{formatCurrency(totalValue, 2)}
                         </p>
                         <p style={{
                             textAlign: 'right', fontSize: 11, fontWeight: 700, margin: 0,
                             color: getPnlColor(totalPnl),
                         }}>
-                            {`${totalPnl >= 0 ? '+' : ''}₹${formatCurrency(Math.abs(totalPnl), 1)}`}
+                            {`${totalPnl >= 0 ? '+' : ''}₹${formatCurrency(Math.abs(totalPnl), 2)}`}
                         </p>
                         <p style={{ margin: 0 }} />
                         <p style={{ margin: 0 }} />

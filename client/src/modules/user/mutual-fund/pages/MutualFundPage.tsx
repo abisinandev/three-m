@@ -6,7 +6,7 @@ import { fetchMutualFunds, fetchSips } from '@/shared/services/mutual-fund/mutua
 import { useNavigate } from '@tanstack/react-router';
 import { useUserStore } from '@stores/user/UserStore';
 import type { SipDto } from '../types/dashboard.types';
-import api from '@lib/axiosUser';
+import api from '@/lib/axios-user';
 
 import { toast } from 'sonner';
 import { CancelSipStatus, PauseSipStatus, ResumeSipStatus } from '@/shared/services/admin/sip-management/sip-management-user-api';

@@ -1,6 +1,6 @@
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
-import type { IInvestmentBaseResponse, IInvestmentResponse, IPortfolioProjectionResponse, IPortfolioSummaryResponse, IRedeemedInvestment } from "@shared/types/portfolio.types";
+import type { IInvestmentBaseResponse, IInvestmentResponse, IPortfolioProjectionResponse, IPortfolioSummaryResponse, IRedeemedInvestment, IPortfolioHistoryResponse } from "@shared/types/portfolio.types";
 
 export const getPortfolioInvestments = async (
     page = 1,
@@ -96,7 +96,7 @@ export const getPortfolioAssets = async (
     const responseData = data?.data;
 
     return {
-        data: responseData?.data.map((item: IInvestmentResponse) => {
+        data: responseData?.data?.filter(Boolean).map((item: IInvestmentResponse) => {
             const isStock = item.assetType === "STOCK" || item.investmentType === "STOCK";
             return {
                 ...item,
@@ -129,7 +129,7 @@ export const getMFHoldings = (page = 1, limit = 10, search?: string) =>
 export const getStockHoldings = (page = 1, limit = 10, search?: string) =>
     getPortfolioAssets(page, limit, search, "STOCK");
 
-export const getHistories = async (page = 1, limit = 10): Promise<IInvestmentBaseResponse> => {
+export const getHistories = async (page = 1, limit = 10): Promise<IPortfolioHistoryResponse> => {
     const { data } = await api.get(API_ROUTES.USER.PORTFOLIO.HISTORIES, {
         params: { page, limit }
     });

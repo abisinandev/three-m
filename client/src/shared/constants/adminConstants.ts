@@ -7,3 +7,4 @@ export const LOGOUT = "/logout"
 export const FETCH_USER_URL = "/users"
 export const BLOCK_USER = "/block"
 export const PROFILE_URL = '/profile'
+export const SYSTEM_LOGS = "/system/logs"

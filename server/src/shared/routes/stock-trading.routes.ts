@@ -5,4 +5,13 @@ export enum StockTradingRoutes {
     GET_CANDLES = "/:symbol/candles",
     WATCHLIST = "/all/watchlist",
     MOVERS = "/market/movers",
-}
+}
+
+export enum OrderRoutes {
+    PENDING = "/pending",
+    BUY = "/:symbol/buy",
+    SELL = "/:symbol/sell",
+    LIMIT_BUY = "/:symbol/limit-buy",
+    LIMIT_SELL = "/:symbol/limit-sell",
+    CANCEL = "/:symbol/cancel/:orderId",
+}

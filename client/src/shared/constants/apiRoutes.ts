@@ -70,6 +70,34 @@ export const API_ROUTES = {
         STOCKS: {
             GET_ALL: "/user/stocks",
             WATCHLIST: "/user/stocks/all/watchlist",
+            DETAILS: (symbol: string) => `/user/stocks/${symbol}`,
+            CANDLES: (symbol: string) => `/user/stocks/${symbol}/candles`,
+            MARKET_MOVERS: "/user/stocks/market/movers",
+            ORDERS: {
+                BUY: (symbol: string) => `/user/stock/order/${symbol}/buy`,
+                SELL: (symbol: string) => `/user/stock/order/${symbol}/sell`,
+                LIMIT_BUY: (symbol: string) => `/user/stock/order/${symbol}/limit-buy`,
+                LIMIT_SELL: (symbol: string) => `/user/stock/order/${symbol}/limit-sell`,
+                PENDING: "/user/stock/order/pending",
+                CANCEL: (symbol: string, orderId: string) => `/user/stock/order/${symbol}/cancel/${orderId}`,
+            }
+        },
+        ALGO_TRADING: {
+            CONFIRM_SIGNAL: "/user/stock/algo-trading/confirm-signal",
+        },
+        DASHBOARD: {
+            OVERVIEW: "/user/dashboard/overview",
+        },
+        SUBSCRIPTIONS: {
+            PREMIUM: "/user/subscriptions/premium",
+        },
+        EXPENSE_TRACKER: {
+            GET_DATA: "/user/expense-tracker",
+            ADD_EXPENSE: "/user/expense-tracker/add-expense",
+            ADD_INCOME: "/user/expense-tracker/add-income",
+            DELETE_EXPENSE: (id: number | string) => `/user/expense-tracker/delete-expense/${id}`,
+            ANALYTICS: "/user/expense-tracker/analytics",
+            BUDGET_PLAN: "/user/expense-tracker/budget-plan",
         }
     },
     ADMIN: {

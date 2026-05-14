@@ -81,14 +81,22 @@ import { SlTpOrderWorker } from "@infrastructure/providers/stocks/queue/workers/
 import { SlTpOrderScheduler } from "@infrastructure/providers/stocks/queue/sl-tp-order.scheduler";
 import { IGetMarketMoversUseCase } from "@application/use_cases/stock/interfaces/get-market-movers.interface";
 import { GetMarketMoversUseCase } from "@application/use_cases/stock/get-market-movers.usecase";
-import { IGetValidStrategiesUseCase } from "@application/use_cases/algo-trading/interfaces/get-valid-strategies.interface";
-import { GetValidStrategiesUseCase } from "@application/use_cases/algo-trading/get-valid-strategies.usecase";
+import { IStrategiesUseCase } from "@application/use_cases/algo-trading/interfaces/get-valid-strategies.interface";
+import { StrategiesUseCase } from "@application/use_cases/algo-trading/get-valid-strategies.usecase";
 import { IEvaluateStrategyUseCase } from "@application/use_cases/algo-trading/interfaces/evaluate-strategy.interface";
 import { EvaluateStrategyUseCase } from "@application/use_cases/algo-trading/evaluate-strategy.usecase";
 import { IExecuteMarketBuyOrderUseCase } from "@application/use_cases/stock/interfaces/execute-market-buy-order.interface";
 import { ExecuteMarketBuyOrderUseCase } from "@application/use_cases/stock/execute-market-buy-order.usecase";
 import { IExecuteMarketSellOrderUseCase } from "@application/use_cases/stock/interfaces/execute-market-sell-order.interface";
 import { ExecuteMarketSellOrderUseCase } from "@application/use_cases/stock/execute-market-sell-order.usecase";
+import { IStockValidationService } from "@application/services/stock/interfaces/stock-validation.service.interface";
+import { StockValidationService } from "@application/services/stock/stock-validation.service";
+import { IDispatchLimitOrdersUseCase } from "@application/use_cases/stock/interfaces/dispatch-limit-orders.interface";
+import { DispatchLimitOrdersUseCase } from "@application/use_cases/stock/dispatch-limit-orders.usecase";
+import { IDispatchSlTpOrdersUseCase } from "@application/use_cases/stock/interfaces/dispatch-sl-tp-orders.interface";
+import { DispatchSlTpOrdersUseCase } from "@application/use_cases/stock/dispatch-sl-tp-orders.usecase";
+import { IProcessOrderJobUseCase } from "@application/use_cases/stock/interfaces/process-order-job.interface";
+import { ProcessOrderJobUseCase } from "@application/use_cases/stock/process-order-job.usecase";
 
 // BullMQ & Queues
 import { StrategyQueue } from "@infrastructure/providers/algos/queue/strategy/strategy.queue";
@@ -134,6 +142,8 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IExecuteMarketBuyOrderUseCase>(STOCK_TYPES.ExecuteMarketBuyOrderUseCase).to(ExecuteMarketBuyOrderUseCase);
     bind<IMarketSellOrderUseCase>(STOCK_TYPES.MarketSellOrderUseCase).to(MarketSellOrderUseCase);
     bind<IExecuteMarketSellOrderUseCase>(STOCK_TYPES.ExecuteMarketSellOrderUseCase).to(ExecuteMarketSellOrderUseCase);
+    bind<IStockValidationService>(STOCK_TYPES.StockValidationService).to(StockValidationService);
+
     bind<ILimitBuyOrderUseCase>(STOCK_TYPES.LimitBuyOrderUseCase).to(LimitBuyOrderUseCase);
     bind<IExecuteLimitBuyOrderUseCase>(STOCK_TYPES.ExecuteLimitBuyOrderUseCase).to(ExecuteLimitBuyOrderUseCase);
     bind<ILimitSellOrderUseCase>(STOCK_TYPES.LimitSellOrderUseCase).to(LimitSellOrderUseCase);
@@ -143,6 +153,9 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IExecuteSlTpUseCase>(STOCK_TYPES.ExecuteSlTpUseCase).to(ExecuteSlTpUseCase);
     bind<IOrderRepository>(STOCK_TYPES.OrderRepository).to(OrderRepository);
     bind<ITradeRepository>(STOCK_TYPES.TradeRepository).to(TradeRepository);
+    bind<IDispatchLimitOrdersUseCase>(STOCK_TYPES.DispatchLimitOrdersUseCase).to(DispatchLimitOrdersUseCase);
+    bind<IDispatchSlTpOrdersUseCase>(STOCK_TYPES.DispatchSlTpOrdersUseCase).to(DispatchSlTpOrdersUseCase);
+    bind<IProcessOrderJobUseCase>(STOCK_TYPES.ProcessOrderJobUseCase).to(ProcessOrderJobUseCase);
 
     bind<AlgoTradingController>(STOCK_TYPES.AlgoTradingController).to(AlgoTradingController);
     bind<GetStrategiesUseCase>(STOCK_TYPES.GetStrategiesUseCase).to(GetStrategiesUseCase);
@@ -157,7 +170,7 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IProcessSignalUseCase>(STOCK_TYPES.ProcessSignalUseCase).to(ProcessSignalUseCase);
     bind<IConfirmBuySignalUseCase>(STOCK_TYPES.ConfirmBuySignalUseCase).to(ConfirmBuySignalUseCase);
     bind<IConfirmSellSignalUseCase>(STOCK_TYPES.ConfirmSellSignalUseCase).to(ConfirmSellSignalUseCase);
-    bind<IGetValidStrategiesUseCase>(STOCK_TYPES.GetValidStrategiesUseCase).to(GetValidStrategiesUseCase);
+    bind<IStrategiesUseCase>(STOCK_TYPES.StrategiesUseCase).to(StrategiesUseCase);
     bind<IEvaluateStrategyUseCase>(STOCK_TYPES.EvaluateStrategyUseCase).to(EvaluateStrategyUseCase);
 
     // BullMQ & Queues

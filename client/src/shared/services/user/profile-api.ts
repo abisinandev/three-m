@@ -1,4 +1,4 @@
-import api from "@lib/axiosUser";
+import api from "@/lib/axios-user";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
 import { useQuery } from "@tanstack/react-query";
 import type { UserType } from "@shared/types/user/UserType";
@@ -15,6 +15,8 @@ export const useProfileQuery = () =>
     useQuery({
         queryKey: ['profile'],
         queryFn: ProfileApi,
-        staleTime: 1000 * 60 * 5,
+        staleTime: 1000 * 60 * 30, // 30 minutes
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
         retry: false,
     });

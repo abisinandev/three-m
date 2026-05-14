@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import api from '@lib/axiosUser';
+import api from '@/lib/axios-user';
 import { useUserStore } from '@stores/user/UserStore';
 import { Wallet, ChevronDown, LogOut, User, Menu, Bell } from 'lucide-react';
 import { Footer } from '@shared/components/LandingPage/Footer';

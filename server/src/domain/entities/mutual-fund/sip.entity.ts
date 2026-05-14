@@ -1,4 +1,5 @@
 import { SipFrequency, SipStatus } from "@domain/enum/funds/sip.enums";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 export class SipEntity {
     private readonly _id?: string;
@@ -16,11 +17,11 @@ export class SipEntity {
     private readonly _totalInstallments: number;
     private readonly _executedInstallments: number;
 
-    private readonly _status: SipStatus;
+    private _status: SipStatus;
     private readonly _failureReason?: string;
 
     private readonly _createdAt: Date;
-    private readonly _updatedAt?: Date;
+    private _updatedAt?: Date;
 
     private constructor(props: {
         id?: string;
@@ -82,11 +83,11 @@ export class SipEntity {
     ): SipEntity {
 
         if (sip._status !== SipStatus.ACTIVE) {
-            throw new Error("SIP is not active");
+            throw new ValidationError("SIP is not active");
         }
 
         if (sip._executedInstallments >= sip._totalInstallments) {
-            throw new Error("SIP already completed");
+            throw new ValidationError("SIP already completed");
         }
 
         const executedInstallments = sip._executedInstallments + 1;
@@ -113,7 +114,7 @@ export class SipEntity {
 
     static pause(sip: SipEntity): SipEntity {
         if (sip._status !== SipStatus.ACTIVE) {
-            throw new Error("Only active SIP can be paused");
+            throw new ValidationError("Only active SIP can be paused");
         }
 
         return new SipEntity({
@@ -125,7 +126,7 @@ export class SipEntity {
 
     static cancel(sip: SipEntity): SipEntity {
         if (sip._status === SipStatus.COMPLETED) {
-            throw new Error("Completed SIP cannot be cancelled");
+            throw new ValidationError("Completed SIP cannot be cancelled");
         }
 
         return new SipEntity({
@@ -187,4 +188,20 @@ export class SipEntity {
     get failureReason() { return this._failureReason; }
     get createdAt() { return this._createdAt; }
     get updatedAt() { return this._updatedAt; }
+
+    cancel() {
+
+        if (
+            this.status !== SipStatus.ACTIVE
+        ) {
+
+            throw new ValidationError(
+                "Only active SIP can cancel"
+            );
+        }
+
+        this._status = SipStatus.CANCELLED;
+
+        this._updatedAt = new Date();
+    }
 }

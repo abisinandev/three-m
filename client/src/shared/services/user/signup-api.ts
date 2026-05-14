@@ -1,6 +1,6 @@
 import type { SignupType } from '@shared/types/user/SignupTypes'
 import { API_ROUTES } from '@shared/constants/apiRoutes'
-import api from "../../../lib/axiosUser";
+import api from "../../../lib/axios-user";
 
 
 export const SignupApi = async (data: SignupType) => {

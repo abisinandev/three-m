@@ -9,7 +9,7 @@ import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { calculateReturn } from "@shared/utils/mutual-fund/return-calculation";
 import { inject, injectable } from "inversify";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
-import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
+import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
 
 @injectable()
 export class MutualFundDetailsUseCase implements IMutualFundDetailsUseCase {
@@ -17,7 +17,7 @@ export class MutualFundDetailsUseCase implements IMutualFundDetailsUseCase {
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: MutualFundRepository,
         @inject(MUTUAL_FUND_TYPES.MfCagrRepository) private readonly _mfCagrRepository: IMfCagrRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundNavRepository) private readonly _mfNavRepository: IMutualFundNavRepository,
-        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
+        @inject(MUTUAL_FUND_TYPES.MutualFundNavService) private readonly _navService: IMutualFundNavService,
     ) { };
 
     async execute(schemeCode: string, interval: NavInterval): Promise<FundDetailsDTO> {
@@ -26,7 +26,8 @@ export class MutualFundDetailsUseCase implements IMutualFundDetailsUseCase {
 
         const mfCagrs = await this._mfCagrRepository.findOne({ schemeCode });
         const navHistories = await this._mfNavRepository.findByInterval(schemeCode, interval, 300) ?? [];
-        const latestNav = await this._navUpdateProvider.fetchNavHistories(schemeCode);
+
+        const { nav, navDate } = await this._navService.getLatestNav(schemeCode);
 
         const absoluteReturn = calculateReturn(navHistories);
         return {
@@ -37,8 +38,8 @@ export class MutualFundDetailsUseCase implements IMutualFundDetailsUseCase {
             category: fund.category,
             subCategory: fund.subCategory,
 
-            nav: latestNav[0].nav ?? 0,
-            navDate: fund.latestNav?.navDate ?? new Date(0),
+            nav: nav,
+            navDate: navDate || fund.latestNav?.navDate || new Date(0),
 
             cagr: mfCagrs
                 ? {

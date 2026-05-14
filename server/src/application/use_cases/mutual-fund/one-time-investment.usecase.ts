@@ -1,87 +1,59 @@
 import { InvestmentDTO } from "@application/dto/mutual-funds/investment-dto";
 import { IOneTimeInvestmentUseCase } from "./interfaces/one-time-investment.usecase.interface";
-import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
-import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { inject, injectable } from "inversify";
-import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
-import { ErrorMessages } from "@shared/constants/error.messages";
-import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
-import { ITransactionRepository } from "@application/interfaces/repositories/feature/transaction-repository.interface";
-import { CurrencyTypes } from "@domain/enum/users/currency-enum";
-import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
-import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
-import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
-import { FundStatus } from "@domain/enum/funds/fund-status.enum";
-import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
-import { TransactionEntity } from "@domain/entities/transaction/transaction.entity";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
-import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
-import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 import mongoose from "mongoose";
-import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
+import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 import { IIdempotencyService } from "@application/services/idempotency/interface/idempotency-service.interface";
-
+import { IInvestmentValidationService } from "@application/services/mutual-fund/interfaces/investment-validation.service.interface";
+import { ITransactionService } from "@application/services/transaction/interfaces/transaction.service.interface";
+import { IWalletService } from "@application/services/wallet/interfaces/wallet.service.interface";
+import { IPortfolioService } from "@application/services/portfolio/interfaces/portfolio.service.interface";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 
 @injectable()
 export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
     constructor(
-        @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
-        @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
-        @inject(USER_TYPES.TransactionRepository) private readonly _transactionRepository: ITransactionRepository,
-        @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
-        @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
-        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
+        @inject(MUTUAL_FUND_TYPES.MutualFundNavService) private readonly _navService: IMutualFundNavService,
         @inject(EXTERNAL_TYPES.IdempotencyService) private readonly _idempotencyService: IIdempotencyService,
+        @inject(MUTUAL_FUND_TYPES.InvestmentValidationService) private readonly _validationService: IInvestmentValidationService,
+        @inject(USER_TYPES.TransactionService) private readonly _transactionService: ITransactionService,
+        @inject(USER_TYPES.WalletService) private readonly _walletService: IWalletService,
+        @inject(PORTFOLIO_TYPES.PortfolioService) private readonly _portfolioService: IPortfolioService,
     ) { }
 
     async execute(data: InvestmentDTO, userId: string, idempotencyKey: string): Promise<void> {
-
         const { amount, schemeCode, investmentType, paymentMethod } = data;
 
         await this._idempotencyService.checkAndLock(idempotencyKey, data);
 
-        const latestNav = (await this._navUpdateProvider.fetchNavHistories(schemeCode))[0].nav;
+        const { nav: latestNav } = await this._navService.getLatestNav(schemeCode);
 
         const session = await mongoose.startSession();
 
         try {
             await session.withTransaction(async () => {
-
-                const user = await this._userRepository.findById(userId, session);
-                if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
-
-                if (!user.isVerified) throw new ValidationError(ErrorMessages.AUTH.COMPLETE_KYC);
-
-                const wallet = await this._walletRepository.findOne({ userId });
-                if (!wallet) throw new NotFoundError(ErrorMessages.PAYMENT.WALLET_NOT_FOUND);
-
-                const fund = await this._mutualFundRepository.findBySchemeCode(data.schemeCode);
-                if (!fund || fund.status === FundStatus.INACTIVE) throw new ValidationError(ErrorMessages.MUTUAL_FUND.FUND_INACTIVE);
-
-                const transaction = TransactionEntity.create({
-                    userId: user.id!,
-                    userCode: user.userCode!,
+                const { user, wallet, fund } = await this._validationService.validateInvestment(
+                    userId,
+                    schemeCode,
                     amount,
-                    currency: CurrencyTypes.INR,
-                    status: TransactionStatus.PENDING,
-                    type: TransactionTypes.INVESTMENT,
-                    referenceType: TransactionReferenceType.INVESTMENT,
-                    fundId: fund.id,
-                })
-                const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
+                    session
+                );
 
-                if (wallet.availableBalance < amount)
-                    throw new ValidationError(ErrorMessages.PAYMENT.INSUFFICIENT_BALANCE);
+                const newTransaction = await this._transactionService.createInvestmentTransaction(
+                    user,
+                    amount,
+                    fund.id as string,
+                    session
+                );
 
-                wallet.debit(amount);
-
-                await this._walletRepository.update(wallet.id as string, wallet, session);
+                await this._walletService.debit(wallet, amount, session);
 
                 const investment = InvestmentEntity.create({
                     userId,
@@ -92,42 +64,19 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                 });
                 await this._investmentRepository.createInvestment(investment, session);
 
-                let portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
+                await this._portfolioService.updateOrCreatePortfolio(
                     userId,
                     fund.id as string,
+                    AssetType.MUTUAL_FUND,
+                    amount,
+                    latestNav,
                     session
                 );
 
-                if (!portfolio) {
-                    portfolio = PortfolioEntity.create({
-                        userId,
-                        assetId: fund.id as string,
-                        assetType: AssetType.MUTUAL_FUND,
-                        units: amount / latestNav,
-                        avgPrice: latestNav,
-                        investedAmount: amount,
-                    });
-                    await this._portfolioRepository.create(portfolio, session);
-                } else {
-                    const newTotalInvested = portfolio.investedAmount + amount;
-                    const investmentUnits = amount / latestNav;
-                    const newUnits = (portfolio.units ?? 0) + investmentUnits;
-                    const newAvgPrice = latestNav;
-
-
-                    portfolio.updateQuantityAndPrice(newUnits, newAvgPrice, newTotalInvested);
-
-                    await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
-                }
-
-                newTransaction.markSucess();
-                await this._transactionRepository.update(newTransaction.id as string, newTransaction, session);
-
+                await this._transactionService.markSuccess(newTransaction, session);
             });
-
-
         } finally {
             await session.endSession();
         }
     }
-}  
+}

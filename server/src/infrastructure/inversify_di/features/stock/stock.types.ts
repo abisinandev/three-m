@@ -34,6 +34,7 @@ export const STOCK_TYPES = {
     ExecuteLimitSellOrderUseCase: Symbol.for("ExecuteLimitSellOrderUseCase"),
     CancelLimitOrderUseCase: Symbol.for("CancelLimitOrderUseCase"),
     FetchPendingOrdersUseCase: Symbol.for("FetchPendingOrdersUseCase"),
+    ProcessOrderJobUseCase: Symbol.for("ProcessOrderJobUseCase"),
     OrderRepository: Symbol.for("OrderRepository"),
     TradeRepository: Symbol.for("TradeRepository"),
 
@@ -48,7 +49,7 @@ export const STOCK_TYPES = {
     ConfirmBuySignalUseCase: Symbol.for("ConfirmBuySignalUseCase"),
     ConfirmSellSignalUseCase: Symbol.for("ConfirmSellSignalUseCase"),
     SignalManager: Symbol.for("SignalManager"),
-    GetValidStrategiesUseCase: Symbol.for("GetValidStrategiesUseCase"),
+    StrategiesUseCase: Symbol.for("StrategiesUseCase"),
     AlgoStrategyConfigRepository: Symbol.for("AlgoStrategyConfigRepository"),
     AdminGetBaseStrategiesUseCase: Symbol.for("AdminGetBaseStrategiesUseCase"),
     AdminUpdateStrategyRiskConfigUseCase: Symbol.for("AdminUpdateStrategyRiskConfigUseCase"),
@@ -68,15 +69,16 @@ export const STOCK_TYPES = {
     SlTpOrderWorker: Symbol.for("SlTpOrderWorker"),
     SlTpOrderScheduler: Symbol.for("SlTpOrderScheduler"),
     ExecuteSlTpUseCase: Symbol.for("ExecuteSlTpUseCase"),
+    DispatchLimitOrdersUseCase: Symbol.for("DispatchLimitOrdersUseCase"),
+    DispatchSlTpOrdersUseCase: Symbol.for("DispatchSlTpOrdersUseCase"),
 
 
-    // EngineRunner:Symbol.for("EngineRunner")
     WatchlistRepository: Symbol.for("WatchlistRepository"),
     StockCandleRepository: Symbol.for("StockCandleRepository"),
     AddToWatchlistUseCase: Symbol.for("AddToWatchlistUseCase"),
     RemoveFromWatchlistUseCase: Symbol.for("RemoveFromWatchlistUseCase"),
     FetchWatchlistUseCase: Symbol.for("FetchWatchlistUseCase"),
     GetMarketMoversUseCase: Symbol.for("GetMarketMoversUseCase"),
-
-
+    StockValidationService: Symbol.for("StockValidationService"),
 }
+

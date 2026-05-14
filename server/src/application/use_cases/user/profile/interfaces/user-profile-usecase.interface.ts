@@ -1,5 +1,5 @@
-import type { UserDTO } from "@application/dto/user/user-dto";
+import type { UserMeResponseDTO } from "@application/dto/user/user-me-response.dto";
 
 export interface IUserProfileInterface {
-  execute(data: { userId: string }): Promise<UserDTO>;
+  execute(data: { userId: string }): Promise<UserMeResponseDTO>;
 }

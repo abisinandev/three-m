@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useUserStore } from "@stores/user/UserStore";
-import { redirect } from '@tanstack/react-router'
+import { redirect, notFound } from '@tanstack/react-router'
 import { USER_REFRESH_TOKEN } from "@shared/constants/userContants";
 import { ROUTES } from "@shared/constants/routes";
 
@@ -54,9 +54,8 @@ api.interceptors.response.use(
             );
         }
 
-        if (err.response.status === 403) {
-            useUserStore.getState().logout();
-            throw redirect({ to: ROUTES.AUTH.LOGIN })
+        if (err.response?.status === 403) {
+            throw notFound();
         }
 
         if (err.response.status === 401 && !originalRequest._retry) {
@@ -67,6 +66,11 @@ api.interceptors.response.use(
 
                 try {
                     await api.post(USER_REFRESH_TOKEN, {}, { withCredentials: true });
+                } catch (error) {
+
+                    useUserStore.getState().logout();
+                    throw redirect({ to: ROUTES.AUTH.LOGIN })
+                    
                 } finally {
                     isRefreshing = false
                 }

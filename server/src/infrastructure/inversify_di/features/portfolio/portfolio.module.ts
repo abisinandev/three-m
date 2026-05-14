@@ -21,6 +21,9 @@ import { IFetchPortfolioAssetsUsecase } from "@application/use_cases/portfolio/i
 import { FetchPortfolioAssetsUseCases } from "@application/use_cases/portfolio/fetch-portfolio-assets.usecase";
 import { IFetchStockHoldingsUseCase } from "@application/use_cases/portfolio/interfaces/fetch-stock-holdings-usecase.interface";
 import { FetchStockHoldingsUseCase } from "@application/use_cases/portfolio/fetch-stock-holdings.usecase";
+import { PortfolioService } from "@application/services/portfolio/portfolio.service";
+import { IPortfolioService } from "@application/services/portfolio/interfaces/portfolio.service.interface";
+
 
 export const PortfolioModule = new ContainerModule(({ bind }) => {
     // Repositories
@@ -39,4 +42,8 @@ export const PortfolioModule = new ContainerModule(({ bind }) => {
 
     // Controllers
     bind<PortFolioController>(PORTFOLIO_TYPES.PortFolioController).to(PortFolioController);
+
+    // Services
+    bind<IPortfolioService>(PORTFOLIO_TYPES.PortfolioService).to(PortfolioService);
+
 });

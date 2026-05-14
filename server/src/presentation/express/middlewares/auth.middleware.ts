@@ -25,7 +25,7 @@ export class AuthMiddleware {
       logger.info(`Access_token: ${accessToken}`);
 
       if (!accessToken) {
-        throw new UnauthorizedError("Unauthorized access");
+        throw new UnauthorizedError(ErrorMessages.AUTH.UNAUTHORIZED);
       }
 
       const decoded = jwt.verify(accessToken, env.ACCESS_SECRET) as JwtPayload;

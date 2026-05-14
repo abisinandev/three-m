@@ -14,6 +14,6 @@ router.post(
     controller.createCheckoutSession.bind(controller)
 );
 
-router.post('/verify', controller.verifyPayment.bind(controller));
+router.post(UserPaymentRoutes.VERIFY, controller.verifyPayment.bind(controller));
 
 export default router;

@@ -19,6 +19,6 @@ router.get(PortfolioRoutes.STOCK_ASSETS, controller.listStockAssets.bind(control
 router.get(PortfolioRoutes.TRADE_HISTORY, controller.listTradeHistory.bind(controller));
 router.get(PortfolioRoutes.HISTORIES, controller.listTradeHistory.bind(controller));
 
-router.get("/projection", controller.returnProjection.bind(controller));
+router.get(PortfolioRoutes.PROJECTION, controller.returnProjection.bind(controller));
 
 export default router;

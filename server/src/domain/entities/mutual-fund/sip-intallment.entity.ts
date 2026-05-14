@@ -1,4 +1,5 @@
 import { SipInstallmentStatus } from "@domain/enum/funds/sip-intallment-status";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 export class SipInstallmentEntity {
     private readonly _id?: string;
@@ -93,6 +94,18 @@ export class SipInstallmentEntity {
             ...installment.toPersistence(),
             status: SipInstallmentStatus.FAILED,
             failureReason: reason,
+        });
+    }
+
+    static cancel(
+        installment: SipInstallmentEntity
+    ): SipInstallmentEntity {
+        if (installment.status !== SipInstallmentStatus.PENDING) {
+            throw new ValidationError("Only pending installments can be cancelled");
+        }
+        return new SipInstallmentEntity({
+            ...installment.toPersistence(),
+            status: SipInstallmentStatus.CANCELLED,
         });
     }
 

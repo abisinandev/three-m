@@ -28,7 +28,8 @@ export enum UserSipRoutes {
 }
 
 export enum UserPaymentRoutes {
-    CREATE_CHECKOUT_SESSION = '/create-checkout-session'
+    CREATE_CHECKOUT_SESSION = '/create-checkout-session',
+    VERIFY = '/verify'
 }
 
 export enum UserWebhookRoutes {

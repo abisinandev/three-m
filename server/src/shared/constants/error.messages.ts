@@ -80,6 +80,7 @@ export const ErrorMessages = {
         ALREADY_COMPLETED: "Cannot pause completed SIP",
         ONLY_ACTIVE_SIP: "Only active SIP can be paused",
         INVALID_STATE_RESUME: "Invalid SIP state for resume",
+        EXISTING_INSTALLMENTS: "Please redeem your existing installments first before cancelling the SIP.",
     },
     EXPENSE_TRACKER: {
         INSUFFICIENT_BALANCE: "Insufficient funds: You don't have enough balance to add this expense."

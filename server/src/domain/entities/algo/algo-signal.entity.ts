@@ -1,3 +1,4 @@
+import { ValidationError } from "@presentation/express/utils/error-handling";
 import { SignalAction, SignalStatus } from "./enum/signal-enums";
 
 export class AlgoSignalEntity {
@@ -46,7 +47,7 @@ export class AlgoSignalEntity {
         expiresAt: Date;
     }): AlgoSignalEntity {
         if (data.price <= 0) {
-            throw new Error('Price must be greater than 0');
+            throw new ValidationError('Price must be greater than 0');
         }
 
         return new AlgoSignalEntity({
@@ -100,14 +101,14 @@ export class AlgoSignalEntity {
 
     approve() {
         if (this._status !== SignalStatus.PENDING) {
-            throw new Error('Only pending signals can be approved');
+            throw new ValidationError('Only pending signals can be approved');
         }
         this._status = SignalStatus.APPROVED;
     }
 
     reject() {
         if (this._status !== SignalStatus.PENDING) {
-            throw new Error('Only pending signals can be rejected');
+            throw new ValidationError('Only pending signals can be rejected');
         }
         this._status = SignalStatus.REJECTED;
     }

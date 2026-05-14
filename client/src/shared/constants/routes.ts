@@ -65,5 +65,7 @@ export const ROUTES = {
         ALGO_TRADING: "/admin/algo-trading",
         SUBSCRIPTIONS: "/admin/subscriptions",
         SETTINGS: "/admin/settings",
+        SYSTEM_LOGS: "/admin/system-logs",
+        SYSTEM_LOG_DETAIL: (id: string) => `/admin/system-logs/${id}`,
     }
 } as const;

@@ -1,4 +1,4 @@
 export interface IStrategyScheduler {
-    start(): Promise<void>;
-    stop(): Promise<void>;
+    start(): void;
+    stop(): void;
 }

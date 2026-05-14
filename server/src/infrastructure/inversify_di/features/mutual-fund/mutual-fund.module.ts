@@ -10,7 +10,6 @@ import { InvestmentRepository } from "@infrastructure/databases/repository/mutua
 // UseCases
 import { MutualFundsUseCase } from "@application/use_cases/mutual-fund/mutual-fund.usecase";
 import { FetchAllFundUseCases } from "@application/use_cases/mutual-fund/fetch-all-funds.usecase";
-import { MutualFundNavUpdate } from "@application/use_cases/mutual-fund/mutual-fund-nav-update.usecase";
 import { ChangeStatusUseCase } from "@application/use_cases/mutual-fund/change-status.usecase";
 import { ListFundUserSideUseCase } from "@application/use_cases/mutual-fund/list-funds.usecase";
 import { MfCagrUseCase } from "@application/use_cases/mutual-fund/mf-cagr-usecase";
@@ -21,6 +20,15 @@ import { MfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/m
 
 // Providers
 import { NavUpdateProvider } from "@infrastructure/providers/mutual-fund/nav-update.provider";
+import { InvestmentValidationService } from "@application/services/mutual-fund/investment-validation.service";
+import { NavUpdateQueue } from "@infrastructure/providers/mutual-fund/queue/nav-update-queue";
+import { NavUpdateWorker } from "@infrastructure/providers/mutual-fund/queue/workers/nav-update.worker";
+import { INavUpdateQueue } from "@application/interfaces/services/mutual-fund/nav-update.queue";
+import { SyncSingleFundNavUseCase } from "@application/use_cases/mutual-fund/sync-single-fund-nav.usecase";
+import { ISyncSingleFundNavUseCase } from "@application/use_cases/mutual-fund/interfaces/sync-single-fund-nav.usecase.interface";
+import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
+import { MutualFundNavService } from "@application/services/mutual-fund/mutual-fund-nav.service";
+
 
 // Controllers
 import { MutualFundsAdminController } from "@presentation/http/controllers/mutual-funds/mutual-fund-admin.controller";
@@ -47,6 +55,9 @@ import { IOneTimeInvestmentUseCase } from "@application/use_cases/mutual-fund/in
 import { INavAllocateUseCase } from "@application/use_cases/mutual-fund/interfaces/nav-allocate-usecase.interface";
 import { IMfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-investment-history-usecase.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
+import { IInvestmentValidationService } from "@application/services/mutual-fund/interfaces/investment-validation.service.interface";
+import { MutualFundNavUpdateUsecase } from "@application/use_cases/mutual-fund/mutual-fund-nav-update.usecase";
+
 
 
 export const MutualFundModule = new ContainerModule(({ bind }) => {
@@ -59,7 +70,7 @@ export const MutualFundModule = new ContainerModule(({ bind }) => {
     // UseCases
     bind<IMutualFundsUseCase>(MUTUAL_FUND_TYPES.MutualFundUsecase).to(MutualFundsUseCase);
     bind<IFetchAllFundsUseCases>(MUTUAL_FUND_TYPES.FetchAllFundUseCases).to(FetchAllFundUseCases);
-    bind<IMutualFundNavUpdatesUseCase>(MUTUAL_FUND_TYPES.MutualFundNavUpdateUseCase).to(MutualFundNavUpdate);
+    bind<IMutualFundNavUpdatesUseCase>(MUTUAL_FUND_TYPES.MutualFundNavUpdateUseCase).to(MutualFundNavUpdateUsecase);
     bind<IChangeFundStatusUseCase>(MUTUAL_FUND_TYPES.ChangeStatusUseCase).to(ChangeStatusUseCase);
     bind<IListFundsUserSideUseCase>(MUTUAL_FUND_TYPES.ListFundUserSideUseCase).to(ListFundUserSideUseCase);
     bind<IMfCagrUseCase>(MUTUAL_FUND_TYPES.MfCagrUseCase).to(MfCagrUseCase);
@@ -67,9 +78,15 @@ export const MutualFundModule = new ContainerModule(({ bind }) => {
     bind<IOneTimeInvestmentUseCase>(MUTUAL_FUND_TYPES.InvestmentUseCase).to(OneTimeInvestmentUseCase);
     bind<INavAllocateUseCase>(MUTUAL_FUND_TYPES.NavAllocateUseCase).to(NavAllocateUseCase);
     bind<IMfInvestmentHistoryUseCase>(MUTUAL_FUND_TYPES.MfInvestmentHistoryUseCase).to(MfInvestmentHistoryUseCase);
+    bind<ISyncSingleFundNavUseCase>(MUTUAL_FUND_TYPES.SyncSingleFundNavUseCase).to(SyncSingleFundNavUseCase);
 
     // Providers
     bind<IMutualFundNavUpdateProvider>(MUTUAL_FUND_TYPES.NavUpdateProvider).to(NavUpdateProvider);
+    bind<IInvestmentValidationService>(MUTUAL_FUND_TYPES.InvestmentValidationService).to(InvestmentValidationService);
+    bind<INavUpdateQueue>(MUTUAL_FUND_TYPES.NavUpdateQueue).to(NavUpdateQueue);
+    bind<NavUpdateWorker>(MUTUAL_FUND_TYPES.NavUpdateWorker).to(NavUpdateWorker).inSingletonScope();
+    bind<IMutualFundNavService>(MUTUAL_FUND_TYPES.MutualFundNavService).to(MutualFundNavService);
+
 
     // Controllers
     bind<MutualFundsAdminController>(MUTUAL_FUND_TYPES.MutualFundsAdminController).to(MutualFundsAdminController);

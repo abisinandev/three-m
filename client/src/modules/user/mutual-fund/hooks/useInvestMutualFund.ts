@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '@lib/axiosUser';
+import api from '@/lib/axios-user';
 import type { InvestmentPayload } from '../types/mutual-fund.types';
 import { createIdempotencyKey } from '@/utils/uuid/generate-idempotency-key';
 

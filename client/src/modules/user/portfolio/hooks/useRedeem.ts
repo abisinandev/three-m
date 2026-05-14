@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { getRedeemableInvestments } from '@/shared/services/portfolio/portfolio-api';
 import type { IRedeemedInvestment } from '@shared/types/portfolio.types';
-import api from '@lib/axiosUser';
+import api from '@/lib/axios-user';
+import { API_ROUTES } from '@shared/constants/apiRoutes';
 
 export const useRedeem = () => {
     const { data: investments = [], isLoading: loading, refetch } = useQuery<IRedeemedInvestment[]>({
@@ -35,7 +36,7 @@ export const useRedeem = () => {
 
     const mutateRedeem = useMutation({
         mutationFn: async (payload: { schemeCode: string, amount: number | string, units: number | string }) =>
-            await api.patch("/user/portfolio/confirm-redeem", payload),
+            await api.patch(API_ROUTES.USER.PORTFOLIO.CONFIRM_REDEEM, payload),
         onSuccess: () => {
             setConfirmStep('success');
             refetch();
@@ -97,4 +98,3 @@ export const useRedeem = () => {
         handleRedeemConfirm,
     };
 };
-

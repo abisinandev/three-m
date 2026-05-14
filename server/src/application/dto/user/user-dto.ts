@@ -25,9 +25,7 @@ export type UserDTO = {
     plan: string;
   };
   kycId: string;
-  kyc?: KycSummary;
   kycStatus?: KycStatusType;
-  wallet?: WalletSummary;
   walletId: string;
 
   currency: string;
