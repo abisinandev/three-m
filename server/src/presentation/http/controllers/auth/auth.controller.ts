@@ -114,7 +114,7 @@ export class AuthController {
       return ResponseHelper.success(
         res,
         SuccessMessages.AUTH.LOGGED_IN,
-        { accessToken: "Created" },
+        { accessToken: "Created", user: result.user },
         HttpStatus.OK,
       );
 

@@ -11,7 +11,6 @@ import { calculateNextExecutionDate } from "@shared/utils/sip/sip-installment.ut
 import { SipEntity } from "@domain/entities/mutual-fund/sip.entity";
 import { ITransactionService } from "@application/services/transaction/interfaces/transaction.service.interface";
 import { IWalletService } from "@application/services/wallet/interfaces/wallet.service.interface";
-import { IPortfolioService } from "@application/services/portfolio/interfaces/portfolio.service.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import mongoose from "mongoose";
@@ -22,9 +21,6 @@ import { ICreateNotificationUseCase } from "../notification/interfaces/create-no
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
-import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
-import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
-import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IExecuteDueSipsUseCase } from "./interfaces/execute-due-sip-usecase.interface";
 
@@ -38,10 +34,8 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
         @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotificationUseCase: ICreateNotificationUseCase,
-        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
         @inject(USER_TYPES.TransactionService) private readonly _transactionService: ITransactionService,
         @inject(USER_TYPES.WalletService) private readonly _walletService: IWalletService,
-        @inject(PORTFOLIO_TYPES.PortfolioService) private readonly _portfolioService: IPortfolioService,
     ) { }
 
 
@@ -106,17 +100,6 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
 
             await this._investmentRepository.createInvestment(investment, session);
 
-            const navHistory = await this._navUpdateProvider.fetchNavHistories(installment.schemeCode);
-            const latestNav = navHistory[0]?.nav ?? 0;
-
-            await this._portfolioService.updateOrCreatePortfolio(
-                user.id as string,
-                fund.id as string,
-                AssetType.MUTUAL_FUND,
-                installment.amount,
-                latestNav,
-                session
-            );
 
 
             const nextDate = calculateNextExecutionDate(
@@ -152,7 +135,6 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
             }
 
             await this._transactionService.markSuccess(newTransaction, session);
-
 
             await session.commitTransaction();
 

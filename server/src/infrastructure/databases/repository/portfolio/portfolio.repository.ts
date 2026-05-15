@@ -177,4 +177,6 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         ]);
         return result.length > 0 ? result[0].total : 0;
     }
+
+    
 }

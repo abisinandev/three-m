@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { ISyncSingleFundNavUseCase } from "./interfaces/sync-single-fund-nav.usecase.interface";
+import { ISyncFundNavUseCase } from "./interfaces/sync-fund-nav.usecase.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IMutualFundNavRepository } from "@application/interfaces/repositories/feature/mutual-fund-nav-repository.interface";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
@@ -10,7 +10,7 @@ import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/e
 import { ICacheProvider } from "@application/interfaces/services/externals/redis-cache.provider.interface";
 
 @injectable()
-export class SyncSingleFundNavUseCase implements ISyncSingleFundNavUseCase {
+export class SyncFundNavUseCase implements ISyncFundNavUseCase {
     constructor(
         @inject(MUTUAL_FUND_TYPES.MutualFundNavRepository) private readonly _mutualFundNavRepository: IMutualFundNavRepository,
         @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,

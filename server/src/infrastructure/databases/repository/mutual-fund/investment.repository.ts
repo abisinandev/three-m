@@ -284,22 +284,8 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
     }
 
     async findInvestmentsByUser(userId: string): Promise<InvestmentEntity[] | null> {
-        const latestDoc = await this.model
-            .findOne({ userId })
-            .sort({ createdAt: -1 })
-            .exec();
-
-        if (!latestDoc) return null;
-
-        const latestDate = new Date(latestDoc.createdAt);
-        const startOfMonth = new Date(latestDate.getFullYear(), latestDate.getMonth(), 1);
-        const endOfMonth = new Date(latestDate.getFullYear(), latestDate.getMonth() + 1, 0, 23, 59, 59);
-
-        const docs = await this.model.find({
-            userId,
-            createdAt: { $gte: startOfMonth, $lte: endOfMonth },
-        });
-
+        const docs = await this.model.find({ userId });
+        if (!docs || docs.length === 0) return null;
         return docs.map(doc => this.mapper.toDomain(doc));
     }
 

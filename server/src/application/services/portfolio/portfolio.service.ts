@@ -28,7 +28,7 @@ export class PortfolioService implements IPortfolioService {
         );
 
         const quantityOrUnits = assetType === AssetType.STOCK ? amount : amount / price;
-
+        
         if (!portfolio) {
             portfolio = PortfolioEntity.create({
                 userId,
@@ -39,16 +39,16 @@ export class PortfolioService implements IPortfolioService {
                 avgPrice: price,
                 investedAmount: assetType === AssetType.STOCK ? (quantityOrUnits * price) : amount,
             });
-            
+
             if (riskLevels) {
                 portfolio.updateRiskLevels(riskLevels.stopLoss, riskLevels.takeProfit);
             }
-            
+
             await this._portfolioRepository.create(portfolio, session);
         } else {
             const currentQty = assetType === AssetType.STOCK ? (portfolio.quantity ?? 0) : (portfolio.units ?? 0);
             const newTotalQuantity = currentQty + quantityOrUnits;
-            
+
             const addedInvestment = assetType === AssetType.STOCK ? (quantityOrUnits * price) : amount;
             const newTotalInvested = portfolio.investedAmount + addedInvestment;
             const newAvgPrice = newTotalInvested / newTotalQuantity;
