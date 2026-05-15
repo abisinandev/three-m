@@ -12,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import api from "@/lib/axios-user";
 import { LOGIN_API } from "@shared/constants/userContants";
 import { ROUTES } from "@shared/constants/routes";
+import { useUserStore } from "@stores/user/UserStore";
 
 export const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -74,6 +75,8 @@ export const LoginPage: React.FC = () => {
                 onSuccess: (res) => {
                     toast.success(res.data?.message || "2FA verified successfully!");
                     setIs2faModalOpen(false);
+                    const userData = res.data.data.user;
+                    useUserStore.getState().setUser(userData);
                     navigate({ to: ROUTES.USER.PROFILE, replace: true });
                 },
                 onError: () => toast.error("Invalid 2FA code"),

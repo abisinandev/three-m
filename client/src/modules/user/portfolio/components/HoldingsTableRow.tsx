@@ -78,7 +78,6 @@ export const HoldingsTableRow = ({
 }: HoldingsTableRowProps) => {
     const profit = inv.profit ?? 0;
 
-    // Reliable isStock detection: checks assetType (from API), investmentType, and category
     const isStock =
         inv.assetType === 'STOCK' ||
         inv.investmentType?.toUpperCase() === 'STOCK' ||
@@ -88,7 +87,6 @@ export const HoldingsTableRow = ({
     const statusStyle = getStatusStyle(inv.status);
     const itemId = (inv.id || inv.schemeCode) as string;
 
-    // Stock-specific values
     const quantity = inv.units ?? inv.quantity ?? 0;
     const avgPrice = isMF ? (inv.nav || inv.avgPrice || 0) : (inv.avgPrice || (inv.amount && quantity ? inv.amount / quantity : 0));
     const ltp = isStock ? (inv.currentPrice || inv.nav || avgPrice) : (inv.nav || inv.avgPrice || 0);
@@ -109,7 +107,6 @@ export const HoldingsTableRow = ({
 
     return (
         <div>
-            {/* ─── Main Row ─── */}
             <div
                 onClick={handleRowClick}
                 style={{
@@ -125,7 +122,6 @@ export const HoldingsTableRow = ({
                 onMouseEnter={e => { if (!isExpanded) (e.currentTarget as HTMLDivElement).style.background = '#13151a'; }}
                 onMouseLeave={e => { if (!isExpanded) (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
             >
-                {/* Column 1: Instrument Info */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
                     <AssetLogo logo={inv.logo} name={inv.schemeName || inv.schemeCode} />
 
@@ -142,7 +138,6 @@ export const HoldingsTableRow = ({
                                 }
                             </p>
 
-                            {/* Asset type badge */}
                             <span style={{
                                 fontSize: 8, fontWeight: 800, padding: '1px 5px', borderRadius: 3,
                                 background: isStock ? 'rgba(99,179,237,0.1)' : 'rgba(167,139,250,0.1)',
@@ -153,7 +148,6 @@ export const HoldingsTableRow = ({
                                 {isStock ? 'EQ' : 'MF'}
                             </span>
 
-                            {/* Status badge */}
                             <span style={{
                                 fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 3,
                                 border: `1px solid ${statusStyle.border}`, background: statusStyle.bg,
@@ -174,7 +168,6 @@ export const HoldingsTableRow = ({
                     </div>
                 </div>
 
-                {/* Column 2: Qty & Avg (stocks) OR Invested (MF) */}
                 <div style={{ textAlign: 'right' }}>
                     {isStock ? (
                         <>
@@ -197,14 +190,12 @@ export const HoldingsTableRow = ({
                     )}
                 </div>
 
-                {/* Column 3: Current Value */}
                 <div style={{ textAlign: 'right' }}>
                     <p style={{ fontSize: 12, fontWeight: 600, color: '#e8eaed', margin: 0 }}>
                         ₹{formatCurrency(currentValue, 2)}
                     </p>
                 </div>
 
-                {/* Column 4: P&L */}
                 <div style={{ textAlign: 'right' }}>
                     {returnType === 'Absolute' ? (
                         <>
@@ -225,7 +216,6 @@ export const HoldingsTableRow = ({
                     )}
                 </div>
 
-                {/* Column 5: LTP (stocks) or NAV (MF) */}
                 <div style={{ textAlign: 'right' }}>
                     {isStock ? (
                         <>
@@ -255,7 +245,6 @@ export const HoldingsTableRow = ({
                     )}
                 </div>
 
-                {/* Column 6: Action indicator */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                     {isStock
                         ? <ArrowUpRight size={13} color="#5a5f6e" />
@@ -264,7 +253,6 @@ export const HoldingsTableRow = ({
                 </div>
             </div>
 
-            {/* ─── Expanded MF Detail Panel ─── */}
             {isExpanded && isMF && (
                 <div style={{
                     background: '#0e1014', borderBottom: '1px solid #1e2025',
@@ -316,11 +304,6 @@ export const HoldingsTableRow = ({
                     </DetailGroup>
 
                     <DetailGroup label="Timeline">
-                        <DetailRow k="Invested On" v={formatDateTime(new Date(inv.createdAt))} />
-                        <DetailRow
-                            k="Holding Duration"
-                            v={`${Math.floor((Date.now() - new Date(inv.createdAt).getTime()) / 86400000)} days`}
-                        />
                         {inv.redeemedUnits && Number(inv.redeemedUnits) > 0 && (
                             <>
                                 <DetailRow k="Redeemed Units" v={`${Number(inv.redeemedUnits).toFixed(4)}`} />
