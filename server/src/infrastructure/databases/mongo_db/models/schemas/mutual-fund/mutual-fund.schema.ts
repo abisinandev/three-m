@@ -22,30 +22,30 @@ const MutualFundSchema = new Schema<MutualFundDocument>(
         },
         source: {
             type: String,
-            // required: true,
+            required: true,
         },
         amc: {
             type: String,
-            // required: true,
+            required: true,
             trim: true,
         },
 
         category: {
             type: String,
             enum: Object.values(FundCategory),
-            // required: true,
+            required: true,
         },
 
         subCategory: {
             type: String,
             enum: Object.values(SubCategory),
-            // required: true,
+            required: true,
         },
 
         risk: {
             type: String,
             enum: Object.values(RiskLevel),
-            // required: true,
+            required: true,
         },
 
         status: {

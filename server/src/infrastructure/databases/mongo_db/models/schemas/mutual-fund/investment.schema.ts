@@ -6,7 +6,7 @@ const InvestmentSchema = new Schema<InvestmentDocument>(
     {
         userId: {
             type: Schema.Types.ObjectId,
-            // required: true,
+            required: true,
             ref: "User",
             index: true,
         },
@@ -18,7 +18,7 @@ const InvestmentSchema = new Schema<InvestmentDocument>(
 
         schemeCode: {
             type: String,
-            // required: true,
+            required: true,
             index: true,
             trim: true,
         },
@@ -31,24 +31,20 @@ const InvestmentSchema = new Schema<InvestmentDocument>(
 
         units: {
             type: Number,
-            // required: true,
             min: 0,
         },
 
         nav: {
             type: Number,
-            // required: true,
             min: 0,
         },
 
         navDate: {
             type: Date,
-            // required: true,
         },
 
         remainingUnits: {
             type: Number,
-            // required: true,
             min: 0,
             index: true,
         },
@@ -66,20 +62,20 @@ const InvestmentSchema = new Schema<InvestmentDocument>(
         status: {
             type: String,
             enum: Object.values(InvestmentStatus),
-            // required: true,
+            required: true,
             index: true,
         },
 
         paymentMethod: {
             type: String,
             enum: Object.values(PaymentMethod),
-            // required: true,
+            required: true,
         },
 
         investmentType: {
             type: String,
             enum: Object.values(InvestmentType),
-            // required: true,
+            required: true,
         },
     },
     {

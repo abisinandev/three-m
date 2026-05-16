@@ -38,19 +38,18 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
         @inject(USER_TYPES.WalletService) private readonly _walletService: IWalletService,
     ) { }
 
-
-    async execute(): Promise<void> {
-        const dueInstallments = await this._sipInstallmentRepository.findActiveDueSips() ?? [];
-        for (let installment of dueInstallments) {
-            await this.executeSingleInstallment(installment);
-        }
+    async execute(installmentId: string): Promise<void> {
+        const installment = await this._sipInstallmentRepository.findById(installmentId);
+        if (!installment) return;
+        
+        await this.executeSingleInstallment(installment);
     }
 
     private async executeSingleInstallment(installment: SipInstallmentEntity): Promise<void> {
         const session = await mongoose.startSession();
         try {
             session.startTransaction();
-
+ 
             const sip = await this._sipRepository.findById(installment.sipId);
             if (!sip || sip.status !== SipStatus.ACTIVE) return;
 
@@ -100,8 +99,6 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
 
             await this._investmentRepository.createInvestment(investment, session);
 
-
-
             const nextDate = calculateNextExecutionDate(
                 sip.nextExecutionDate,
                 sip.frequency
@@ -113,7 +110,7 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 installment.id as string,
                 investment.id as string
             );
-
+ 
             // Notification
             await this._createNotificationUseCase.execute({
                 userId: user.id!,
@@ -149,4 +146,5 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
             session.endSession();
         }
     }
-}
+} 
+   

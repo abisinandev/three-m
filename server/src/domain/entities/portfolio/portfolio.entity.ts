@@ -188,7 +188,7 @@ export class PortfolioEntity {
         this._quantity = quantity;
         this._avgPrice = avgPrice;
         this._investedAmount = investedAmount;
-        // Automatically sync units if it's a mutual fund
+        
         if (this._assetType === AssetType.MUTUAL_FUND) {
             this._units = quantity;
         }

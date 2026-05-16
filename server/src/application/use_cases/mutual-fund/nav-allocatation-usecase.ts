@@ -5,7 +5,7 @@ import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/e
 import { getNavDate, isSameDate } from "@shared/utils/mutual-fund/nav-allocation-utils";
 import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
-import { InvestmentType } from "@domain/enum/funds/investment.enums";
+import { InvestmentStatus, InvestmentType } from "@domain/enum/funds/investment.enums";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
@@ -40,7 +40,7 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
                     );
 
                     const navForDate = navHistories.find(nav =>
-                        isSameDate(new Date(nav.navDate), navDate)
+                        isSameDate(new Date(nav.navDate), navDate)//check today NAV value is available
                     );
 
                     if (!navForDate) {
@@ -74,7 +74,7 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
 
                     await this._investmentRepository.update(
                         investment.id as string,
-                        updatedInvestment,
+                        { ...updatedInvestment, status: InvestmentStatus.ALLOTTED },
                         session
                     );
 
@@ -83,7 +83,7 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
                         fund.id as string,
                         AssetType.MUTUAL_FUND,
                         investment.amount,
-                        updatedInvestment.nav!,
+                        updatedInvestment.nav as number,
                         session
                     );
                 });
@@ -98,4 +98,4 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
             }
         }
     }
-}
+}

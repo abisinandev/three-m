@@ -18,9 +18,9 @@ export class SipQueue implements ISipQueue {
         });
     }
 
-    public async addSipExecutionJob(): Promise<void> {
-        await this.queue.add('execute-due-sips', {}, {
-            jobId: 'sip-execution-job'
+    public async addSipExecutionJob(installmentId: string): Promise<void> {
+        await this.queue.add('execute-due-sips', { installmentId }, {
+            jobId: installmentId
         });
     }
 }

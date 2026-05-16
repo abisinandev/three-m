@@ -309,7 +309,7 @@ const MutualFundDetailsPage = () => {
         <SuccessModal
           data={data}
           investment={investment}
-          successData={successData}
+          successData={successData ?? undefined}
           onClose={() => {
             setShowSuccessModal(false);
             setInvestment(0);
