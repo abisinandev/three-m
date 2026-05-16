@@ -24,7 +24,7 @@ jobs:
 
       - name: Install Backend Dependencies
         working-directory: server
-        run: npm install
+        run: npm ci --legacy-peer-deps
 
       - name: Lint Backend
         working-directory: server
@@ -53,7 +53,7 @@ jobs:
 
       - name: Install Frontend Dependencies
         working-directory: client
-        run: npm install
+        run: npm ci --legacy-peer-deps
 
       - name: Lint Frontend
         working-directory: client
