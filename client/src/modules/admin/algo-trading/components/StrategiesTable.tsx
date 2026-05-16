@@ -1,16 +1,16 @@
-import React from 'react';
+import { FC } from 'react';
 import dayjs from 'dayjs';
 import { RefreshCw, Search } from 'lucide-react';
-import type { AlgoStrategy } from '../types/algo-trading.types';
+import type { AdminStrategy } from '@/shared/types/admin/algo-trading.types';
 
 interface StrategiesTableProps {
-    items: AlgoStrategy[];
+    items: AdminStrategy[];
     isLoading: boolean;
     search: string;
     onSearchChange: (val: string) => void;
 }
 
-export const StrategiesTable: React.FC<StrategiesTableProps> = ({
+export const StrategiesTable: FC<StrategiesTableProps> = ({
     items,
     isLoading,
     search,
@@ -83,7 +83,7 @@ export const StrategiesTable: React.FC<StrategiesTableProps> = ({
     );
 };
 
-const headerStyle: React.CSSProperties = {
+const headerStyle: Record<string, string | number> = {
     fontSize: 10,
     fontWeight: 600,
     color: '#5a5f6e',

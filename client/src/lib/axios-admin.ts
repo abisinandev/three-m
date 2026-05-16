@@ -1,7 +1,7 @@
 import { REFRESH_TOKEN_URL } from "@shared/constants/adminConstants";
 import { useAdminStore } from "@stores/admin/useAdminStore";
 import { notFound, redirect } from '@tanstack/react-router'
-import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+import axios, { isAxiosError, type InternalAxiosRequestConfig } from "axios";
 import { ROUTES } from "@shared/constants/routes";
 
 const adminApi = axios.create({
@@ -22,7 +22,10 @@ let isRefreshing = false;
 
 adminApi.interceptors.response.use(
     res => res,
-    async (err: AxiosError) => {
+    async (err: unknown) => {
+        if (!isAxiosError(err)) {
+            return Promise.reject(err);
+        }
         const originalRequest = err.config as RetryConfig;
         console.log("originalRequest: ", originalRequest);
 

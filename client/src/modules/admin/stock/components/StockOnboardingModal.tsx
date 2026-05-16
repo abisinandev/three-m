@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, type FC } from 'react';
 import { X, Search, Plus, Check, Loader2, Globe, Landmark, Upload, ArrowLeft, Building2 } from 'lucide-react';
 import { StockManagementApi } from '../services/StockManagementApi';
 import { uploadToCloudinary } from '@/utils/upload/UploadToCloudinary';
 import { GetSignatureApi } from '@/shared/services/user/get-signature-api';
 import { useAdminStore } from '@/stores/admin/useAdminStore';
 import { toast } from 'sonner';
+import { isAxiosError } from 'axios';
 
 interface StockOnboardingModalProps {
     isOpen: boolean;
@@ -16,7 +17,7 @@ import type { StockResult } from '@/shared/types/admin/stock-management.types';
 
 type Step = 'search' | 'details';
 
-export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOpen, onClose, onSuccess }) => {
+export const StockOnboardingModal: FC<StockOnboardingModalProps> = ({ isOpen, onClose, onSuccess }) => {
     const adminId = useAdminStore(state => state.data?.adminCode || 'admin');
     const [step, setStep] = useState<Step>('search');
     const [searchQuery, setSearchQuery] = useState('');
@@ -112,9 +113,13 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
             // Reset
             handleBack();
         } catch (err: unknown) {
-            const error = err as { response?: { data?: { message?: string } } };
-            console.error('Onboarding error:', error);
-            const msg = error.response?.data?.message || 'Failed to onboard stock';
+            console.error('Onboarding error:', err);
+            let msg = 'Failed to onboard stock';
+            if (isAxiosError(err)) {
+                msg = err.response?.data?.message || msg;
+            } else if (err instanceof Error) {
+                msg = err.message;
+            }
             toast.error(msg);
         } finally {
             setIsSubmitting(false);
@@ -165,7 +170,7 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
                 </div>
 
                 <div className="p-6">
-                    {step === 'search' ? (
+                    {step === 'search' && (
                         <div className="space-y-4">
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5f6e]" size={16} />
@@ -221,7 +226,8 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
                                 )}
                             </div>
                         </div>
-                    ) : (
+                    )}
+                    {step === 'details' && selectedStock && (
                         <div className="space-y-6">
                             {/* Asset Summary Card */}
                             <div className="p-4 rounded-xl bg-[#111214] border border-[#1e2025] flex items-center gap-4">

@@ -49,7 +49,7 @@ export const CashFlowChart = ({ data }: CashFlowChartProps) => {
                             }}
                             itemStyle={{ color: '#fff', padding: '2px 0' }}
                             cursor={{ fill: '#1f1f1f' }}
-                            formatter={(value: number | string) => `₹${value.toLocaleString()}`}
+                            formatter={(value: number | string) => [Number(value).toLocaleString(), 'Value']}
                         />
                         <Bar dataKey="deposits" fill="#10b981" radius={[2, 2, 0, 0]} barSize={12} />
                         <Bar dataKey="withdrawals" fill="#ef4444" radius={[2, 2, 0, 0]} barSize={12} />

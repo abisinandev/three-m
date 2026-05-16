@@ -1,17 +1,17 @@
-import React from 'react';
+import { type FC } from 'react';
 import dayjs from 'dayjs';
 import { Search } from 'lucide-react';
 import { LoadingRow, EmptyRow } from './StrategiesTable';
-import type { AlgoSignal } from '../types/algo-trading.types';
+import type { AdminSignal } from '@/shared/types/admin/algo-trading.types';
 
 interface SignalsTableProps {
-    items: AlgoSignal[];
+    items: AdminSignal[];
     isLoading: boolean;
     search: string;
     onSearchChange: (val: string) => void;
 }
 
-export const SignalsTable: React.FC<SignalsTableProps> = ({
+export const SignalsTable: FC<SignalsTableProps> = ({
     items,
     isLoading,
     search,
@@ -71,9 +71,9 @@ export const SignalsTable: React.FC<SignalsTableProps> = ({
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${item.status === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-500' :
-                                                item.status === 'REJECTED' ? 'bg-red-500/10 text-red-500' :
-                                                    item.status === 'EXPIRED' ? 'bg-[#1a1c20] text-[#5a5f6e]' :
-                                                        'bg-amber-500/10 text-amber-500'
+                                            item.status === 'REJECTED' ? 'bg-red-500/10 text-red-500' :
+                                                item.status === 'EXPIRED' ? 'bg-[#1a1c20] text-[#5a5f6e]' :
+                                                    'bg-amber-500/10 text-amber-500'
                                             }`}>
                                             {item.status}
                                         </span>
@@ -91,7 +91,7 @@ export const SignalsTable: React.FC<SignalsTableProps> = ({
     );
 };
 
-const headerStyle: React.CSSProperties = {
+const headerStyle: Record<string, string | number> = {
     fontSize: 10,
     fontWeight: 600,
     color: '#5a5f6e',

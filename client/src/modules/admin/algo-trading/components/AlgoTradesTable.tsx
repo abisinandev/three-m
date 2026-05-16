@@ -1,17 +1,17 @@
-import React from 'react';
+import { type FC } from 'react';
 import dayjs from 'dayjs';
 import { Search } from 'lucide-react';
 import { LoadingRow, EmptyRow } from './StrategiesTable';
-import type { AlgoTrade } from '../types/algo-trading.types';
+import type { AdminAlgoTrade } from '@/shared/types/admin/algo-trading.types';
 
 interface AlgoTradesTableProps {
-    items: AlgoTrade[];
+    items: AdminAlgoTrade[];
     isLoading: boolean;
     search: string;
     onSearchChange: (val: string) => void;
 }
 
-export const AlgoTradesTable: React.FC<AlgoTradesTableProps> = ({
+export const AlgoTradesTable: FC<AlgoTradesTableProps> = ({
     items,
     isLoading,
     search,
@@ -75,8 +75,8 @@ export const AlgoTradesTable: React.FC<AlgoTradesTableProps> = ({
                                     </td>
                                     <td className="px-6 py-4">
                                         {item.side === 'SELL' && item.profit !== undefined ? (
-                                            <span className={`font-mono font-medium ${item.profit >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                                                {item.profit >= 0 ? '+' : ''}₹{item.profit.toLocaleString()}
+                                            <span className={`font-mono font-medium ${Number(item.profit) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                                {Number(item.profit) >= 0 ? '+' : ''}₹{Number(item.profit).toLocaleString()}
                                             </span>
                                         ) : (
                                             <span className="text-[#5a5f6e]">-</span>
@@ -95,7 +95,7 @@ export const AlgoTradesTable: React.FC<AlgoTradesTableProps> = ({
     );
 };
 
-const headerStyle: React.CSSProperties = {
+const headerStyle: Record<string, string | number> = {
     fontSize: 10,
     fontWeight: 600,
     color: '#5a5f6e',

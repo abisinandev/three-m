@@ -34,6 +34,8 @@ export interface AdminSignal {
 
 export interface AdminAlgoTrade {
     id: string;
+    userId: string;
+    orderId: string;
     symbol: string;
     side: 'BUY' | 'SELL';
     quantity: number;

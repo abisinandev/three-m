@@ -99,7 +99,7 @@ export default function UserManagement() {
                     title="Total Users"
                     value={stats.total}
                     icon={<Users />}
-                    color="text-emerald-400"
+                    color="emerald"
                     subtitle={
                         total > 0
                             ? `${((total / total) * 100).toFixed(1)}% active`
@@ -110,7 +110,7 @@ export default function UserManagement() {
                     title="Active Users"
                     value={stats.active}
                     icon={<Users />}
-                    color="text-emerald-400"
+                    color="emerald"
                     subtitle={
                         total > 0
                             ? `${((stats.active / total) * 100).toFixed(1)}% active`
@@ -121,7 +121,7 @@ export default function UserManagement() {
                     title="Blocked Users"
                     value={stats.blocked}
                     icon={<Lock />}
-                    color="text-emerald-400"
+                    color="emerald"
                     subtitle={
                         total > 0
                             ? `${((stats.blocked / total) * 100).toFixed(1)}% active`
@@ -132,7 +132,7 @@ export default function UserManagement() {
                     title="Verified Users"
                     value={stats.verified}
                     icon={<Users />}
-                    color="text-emerald-400"
+                    color="emerald"
                     subtitle={
                         total > 0
                             ? `${((stats.verified / total) * 100).toFixed(1)}% active`

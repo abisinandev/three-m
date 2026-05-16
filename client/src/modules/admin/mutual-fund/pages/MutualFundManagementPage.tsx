@@ -153,7 +153,7 @@ export default function MutualFundsPage() {
                     title="Total Funds"
                     value={total.toLocaleString()}
                     icon={<Layers className="w-5 h-5 text-blue-400" />}
-                    color="text-blue-400"
+                    color="blue"
                     subtitle="All listed mutual funds"
                 />
 
@@ -161,7 +161,7 @@ export default function MutualFundsPage() {
                     title="Active Funds"
                     value={totalActive.toLocaleString()}
                     icon={<CheckCheck className="w-5 h-5 text-emerald-400" />}
-                    color="text-emerald-400"
+                    color="emerald"
                     subtitle={
                         total > 0
                             ? `${((totalActive / total) * 100).toFixed(1)}% active`

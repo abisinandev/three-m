@@ -1,4 +1,4 @@
-import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios"
+import axios, { isAxiosError, type InternalAxiosRequestConfig } from "axios"
 import { useUserStore } from "@stores/user/UserStore";
 import { redirect, notFound } from '@tanstack/react-router'
 import { USER_REFRESH_TOKEN } from "@shared/constants/userContants";
@@ -23,7 +23,10 @@ interface RetryConfig extends InternalAxiosRequestConfig {
 let isRefreshing = false;
 api.interceptors.response.use(
     res => res,
-    async (err: AxiosError) => {
+    async (err: unknown) => {
+        if (!isAxiosError(err)) {
+            return Promise.reject(err);
+        }
         const originalRequest = err.config as RetryConfig;
         console.log("originalRequest: ", originalRequest);
 

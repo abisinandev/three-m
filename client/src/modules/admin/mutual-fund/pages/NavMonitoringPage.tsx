@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Search, RefreshCw, CheckCircle2, AlertTriangle, Database } from 'lucide-react';
-import type { NavMonitoring } from '../types/SipTypes';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
+import type { NavMonitoring } from '@/shared/types/admin/sip-management.types';
 
 const MOCK_NAV: NavMonitoring[] = [
     {
@@ -124,8 +124,8 @@ const NavMonitoringPage = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border ${item.fetchStatus === 'SUCCESS'
-                                                ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-                                                : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                                            ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                                            : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
                                             }`}>
                                             {item.fetchStatus}
                                         </span>
