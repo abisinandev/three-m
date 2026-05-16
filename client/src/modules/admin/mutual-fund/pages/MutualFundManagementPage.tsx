@@ -173,7 +173,7 @@ export default function MutualFundsPage() {
                     title="Inactive Funds"
                     value={totalInactive.toLocaleString()}
                     icon={<Ban className="w-5 h-5 text-orange-400" />}
-                    color="text-orange-400"
+                    color="amber"
                     subtitle={
                         total > 0
                             ? `${((totalInactive / total) * 100).toFixed(1)}% inactive`
@@ -185,7 +185,7 @@ export default function MutualFundsPage() {
                     title="Updated Today"
                     value={todayUpdated.toLocaleString()}
                     icon={<Clock className="w-5 h-5 text-cyan-400" />}
-                    color="text-cyan-400"
+                    color="teal"
                     subtitle="Funds updated today"
                 />
             </div>

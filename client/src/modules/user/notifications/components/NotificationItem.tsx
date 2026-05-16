@@ -37,8 +37,8 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
 
     const handleConfirm = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        const action = notif.data?.action || extractAction(notif.message);
-        const symbol = notif.data?.symbol || extractSymbol(notif.message);
+        const action = (notif.data?.action || extractAction(notif.message)) as 'BUY' | 'SELL';
+        const symbol = (notif.data?.symbol || extractSymbol(notif.message)) as string;
 
         if (!action || !symbol) { setError('Cannot parse signal details'); return; }
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Upload, X, FileText } from 'lucide-react';
 import type { KycFiles, KycPreviews } from './KycTypes';
 

@@ -17,9 +17,7 @@ export interface StockTableProps {
 export interface MarketMoverProps {
   symbol: string;
   price: number;
-  change: number;
   changePercent: number;
-  isPositive: boolean;
   onNavigate: (symbol: string) => void;
 }
 

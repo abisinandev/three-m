@@ -1,4 +1,3 @@
-import React from "react";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
 
 export const PaymentStatusBadge = ({ status }: { status: string }) => {

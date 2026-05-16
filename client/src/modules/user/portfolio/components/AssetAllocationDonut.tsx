@@ -184,8 +184,7 @@ export const AssetAllocationDonut = ({ allocations = [] }: AssetAllocationProps)
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie
-                            activeIndex={activeIndex ?? undefined}
-                            activeShape={renderActiveShape}
+                            activeShape={renderActiveShape as unknown as React.ComponentProps<typeof Pie>["activeShape"]}
                             data={data}
                             cx="50%"
                             cy="50%"

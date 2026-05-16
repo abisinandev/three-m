@@ -128,7 +128,7 @@ export const AnalyticsView = ({ data, formatCurrency, selectedMonth }: Analytics
                                         <YAxis stroke="#3a3d45" fontSize={9} fontWeight={700} axisLine={false} tickLine={false} tickFormatter={(v) => `₹${v}`} />
                                         <RechartsTooltip
                                         />
-                                        <Line type="monotone" dataKey="thisMonth" stroke="#3B82F6" strokeWidth={2} dot={false} strokeLink="round" />
+                                        <Line type="monotone" dataKey="thisMonth" stroke="#3B82F6" strokeWidth={2} dot={false} strokeLinecap="round" />
                                         <Line type="monotone" dataKey="lastMonth" stroke="#3a3d45" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
                                     </LineChart>
                                 )}

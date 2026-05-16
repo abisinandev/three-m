@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import type { KycFiles, KycPreviews } from './KycTypes';

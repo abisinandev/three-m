@@ -1,7 +1,7 @@
 import { Zap, ChevronRight } from 'lucide-react';
 import { formatCurrency } from '../../helpers/format';
 import { Skeleton } from './Skeleton';
-import type { DashboardInvestment } from '../../types/dashboard.types';
+import type { DashboardInvestment } from '../types/dashboard.types';
 
 export const RecentInvestmentsPanel = ({ recentInvestments, isLoading }: { recentInvestments: DashboardInvestment[]; isLoading: boolean }) => {
     return (

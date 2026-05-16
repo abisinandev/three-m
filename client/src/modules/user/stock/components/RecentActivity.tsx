@@ -1,7 +1,7 @@
 import React from 'react';
 import { ListPlus } from 'lucide-react';
 import stockCurrencyService from '@/shared/services/external/stock-currency.service';
-import type { RecentActivityProps } from '../../types/stock-dashboard.types';
+import type { RecentActivityProps } from '../types/stock-dashboard.types';
 
 const RecentActivity: React.FC<RecentActivityProps> = ({ trades, onNavigate }) => {
   return (

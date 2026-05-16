@@ -1,7 +1,7 @@
 import { Clock, ChevronRight, Calendar } from 'lucide-react';
 import { formatCurrency } from '../../helpers/format';
 import { Skeleton } from './Skeleton';
-import type { DashboardSip } from '../../types/dashboard.types';
+import type { DashboardSip } from '../types/dashboard.types';
 
 export const ActiveSipsPanel = ({ recentSips, isLoading }: { recentSips: DashboardSip[]; isLoading: boolean }) => {
     return (

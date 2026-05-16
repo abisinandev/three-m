@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import dayjs from 'dayjs';
 import { RefreshCw, Search } from 'lucide-react';
 import type { AdminStrategy } from '@/shared/types/admin/algo-trading.types';

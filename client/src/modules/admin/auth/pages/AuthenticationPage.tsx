@@ -32,8 +32,9 @@ const AuthenticationPage = () => {
                 replace: true
             })
         },
-        onError: (err) => {
-            toast.error(err.response?.data?.message || "Authentication failed");
+        onError: (err: unknown) => {
+            const error = err as { response?: { data?: { message?: string } } };
+            toast.error(error.response?.data?.message || "Authentication failed");
         },
     });
 

@@ -95,9 +95,7 @@ const KycVerificationPage = () => {
                 onView={(user) => {
                   navigate({
                     to: ROUTES.ADMIN.KYC_MANAGEMENT.VIEW(user.id) as "/admin/view-kyc/$kycId",
-                    params: {
-                      kycId: user.id,
-                    },
+                    params: (prev: Record<string, string>) => ({ ...prev, kycId: user.id }),
                   });
                 }}
               />

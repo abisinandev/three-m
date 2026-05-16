@@ -30,7 +30,7 @@ export const StockOnboardingModal: FC<StockOnboardingModalProps> = ({ isOpen, on
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [sector, setSector] = useState('Unknown');
 
-    const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const searchTimeoutRef = useRef<number | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleSearch = useCallback(async () => {
@@ -49,7 +49,7 @@ export const StockOnboardingModal: FC<StockOnboardingModalProps> = ({ isOpen, on
     useEffect(() => {
         if (searchQuery.length > 2) {
             if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-            searchTimeoutRef.current = setTimeout(handleSearch, 500);
+            searchTimeoutRef.current = window.setTimeout(handleSearch, 500);
         } else {
             setResults([]);
         }

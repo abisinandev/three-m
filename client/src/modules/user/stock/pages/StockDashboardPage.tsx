@@ -66,7 +66,15 @@ const StockDashboardPage = () => {
   }, [watchlistResponse]);
 
   const total = stocksResponse?.data?.total ?? 0;
-  const recentTrades = useMemo(() => tradesResponse?.data ?? [], [tradesResponse]);
+  const recentTrades = useMemo(() => {
+    const raw = tradesResponse?.data ?? [];
+    return raw.map((t) => ({
+      symbol: t.symbol ?? t.schemeCode ?? '',
+      type: t.investmentType ?? 'BUY',
+      quantity: t.quantity ?? 0,
+      totalPrice: t.investedAmount ?? t.amount ?? 0,
+    }));
+  }, [tradesResponse]);
 
   const updateFilters = (updates: Partial<UserStockFilters>) => {
     setFilters(prev => ({ ...prev, ...updates, page: updates.page ?? 1 }));
@@ -83,7 +91,7 @@ const StockDashboardPage = () => {
   };
 
   const handleNavigate = (symbol: string) => {
-    navigate({ to: '/user/trading/$symbol', params: { symbol } });
+    navigate({ to: '/user/trading/$symbol', params: (prev: Record<string, string>) => ({ ...prev, symbol }) });
   };
 
   const filtersRef = useRef(filters);

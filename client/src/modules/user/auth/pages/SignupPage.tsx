@@ -130,7 +130,10 @@ export const SignupPage: React.FC = () => {
                     }, 50);
                 }
             },
-            onError: (err: { response?: { data?: { message?: string } } }) => toast.error(err.response?.data?.message || "Verification failed"),
+            onError: (err: unknown) => {
+                const error = err as { response?: { data?: { message?: string } } };
+                toast.error(error.response?.data?.message || "Verification failed");
+            },
         });
     };
 

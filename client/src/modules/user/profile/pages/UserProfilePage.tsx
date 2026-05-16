@@ -5,7 +5,7 @@ import ChangePasswordModal from '@shared/components/modals/ChangePasswordModal';
 import { format } from 'date-fns';
 import EditProfileModal from '@shared/components/modals/UserProfileEditModal';
 import { useNavigate } from '@tanstack/react-router';
-import { useNavigate } from '@tanstack/react-router';
+
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import api from '@/lib/axios-user';

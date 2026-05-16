@@ -2,7 +2,7 @@ import React from 'react';
 import { TrendingUp, TrendingDown, Star } from 'lucide-react';
 import Sparkline from './Sparkline';
 import stockCurrencyService from '@/shared/services/external/stock-currency.service';
-import type { StockTableProps } from '../../types/stock-dashboard.types';
+import type { StockTableProps } from '../types/stock-dashboard.types';
 
 const StockTable: React.FC<StockTableProps> = ({
   stocks,

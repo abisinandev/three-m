@@ -1,6 +1,6 @@
 import api from "@/lib/axios-user";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
-import type { AddExpenseRequest, AddExpenseResponse, AddIncomeRequest, ExpenseTrackerData, BudgetPlanRequest, BudgetPlanResponse } from "../../../modules/user/expense-tracker/types/expense.types";
+import type { AddExpenseRequest, AddExpenseResponse, AddIncomeRequest, ExpenseTrackerData, BudgetPlanRequest, BudgetPlanResponse, SimulationRequest, SimulationResult } from "../../../modules/user/expense-tracker/types/expense.types";
 
 export const fetchExpenseTrackerData = async (month?: string): Promise<ExpenseTrackerData> => {
     const response = await api.get(API_ROUTES.USER.EXPENSE_TRACKER.GET_DATA, { params: { month } });
@@ -48,5 +48,10 @@ export const fetchAnalyticsData = async (month?: string) => {
 
 export const calculateBudgetPlan = async (data: BudgetPlanRequest): Promise<BudgetPlanResponse> => {
     const response = await api.post(API_ROUTES.USER.EXPENSE_TRACKER.BUDGET_PLAN, data);
+    return response.data.data;
+};
+
+export const simulateBudget = async (data: SimulationRequest): Promise<SimulationResult> => {
+    const response = await api.post(API_ROUTES.USER.EXPENSE_TRACKER.SIMULATE, data);
     return response.data.data;
 };

@@ -1,4 +1,4 @@
-import type { ChartPoint, NavHistory } from "../types/mutual-fund/details.types";
+import type { ChartPoint, NavHistory } from "../types/details.types";
 
 export function formatNavDate(navDate?: string | Date) {
     if (!navDate) return "--";

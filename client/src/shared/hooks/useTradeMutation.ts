@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { StockApiService } from "@shared/services/stock/stock-api";
-import type { BuyOrderRequest, SellOrderRequest, LimitBuyOrderRequest, LimitSellOrderRequest, OrderResponse } from "@shared/services/stock/stock-api";
+import type { BuyOrderRequest, SellOrderRequest, LimitBuyOrderRequest, LimitSellOrderRequest, OrderResponse } from "@shared/types/stock/stock.types";
 import { toast } from "sonner";
 import { usePremiumModalStore } from "@stores/user/PremiumModalStore";
 

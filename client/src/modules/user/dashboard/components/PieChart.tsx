@@ -107,7 +107,7 @@ export default function AssetAllocationDonut({ investments = [] }: AssetAllocati
                         </Pie>
 
                         <Tooltip
-                            content={(props) => renderTooltipContent({ ...props, totalValue })}
+                            content={(props) => renderTooltipContent({ ...props, totalValue } as unknown as PieChartTooltipProps)}
                         />
 
                         <Legend

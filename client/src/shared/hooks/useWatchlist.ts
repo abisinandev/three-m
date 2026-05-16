@@ -15,7 +15,7 @@ export const useWatchlistMutation = (onUpgradeRequired?: () => void) => {
     const addMutation = useMutation({
         mutationFn: AddToWatchlistApi,
         onSuccess: (data) => {
-            if (data?.data?.upgrade) {
+            if ((data as unknown as { data?: { upgrade?: boolean } })?.data?.upgrade) {
                 onUpgradeRequired?.();
             } else {
                 toast.success('Added to watchlist');

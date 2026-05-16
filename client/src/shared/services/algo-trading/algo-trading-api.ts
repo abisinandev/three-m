@@ -20,9 +20,16 @@ export const saveAlgoStrategy = async (data: { symbol: string, strategyName: str
   return response.data;
 };
 
-export const getActiveStrategyBySymbol = async (symbol: string): Promise<unknown> => {
+export interface ActiveStrategyResponse {
+  _id: string;
+  strategyName: string;
+  symbol: string;
+  isActive: boolean;
+}
+
+export const getActiveStrategyBySymbol = async (symbol: string): Promise<ActiveStrategyResponse | null> => {
   const response = await api.get(`/user/stock/algo-trading/active/${symbol}`);
-  return response.data?.data;
+  return response.data?.data ?? null;
 };
 
 export const toggleAlgoStrategyStatus = async (strategyId: string, isActive: boolean): Promise<unknown> => {

@@ -24,6 +24,8 @@ export interface IInvestmentResponse {
     currentValue?: number;
     profit: number;
     profitPercentage?: number;
+    stopLoss?: number;
+    takeProfit?: number;
     xirr?: number;
     logo: string;
     remainingUnits?: number;

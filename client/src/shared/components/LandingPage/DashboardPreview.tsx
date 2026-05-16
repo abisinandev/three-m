@@ -102,7 +102,7 @@ export const DashboardPreview: React.FC = () => (
                   contentStyle={{ backgroundColor: '#1A1A1A', border: '1px solid #333', borderRadius: '4px', fontSize: '11px', padding: '4px 8px' }}
                   itemStyle={{ fontWeight: 'bold', textTransform: 'capitalize' }}
                   labelStyle={{ display: 'none' }}
-                  formatter={(value: number, name: string) => [`₹${value}`, name]}
+                  formatter={(value, name) => [`₹${value}`, name]}
                   cursor={{ stroke: '#444', strokeWidth: 1, strokeDasharray: '3 3' }}
                 />
                 <YAxis domain={['dataMin - 100', 'dataMax + 50']} hide />

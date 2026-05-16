@@ -32,7 +32,7 @@ export function DataTable<T>({
     onBlock,
     onView,
 }: DataTableProps<T>) {
-    const [openRow, setOpenRow] = useState<string | null>(null);
+    const [openRow, setOpenRow] = useState<string | number | null>(null);
 
     if (isLoading) {
         return <div className="p-6 text-xs text-neutral-500">Loading...</div>;

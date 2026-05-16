@@ -1,5 +1,5 @@
 import React from 'react';
-import type { SparklineProps } from '../../types/stock-dashboard.types';
+import type { SparklineProps } from '../types/stock-dashboard.types';
 
 const Sparkline: React.FC<SparklineProps> = ({ data, positive }) => {
   const min = Math.min(...data);

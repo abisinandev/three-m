@@ -23,7 +23,7 @@ export const useStartSip = <T = { message?: string; data?: unknown }>(
             const res = await api.post('/user/mutual-funds/sip/create',
                 payload,
                 {
-                    headers: { 'x-idempotency-key': createIdempotencyKey(payload) }
+                    headers: { 'x-idempotency-key': createIdempotencyKey(payload as unknown as Parameters<typeof createIdempotencyKey>[0]) }
                 }
             );
             return res.data;

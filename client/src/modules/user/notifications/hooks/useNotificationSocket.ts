@@ -10,7 +10,7 @@ export const useNotificationSocket = () => {
 
     useEffect(() => {
         const handler = (data: Notification) => {
-            addNotification(data);
+            addNotification(data as unknown as Parameters<typeof addNotification>[0]);
             
             // Trigger visual toast
             toast.info(data.title || 'New Notification', {

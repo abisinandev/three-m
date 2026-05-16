@@ -43,12 +43,12 @@ export function ChatMessageList({
                         message={msg}
                         onUpgradeClick={onUpgradeClick}
                     />
-                    {msg.type === 'confirmation' && msg.data && (
-                        <OrderPreview data={msg.data as OrderData} />
-                    )}
-                    {msg.type === 'suggestion_list' && msg.data && (
-                        <StockSuggestionList stocks={msg.data as BotStock[]} />
-                    )}
+                    {msg.type === 'confirmation' && msg.data ? (
+                        <OrderPreview data={msg.data as unknown as OrderData} />
+                    ) : null}
+                    {msg.type === 'suggestion_list' && msg.data ? (
+                        <StockSuggestionList stocks={msg.data as unknown as BotStock[]} />
+                    ) : null}
                 </div>
             ))}
 

@@ -295,7 +295,6 @@ const MutualFundDetailsPage = () => {
 
       {showConfirmModal && data && (
         <ConfirmModal
-          data={data}
           investment={investment}
           units={units}
           latestNav={latestNav}

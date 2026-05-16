@@ -98,6 +98,7 @@ export const API_ROUTES = {
             DELETE_EXPENSE: (id: number | string) => `/user/expense-tracker/delete-expense/${id}`,
             ANALYTICS: "/user/expense-tracker/analytics",
             BUDGET_PLAN: "/user/expense-tracker/budget-plan",
+            SIMULATE: "/user/expense-tracker/simulate",
         }
     },
     ADMIN: {

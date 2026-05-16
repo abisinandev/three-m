@@ -18,6 +18,12 @@ export type FundDetails = {
     absoluteReturn: number;
     logo: string;
     aum?: string;
+    cagr?: {
+        cagr1Y?: number;
+        cagr3Y?: number;
+        cagr5Y?: number;
+        updatedAt?: string;
+    };
     navHistory: NavHistory[];
 };
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { FileText, ExternalLink } from 'lucide-react';
 
 import type { kycDocuments } from '@shared/types/user/KycUserType';

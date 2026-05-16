@@ -13,6 +13,8 @@ import FundsTab from '../components/dashboard/FundsTab';
 import SipsTab from '../components/dashboard/SipsTab';
 import HistoryTab from '../components/dashboard/HistoryTab';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
+import type { FundDetails } from '../types/details.types';
+import type { IInvestmentResponse } from '@/shared/types/portfolio.types';
 
 const MutualFundDashboard = () => {
     const user = useUserStore((state) => state.user);
@@ -161,11 +163,11 @@ const MutualFundDashboard = () => {
                                 selectedFilters={selectedFilters}
                                 setSelectedFilters={setSelectedFilters}
                                 fundsLoading={fundsLoading}
-                                funds={funds}
+                                funds={funds as unknown as FundDetails[]}
                                 onFundClick={(schemeCode) =>
                                     navigate({
-                                        to: `/user/mutual-funds/$schemeCode`,
-                                        params: { schemeCode },
+                                        to: `/user/mutual-funds/$schemeCode` as '/user/mutual-funds/$schemeCode',
+                                        params: (prev: Record<string, string>) => ({ ...prev, schemeCode }),
                                     })
                                 }
                             />
@@ -186,7 +188,7 @@ const MutualFundDashboard = () => {
                         {activeTab === 'transactions' && (
                             <HistoryTab
                                 investmentsLoading={investmentsLoading}
-                                investments={investments}
+                                investments={investments as unknown as IInvestmentResponse[]}
                             />
                         )}
                     </div>

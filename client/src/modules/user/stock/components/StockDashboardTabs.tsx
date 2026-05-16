@@ -1,5 +1,5 @@
 import React from 'react';
-import type { StockDashboardTabsProps } from '../../types/stock-dashboard.types';
+import type { StockDashboardTabsProps } from '../types/stock-dashboard.types';
 
 const StockDashboardTabs: React.FC<StockDashboardTabsProps> = ({ activeTab, setActiveTab, tabs }) => {
   return (

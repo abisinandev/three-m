@@ -33,8 +33,8 @@ export const BudgetBreakdown: React.FC = () => {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip 
-                formatter={(value: number) => `₹${value.toLocaleString()}`}
+              <Tooltip
+                formatter={(value) => `₹${(value as number).toLocaleString()}`}
                 contentStyle={{ backgroundColor: '#1A1A1A', border: '1px solid #333', borderRadius: '8px', color: '#fff' }}
                 itemStyle={{ color: '#fff' }}
               />

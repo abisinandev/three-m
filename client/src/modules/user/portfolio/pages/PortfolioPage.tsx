@@ -142,7 +142,7 @@ const PortfolioDashboard = () => {
 
                         {activeTab === 'history' ? (
                             <TradeHistoryTable 
-                                data={historyData?.data || []}
+                                data={(historyData?.data as unknown as React.ComponentProps<typeof TradeHistoryTable>['data']) || []}
                                 total={historyData?.total || 0}
                                 page={page}
                                 limit={limit}

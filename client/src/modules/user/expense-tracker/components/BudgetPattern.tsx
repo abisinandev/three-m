@@ -101,8 +101,8 @@ export const BudgetPattern = ({
 
                     <PieChart>
                         <Pie
-                            activeShape={renderActiveShape}
-                            data={activeChartData}
+                            activeShape={renderActiveShape as unknown as React.ComponentProps<typeof Pie>["activeShape"]}
+                            data={activeChartData as unknown as React.ComponentProps<typeof Pie>["data"]}
                             cx="50%"
                             cy="50%"
                             innerRadius={65}

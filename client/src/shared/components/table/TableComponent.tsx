@@ -64,7 +64,7 @@ export function TableComponent<T>({ columns, data, actions }: TableProps<T>) {
                                             >
                                                 {
                                                     typeof action.label === "function"
-                                                        ? action.label(row)
+                                                        ? (action.label as Function)(row)
                                                         : action.label
                                                 }
                                             </button>

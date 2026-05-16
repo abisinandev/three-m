@@ -1,5 +1,5 @@
-import { WalletData } from "../../../modules/user/wallet/types/wallet.types";
-import { KycUser } from "./KycUserType";
+import type { WalletData } from "../../../modules/user/wallet/types/wallet.types";
+import type { KycUser } from "./KycUserType";
 
 export type UserType = {
     id: string;

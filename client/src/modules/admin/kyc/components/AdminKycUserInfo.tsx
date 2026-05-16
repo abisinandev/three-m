@@ -1,4 +1,3 @@
-import React from 'react';
 import { User, Mail, Hash, FileText, MapPin, AlertCircle } from 'lucide-react';
 import type { KycUser } from '@shared/types/user/KycUserType';
 

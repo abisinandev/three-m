@@ -74,7 +74,7 @@ export default function AddMutualFundPage() {
                 logo: logoUrl || '',
             };
 
-            const response = await addFundApi(payload);
+            const response = await addFundApi(payload) as { data: { message?: string } };
             return response.data;
         },
 
