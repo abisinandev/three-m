@@ -10,7 +10,6 @@ interface NotificationItemProps {
 }
 
 export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps) => {
-    const [quantity, setQuantity] = useState<number>(1);
     const [confirming, setConfirming] = useState(false);
     const [confirmed, setConfirmed] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -42,7 +41,6 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
         const symbol = notif.data?.symbol || extractSymbol(notif.message);
 
         if (!action || !symbol) { setError('Cannot parse signal details'); return; }
-        if (quantity <= 0) { setError('Enter a valid quantity'); return; }
 
         setConfirming(true);
         setError(null);
@@ -53,13 +51,12 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
                 signalId: (notif.signalId || notif.data?.signalId)!,
                 symbol,
                 action,
-                quantity,
+                quantity: 1,
             });
             setConfirmed(true);
             onMarkAsRead(notif.id);
-        } catch (err: unknown) {
-            const error = err as { response?: { data?: { message?: string } } };
-            setError(error?.response?.data?.message ?? 'Order failed. Try again.');
+        } catch {
+            setError('Order failed. Try again.');
         } finally {
             setConfirming(false);
         }

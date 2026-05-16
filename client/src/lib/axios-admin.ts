@@ -62,7 +62,7 @@ adminApi.interceptors.response.use(
 
                 try {
                     await adminApi.post(REFRESH_TOKEN_URL, {}, { withCredentials: true });
-                } catch (error) {
+                } catch {
                     useAdminStore.getState().logout();
                     throw redirect({ to: ROUTES.ADMIN.AUTH.LOGIN })
                 } finally {

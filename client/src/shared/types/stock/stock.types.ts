@@ -9,8 +9,8 @@ export interface TradeOrderRequest {
   takeProfit?: number;
 }
 
-export interface BuyOrderRequest extends TradeOrderRequest {}
-export interface SellOrderRequest extends TradeOrderRequest {}
+export type BuyOrderRequest = TradeOrderRequest;
+export type SellOrderRequest = TradeOrderRequest;
 
 export interface LimitBuyOrderRequest {
   symbol: string;

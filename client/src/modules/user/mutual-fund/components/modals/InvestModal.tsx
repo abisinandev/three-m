@@ -1,6 +1,6 @@
 import type { FundDetails } from '../../types/details.types';
 import { formatNavDate } from '@/utils/mutualFundUtils/mutual-fund.chart';
-import { X, Info, Loader2 } from 'lucide-react';
+import { X, Info } from 'lucide-react';
 
 interface InvestModalProps {
     data: FundDetails;

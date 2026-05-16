@@ -137,7 +137,7 @@ export const useRealtimeChart = (
     socketService.connect();
     socketService.subscribeToCandle(symbol, backendTimeframe);
 
-    const handleReconnect = (_: unknown) => {
+    const handleReconnect = () => {
       socketService.subscribeToCandle(symbol, backendTimeframe);
       console.log(`[Chart] Re-subscribed to ${symbol}:${backendTimeframe} after reconnect`);
     };
@@ -400,7 +400,7 @@ export const useRealtimeChart = (
       chartRef.current?.unsubscribeCrosshairMove(handleCrosshairMove);
       if (container.contains(toolTip)) container.removeChild(toolTip!);
     };
-  }, [position, showPosition, currentPrice]);
+  }, [position, showPosition, currentPrice, containerRef]);
 
   return { isLoading, currentPrice, status, hasHistory };
 };

@@ -32,12 +32,7 @@ const ConfirmModal = ({
     default: "bg-[#2962ff] hover:bg-[#3d72ff] shadow-lg shadow-blue-500/10 text-white",
   };
 
-  const statusColor = {
-    destructive: "bg-red-500",
-    success: "bg-[#00C853]",
-    warning: "bg-amber-500",
-    default: "bg-[#2962ff]",
-  };
+
 
   const iconMap = {
     destructive: <AlertCircle size={20} className="text-red-500" />,

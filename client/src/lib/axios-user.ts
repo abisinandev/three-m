@@ -66,7 +66,7 @@ api.interceptors.response.use(
 
                 try {
                     await api.post(USER_REFRESH_TOKEN, {}, { withCredentials: true });
-                } catch (error) {
+                } catch {
 
                     useUserStore.getState().logout();
                     throw redirect({ to: ROUTES.AUTH.LOGIN })

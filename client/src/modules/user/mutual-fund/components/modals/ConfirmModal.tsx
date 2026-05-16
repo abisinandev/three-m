@@ -1,9 +1,8 @@
 
-import type { FundDetails } from '../../types/details.types';
+
 import { Loader2, X } from 'lucide-react';
 
 interface ConfirmModalProps {
-    data: FundDetails;
     investment: number;
     units: number;
     latestNav: number;
@@ -13,7 +12,6 @@ interface ConfirmModalProps {
 }
 
 export const ConfirmModal = ({
-    data,
     investment,
     units,
     latestNav,

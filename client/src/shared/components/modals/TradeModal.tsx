@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Loader2, Info } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 
 interface TradeModalProps {
   isOpen: boolean;
@@ -56,7 +56,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
       setStopLoss('');
       setTakeProfit('');
     }
-  }, [isOpen, symbol]);
+  }, [isOpen, symbol, currentPrice, initialType]);
 
   if (!isOpen) return null;
 
@@ -84,7 +84,6 @@ const TradeModal: React.FC<TradeModalProps> = ({
   };
 
   const isBuy = type === 'buy';
-  const themeColor = isBuy ? '#00C853' : '#FF1744';
   const themeBg = isBuy ? 'bg-[#00C853]' : 'bg-[#FF1744]';
   const textColor = isBuy ? 'text-[#00C853]' : 'text-[#FF1744]';
   const borderColor = isBuy ? 'border-[#00C853]' : 'border-[#FF1744]';

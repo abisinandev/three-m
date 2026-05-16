@@ -72,9 +72,11 @@ export default function UserManagement() {
         if (!blockModal.user) return;
 
         try {
-            blockModal.user.isBlocked
-                ? await UnblockUserApi(blockModal.user.id)
-                : await BlockUserDataApi(blockModal.user.id);
+            if (blockModal.user.isBlocked) {
+                await UnblockUserApi(blockModal.user.id);
+            } else {
+                await BlockUserDataApi(blockModal.user.id);
+            }
 
             queryClient.invalidateQueries({ queryKey: ['admin-users'] });
         } finally {

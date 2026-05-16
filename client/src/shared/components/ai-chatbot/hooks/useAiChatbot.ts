@@ -34,8 +34,8 @@ export function useAiChatbot() {
                     setShowQuickActions(false);
                     historyLoaded.current = true;
                 }
-            } catch (error) {
-                console.error("Failed to load chat history:", error);
+            } catch (_error) {
+                console.error("Failed to load chat history:", _error);
             }
         }
     }, []);
@@ -73,7 +73,7 @@ export function useAiChatbot() {
                 upgradeRequired: reply.upgradeRequired,
             };
             setMessages(prev => [...prev, aiMsg]);
-        } catch (error) {
+        } catch {
             const errorMsg: ChatMessage = {
                 id: (Date.now() + 1).toString(),
                 role: 'assistant',

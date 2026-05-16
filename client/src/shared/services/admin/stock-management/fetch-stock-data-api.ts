@@ -4,17 +4,13 @@ import type { StockFilters } from '@shared/types/admin/stock-management.types';
 
 
 export const FetchStockDataApi = async (filters: StockFilters) => {
-    try {
-        const params = new URLSearchParams();
-        Object.entries(filters).forEach(([key, value]) => {
-            if (value !== undefined && value !== '') {
-                params.append(key, String(value));
-            }
-        });
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== '') {
+            params.append(key, String(value));
+        }
+    });
 
-        const response = await adminApi.get(`${API_ROUTES.ADMIN.STOCKS.GET_ALL}?${params.toString()}`);
-        return response.data.data;
-    } catch (error) {
-        throw error;
-    }
+    const response = await adminApi.get(`${API_ROUTES.ADMIN.STOCKS.GET_ALL}?${params.toString()}`);
+    return response.data.data;
 };

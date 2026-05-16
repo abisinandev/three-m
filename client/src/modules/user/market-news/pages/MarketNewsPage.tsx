@@ -13,7 +13,7 @@ export const MarketNewsPage = () => {
         setPage,
         pageSize,
         isLoading,
-        error,
+        error: _error,
         refetch,
         searchQuery,
         setSearchQuery,
@@ -66,7 +66,7 @@ export const MarketNewsPage = () => {
                     <main className="lg:col-span-8">
                         {isLoading ? (
                             <NewsSkeleton />
-                        ) : error ? (
+                        ) : _error ? (
                             <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="p-12 text-center">
                                 <p className="text-red-400 text-xs font-medium mb-4">Connection to news intelligence lost.</p>
                                 <button

@@ -61,7 +61,7 @@ export const HoldingsTable = ({
     if (isError) {
         return (
             <div style={{ padding: '40px 0', textAlign: 'center', fontSize: 12, color: '#FF1744', background: '#111214', border: '1px solid #1e2025', borderRadius: 8 }}>
-                Failed — {error?.message || 'Unknown error'}
+                Failed — {(error as { message?: string })?.message || 'Unknown error'}
             </div>
         );
     }
@@ -110,13 +110,11 @@ export const HoldingsTable = ({
                         <HoldingsTableRow
                             key={inv.id || inv.schemeCode || idx}
                             inv={inv}
-                            idx={idx}
                             isLast={idx === items.length - 1}
                             isExpanded={expandedId === (inv.id || inv.schemeCode)}
                             onExpand={setExpandedId}
                             onNavigate={onNavigate}
                             returnType={returnType}
-                            activeTab={activeTab}
                         />
                     ))}
 

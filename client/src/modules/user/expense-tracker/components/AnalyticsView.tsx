@@ -3,7 +3,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid,
     LineChart, Line, ResponsiveContainer, Tooltip as RechartsTooltip, Cell
 } from 'recharts';
-import { TrendingUp, ArrowUpRight, ArrowDownLeft, Activity, TrendingDown, AlertCircle, Lightbulb, Target } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, Activity, Lightbulb } from 'lucide-react';
 import { useState } from 'react';
 
 interface AnalyticsViewProps {

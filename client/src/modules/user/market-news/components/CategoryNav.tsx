@@ -1,5 +1,3 @@
-import { useRef } from "react";
-
 import { MARKET_NEWS_CATEGORIES as CATEGORIES } from "../constants/categories";
 
 interface CategoryNavProps {
@@ -8,8 +6,6 @@ interface CategoryNavProps {
 }
 
 export const CategoryNav = ({ activeCategory, onCategoryChange }: CategoryNavProps) => {
-    const scrollRef = useRef<HTMLDivElement>(null);
-
     return (
         <div className="relative py-2">
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth">
@@ -36,4 +32,3 @@ export const CategoryNav = ({ activeCategory, onCategoryChange }: CategoryNavPro
         </div>
     );
 };
-

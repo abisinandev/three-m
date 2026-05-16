@@ -10,7 +10,7 @@ export const Route = createFileRoute('/admin')({
         try {
             const { data } = await adminApi.get(PROFILE_URL);
             context.admin.setData(data);
-        } catch (error) {
+        } catch {
             throw redirect({ to: ROUTES.ADMIN.AUTH.LOGIN })
         }
     },

@@ -5,7 +5,6 @@ import { useDebounce } from 'use-debounce';
 import { fetchMutualFunds, fetchSips } from '@/shared/services/mutual-fund/mutual-fund-apis-user-side';
 import { useNavigate } from '@tanstack/react-router';
 import { useUserStore } from '@stores/user/UserStore';
-import type { SipDto } from '../types/dashboard.types';
 import api from '@/lib/axios-user';
 
 import { toast } from 'sonner';
@@ -37,7 +36,14 @@ const MutualFundDashboard = () => {
         placeholderData: prev => prev,
     });
 
-    const funds = fundsData?.data ?? [];
+    const funds = useMemo(() => {
+        const rawFunds = fundsData?.data ?? [];
+        return rawFunds.map((f) => ({
+            ...f,
+            nav: f?.nav,
+            navDate: f?.navDate,
+        }));
+    }, [fundsData]);
 
     const recentNAVUpdates = useMemo(() => {
         const currentFunds = fundsData?.data ?? [];
@@ -48,7 +54,7 @@ const MutualFundDashboard = () => {
 
             return {
                 fund: fund.schemeName || 'Unknown Fund',
-                nav: fund.nav || 0,
+                nav: fund?.nav || 0,
                 change: change,
                 date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
             };
@@ -56,21 +62,24 @@ const MutualFundDashboard = () => {
     }, [fundsData]);
 
 
-    const { data: sipsData, isLoading: sipsLoading } = useQuery({
+    const { data: sipsResponse, isLoading: sipsLoading } = useQuery({
         queryKey: ['sip-lists'],
         queryFn: fetchSips,
         enabled: activeTab === 'sips',
     });
 
-    const sips = (sipsData as { data?: { data?: SipDto[] } } | undefined)?.data?.data ?? [];
+    const sips = sipsResponse?.data?.data ?? [];
 
-    const { data: investmentsData, isLoading: investmentsLoading } = useQuery({
+    const { data: investmentsResponse, isLoading: investmentsLoading } = useQuery({
         queryKey: ['investments-listing'],
-        queryFn: async () => api.get('/user/mutual-funds/investments'),
+        queryFn: async () => {
+            const res = await api.get('/user/mutual-funds/investments');
+            return res.data;
+        },
         enabled: activeTab === 'transactions',
     });
 
-    const investments = (investmentsData as { data?: { data?: unknown[] } } | undefined)?.data?.data ?? [];
+    const investments = (investmentsResponse?.data as unknown[]) ?? [];
 
     const pauseMutation = useMutation({
         mutationFn: PauseSipStatus,
@@ -133,8 +142,8 @@ const MutualFundDashboard = () => {
                                         key={tab}
                                         onClick={() => setActiveTab(tab as 'funds' | 'sips' | 'transactions')}
                                         className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-colors ${isActive
-                                                ? 'bg-[#1a1c20] text-[#e8eaed] shadow-sm'
-                                                : 'text-[#6a7182] hover:text-[#e8eaed] hover:bg-[#1a1c20]/50'
+                                            ? 'bg-[#1a1c20] text-[#e8eaed] shadow-sm'
+                                            : 'text-[#6a7182] hover:text-[#e8eaed] hover:bg-[#1a1c20]/50'
                                             }`}
                                     >
                                         {tab === 'funds' ? 'All Funds' : tab === 'sips' ? 'Active SIPs' : 'History'}

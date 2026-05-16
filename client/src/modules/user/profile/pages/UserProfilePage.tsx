@@ -1,11 +1,11 @@
 import { useUserStore } from '@stores/user/UserStore';
-import { useEffect, useState } from 'react';
-import { Camera, CheckCircle } from 'lucide-react';
+import { useState } from 'react';
+import { CheckCircle } from 'lucide-react';
 import ChangePasswordModal from '@shared/components/modals/ChangePasswordModal';
 import { format } from 'date-fns';
 import EditProfileModal from '@shared/components/modals/UserProfileEditModal';
 import { useNavigate } from '@tanstack/react-router';
-import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import api from '@/lib/axios-user';
@@ -18,12 +18,10 @@ import { SecurityCard } from '../components/SecurityCard';
 
 const UserProfilePage = () => {
   const { user, setUser } = useUserStore();
-  const [twoFAEnabled, setTwoFAEnabled] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
 
   const getInitials = (name: string) =>
@@ -115,8 +113,8 @@ const UserProfilePage = () => {
         url: result.secure_url
       });
       setUser({ ...user, avatar: result.secure_url });
-    } catch (err) {
-      console.error("Profile image upload failed", err);
+    } catch (_err) {
+      console.error("Profile image upload failed", _err);
     } finally {
       setUploading(false);
     }
@@ -164,8 +162,6 @@ const UserProfilePage = () => {
             />
 
             <SecurityCard
-              twoFAEnabled={twoFAEnabled}
-              setTwoFAEnabled={setTwoFAEnabled}
               setShowPasswordModal={setShowPasswordModal}
               user={user}
             />

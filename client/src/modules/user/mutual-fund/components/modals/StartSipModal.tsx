@@ -1,5 +1,5 @@
 import type { FundDetails } from '../../types/details.types';
-import { X, Loader2, Info } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface StartSipModalProps {
