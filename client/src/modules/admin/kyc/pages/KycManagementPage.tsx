@@ -26,7 +26,7 @@ const KycVerificationPage = () => {
     placeholderData: keepPreviousData,
   });
 
-  const users: KycUser[] = data?.data ?? [];
+  const users: KycUser[] = data?.users ?? [];
   const total = data?.total ?? 0;
 
   return (

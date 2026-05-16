@@ -47,7 +47,7 @@ export const InvestmentDistributionDonut = ({ data, totalAum, formatCurrency }: 
                                 color: '#fff'
                             }}
                             itemStyle={{ color: '#fff', padding: '2px 0' }}
-                            formatter={(value: number) => formatCurrency(value)}
+                            formatter={(value: number | string) => formatCurrency(Number(value))}
                         />
                     </PieChart>
                 </ResponsiveContainer>

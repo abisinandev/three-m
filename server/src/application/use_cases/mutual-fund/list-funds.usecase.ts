@@ -20,7 +20,7 @@ export class ListFundUserSideUseCase implements IListFundsUserSideUseCase {
 
     ) { };
 
-    async execute(userId: string, data: any): Promise<{
+    async execute(userId: string, data: QueryOptions & { categories?: string[] }): Promise<{
         data: FundListDTO[];
         total: number;
         page: number;

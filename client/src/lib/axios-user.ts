@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios"
 import { useUserStore } from "@stores/user/UserStore";
 import { redirect, notFound } from '@tanstack/react-router'
 import { USER_REFRESH_TOKEN } from "@shared/constants/userContants";
@@ -15,11 +15,16 @@ const authFreeRoutes = [
     "/auth/signup",
 ];
 
+interface RetryConfig extends InternalAxiosRequestConfig {
+    _retry?: boolean;
+    _retryCount?: number;
+}
+
 let isRefreshing = false;
 api.interceptors.response.use(
     res => res,
-    async (err) => {
-        const originalRequest = err.config;
+    async (err: AxiosError) => {
+        const originalRequest = err.config as RetryConfig;
         console.log("originalRequest: ", originalRequest);
 
         const isServerRestart =
@@ -58,7 +63,7 @@ api.interceptors.response.use(
             throw notFound();
         }
 
-        if (err.response.status === 401 && !originalRequest._retry) {
+        if (err.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
             if (!isRefreshing) {
@@ -70,7 +75,7 @@ api.interceptors.response.use(
 
                     useUserStore.getState().logout();
                     throw redirect({ to: ROUTES.AUTH.LOGIN })
-                    
+
                 } finally {
                     isRefreshing = false
                 }

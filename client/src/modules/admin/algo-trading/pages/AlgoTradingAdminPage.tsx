@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   RefreshCw, Plus, Cpu, Activity, BarChart2,
   AlertTriangle, Clock, Search, Edit2, ExternalLink,
@@ -235,7 +235,7 @@ const AlgoTradingAdminPage = () => {
                       </td>
                     </tr>
                   ) : (
-                    items.map((item: AdminStrategy | AdminSignal | AdminAlgoTrade) => {
+                    (items as (AdminStrategy | AdminSignal | AdminAlgoTrade)[]).map((item) => {
                       const strategy = item as AdminStrategy;
                       const signal = item as AdminSignal;
                       const trade = item as AdminAlgoTrade;
@@ -305,8 +305,8 @@ const AlgoTradingAdminPage = () => {
                               <td className="px-6 py-4 text-[13px] font-mono text-white">₹{parseFloat(String(trade.price)).toLocaleString()}</td>
                               <td className="px-6 py-4">
                                 {trade.profit != null ? (
-                                  <span className={`text-[13px] font-bold font-mono ${trade.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                                    {trade.profit >= 0 ? '+' : ''}₹{parseFloat(String(trade.profit)).toLocaleString()}
+                                  <span className={`text-[13px] font-bold font-mono ${Number(trade.profit || 0) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    {Number(trade.profit || 0) >= 0 ? '+' : ''}₹{parseFloat(String(trade.profit || 0)).toLocaleString()}
                                   </span>
                                 ) : (
                                   <span className="text-[12px] text-neutral-600">—</span>

@@ -7,6 +7,7 @@ import BaseStrategiesRiskTable from '../components/BaseStrategiesRiskTable';
 import { AlgoTradesTable } from '../components/AlgoTradesTable';
 import { AlgoPagination } from '../components/AlgoPagination';
 import { useAlgoTrading } from '../hooks/useAlgoTrading';
+import type { AdminStrategy, AdminSignal, AdminAlgoTrade } from '@/shared/types/admin/algo-trading.types';
 
 
 const AlgoTradingPage = () => {
@@ -86,21 +87,21 @@ const AlgoTradingPage = () => {
                 <div style={{ background: '#111214', borderRadius: 8, border: '1px solid #1e2025', overflow: 'hidden' }}>
                     {activeTab === 'Strategies' ? (
                         <StrategiesTable
-                            items={items}
+                            items={items as AdminStrategy[]}
                             isLoading={isLoading}
                             search={search}
                             onSearchChange={setSearch}
                         />
                     ) : activeTab === 'Signals' ? (
                         <SignalsTable
-                            items={items}
+                            items={items as AdminSignal[]}
                             isLoading={isLoading}
                             search={search}
                             onSearchChange={setSearch}
                         />
                     ) : activeTab === 'Trades' ? (
                         <AlgoTradesTable
-                            items={items}
+                            items={items as AdminAlgoTrade[]}
                             isLoading={isLoading}
                             search={search}
                             onSearchChange={setSearch}

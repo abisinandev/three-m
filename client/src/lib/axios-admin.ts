@@ -1,7 +1,7 @@
 import { REFRESH_TOKEN_URL } from "@shared/constants/adminConstants";
 import { useAdminStore } from "@stores/admin/useAdminStore";
 import { notFound, redirect } from '@tanstack/react-router'
-import axios from "axios";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { ROUTES } from "@shared/constants/routes";
 
 const adminApi = axios.create({
@@ -13,12 +13,17 @@ const adminApi = axios.create({
 });
 
 
+interface RetryConfig extends InternalAxiosRequestConfig {
+    _retry?: boolean;
+    _retryCount?: number;
+}
+
 let isRefreshing = false;
 
 adminApi.interceptors.response.use(
     res => res,
-    async (err) => {
-        const originalRequest = err.config;
+    async (err: AxiosError) => {
+        const originalRequest = err.config as RetryConfig;
         console.log("originalRequest: ", originalRequest);
 
         const isServerRestart =
@@ -50,11 +55,11 @@ adminApi.interceptors.response.use(
             );
         }
 
-        if (err.response.status === 403) {
+        if (err.response?.status === 403) {
             throw notFound();
         }
 
-        if (err.response.status === 401 && !originalRequest._retry) {
+        if (err.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
             if (!isRefreshing) {
