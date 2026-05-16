@@ -93,6 +93,7 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
             assetId: doc.assetId,
             assetType: doc.assetType,
             quantity: doc.quantity,
+            units: doc.units,
             avgPrice: doc.avgPrice,
             investedAmount: doc.investedAmount,
             createdAt: doc.createdAt,

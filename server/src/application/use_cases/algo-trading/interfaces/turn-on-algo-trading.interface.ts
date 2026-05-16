@@ -1,3 +1,3 @@
 export interface ITurnOnAlgoTradingUseCase {
-    execute(userId: string, strategyId: string, isActive: boolean): Promise<void | { message: string, upgrade: boolean }>;
+    execute(userId: string, strategyId: string, isActive: boolean): Promise<undefined | { message: string, upgrade: boolean }>;
 }

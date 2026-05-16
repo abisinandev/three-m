@@ -43,7 +43,7 @@ export class WalletEntity {
   }): WalletEntity {
     const balance = data.balance ?? 0;
 
-    if (balance > this.MAX_BALANCE) {
+    if (balance > WalletEntity.MAX_BALANCE) {
       throw new ValidationError("Wallet balance cannot exceed ₹100,000.");
     }
 

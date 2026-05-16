@@ -1,5 +1,6 @@
 import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { PortfolioDocument } from "@infrastructure/databases/mongo_db/models/schemas/portfolio/portfolio.schema";
+import { Types } from "mongoose";
 
 export const toDomain = (doc: PortfolioDocument): PortfolioEntity => {
     return PortfolioEntity.fromPersistence({
@@ -22,8 +23,8 @@ export const toDomain = (doc: PortfolioDocument): PortfolioEntity => {
 export const toPersistance = (entity: PortfolioEntity): Partial<PortfolioDocument> => {
     const data = entity.toPersistence();
     return {
-        userId: data.userId as unknown,
-        assetId: data.assetId as unknown,
+        userId: new Types.ObjectId(data.userId),
+        assetId: new Types.ObjectId(entity.assetId),
         assetType: data.assetType,
         quantity: data.quantity,
         units: data.units,

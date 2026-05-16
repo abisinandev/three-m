@@ -1,7 +1,6 @@
 import { inject, injectable } from "inversify";
 import { IMarketBuyOrderUseCase } from "./interfaces/buy-order-usecase.interface";
 import { BuyOrderDTO } from "@application/dto/stocks/buy-order.dto";
-import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { IOrderRepository } from "@application/interfaces/repositories/stock/order-repository.interface";
 import { OrderSide } from "@domain/entities/stock/enum/order-side.enum";
 import { OrderType } from "@domain/entities/stock/enum/order-type.enum";
@@ -32,7 +31,7 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
         @inject(STOCK_TYPES.OrderQueue) private readonly _orderQueue: IOrderQueue,
     ) { }
 
-    async execute(order: BuyOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
+    async execute(order: BuyOrderDTO, userId: string): Promise<undefined | { message: string, upgrade: boolean }> {
 
         const hasAccess = await this._featureAccess.hasAccess(
             userId,
@@ -76,7 +75,7 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
                 isAlgoTrade: order.isAlgoTrade ?? false,
             });
 
-            const newOrder = await this._orderRepository.create(marketOrder, session);
+            const newOrder = await this._orderRepository.createOrder(marketOrder, session);
 
             await session.commitTransaction();
 

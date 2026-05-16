@@ -64,12 +64,12 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
 
             if ((wallet?.balance ?? 0) < installment.amount) {
                 await this._sipInstallmentRepository.markFailed(
-                    installment.id!,
+                    installment.id as string,
                     "INSUFFICIENT_BALANCE"
                 );
 
                 await this._createNotificationUseCase.execute({
-                    userId: user.id!,
+                    userId: user.id as string,
                     type: NotificationType.SIP,
                     title: "SIP Installment Failed",
                     message: `Your SIP installment of ₹${installment.amount} failed due to insufficient wallet balance.`,
@@ -82,7 +82,7 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 user,
                 installment.amount,
                 fund.id as string,
-                installment.id!,
+                installment.id as string,
                 session
             );
 
@@ -113,7 +113,7 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
  
             // Notification
             await this._createNotificationUseCase.execute({
-                userId: user.id!,
+                userId: user.id as string,
                 type: NotificationType.SIP,
                 title: "SIP Installment Executed",
                 message: `Your SIP installment of ₹${installment.amount} has been successfully invested in ${fund.schemeName}.`,
@@ -138,7 +138,7 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
         } catch (error) {
             await session.abortTransaction();
             await this._sipInstallmentRepository.markFailed(
-                installment.id!,
+                installment.id as string,
                 error instanceof Error ? error.message : "EXECUTION_FAILED"
             );
 

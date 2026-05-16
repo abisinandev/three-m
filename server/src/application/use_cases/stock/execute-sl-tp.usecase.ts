@@ -25,11 +25,11 @@ export class ExecuteSlTpUseCase implements IExecuteSlTpUseCase {
 
     async execute(orderId: string): Promise<void> {
         const order = await this._orderRepository.findById(orderId);
-        
+
         if (!order) return;
         if (order.status !== OrderStatus.FILLED) return;
         if (order.side !== OrderSide.BUY) return;
-        
+
         const sl = order.stopLoss;
         const tp = order.takeProfit;
 
@@ -48,13 +48,11 @@ export class ExecuteSlTpUseCase implements IExecuteSlTpUseCase {
             if (!stock) throw new NotFoundError(ErrorMessages.STOCKS.NOT_FOUND);
 
             const portfolio = await this._portfolioRepository.findByUserIdAndSymbol(order.userId, stock.id as string);
-            
+
             if (!portfolio || (portfolio.quantity ?? 0) < order.quantity) {
                 await this.clearSlTp(orderId);
                 return;
             }
-
-            try {
                 await this._marketSellOrder.execute({
                     symbol: order.symbol,
                     quantity: order.quantity,
@@ -63,10 +61,6 @@ export class ExecuteSlTpUseCase implements IExecuteSlTpUseCase {
                 }, order.userId);
 
                 await this.clearSlTp(orderId);
-                
-            } catch (error) {
-                throw error;
-            }
         }
     }
 
@@ -74,9 +68,9 @@ export class ExecuteSlTpUseCase implements IExecuteSlTpUseCase {
         const order = await this._orderRepository.findById(orderId);
         if (order) {
 
-            order.stopLoss = null;
-            order.takeProfit = null;
-            await this._orderRepository.update(orderId, order);
+            await this._orderRepository.update(orderId, {
+                stopLoss: null, takeProfit: null
+            });
         }
     }
 }

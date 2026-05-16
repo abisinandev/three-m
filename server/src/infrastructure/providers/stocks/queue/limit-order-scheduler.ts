@@ -3,7 +3,6 @@ import { STOCK_TYPES } from '@infrastructure/inversify_di/features/stock/stock.t
 import { isIndianMarketOpen } from '@shared/utils/market/market-time';
 import { BaseScheduler } from '../../cron-scheduler/base.scheduler';
 import { IDispatchLimitOrdersUseCase } from '@application/use_cases/stock/interfaces/dispatch-limit-orders.interface';
-import { logger } from '../../logger/pino.logger';
 
 @injectable()
 export class LimitOrderScheduler extends BaseScheduler {

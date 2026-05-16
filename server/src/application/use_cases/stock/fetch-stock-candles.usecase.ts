@@ -54,8 +54,8 @@ export class FetchStockCandlesUseCase implements IFetchStockCandlesUseCase {
 
         const now = Math.floor(Date.now() / 1000);
 
-        if (!to || isNaN(to)) to = now;
-        if (!from || isNaN(from)) from = to - 86400;
+        if (!to || Number.isNaN(to)) to = now;
+        if (!from || Number.isNaN(from)) from = to - 86400;
 
         if (from > 1e12) from = Math.floor(from / 1000);
         if (to > 1e12) to = Math.floor(to / 1000);

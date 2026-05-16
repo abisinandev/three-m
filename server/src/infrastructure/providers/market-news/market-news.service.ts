@@ -5,7 +5,7 @@ import { IMarketNewsProvider, RawNewsArticle } from "@application/interfaces/ser
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 import { MARKET_NEWS_TYPES } from "@infrastructure/inversify_di/features/market-news/market-news.types";
 import { inject, injectable, multiInject } from "inversify";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 @injectable()
 export class MarketNewsServices implements IMarketNewsServices {
@@ -91,11 +91,11 @@ export class MarketNewsServices implements IMarketNewsServices {
         return articles.filter(article => {
             // URL Hash
             const urlHash = crypto.createHash("md5").update(article.url).digest("hex");
-            // Title slug (simple)
+
             const titleSlug = article.title.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 50);
-            
+
             if (seen.has(urlHash) || seen.has(titleSlug)) return false;
-            
+
             seen.add(urlHash);
             seen.add(titleSlug);
             return true;
@@ -118,13 +118,11 @@ export class MarketNewsServices implements IMarketNewsServices {
             .map(article => {
                 let score = sourceReliability[article.source] || 50;
 
-                // Keyword relevance
-                const content = (article.title + " " + (article.description || "")).toLowerCase();
+                const content = (`${article.title} ${article.description || ""}`).toLowerCase();
                 highValueKeywords.forEach(kw => {
                     if (content.includes(kw)) score += 10;
                 });
 
-                // Recency bonus (within last 24h)
                 const hoursOld = (Date.now() - new Date(article.publishedAt).getTime()) / (1000 * 60 * 60);
                 if (hoursOld < 24) score += (24 - hoursOld) * 2;
 
@@ -135,19 +133,19 @@ export class MarketNewsServices implements IMarketNewsServices {
     }
 }
 
-export class NewsNormalizer {
-    static normalize(rawArticles: RawNewsArticle[]): MarketNewsArticle[] {
+export const NewsNormalizer = {
+    normalize: (rawArticles: RawNewsArticle[]): MarketNewsArticle[] => {
         return rawArticles.map(article => ({
             title: article.title?.trim() || "Untitled Financial News",
             description: article.description?.trim() || null,
             url: article.url,
             image: article.urlToImage || null,
             source: article.source?.name || "Market Source",
-            publishedAt: this.isValidDate(article.publishedAt) ? article.publishedAt : new Date().toISOString()
+            publishedAt: NewsNormalizer.isValidDate(article.publishedAt) ? article.publishedAt : new Date().toISOString()
         }));
-    }
+    },
 
-    private static isValidDate(dateStr: string): boolean {
-        return !isNaN(Date.parse(dateStr));
+    isValidDate: (dateStr: string): boolean => {
+        return !Number.isNaN(Date.parse(dateStr));
     }
 }

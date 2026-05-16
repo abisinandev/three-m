@@ -74,7 +74,7 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
                 profit: profit,
                 createdAt: stockPf.createdAt,
                 updatedAt: stockPf.updatedAt,
-            } as any);
+            });
         }
 
         return {

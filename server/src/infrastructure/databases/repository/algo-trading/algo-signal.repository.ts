@@ -12,7 +12,7 @@ export class AlgoSignalRepository extends
         super(AlgoSignalModel, AlgoSignalMapper)
     }
 
-    async create(signal: AlgoSignalEntity): Promise<AlgoSignalEntity> {
+    async createSignal(signal: AlgoSignalEntity): Promise<AlgoSignalEntity> {
         const data = this.mapper.toPersistance(signal);
         const doc = await this.model.create(data);
         return this.mapper.toDomain(doc)

@@ -80,7 +80,7 @@ export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsU
                 xirr: fundXirr ?? 0,
                 createdAt: pf.createdAt,
                 updatedAt: pf.updatedAt,
-            } as any);
+            });
         }
 
         return {

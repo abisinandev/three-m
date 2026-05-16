@@ -73,7 +73,7 @@ export class SipRepository extends BaseRepository<SipEntity, SipDocument> implem
         }
     }
 
-    async findSipsByUser(options: QueryOptions, userId: string): Promise<SipEntity[] | null> {
+    async findSipsByUser(options: QueryOptions, _userId: string): Promise<SipEntity[] | null> {
         const {
             page = 1,
             limit = 10,

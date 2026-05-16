@@ -7,7 +7,7 @@ export const TradeExecutionTool = (confirmUseCase: IConfirmBotBuyOrderUseCase, u
         async ({ symbol, quantity }) => {
             const result = await confirmUseCase.execute({ userId, symbol, quantity });
             
-            if (result && result.upgrade) {
+            if (result?.upgrade) {
                 return result.message;
             }
 

@@ -14,7 +14,7 @@ export class DispatchSipInstallmentsUseCase implements IDispatchSipInstallmentsU
     async execute(): Promise<void> {
         const dueInstallments = await this._sipInstallmentRepository.findActiveDueSips() ?? [];
 
-        for (let installment of dueInstallments) {
+        for (const installment of dueInstallments) {
             await this._sipQueue.addSipExecutionJob(installment.id as string);
         }
     }

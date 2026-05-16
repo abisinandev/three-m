@@ -13,7 +13,7 @@ export class OrderRepository extends BaseRepository<OrderEntity, OrderDocument> 
         super(OrderModel, OrderMapper)
     }
 
-    async create(entity: OrderEntity, session?: ClientSession): Promise<OrderEntity> {
+    async createOrder(entity: OrderEntity, session?: ClientSession): Promise<OrderEntity> {
         const data = this.mapper.toPersistance(entity);
 
         const doc = await this.model.create([data], { session });

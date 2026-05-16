@@ -28,7 +28,7 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
         @inject(STOCK_TYPES.OrderQueue) private readonly _orderQueue: IOrderQueue,
     ) { }
 
-    async execute(order: SellOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
+    async execute(order: SellOrderDTO, userId: string): Promise<undefined | { message: string, upgrade: boolean }> {
 
         const hasAccess = await this._featureAccess.hasAccess(
             userId,
@@ -69,7 +69,7 @@ export class MarketSellOrderUseCase implements IMarketSellOrderUseCase {
                 isAlgoTrade: order.isAlgoTrade ?? false,
             });
 
-            const newOrder = await this._orderRepository.create(marketOrder, session);
+            const newOrder = await this._orderRepository.createOrder(marketOrder, session);
 
             await session.commitTransaction();
 

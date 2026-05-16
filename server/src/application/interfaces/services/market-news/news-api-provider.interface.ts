@@ -1,4 +1,4 @@
-import { MarketNewsArticle } from "@application/dto/market-news/market-news.dto";
+
 
 export interface RawNewsArticle {
     title: string;

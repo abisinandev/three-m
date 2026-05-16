@@ -5,9 +5,8 @@ import { generateInsights } from "@shared/utils/expense-tracker/insight-engine";
 
 @injectable()
 export class CalculateBudgetPlanUseCase implements ICalculateBudgetPlanUseCase {
-    constructor() { }
 
-    async execute(userId: string, data: BudgetPlanRequestDTO): Promise<BudgetPlanResultDTO> {
+    async execute(_userId: string, data: BudgetPlanRequestDTO): Promise<BudgetPlanResultDTO> {
         const { income, needsTotal, wantsTotal, savingsTotal } = data;
 
         const totalSpent = needsTotal + wantsTotal;

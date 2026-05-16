@@ -20,7 +20,7 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
 
     async createInvestment(entity: InvestmentEntity, session?: ClientSession): Promise<InvestmentEntity | null> {
         const persistenceData = this.mapper.toPersistance(entity);
-        let createdDoc;
+        let createdDoc = null;
         if (session) {
             const docs = await this.model.create([persistenceData], { session });
             createdDoc = docs[0];

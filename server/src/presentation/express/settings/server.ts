@@ -1,7 +1,7 @@
 import connectDB from "@infrastructure/databases/mongo_db/mongo.db";
 import { env } from "@presentation/express/utils/constants/env.constants";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
-import http from "http";
+import http from "node:http";
 import app from "./app";
 import { startSchedulers } from "@shared/bootstraps/start-schedulers";
 import { startWorkers } from "@shared/bootstraps/start-workers";

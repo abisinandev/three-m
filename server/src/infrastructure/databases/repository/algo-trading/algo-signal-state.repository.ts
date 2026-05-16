@@ -6,10 +6,6 @@ import { injectable } from "inversify";
 @injectable()
 export class AlgoSignalStateRepository implements IAlgoSignalStateRepository {
 
-    constructor() {
-
-    }
-
     async getLastAction(algoId: string, symbol: string): Promise<SignalAction | null> {
         const state = await SignalStateModel.findOne({ algoId, symbol });
         return state ? (state.lastAction as SignalAction) : null;

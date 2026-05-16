@@ -29,12 +29,13 @@ export class AgentRouter {
             case "education":
                 return await this._educationAgent.handle(userInput, history);
 
-            default:
+            default:{
                 const response = await this._detectAgent.directLLM(userInput);
                 return {
                     message: String(response.content),
                     type: 'text'
                 };
+            }
         }
     }
 }

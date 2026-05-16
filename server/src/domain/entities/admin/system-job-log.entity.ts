@@ -48,7 +48,7 @@ export class SystemJobLog {
         this.updatedAt = data.updatedAt || new Date();
     }
 
-    static create(jobName: string, metadata?: any): SystemJobLog {
+    static create(jobName: string, metadata?: Record<string, unknown>): SystemJobLog {
         return new SystemJobLog({
             jobName,
             status: JobStatus.RUNNING,

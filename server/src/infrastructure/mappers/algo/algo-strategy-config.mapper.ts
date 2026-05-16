@@ -1,8 +1,8 @@
 import { AlgoStrategyRiskConfig } from "@domain/entities/algo/algo-strategy-config.entity";
 import { AlgoStrategyConfigDocument } from "@infrastructure/databases/mongo_db/models/schemas/algo-trading/algo-strategy-config.schema";
 
-export class AlgoStrategyConfigMapper {
-    public static toDomain(doc: AlgoStrategyConfigDocument): AlgoStrategyRiskConfig {
+export const AlgoStrategyConfigMapper = {
+    toDomain: (doc: AlgoStrategyConfigDocument): AlgoStrategyRiskConfig => {
         return AlgoStrategyRiskConfig.fromPersistence({
             id: doc._id.toString(),
             strategyName: doc.strategyName,
@@ -12,9 +12,9 @@ export class AlgoStrategyConfigMapper {
             takeProfit: doc.takeProfit,
             updatedAt: doc.updatedAt,
         });
-    }
+    },
 
-    public static toPersistence(entity: AlgoStrategyRiskConfig): Record<string, unknown> {
+    toPersistence: (entity: AlgoStrategyRiskConfig): Partial<AlgoStrategyConfigDocument> => {
         return {
             strategyName: entity.strategyName,
             riskAmount: entity.riskAmount,

@@ -49,7 +49,7 @@ export class AiChatbotController {
 
             const result = await this._confirmBotBuyOrderUseCase.execute({ userId, symbol, quantity });
 
-            if (result && result.upgrade) {
+            if (result?.upgrade) {
                 return ResponseHelper.success(
                     res,
                     result.message,

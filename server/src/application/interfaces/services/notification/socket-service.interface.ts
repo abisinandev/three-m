@@ -1,4 +1,4 @@
-import http from "http";
+import http from "node:http";
 import { NotificationPayload } from "./notification-service.interface";
 import { Trade } from "@application/dto/stocks/stock.dto";
 

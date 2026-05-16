@@ -53,7 +53,7 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
 
         const sort: Record<string, 1 | -1> = {
             [sortBy]: sortOrder === "asc" ? 1 : -1,
-        } as unknown;
+        };
 
         const docs = await this.model
             .find(finalFilter)
@@ -102,7 +102,7 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
         const matchStage: Record<string, unknown> = { isAlgoTrade: true };
 
         if (search) {
-            matchStage["$or"] = [
+            matchStage.$or = [
                 { symbol: { $regex: search, $options: "i" } },
                 { userId: { $regex: search, $options: "i" } },
                 { side: { $regex: search, $options: "i" } },
@@ -123,7 +123,7 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
         const matchStage: Record<string, unknown> = { isAlgoTrade: true };
 
         if (search) {
-            matchStage["$or"] = [
+            matchStage.$or = [
                 { symbol: { $regex: search, $options: "i" } },
                 { userId: { $regex: search, $options: "i" } },
                 { side: { $regex: search, $options: "i" } },
@@ -134,7 +134,7 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
     }
 
 
-    async countDailyAlgoTradesByStrategy(strategyName: string): Promise<number> {
+    async countDailyAlgoTradesByStrategy(_strategyName: string): Promise<number> {
         return 0
     }
 

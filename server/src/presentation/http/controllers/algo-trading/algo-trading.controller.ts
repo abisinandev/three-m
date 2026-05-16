@@ -23,7 +23,7 @@ export class AlgoTradingController {
         @inject(STOCK_TYPES.ConfirmSellSignalUseCase) private readonly _confirmSellSignalUseCase: IConfirmSellSignalUseCase,
     ) { }
 
-    async getStrategies(req: Request, res: Response, next: NextFunction) {
+    async getStrategies(_req: Request, res: Response, next: NextFunction) {
         try {
             const list = this._getStrategiesUseCase.execute();
             return ResponseHelper.success(res, SuccessMessages.ALGO.STRATEGY_FETCHED, list);
@@ -52,7 +52,7 @@ export class AlgoTradingController {
             }
             const result = await this._saveAlgoStrategyUseCase.execute({ userId, symbol, strategyName, config });
             
-            if (result && result.upgrade) {
+            if (result?.upgrade) {
                 return ResponseHelper.success(
                     res,
                     result.message,
@@ -74,7 +74,7 @@ export class AlgoTradingController {
             const { isActive } = req.body;
             const result = await this._turnAlgoTradingUseCase.execute(userId, strategyId, isActive);
             
-            if (result && result.upgrade) {
+            if (result?.upgrade) {
                 return ResponseHelper.success(
                     res,
                     result.message,
@@ -97,7 +97,7 @@ export class AlgoTradingController {
             const userId = req.user?.id as string;
             const { action } = req.body;
 
-            let result;
+            let result = null;
             if (action === "BUY") {
                 result = await this._confirmBuySignalUseCase.execute({ ...req.body, userId });
             } else if (action === "SELL") {
@@ -106,7 +106,7 @@ export class AlgoTradingController {
                 throw new AppError("Invalid signal action. Must be BUY or SELL.");
             }
 
-            if (result && result.upgrade) {
+            if (result?.upgrade) {
                 return ResponseHelper.success(
                     res,
                     result.message,

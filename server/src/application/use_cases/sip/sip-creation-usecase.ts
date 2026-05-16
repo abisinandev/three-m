@@ -28,7 +28,7 @@ export class SipCreationUseCase implements ISipCreationUseCase {
         @inject(MUTUAL_FUND_TYPES.InvestmentValidationService) private readonly _validationService: IInvestmentValidationService,
     ) { }
 
-    async execute(data: SipCreationDTO, userId: string, idempotencyKey: string): Promise<void | { message: string, upgrade: boolean }> {
+    async execute(data: SipCreationDTO, userId: string, idempotencyKey: string): Promise<undefined | { message: string, upgrade: boolean }> {
 
         const hasAccess = await this._featureAccess.hasAccess(
             userId,

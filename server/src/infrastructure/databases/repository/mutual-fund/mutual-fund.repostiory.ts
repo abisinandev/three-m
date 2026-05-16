@@ -84,12 +84,12 @@ export class MutualFundRepository extends BaseRepository<MutualFundEntity, Mutua
     };
 
 
-    async createFund(entities: MutualFundEntity, session?: ClientSession): Promise<void> {
+    async createFund(entities: MutualFundEntity, _session?: ClientSession): Promise<void> {
         const doc = this.mapper.toPersistance(entities);
         await this.model.create(doc);
     };
 
-    async findBySchemeCode(schemeCode: string, session?: ClientSession): Promise<MutualFundEntity | null> {
+    async findBySchemeCode(schemeCode: string, _session?: ClientSession): Promise<MutualFundEntity | null> {
         const doc = await this.model.findOne({ schemeCode });
         if (!doc) return null;
         return this.mapper.toDomain(doc);
@@ -136,33 +136,6 @@ export class MutualFundRepository extends BaseRepository<MutualFundEntity, Mutua
                 { $sort: sort },
                 { $skip: skip },
                 { $limit: limitNumber },
-                {
-                    $lookup: {
-                        from: "mutualfundnavs",
-                        let: { schemeCode: "$schemeCode" },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $and: [
-                                            { $eq: ["$schemeCode", "$$schemeCode"] },
-                                            { $eq: ["$interval", "DAILY"] }
-                                        ]
-                                    }
-                                }
-                            },
-                            { $sort: { navDate: -1 } },
-                            { $limit: 1 },
-                        ],
-                        as: "latestNav",
-                    },
-                },
-                {
-                    $unwind: {
-                        path: "$latestNav",
-                        preserveNullAndEmptyArrays: true,
-                    },
-                },
             ]);
         } else {
             docs = await this.model.find({ status: "Active" });

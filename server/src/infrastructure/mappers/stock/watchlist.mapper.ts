@@ -1,5 +1,6 @@
 import { WatchlistEntity } from "@domain/entities/stock/watchlist.entity";
 import { WatchlistDocument } from "@infrastructure/databases/mongo_db/models/schemas/stock/watchlist.schema";
+import { Types } from "mongoose";
 
 export const toDomain = (doc: WatchlistDocument): WatchlistEntity => {
   return WatchlistEntity.fromPersistence({
@@ -12,7 +13,7 @@ export const toDomain = (doc: WatchlistDocument): WatchlistEntity => {
 
 export const toPersistance = (entity: WatchlistEntity): Partial<WatchlistDocument> => {
   return {
-    userId: entity.userId as unknown,
+    userId: new Types.ObjectId(entity.userId),
     symbol: entity.symbol,
     createdAt: entity.createdAt,
   };

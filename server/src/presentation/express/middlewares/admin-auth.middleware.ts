@@ -7,7 +7,6 @@ import { injectable } from "inversify";
 
 @injectable()
 export class AdminAuthMiddleware {
-  constructor() { }
 
   async handle(req: Request, _res: Response, next: NextFunction) {
     try {

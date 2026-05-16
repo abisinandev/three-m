@@ -22,10 +22,6 @@ export class WsGateway implements IWsGateway {
     private marketDataService!: IMarketDataService;
     private subscriptions: Map<string, Set<string>> = new Map();
 
-    constructor(
-
-    ) { }
-
     public init(io: Server, marketDataService: IMarketDataService) {
         this.io = io;
         this.marketDataService = marketDataService;
@@ -47,7 +43,7 @@ export class WsGateway implements IWsGateway {
                     this.subscriptions.set(room, new Set());
                 }
                 
-                this.subscriptions.get(room)!.add(socket.id);
+                this.subscriptions.get(room)?.add(socket.id);
                 console.log(`Socket ${socket.id} subscribed to ${room}`);
             });
 

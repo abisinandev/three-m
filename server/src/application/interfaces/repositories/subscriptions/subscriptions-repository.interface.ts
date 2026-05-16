@@ -1,7 +1,6 @@
 import { SubscriptionEntity } from "@domain/entities/subscription/subscription.entity";
 import { IBaseRepository } from "../base-repository.interface";
 import { FilterQuery, QueryOptions } from "mongoose";
-import { SubscriptionStatsDTO } from "@application/dto/admin/subscription/subscription-data.dto";
 
 export interface ISubscriptionRepository extends IBaseRepository<SubscriptionEntity> {
     findWithFilters(options: QueryOptions): Promise<SubscriptionEntity[]>;

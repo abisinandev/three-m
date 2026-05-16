@@ -95,7 +95,7 @@ export class PortFolioController {
         try {
             const userId = req?.user?.id;
             const expectedReturnRate = parseFloat(req.query.expectedReturnRate as string) || 12;
-            const years = parseInt(req.query.years as string) || 10;
+            const years = parseInt(req.query.years as string, 10) || 10;
             const result = await this._portfolioProjection.execute({
                 expectedReturnRate,
                 years,

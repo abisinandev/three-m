@@ -7,6 +7,7 @@ import { IMutualFundRepository } from "@application/interfaces/repositories/feat
 import { IMfCagrRepository } from "@application/interfaces/repositories/feature/mf-cagr-repository.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
+import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
 
 
 @injectable()
@@ -15,9 +16,11 @@ export class ListFundUserSideUseCase implements IListFundsUserSideUseCase {
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
         @inject(MUTUAL_FUND_TYPES.MfCagrRepository) private readonly _mfCagrRepository: IMfCagrRepository,
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
+        @inject(MUTUAL_FUND_TYPES.MutualFundNavService) private readonly _navService: IMutualFundNavService,
+
     ) { };
 
-    async execute(userId: string, data: QueryOptions): Promise<{
+    async execute(userId: string, data: any): Promise<{
         data: FundListDTO[];
         total: number;
         page: number;
@@ -41,15 +44,27 @@ export class ListFundUserSideUseCase implements IListFundsUserSideUseCase {
         const { funds, countActiveFunds } = await this._mutualFundRepository.findActiveFunds(finalQueryOptions);
         const totalInvestments = await this._investmentRepository.findByUsertotalInvestments(userId);
         const { totalCount } = await this._mutualFundRepository.count();
-        const totalPages = Math.ceil(totalCount / (data.limit || 10));
+        const totalPages = Math.ceil(totalCount / (Number(data.limit) || 10));
         const mfCagrs = await this._mfCagrRepository.findAll();
 
+        const fundLists = await Promise.all(
+            funds.map(async (fund) => {
+                const nav = await this._navService.getLatestNav(fund.schemeCode);
+                const cagr = mfCagrs.find((c) => c.schemeCode === fund.schemeCode);
+
+                return {
+                    ...toMutualFundResponse(fund, cagr),
+                    nav: nav.nav,
+                    navDate: nav.navDate,
+                    latestNav: nav,
+                };
+            })
+        );
+
         return {
-            data: funds.map(data => toMutualFundResponse(data,
-                mfCagrs.find(cagr => cagr.schemeCode === data.schemeCode))
-            ),
-            limit: data.limit || 10,
-            page: data.page || 1,
+            data: fundLists,
+            limit: Number(data.limit) || 10,
+            page: Number(data.page) || 1,
             totalPages,
             total: totalCount,
             totalActiveFunds: countActiveFunds,

@@ -5,5 +5,5 @@ export interface ConfirmBotOrderDTO {
 }
 
 export interface IConfirmBotBuyOrderUseCase {
-    execute(order: ConfirmBotOrderDTO): Promise<void | { message: string, upgrade: boolean }>;
+    execute(order: ConfirmBotOrderDTO): Promise<undefined | { message: string, upgrade: boolean }>;
 }

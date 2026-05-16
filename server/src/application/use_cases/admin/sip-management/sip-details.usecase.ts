@@ -30,9 +30,9 @@ export class SipDetailsUseCase implements ISipDetailsUseCase {
 
         const actualUserId = sip.userId.toString();
 
-        let limit = Number(options?.limit) || 10;
-        let page = Number(options?.page) || 1;
-        let skip = (page - 1) * limit;
+        const limit = Number(options?.limit) || 10;
+        const page = Number(options?.page) || 1;
+        const skip = (page - 1) * limit;
 
         const queryOptions = {
             sipId,

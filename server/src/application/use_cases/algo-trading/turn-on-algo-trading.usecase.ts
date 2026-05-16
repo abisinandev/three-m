@@ -14,7 +14,7 @@ export class TurnOnAlgoTradingUseCase implements ITurnOnAlgoTradingUseCase {
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
     ) { }
 
-    async execute(userId: string, strategyId: string, isActive: boolean): Promise<void | { message: string, upgrade: boolean }> {
+    async execute(userId: string, strategyId: string, isActive: boolean): Promise<undefined | { message: string, upgrade: boolean }> {
 
         const hasAccess = await this._featureAccess.hasAccess(
             userId,

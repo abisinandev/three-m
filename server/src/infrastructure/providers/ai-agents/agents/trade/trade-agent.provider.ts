@@ -20,7 +20,7 @@ export class TradeAgent implements ITradeBotAgent {
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
     ) { }
 
-    async handle(input: string, _history: ChatMessage[], userId: string): Promise<AgentResponse> {
+    async handle(input: string, _history: ChatMessage[], _userId: string): Promise<AgentResponse> {
 
         logger.info("TRADE AGENT WORKING...");
 

@@ -16,7 +16,7 @@ export class Budget {
     }
 
     static fromIncome(income: Income): Budget {
-        return this.fromIncomeTotal(income.amount);
+        return Budget.fromIncomeTotal(income.amount);
     }
 
     static fromIncomeTotal(amount: number): Budget {

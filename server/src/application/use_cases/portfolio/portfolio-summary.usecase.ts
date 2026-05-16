@@ -19,6 +19,7 @@ import { ICacheProvider } from "@application/interfaces/services/externals/redis
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
+import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
 
 
 @injectable()
@@ -165,7 +166,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
     }
 
     private buildCashFlows(
-        investments: any[],
+        investments: InvestmentEntity[],
         trades: TradeEntity[],
         portfolioAssets: PortfolioEntity[],
         priceMap: Map<string, number>

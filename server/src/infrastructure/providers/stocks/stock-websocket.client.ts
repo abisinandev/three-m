@@ -55,10 +55,10 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
             if (parsed.type === "trade") {
                 parsed.data.forEach((t: Record<string, unknown>) => {
                     const trade: Trade = {
-                        symbol: t.s,
-                        price: t.p,
-                        volume: t.v,
-                        timestamp: t.t,
+                        symbol: String(t.s),
+                        price: Number(t.p),
+                        volume: Number(t.v),
+                        timestamp: Number(t.t),
                     };
 
                     this.notifySubscribers(trade);
@@ -109,6 +109,6 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
     }
 
     private notifySubscribers(trade: Trade) {
-        this.subscribers.forEach((cb) => cb(trade));
+        this.subscribers.forEach((cb) => { cb(trade) });
     }
 }
