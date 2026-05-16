@@ -180,7 +180,7 @@ const KYCVerificationPage = () => {
                 }
             }
 
-            const documents = [];
+            const documents: { type: string; fileName: string; fileUrl: string; }[] = [];
             if (files.pan) documents.push({ type: 'pan', fileName: files.pan.name, fileUrl: uploadedFiles.pan });
             if (files.aadhaar) documents.push({ type: 'aadhaar', fileName: files.aadhaar.name, fileUrl: uploadedFiles.aadhaar });
             if (files.selfie) documents.push({ type: 'selfie', fileName: files.selfie.name, fileUrl: uploadedFiles.selfie });
