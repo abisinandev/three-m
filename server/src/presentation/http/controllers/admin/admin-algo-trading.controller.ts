@@ -22,7 +22,7 @@ export class AdminAlgoTradingController {
         @inject(STOCK_TYPES.AdminUpdateStrategyRiskConfigUseCase) private readonly _updateRiskConfig: IAdminUpdateStrategyRiskConfigUseCase,
     ) { }
 
-    async getAlgoTrading(req: Request, res: Response, next: NextFunction) {
+    async getAlgoTrading(_req: Request, res: Response, next: NextFunction) {
         try {
             const result = await this._getStats.execute();
             return ResponseHelper.success(
@@ -36,7 +36,7 @@ export class AdminAlgoTradingController {
         }
     }
 
-    async getBaseStrategies(req: Request, res: Response, next: NextFunction) {
+    async getBaseStrategies(_req: Request, res: Response, next: NextFunction) {
         try {
             const result = await this._getBaseStrategies.execute();
             return ResponseHelper.success(
@@ -52,13 +52,13 @@ export class AdminAlgoTradingController {
 
     async updateRiskConfig(req: Request, res: Response, next: NextFunction) {
         try {
-            const { strategyName, riskAmount, maxTradesPerDay, stopLossPercentage, takeProfitPercentage } = req.body;
+            const { strategyName, riskAmount, maxTradesPerDay, stopLoss, takeProfit } = req.body;
             const result = await this._updateRiskConfig.execute({
                 strategyName,
                 riskAmount,
                 maxTradesPerDay,
-                stopLossPercentage,
-                takeProfitPercentage
+                stopLoss,
+                takeProfit
             });
             return ResponseHelper.success(
                 res,
@@ -105,7 +105,7 @@ export class AdminAlgoTradingController {
                 SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
-            ); 
+            );
         } catch (error) {
             next(error);
         }

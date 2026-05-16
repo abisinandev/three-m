@@ -1,15 +1,15 @@
-import { Strategy, StrategyResult, MovingAverageSettings } from "@application/interfaces/services/algo-trading/strategy-interfaces";
+import { Strategy, StrategyResult, StrategyConfig, MovingAverageSettings } from "@application/interfaces/services/algo-trading/strategy-interfaces";
 
 export class MovingAverageStrategy implements Strategy {
     name = "MA";
 
-    async evaluate({ symbol, priceHistory, config }: {
+    async evaluate({ priceHistory, config }: {
         symbol: string;
         priceHistory: number[];
-        config: MovingAverageSettings;
+        config: StrategyConfig;
     }): Promise<StrategyResult | null> {
 
-        const { shortPeriod, longPeriod } = config;
+        const { shortPeriod, longPeriod } = config as MovingAverageSettings;
 
         if (priceHistory.length < longPeriod + 1) return null;
 

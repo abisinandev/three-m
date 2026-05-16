@@ -73,8 +73,7 @@ export function PortfolioProjection() {
     const hData = hoveredIdx !== null ? breakdown[hoveredIdx] : null;
     const isProfit = (data?.projectedProfit ?? 0) >= 0;
 
-    // Y-axis grid values
-    const gridValues = [0, 0.25, 0.5, 0.75, 1].map(r => minV + r * (maxV - minV));
+
 
     return (
         <div style={{ background: '#0c0d0f', border: '1px solid #1e2025', borderRadius: 6 }}>

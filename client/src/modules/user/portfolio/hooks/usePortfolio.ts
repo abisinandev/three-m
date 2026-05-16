@@ -70,7 +70,11 @@ export const usePortfolio = () => {
     const investments = useMemo(() => activeData?.data ?? [], [activeData]);
     const totalCount = useMemo(() => activeData?.total ?? 0, [activeData]);
 
-    const isAssetsLoading = isAllLoading || isStockLoading || isMFLoading;
+    const isAssetsLoading =
+        activeTab === 'all' ? isAllLoading :
+        activeTab === 'stocks' ? isStockLoading :
+        activeTab === 'mf' ? isMFLoading :
+        false;
 
     const isError = useMemo(() => {
         if (activeTab === 'all') return isAllError;

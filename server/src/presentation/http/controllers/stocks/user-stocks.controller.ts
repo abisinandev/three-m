@@ -115,7 +115,7 @@ export class UserStocksController {
 
             const result = await this._addToWatchlistUseCase.execute(data, userId);
 
-            if (result && result.upgrade) {
+            if (result?.upgrade) {
                 return ResponseHelper.success(res, result.message, { upgrade: true }, HttpStatus.OK);
             }
 
@@ -147,7 +147,7 @@ export class UserStocksController {
             next(error);
         }
     }
-    async getMarketMovers(req: Request, res: Response, next: NextFunction) {
+    async getMarketMovers(_req: Request, res: Response, next: NextFunction) {
         try {
             const result = await this._getMarketMoversUseCase.execute();
 

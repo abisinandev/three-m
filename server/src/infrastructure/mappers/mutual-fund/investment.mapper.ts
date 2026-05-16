@@ -1,9 +1,7 @@
-import { InvestmentFundDTO } from "@application/dto/portfolio/aggregated-asset.dto";
+
 import { InvestmentDocument } from "@infrastructure/databases/mongo_db/models/interfaces/mutual-fund/investment.schema.interface";
 import { Types } from "mongoose";
 import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
-import { MutualFundEntity } from "@domain/entities/mutual-fund/mutual-fund-entity";
-import { InvestmentResponseDTO } from "@application/dto/mutual-funds/investment-response.dto";
 
 const toDomain = (doc: InvestmentDocument): InvestmentEntity => {
 

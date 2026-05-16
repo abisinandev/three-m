@@ -1,4 +1,4 @@
-import stripe from "@infrastructure/providers/payment/stripe/stripe.client";
+
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { PAYMENT_TYPES } from "@infrastructure/inversify_di/features/payment/payment.types";

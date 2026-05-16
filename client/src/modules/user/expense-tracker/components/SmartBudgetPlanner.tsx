@@ -44,7 +44,7 @@ export const SmartBudgetPlanner = ({ dashboardData, budgetPlanMutation, month }:
 
     useEffect(() => {
         if (dashboardData?.income && income === 0) setIncome(dashboardData.income);
-    }, [dashboardData]);
+    }, [dashboardData, income]);
 
     const needsTotal = needs.reduce((sum, item) => sum + item.amount, 0);
     const wantsTotal = wants.reduce((sum, item) => sum + item.amount, 0);

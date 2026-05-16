@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, ChevronRight, Bookmark, X, TrendingUp } from "lucide-react";
+import { Plus, Bookmark, X, TrendingUp } from "lucide-react";
 import { MARKET_NEWS_CATEGORIES } from "../constants/categories";
 import type { MarketNews } from "../types";
 

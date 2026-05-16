@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import http from "http";
+import http from "node:http";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
 import { injectable, inject } from "inversify";
@@ -34,7 +34,7 @@ export class SocketService implements ISocketService {
 
                 if (!token && socket.handshake.headers.cookie) {
                     const cookies = cookie.parse(socket.handshake.headers.cookie);
-                    token = cookies["accessToken"];
+                    token = cookies.accessToken;
                 }
 
                 if (!token) {
@@ -44,7 +44,7 @@ export class SocketService implements ISocketService {
 
                 const payload = jwt.verify(
                     token,
-                    env.ACCESS_SECRET!
+                    env.ACCESS_SECRET as string
                 ) as { id: string };
 
                 const userId = payload.id;

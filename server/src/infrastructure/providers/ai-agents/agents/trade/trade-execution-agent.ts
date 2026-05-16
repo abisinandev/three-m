@@ -13,7 +13,7 @@ export class TradeExecutionAgent {
         
         const result = await this._confirmBotBuyOrder.execute({ userId, symbol, quantity });
 
-        if (result && result.upgrade) {
+        if (result?.upgrade) {
             return result.message;
         }
 

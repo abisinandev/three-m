@@ -21,7 +21,7 @@ export class ResumeSipUseCase implements IResumeSipUseCase {
         if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
         const sip = await this._sipRepository.findById(sipId);
-        if (!sip) throw new NotFoundError(ErrorMessages.DB.DATA_NOT_FOUND + " SIP");
+        if (!sip) throw new NotFoundError(`${ErrorMessages.DB.DATA_NOT_FOUND} SIP`);
 
         if (sip.userId !== userId) {
             throw new UnauthorizedError(ErrorMessages.SIP.UNAUTHORIZED_ACCESS);

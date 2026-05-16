@@ -2,7 +2,7 @@ import { FundCategory } from "@domain/enum/funds/fund-category.enum";
 import { RiskLevel } from "@domain/enum/funds/fund-risk-level.enum";
 import { FundStatus } from "@domain/enum/funds/fund-status.enum";
 import { SubCategory } from "@domain/enum/funds/fund-sub-category.enum";
-import { Document, Types } from "mongoose";
+import { Document, } from "mongoose";
 
 
 export interface MutualFundDocument extends Document {

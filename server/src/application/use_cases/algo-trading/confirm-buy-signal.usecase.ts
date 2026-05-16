@@ -57,7 +57,7 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
         @inject(STOCK_TYPES.AlgoStrategyConfigRepository) private readonly _riskConfigRepository: IAlgoStrategyConfigRepository,
     ) { }
 
-    async execute(order: ConfirmSignalDTO): Promise<void | { message: string, upgrade: boolean }> {
+    async execute(order: ConfirmSignalDTO): Promise<undefined | { message: string, upgrade: boolean }> {
 
         
         const hasAccess = await this._featureAccess.hasAccess(
@@ -183,7 +183,7 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
             );
             marketOrder.markFilled();
 
-            const newOrder = await this._orderRepository.create(
+            const newOrder = await this._orderRepository.createOrder(
                 marketOrder,
                 session
             );
@@ -242,7 +242,7 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
                 await this._portfolioRepository.create(portfolio, session);
             }
 
-            newTransaction.markSucess();
+            newTransaction.markSuccess();
             await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
 
             await session.commitTransaction();

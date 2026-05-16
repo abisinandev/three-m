@@ -61,7 +61,7 @@ export class YahooNewsProvider implements IMarketNewsProvider {
                 const description = $item.find("description").text();
                 const pubDate = $item.find("pubDate").text();
 
-                let imageUrl = $item.find("media\\:content").attr("url") ||
+                const imageUrl = $item.find("media\\:content").attr("url") ||
                     $item.find("enclosure").attr("url") || null;
 
                 articles.push({

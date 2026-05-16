@@ -3,7 +3,6 @@ import { useState, useMemo } from 'react';
 import { format, startOfMonth } from 'date-fns';
 import {
     Activity,
-    Plus,
     Search,
     RefreshCcw,
     TrendingDown,
@@ -48,18 +47,18 @@ const ExpenseTracker = () => {
         budgetPlanMutation 
     } = useExpenseTracker(selectedMonth);
 
-    const backendExpenses = dashboardData?.expenses || [];
     const incomeSources = dashboardData?.incomeSources || [];
     const totalIncome = dashboardData?.income || 0;
 
     const filteredExpenses = useMemo(() => {
-        return backendExpenses.filter((exp: Expense) => {
+        const expenses = dashboardData?.expenses || [];
+        return expenses.filter((exp: Expense) => {
             const matchesCategory = filterCategory === 'All' || exp.category === filterCategory;
             const matchesSearch = exp.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 exp.category?.toLowerCase().includes(searchQuery.toLowerCase());
             return matchesCategory && matchesSearch;
         });
-    }, [backendExpenses, filterCategory, searchQuery]);
+    }, [dashboardData?.expenses, filterCategory, searchQuery]);
 
     const filteredNeeds = filteredExpenses.filter((e: Expense) => e.type === 'NEED').reduce((sum: number, e: Expense) => sum + e.amount, 0);
     const filteredWants = filteredExpenses.filter((e: Expense) => e.type === 'WANT').reduce((sum: number, e: Expense) => sum + e.amount, 0);

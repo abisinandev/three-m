@@ -1,4 +1,4 @@
-import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
+
 
 export interface PortfolioSummaryDTO {
     totalCount: number;

@@ -4,6 +4,7 @@ import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.t
 import { IAlgoStrategyRepository } from "@application/interfaces/repositories/algo/algo-strategy-repository.interface";
 import { IMarketDataProvider } from "@application/interfaces/repositories/stock/market-data-provider.interface";
 import { StrategyRegistry } from "@infrastructure/providers/algos/strategy-registry";
+import { SignalAction } from "@domain/entities/algo/enum/signal-enums";
 
 type StrategyName = keyof typeof StrategyRegistry;
 
@@ -14,13 +15,20 @@ export class EvaluateStrategyUseCase implements IEvaluateStrategyUseCase {
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketData: IMarketDataProvider,
     ) { }
 
-    async execute(strategyId: string) {
+    async execute(strategyId: string): Promise<{
+        userId: string;
+        symbol: string;
+        strategyName: string;
+        action: SignalAction;
+        price: number;
+        reason: string;
+    } | null> {
         const s = await this._strategyRepository.findById(strategyId);
         if (!s || !s.isActive) return null;
 
         const { symbol, strategyName, config } = s;
 
-        const now =  Math.floor(Date.now() / 1000);
+        const now = Math.floor(Date.now() / 1000);
         const thirtyDaysAgo = now - 30 * 24 * 60 * 60;
 
         const candles = await this._marketData.getHistoricalData({
@@ -51,7 +59,7 @@ export class EvaluateStrategyUseCase implements IEvaluateStrategyUseCase {
             userId: s.userId,
             symbol,
             strategyName,
-            action: result.action,
+            action: result.action as SignalAction,
             price: currentPrice,
             reason: result.reason,
             // algoId: strategyId

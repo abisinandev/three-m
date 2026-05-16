@@ -1,6 +1,4 @@
 import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
-import { KycSummary } from "@domain/types/kyc-summery";
-import { WalletSummary } from "@domain/types/wallet-summery";
 
 export type UserDTO = {
   id: string;

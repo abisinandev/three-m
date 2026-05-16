@@ -12,6 +12,19 @@ const MAX_DAYS: Record<string, number> = {
     '1d': 3650,
 };
 
+interface YahooQuote {
+    date: Date | string | number;
+    open: number | null;
+    high: number | null;
+    low: number | null;
+    close: number | null;
+    volume: number | null;
+}
+
+interface YahooChartResult {
+    quotes?: YahooQuote[];
+}
+
 @injectable()
 export class YahooProvider implements IMarketDataProvider {
     private _quoteCache = new Map<string, { quote: IQuote, timestamp: number }>();
@@ -29,17 +42,17 @@ export class YahooProvider implements IMarketDataProvider {
             const p1 = new Date(clampedPeriod1 * 1000);
             const p2 = new Date(period2 * 1000);
 
-            const result: Record<string, unknown> = await yahooFinance.chart(symbol, {
+            const result = await yahooFinance.chart(symbol, {
                 period1: p1,
                 period2: p2,
                 interval,
-            });
+            }) as YahooChartResult;
 
             if (!result?.quotes?.length) return [];
 
             return result.quotes
-                .filter((q: Record<string, unknown>) => q.open != null && q.close != null)
-                .map((quote: Record<string, unknown>) => ({
+                .filter((q: YahooQuote) => q.open != null && q.close != null)
+                .map((quote: YahooQuote) => ({
                     symbol,
                     timeframe: interval,
                     time: Math.floor(new Date(quote.date).getTime() / 1000),

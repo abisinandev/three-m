@@ -2,8 +2,8 @@ import { CandleEntity } from "@domain/entities/stock/candle.entity";
 import { CandleDTO, CandlesResponseDTO } from "@application/dto/stocks/candle.dto";
 import { ICandle } from "@infrastructure/databases/mongo_db/models/interfaces/stocks/stock-candle-schema.interface";
 
-export class CandleMapper {
-    static toEntity(data: ICandle): CandleEntity {
+export const CandleMapper = {
+    toEntity: (data: ICandle): CandleEntity => {
         return CandleEntity.create({
             symbol: data.symbol,
             timeframe: data.timeframe,
@@ -14,13 +14,13 @@ export class CandleMapper {
             close: data.close,
             volume: data.volume,
         });
-    }
+    },
 
-    static toEntityList(data: ICandle[]): CandleEntity[] {
-        return data.map((item) => this.toEntity(item));
-    }
+    toEntityList: (data: ICandle[]): CandleEntity[] => {
+        return data.map((item) => CandleMapper.toEntity(item));
+    },
 
-    static toDTO(entity: CandleEntity): CandleDTO {
+    toDTO: (entity: CandleEntity): CandleDTO => {
         return {
             symbol: entity.symbol,
             timeframe: entity.timeframe,
@@ -31,13 +31,13 @@ export class CandleMapper {
             close: entity.close,
             volume: entity.volume,
         };
-    }
+    },
 
-    static toDTOList(entities: CandleEntity[]): CandleDTO[] {
-        return entities.map((entity) => this.toDTO(entity));
-    }
+    toDTOList: (entities: CandleEntity[]): CandleDTO[] => {
+        return entities.map((entity) => CandleMapper.toDTO(entity));
+    },
 
-    static toResponse(entities: CandleEntity[]): CandlesResponseDTO {
+    toResponse: (entities: CandleEntity[]): CandlesResponseDTO => {
         if (entities.length === 0) {
             return {
                 s: "no_data",

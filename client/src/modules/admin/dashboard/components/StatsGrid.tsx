@@ -1,4 +1,4 @@
-import { ArrowUpRight, ArrowDownRight, Users, CreditCard, Wallet, TrendingUp, Clock, Calendar } from 'lucide-react';
+import { ArrowUpRight, Users, CreditCard, Wallet, TrendingUp, Clock, Calendar } from 'lucide-react';
 import type { AdminDashboardData } from '../types/dashboard.types';
 
 interface StatsGridProps {

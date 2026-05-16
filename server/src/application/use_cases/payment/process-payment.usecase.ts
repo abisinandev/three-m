@@ -34,7 +34,7 @@ export class ProcessStripePaymentUseCase implements IProcessStripePaymentUseCase
         const purpose = metadata.purpose as PaymentDataDTO["purpose"];
         const amount = Number(metadata.amount);
 
-        if (!userId || !purpose || isNaN(amount)) {
+        if (!userId || !purpose || Number.isNaN(amount)) {
             throw new ValidationError("Invalid payment metadata");
         }
 

@@ -32,6 +32,7 @@ export interface PortfolioStockDTO {
     assetId: string;
     assetType: string;
     quantity: number;
+    units: number;
     avgPrice: number;
     investedAmount: number;
     currentPrice?: number;

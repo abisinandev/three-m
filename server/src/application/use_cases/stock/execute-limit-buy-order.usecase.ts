@@ -109,7 +109,7 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
                 order.userId,
                 stock.id as string,
                 AssetType.STOCK,
-                execution.filledQty,
+                execution.totalValue,
                 execution.avgPrice,
                 session,
                 { stopLoss: order.stopLoss, takeProfit: order.takeProfit }

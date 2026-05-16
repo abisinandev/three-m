@@ -4,6 +4,7 @@ import { SipRepository } from "@infrastructure/databases/repository/mutual-fund/
 import { SipInstallmentRepository } from "@infrastructure/databases/repository/mutual-fund/sip-intallment.repository";
 import { SipCreationUseCase } from "@application/use_cases/sip/sip-creation-usecase";
 import { ExecuteDueSipUseCase } from "@application/use_cases/sip/execute-due-sip.usecase";
+import { DispatchSipInstallmentsUseCase } from "@application/use_cases/sip/dispatch-sip-installments.usecase";
 import { SipDetailsUseCase } from "@application/use_cases/admin/sip-management/sip-details.usecase";
 import { UserSipDetailsUseCase } from "@application/use_cases/sip/user-sip-details.usecase";
 import { PauseSipUseCase } from "@application/use_cases/sip/pause-sip-usecase";
@@ -14,6 +15,7 @@ import { ISipRepository } from "@application/interfaces/repositories/feature/sip
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
 import { ISipCreationUseCase } from "@application/use_cases/sip/interfaces/sip-creation-usecase.interface";
 import { IExecuteDueSipsUseCase } from "@application/use_cases/sip/interfaces/execute-due-sip-usecase.interface";
+import { IDispatchSipInstallmentsUseCase } from "@application/use_cases/sip/interfaces/dispatch-sip-installments-usecase.interface";
 import { ISipDetailsUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-details-usecase.interface";
 import { IUserSipDetailsUseCase } from "@application/use_cases/sip/interfaces/user-sip-details-usecase.interface";
 import { IPauseSipUseCase } from "@application/use_cases/sip/interfaces/pause-sip-usecase.interface";
@@ -35,6 +37,7 @@ export const SipModule = new ContainerModule(({ bind }) => {
     // UseCases
     bind<ISipCreationUseCase>(SIP_TYPES.SipCreationUseCase).to(SipCreationUseCase);
     bind<IExecuteDueSipsUseCase>(SIP_TYPES.ExecuteDueSipUseCase).to(ExecuteDueSipUseCase);
+    bind<IDispatchSipInstallmentsUseCase>(SIP_TYPES.DispatchSipInstallmentsUseCase).to(DispatchSipInstallmentsUseCase);
     bind<ISipDetailsUseCase>(SIP_TYPES.SipDetailsUseCase).to(SipDetailsUseCase);
     bind<IUserSipDetailsUseCase>(SIP_TYPES.UserSipDetailsUseCase).to(UserSipDetailsUseCase);
     bind<IPauseSipUseCase>(SIP_TYPES.PauseSipUseCase).to(PauseSipUseCase);

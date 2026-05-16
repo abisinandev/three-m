@@ -21,7 +21,6 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
     isLoading,
     isError,
     currentPage,
-    limit,
     total,
     totalPages,
     onPageChange,

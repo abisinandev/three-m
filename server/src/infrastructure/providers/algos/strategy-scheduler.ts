@@ -4,7 +4,6 @@ import { IStrategyScheduler } from '@application/interfaces/services/algo-tradin
 import { isIndianMarketOpen } from '@shared/utils/market/market-time';
 import { IStrategiesUseCase } from '@application/use_cases/algo-trading/interfaces/get-valid-strategies.interface';
 import { BaseScheduler } from '../cron-scheduler/base.scheduler';
-import { logger } from '../logger/pino.logger';
 
 @injectable()
 export class StrategyScheduler extends BaseScheduler implements IStrategyScheduler {

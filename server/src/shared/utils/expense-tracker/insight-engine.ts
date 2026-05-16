@@ -32,7 +32,6 @@ export const generateInsights = (summary: FinancialSummary): InsightResult => {
 
     // 3. Wants Ratio (Goal: <= 0.3)
     if (summary.wantsRatio > 0.3) {
-        const excessPercent = ((summary.wantsRatio - 0.3) * 100).toFixed(1);
         insights.push({
             id: 'wants-over-budget',
             type: 'warning',
@@ -46,7 +45,6 @@ export const generateInsights = (summary: FinancialSummary): InsightResult => {
     // 4. Savings Ratio (Goal: >= 0.2)
     const currentSavingsRatio = 1 - summary.spendingRatio;
     if (currentSavingsRatio < 0.2) {
-        const deficit = ((0.2 - currentSavingsRatio) * 100).toFixed(1);
         insights.push({
             id: 'low-savings',
             type: 'warning',

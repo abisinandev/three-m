@@ -28,7 +28,13 @@ export const SuccessModal = ({ data, investment, successData, onClose }: Success
                 </div>
 
                 <div className="p-5">
-                    <div className="text-center py-6 mb-4">
+                    <div className="flex justify-center mb-6">
+                        <div className="w-16 h-16 bg-[#00C853]/10 rounded-full flex items-center justify-center border-2 border-[#00C853]/20">
+                            <Check size={32} className="text-[#00C853]" strokeWidth={3} />
+                        </div>
+                    </div>
+
+                    <div className="text-center mb-6">
                         <p className="text-[10px] text-[#5a5f6e] font-black uppercase tracking-[0.2em] mb-2">Total Amount Invested</p>
                         <p className="text-3xl font-black text-white tracking-tighter">₹{displayAmount.toLocaleString('en-IN')}</p>
                     </div>

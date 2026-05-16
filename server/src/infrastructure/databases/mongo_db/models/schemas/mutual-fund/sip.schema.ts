@@ -6,42 +6,42 @@ const SipSchema = new Schema<SipDocument>(
     {
         userId: {
             type: String,
-            // required: true,
+            required: true,
             index: true,
         },
 
         schemeCode: {
             type: String,
-            // required: true,
+            required: true,
             index: true,
         },
 
         amount: {
             type: Number,
-            // required: true,
+            required: true,
             min: 1,
         },
 
         frequency: {
             type: String,
             enum: Object.values(SipFrequency),
-            // required: true,
+            required: true,
         },
 
         startDate: {
             type: Date,
-            // required: true,
+            required: true,
         },
 
         nextExecutionDate: {
             type: Date,
-            // required: true,
+            required: true,
             index: true,
         },
 
         totalInstallments: {
             type: Number,
-            // required: true,
+            required: true,
             min: 1,
         },
 

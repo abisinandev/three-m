@@ -44,7 +44,7 @@ export class MutualFundNavRepsitory extends BaseRepository<MutualFundNavEntity, 
     };
 
     async findByInterval(schemeCode: string, interval: NavInterval, limit = 300): Promise<MutualFundNavEntity[] | null> {
-        let docs = null;
+        const _docs = null;
         if (interval === NavInterval.DAILY) {
             const docs = await this.model
                 .find({ schemeCode, interval: NavInterval.DAILY })

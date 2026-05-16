@@ -65,7 +65,6 @@ export class ExecuteLimitSellOrderUseCase implements IExecuteLimitSellOrderUseCa
             const stock = await this._stockRepository.findBySymbol(order.symbol);
             if (!stock) throw new NotFoundError(ErrorMessages.STOCKS.NOT_FOUND);
 
-            // Pre-check: ensure portfolio still has sufficient shares before executing
             const portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
                 order.userId,
                 stock.id as string,

@@ -25,7 +25,7 @@ export class SlTpOrderWorker {
             console.error(`❌ SL/TP job ${job?.id} failed: ${err.message}`);
         });
 
-        this.worker.on('completed', (job) => {
+        this.worker.on('completed', (_job) => {
             // console.log(`✅ SL/TP job ${job.id} processed successfully`);
         });
     }

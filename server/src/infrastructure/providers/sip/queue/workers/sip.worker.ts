@@ -12,11 +12,12 @@ export class SipWorker {
     constructor() {
         this.worker = new Worker(
             'sip-execution-queue',
-            async (job: Job) => {
+            async (job: Job<{ installmentId: string }>) => {
                 if (job.name === 'execute-due-sips') {
                     try {
+                        const { installmentId } = job.data;
                         const useCase = container.get<IExecuteDueSipsUseCase>(SIP_TYPES.ExecuteDueSipUseCase);
-                        await useCase.execute();
+                        await useCase.execute(installmentId);
                     } catch (error) {
                         console.error(`[SIP WORKER] Error processing job: ${job.id}`, error);
                         throw error;

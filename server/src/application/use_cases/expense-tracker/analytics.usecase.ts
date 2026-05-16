@@ -16,7 +16,7 @@ export class AnalyticsUseCase implements IAnalyticsUseCase {
         const targetMonth = month || new Date().toISOString().slice(0, 7);
         const [year, monthNum] = targetMonth.split('-').map(Number);
 
-        const targetMonthDate = new Date(year, monthNum - 1, 1);
+        const _targetMonthDate = new Date(year, monthNum - 1, 1);
         const lastMonthDate = new Date(year, monthNum - 2, 1);
         const lastMonthStr = lastMonthDate.toISOString().slice(0, 7);
 

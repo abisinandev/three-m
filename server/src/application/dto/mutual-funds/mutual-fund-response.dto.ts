@@ -18,6 +18,10 @@ export interface FundListDTO {
   }
   nav: number;
   navDate: Date;
+  latestNav?: {
+    nav: number;
+    navDate: Date;
+  };
 
   createdAt?: Date,
   updatedAt?: Date,

@@ -6,37 +6,37 @@ const SipInstallmentSchema = new Schema<SipInstallmentDocument>(
     {
         sipId: {
             type: Schema.Types.ObjectId,
-            // required: true,
+            required: true,
             index: true,
             ref: "SipPlan"
         },
         userId: {
             type: Schema.Types.ObjectId,
-            // required: true,
-            ref:"User",
+            required: true,
+            ref: "User",
             index: true,
         },
         schemeCode: {
             type: String,
-            // required: true,
+            required: true,
         },
         installmentNo: {
             type: Number,
-            // required: true,
+            required: true,
         },
         executionDate: {
             type: Date,
-            // required: true,
+            required: true,
             index: true,
         },
         amount: {
             type: Number,
-            // required: true,
+            required: true,
         },
         status: {
             type: String,
             enum: Object.values(SipInstallmentStatus),
-            // required: true,
+            required: true,
         },
         nav: {
             type: Number,

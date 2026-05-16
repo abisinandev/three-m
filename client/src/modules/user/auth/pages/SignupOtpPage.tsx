@@ -29,7 +29,7 @@ export default function SignupOTP() {
 
     useEffect(() => {
         startTimer();
-    }, []);
+    }, [startTimer]);
 
     // --- VERIFY OTP MUTATION ---
     const verifyOtp = useMutation({

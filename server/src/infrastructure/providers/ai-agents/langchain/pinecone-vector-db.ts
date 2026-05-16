@@ -2,7 +2,7 @@ import { Pinecone } from "@pinecone-database/pinecone";
 import { env } from "@presentation/express/utils/constants/env.constants";
 
 export const pinecone = new Pinecone({
-    apiKey: env.PINECONE_API_KEY!,
+    apiKey: env.PINECONE_API_KEY as string,
 });
 
 export const pineconeIndex = pinecone.Index(

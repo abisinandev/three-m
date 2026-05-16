@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Search, Plus, Check, Loader2, Globe, Landmark, Upload, ArrowLeft, Building2 } from 'lucide-react';
 import { StockManagementApi } from '../services/StockManagementApi';
 import { uploadToCloudinary } from '@/utils/upload/UploadToCloudinary';
@@ -32,19 +32,7 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
     const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        if (searchQuery.length > 2) {
-            if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-            searchTimeoutRef.current = setTimeout(handleSearch, 500);
-        } else {
-            setResults([]);
-        }
-        return () => {
-            if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-        };
-    }, [searchQuery]);
-
-    const handleSearch = async () => {
+    const handleSearch = useCallback(async () => {
         setIsSearching(true);
         try {
             const data = await StockManagementApi.searchStocks(searchQuery);
@@ -55,7 +43,19 @@ export const StockOnboardingModal: React.FC<StockOnboardingModalProps> = ({ isOp
         } finally {
             setIsSearching(false);
         }
-    };
+    }, [searchQuery]);
+
+    useEffect(() => {
+        if (searchQuery.length > 2) {
+            if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+            searchTimeoutRef.current = setTimeout(handleSearch, 500);
+        } else {
+            setResults([]);
+        }
+        return () => {
+            if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+        };
+    }, [searchQuery, handleSearch]);
 
     const handleSelectStock = (stock: StockResult) => {
         setSelectedStock(stock);

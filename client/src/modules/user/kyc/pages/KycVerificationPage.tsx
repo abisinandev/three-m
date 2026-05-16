@@ -58,10 +58,6 @@ const KYCVerificationPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-    const [statesList, setStatesList] = useState<{ name: string }[]>([]);
-    const [isLoadingStates, setIsLoadingStates] = useState(false);
-    const [isFetchingPin, setIsFetchingPin] = useState(false);
-
     const step = steps[currentStep];
 
     useEffect(() => {
@@ -76,34 +72,12 @@ const KYCVerificationPage = () => {
         }
     }, [user]);
 
-    // Fetch all Indian States on mount
-    useEffect(() => {
-        const fetchStates = async () => {
-            setIsLoadingStates(true);
-            try {
-                const response = await fetch("https://countriesnow.space/api/v0.1/countries/states", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ country: "India" })
-                });
-                const data = await response.json();
-                if (!data.error) {
-                    setStatesList(data.data.states);
-                }
-            } catch (error) {
-                console.error("Failed to fetch states", error);
-            } finally {
-                setIsLoadingStates(false);
-            }
-        };
-        fetchStates();
-    }, []);
+
 
     // Auto-fill City and State when a 6-digit PIN is entered
     useEffect(() => {
         const fetchLocationByPin = async () => {
             if (address.pincode.length === 6) {
-                setIsFetchingPin(true);
                 try {
                     const response = await fetch(`https://api.postalpincode.in/pincode/${address.pincode}`);
                     const data = await response.json();
@@ -118,10 +92,8 @@ const KYCVerificationPage = () => {
                     } else if (data && data[0].Status === 'Error') {
                         toast.error('Invalid PIN Code');
                     }
-                } catch (error) {
-                    console.error('Error fetching location from PIN:', error);
-                } finally {
-                    setIsFetchingPin(false);
+                } catch (_error) {
+                    console.error('Error fetching location from PIN:', _error);
                 }
             }
         };

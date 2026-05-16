@@ -13,17 +13,17 @@ interface SipPayload {
 }
 
 export const useStartSip = <T = { message?: string; data?: unknown }>(
-    onSuccess: (data: T) => void, 
+    onSuccess: (data: T) => void,
     onError: (msg: string, error?: unknown) => void
 ) => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (payload: SipPayload) => {
-            const res = await api.post('/user/mutual-funds/sip/create', 
+            const res = await api.post('/user/mutual-funds/sip/create',
                 payload,
                 {
-                    headers: { 'x-idempotency-key': createIdempotencyKey(payload as any) }
+                    headers: { 'x-idempotency-key': createIdempotencyKey(payload) }
                 }
             );
             return res.data;

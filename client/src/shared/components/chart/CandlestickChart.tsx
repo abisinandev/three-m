@@ -58,11 +58,12 @@ const TradingViewWidget = ({ symbol }: TradingViewWidgetProps) => {
 
     script.innerHTML = JSON.stringify(config);
 
-    containerRef.current.appendChild(script);
+    const currentContainer = containerRef.current;
+    currentContainer.appendChild(script);
 
     return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = "";
+      if (currentContainer) {
+        currentContainer.innerHTML = "";
       }
     };
   }, [symbol]);

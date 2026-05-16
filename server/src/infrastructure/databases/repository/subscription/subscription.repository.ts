@@ -3,7 +3,7 @@ import { BaseRepository } from "../base.repository";
 import { SubscriptionDocument, SubscriptionModel } from "@infrastructure/databases/mongo_db/models/schemas/subscriptions/subscription.schema";
 import { ISubscriptionRepository } from "@application/interfaces/repositories/subscriptions/subscriptions-repository.interface";
 import { SubscriptionMapper } from "@infrastructure/mappers/subscription/subscription.mapper";
-import { FilterQuery, QueryOptions, Types } from "mongoose";
+import { FilterQuery, QueryOptions, } from "mongoose";
 import { injectable } from "inversify";
 import { SubscriptionStatus } from "@domain/entities/subscription/enums/subscription-status.enums";
 
@@ -58,7 +58,7 @@ export class SubscriptionRepository extends
 
 
     async totalRevenue(): Promise<{ totalRevenue: number; }> {
-        const now = new Date();
+        const _now = new Date();
         const result = await this.model.aggregate([
             {
                 $match: {

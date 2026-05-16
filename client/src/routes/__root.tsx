@@ -18,7 +18,7 @@ const RootLayout = () => {
     const handler = () => logout();
     window.addEventListener("auth:logout", handler);
     return () => window.removeEventListener("auth:logout", handler);
-  }, []);
+  }, [logout]);
   return (
     <div className="min-h-screen flex flex-col">
       <Outlet />

@@ -9,7 +9,7 @@ export class AdminDashboardController {
         @inject(DASHBOARD_TYPES.AdminDashboardUseCase) private readonly _adminDashboardUseCase: IAdminDashboardUseCase
     ) { }
 
-    getOverview = async (req: Request, res: Response): Promise<void> => {
+    getOverview = async (_req: Request, res: Response): Promise<void> => {
         try {
             const dashboardData = await this._adminDashboardUseCase.execute();
             res.status(200).json({

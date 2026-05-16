@@ -1,9 +1,9 @@
 import { MutualFundEntity } from "@domain/entities/mutual-fund/mutual-fund-entity";
 import { MutualFundDocument } from "@infrastructure/databases/mongo_db/models/interfaces/mutual-fund/mutual-fund-schema.interface";
 
-export const toDomain = (doc: Record<string, unknown>): MutualFundEntity => {
+export const toDomain = (doc: MutualFundDocument): MutualFundEntity => {
     return MutualFundEntity.fromPersistance({
-        id: doc._id,
+        id: doc._id.toString(),
         schemeCode: doc.schemeCode,
         schemeName: doc.schemeName,
         source: doc.source,
@@ -13,7 +13,6 @@ export const toDomain = (doc: Record<string, unknown>): MutualFundEntity => {
         risk: doc.risk,
         status: doc.status,
         logo: doc.logo,
-        latestNav: doc.latestNav,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
     });

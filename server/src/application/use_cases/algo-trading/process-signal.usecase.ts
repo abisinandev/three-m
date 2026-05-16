@@ -63,7 +63,7 @@ export class ProcessSignalUseCase implements IProcessSignalUseCase {
             expiresAt,
         });
 
-        const createdSignal = await this._signalRepository.create(signal);
+        const createdSignal = await this._signalRepository.createSignal(signal);
 
         await this._handleNotification(input, createdSignal);
     }

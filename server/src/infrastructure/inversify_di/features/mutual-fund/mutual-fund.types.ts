@@ -17,7 +17,7 @@ export const MUTUAL_FUND_TYPES = {
     InvestmentUseCase: Symbol.for("InvestmentUseCase"),
     NavAllocateUseCase: Symbol.for("NavAllocateUseCase"),
     MfInvestmentHistoryUseCase: Symbol.for("MfInvestmentHistoryUseCase"),
-    SyncSingleFundNavUseCase: Symbol.for("SyncSingleFundNavUseCase"),
+    SyncFundNavUseCase: Symbol.for("SyncSingleFundNavUseCase"),
 
     // providers
     NavUpdateProvider: Symbol.for("NavUpdateProvider"),

@@ -14,7 +14,7 @@ export class SipBlockUseCase implements ISipBlockUseCase {
 
     async execute(sipId: string): Promise<void> {
         const sip = await this._sipRepository.findById(sipId);
-        if (!sip) throw new NotFoundError(ErrorMessages.DB.DATA_NOT_FOUND + "SiP");
+        if (!sip) throw new NotFoundError(`${ErrorMessages.DB.DATA_NOT_FOUND}SiP`);
 
         await this._sipRepository.update(sipId, {
             status: SipStatus.SYSTEM_BLOCKED,

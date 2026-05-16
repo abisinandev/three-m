@@ -1,4 +1,4 @@
-import { Document, model, Schema, SchemaType } from "mongoose";
+import { Document, model, Schema, } from "mongoose";
 import { IAlgoSignalSchema } from "../../interfaces/algo/algo-signal-schema.interface";
 import { SignalAction, SignalStatus } from "@domain/entities/algo/enum/signal-enums";
 

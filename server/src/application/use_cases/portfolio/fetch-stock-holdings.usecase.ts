@@ -37,12 +37,12 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
         const data: InvestmentResponseDTO[] = [];
 
         for (const stockPf of stockPortfolios) {
-     
+
             const stockDetails = await this._stockRepository.findById(stockPf.assetId);
             const symbol = stockDetails?.symbol || stockPf.assetId;
 
             let currentPrice = stockPf.avgPrice;
-        
+
             const quote = await this._marketDataProvider.getLatestQuote(symbol);
             if (quote) {
                 currentPrice = quote.price;
@@ -59,7 +59,12 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
                 schemeName: stockDetails?.name || symbol,
                 amount: stockPf.investedAmount,
                 units: stockPf.quantity || 0,
+                quantity: stockPf.quantity || 0,
                 nav: stockPf.avgPrice,
+                avgPrice: stockPf.avgPrice,
+                currentPrice: currentPrice,
+                currentValue: currentValue,
+                profitPercentage: stockPf.investedAmount > 0 ? (profit / stockPf.investedAmount) * 100 : 0,
                 navDate: stockPf.updatedAt || stockPf.createdAt,
                 category: "Stock",
                 status: InvestmentStatus.HOLDING,

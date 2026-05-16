@@ -9,7 +9,6 @@ import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 import {
   NotFoundError,
   UnauthorizedError,
-  ValidationError,
 } from "@presentation/express/utils/error-handling";
 import { inject, injectable } from "inversify";
 import type { IRefreshTokenUseCase } from "./interfaces/refresh-token-usecase.interface";

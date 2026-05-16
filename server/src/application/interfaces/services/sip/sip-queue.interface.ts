@@ -1,3 +1,3 @@
 export interface ISipQueue {
-    addSipExecutionJob(): Promise<void>;
+    addSipExecutionJob(installmentId: string): Promise<void>;
 }

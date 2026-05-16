@@ -3,6 +3,7 @@ import { RiskLevel } from "@domain/enum/funds/fund-risk-level.enum";
 import { FundStatus } from "@domain/enum/funds/fund-status.enum";
 import { SubCategory } from "@domain/enum/funds/fund-sub-category.enum";
 import { LatestNav } from "@domain/types/last-nav.type";
+import { ValidationError } from "@presentation/express/utils/error-handling";
 
 export class MutualFundEntity {
     private readonly _id?: string;
@@ -62,7 +63,7 @@ export class MutualFundEntity {
     }): MutualFundEntity {
 
         if (!data.schemeCode) {
-            throw new Error("Scheme code is required");
+            throw new ValidationError("Scheme code is required");
         }
 
         return new MutualFundEntity({
@@ -89,7 +90,7 @@ export class MutualFundEntity {
         risk: RiskLevel;
         status: FundStatus;
         logo: string;
-        latestNav: LatestNav;
+        latestNav?: LatestNav;
         createdAt?: Date;
         updatedAt?: Date;
     }): MutualFundEntity {

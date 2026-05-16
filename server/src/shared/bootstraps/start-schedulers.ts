@@ -13,7 +13,9 @@ import { SlTpOrderScheduler } from "@infrastructure/providers/stocks/queue/sl-tp
 export const startSchedulers = async () => {
 
     container.get<NavDailyScheduler>(MUTUAL_FUND_TYPES.NavDailyScheduler).start();
+
     container.get<CagrUpdateScheduler>(MUTUAL_FUND_TYPES.CagrUpdateScheduler).start();
+    
     container.get<NavAllocationScheduler>(MUTUAL_FUND_TYPES.NavAllocationScheduler).start();
 
     container.get<LimitOrderScheduler>(STOCK_TYPES.LimitOrderScheduler).start();

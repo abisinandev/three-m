@@ -31,9 +31,9 @@ export class CancelSipUseCase implements ICancelSipUseCase {
             if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
 
             const sip = await this._sipRepository.findById(sipId);
-            if (!sip) throw new NotFoundError(ErrorMessages.DB.DATA_NOT_FOUND + " SIP");
+            if (!sip) throw new NotFoundError(`${ErrorMessages.DB.DATA_NOT_FOUND} SIP`);
 
-            if (sip.userId !== userId) throw new UnauthorizedError(ErrorMessages.AUTH.UNAUTHORIZED + ' SIP');
+            if (sip.userId !== userId) throw new UnauthorizedError(`${ErrorMessages.AUTH.UNAUTHORIZED} SIP`);
 
             if (sip.status === SipStatus.CANCELLED)
                 throw new ValidationError(ErrorMessages.SIP.ALREADY_CANCELLED);
@@ -52,7 +52,7 @@ export class CancelSipUseCase implements ICancelSipUseCase {
             for (const installment of installments) {
                 if (installment.status === SipInstallmentStatus.PENDING) {
                     const cancelledInstallment = SipInstallmentEntity.cancel(installment);
-                    await this._installmentsRepository.update(cancelledInstallment.id!, cancelledInstallment, session);
+                    await this._installmentsRepository.update(cancelledInstallment.id as string, cancelledInstallment, session);
                 }
             }
 

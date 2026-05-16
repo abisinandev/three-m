@@ -51,7 +51,7 @@ export class ConfirmBotBuyOrderUseCase implements IConfirmBotBuyOrderUseCase {
         @inject(AI_SYSTEM_TYPES.ChatHistoryService) private readonly _chatHistory: IChatHistoryService,
     ) { }
 
-    async execute(order: ConfirmBotOrderDTO): Promise<void | { message: string, upgrade: boolean }> {
+    async execute(order: ConfirmBotOrderDTO): Promise<undefined | { message: string, upgrade: boolean }> {
 
         const hasAccess = await this._featureAccess.hasAccess(
             order.userId,
@@ -134,7 +134,7 @@ export class ConfirmBotBuyOrderUseCase implements IConfirmBotBuyOrderUseCase {
             marketOrder.updateFilledQty(quantity, totalValue);
             marketOrder.markFilled();
 
-            const newOrder = await this._orderRepository.create(marketOrder, session);
+            const newOrder = await this._orderRepository.createOrder(marketOrder, session);
 
             const trade = TradeEntity.create({
                 userId,
@@ -182,7 +182,7 @@ export class ConfirmBotBuyOrderUseCase implements IConfirmBotBuyOrderUseCase {
                 await this._portfolioRepository.create(portfolio, session);
             }
 
-            newTransaction.markSucess();
+            newTransaction.markSuccess();
             await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
 
             await session.commitTransaction();

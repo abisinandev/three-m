@@ -11,7 +11,6 @@ import { calculateNextExecutionDate } from "@shared/utils/sip/sip-installment.ut
 import { SipEntity } from "@domain/entities/mutual-fund/sip.entity";
 import { ITransactionService } from "@application/services/transaction/interfaces/transaction.service.interface";
 import { IWalletService } from "@application/services/wallet/interfaces/wallet.service.interface";
-import { IPortfolioService } from "@application/services/portfolio/interfaces/portfolio.service.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import mongoose from "mongoose";
@@ -22,9 +21,6 @@ import { ICreateNotificationUseCase } from "../notification/interfaces/create-no
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
 import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
-import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
-import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
-import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { IWalletRepository } from "@application/interfaces/repositories/user/wallet-repository.interface";
 import { IExecuteDueSipsUseCase } from "./interfaces/execute-due-sip-usecase.interface";
 
@@ -38,25 +34,22 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(USER_TYPES.WalletRepository) private readonly _walletRepository: IWalletRepository,
         @inject(NOTIFICATION_TYEPS.CreateNotificationUseCase) private readonly _createNotificationUseCase: ICreateNotificationUseCase,
-        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
         @inject(USER_TYPES.TransactionService) private readonly _transactionService: ITransactionService,
         @inject(USER_TYPES.WalletService) private readonly _walletService: IWalletService,
-        @inject(PORTFOLIO_TYPES.PortfolioService) private readonly _portfolioService: IPortfolioService,
     ) { }
 
-
-    async execute(): Promise<void> {
-        const dueInstallments = await this._sipInstallmentRepository.findActiveDueSips() ?? [];
-        for (let installment of dueInstallments) {
-            await this.executeSingleInstallment(installment);
-        }
+    async execute(installmentId: string): Promise<void> {
+        const installment = await this._sipInstallmentRepository.findById(installmentId);
+        if (!installment) return;
+        
+        await this.executeSingleInstallment(installment);
     }
 
     private async executeSingleInstallment(installment: SipInstallmentEntity): Promise<void> {
         const session = await mongoose.startSession();
         try {
             session.startTransaction();
-
+ 
             const sip = await this._sipRepository.findById(installment.sipId);
             if (!sip || sip.status !== SipStatus.ACTIVE) return;
 
@@ -71,12 +64,12 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
 
             if ((wallet?.balance ?? 0) < installment.amount) {
                 await this._sipInstallmentRepository.markFailed(
-                    installment.id!,
+                    installment.id as string,
                     "INSUFFICIENT_BALANCE"
                 );
 
                 await this._createNotificationUseCase.execute({
-                    userId: user.id!,
+                    userId: user.id as string,
                     type: NotificationType.SIP,
                     title: "SIP Installment Failed",
                     message: `Your SIP installment of ₹${installment.amount} failed due to insufficient wallet balance.`,
@@ -89,7 +82,7 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 user,
                 installment.amount,
                 fund.id as string,
-                installment.id!,
+                installment.id as string,
                 session
             );
 
@@ -106,19 +99,6 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
 
             await this._investmentRepository.createInvestment(investment, session);
 
-            const navHistory = await this._navUpdateProvider.fetchNavHistories(installment.schemeCode);
-            const latestNav = navHistory[0]?.nav ?? 0;
-
-            await this._portfolioService.updateOrCreatePortfolio(
-                user.id as string,
-                fund.id as string,
-                AssetType.MUTUAL_FUND,
-                installment.amount,
-                latestNav,
-                session
-            );
-
-
             const nextDate = calculateNextExecutionDate(
                 sip.nextExecutionDate,
                 sip.frequency
@@ -130,10 +110,10 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
                 installment.id as string,
                 investment.id as string
             );
-
+ 
             // Notification
             await this._createNotificationUseCase.execute({
-                userId: user.id!,
+                userId: user.id as string,
                 type: NotificationType.SIP,
                 title: "SIP Installment Executed",
                 message: `Your SIP installment of ₹${installment.amount} has been successfully invested in ${fund.schemeName}.`,
@@ -153,13 +133,12 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
 
             await this._transactionService.markSuccess(newTransaction, session);
 
-
             await session.commitTransaction();
 
         } catch (error) {
             await session.abortTransaction();
             await this._sipInstallmentRepository.markFailed(
-                installment.id!,
+                installment.id as string,
                 error instanceof Error ? error.message : "EXECUTION_FAILED"
             );
 
@@ -167,4 +146,5 @@ export class ExecuteDueSipUseCase implements IExecuteDueSipsUseCase {
             session.endSession();
         }
     }
-}
+} 
+   

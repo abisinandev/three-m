@@ -20,7 +20,7 @@ export class AddToWatchlistUseCase implements IAddToWatchlistUseCase {
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
     ) { }
 
-    async execute(data: WatchlistDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
+    async execute(data: WatchlistDTO, userId: string): Promise<undefined | { message: string, upgrade: boolean }> {
  
         const hasAccess = await this._featureAccess.hasAccess(userId, Features.STOCK_TRADING);
         if (!hasAccess) {

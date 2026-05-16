@@ -34,7 +34,7 @@ export const toPersistance = (
 ): Partial<SipInstallmentDocument> => {
     return {
         sipId: new Types.ObjectId(data.sipId),
-        userId: new Types.ObjectId( data.userId),
+        userId: new Types.ObjectId(data.userId),
         schemeCode: data.schemeCode,
 
         installmentNo: data.installmentNo,

@@ -6,7 +6,12 @@ export interface InvestmentResponseDTO {
     schemeCode: string;
 
     amount: number;
+    quantity?: number;
+    avgPrice?: number;
+    currentPrice?: number;
     units?: number;
+    currentValue?: number;
+    profitPercentage?: number;
 
     nav?: number;
     navDate?: Date;

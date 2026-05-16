@@ -45,7 +45,7 @@ export class PortfolioXirrService implements IXirrCalculator {
 
         if (rate === null) return null;
 
-        let percentage = rate * 100;
+        const percentage = rate * 100;
 
         if (percentage > 1000000) return 999999.99;
         if (percentage < -100) return -100;
@@ -111,9 +111,9 @@ export class PortfolioXirrService implements IXirrCalculator {
                         break;
                     }
 
-                    const discount = Math.pow(base, years);
+                    const discount = base ** years;
 
-                    if (!isFinite(discount) || discount === 0) {
+                    if (!Number.isFinite(discount) || discount === 0) {
                         npv = NaN;
                         break;
                     }
@@ -122,11 +122,11 @@ export class PortfolioXirrService implements IXirrCalculator {
                     derivative -= (years * cf.amount) / (discount * base);
                 }
 
-                if (isNaN(npv) || !isFinite(derivative) || derivative === 0) break;
+                if (Number.isNaN(npv) || !Number.isFinite(derivative) || derivative === 0) break;
 
                 const newRate = rate - npv / derivative;
 
-                if (!isFinite(newRate)) break;
+                if (!Number.isFinite(newRate)) break;
 
                 if (Math.abs(newRate - rate) < tolerance) {
                     return newRate;

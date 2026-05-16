@@ -94,7 +94,6 @@ export class MutualFundUserController {
         try {
             const userId = req.user?.id;
             const result = await this._mfInvestmentsHistory.execute(userId as string);
-            console.log("result<", result);
             return ResponseHelper.success(
                 res,
                 SuccessMessage.DATA_FETCHED,

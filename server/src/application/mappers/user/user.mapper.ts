@@ -6,7 +6,6 @@ import type { UserMeResponseDTO } from "@application/dto/user/user-me-response.d
 import type { KycEntity } from "@domain/entities/user/kyc.entity";
 import type { WalletEntity } from "@domain/entities/user/wallet.entity";
 import { maskSensitiveData } from "@shared/utils/masking";
-import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
 
 // Dto => Domain
 export function toEntity(dto: CreateUserDTO, hashedPassword: string): UserEntity {

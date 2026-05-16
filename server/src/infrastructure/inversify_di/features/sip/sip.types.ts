@@ -6,6 +6,7 @@ export const SIP_TYPES = {
     // usecases
     SipCreationUseCase: Symbol.for("SipCreationUseCase"),
     ExecuteDueSipUseCase: Symbol.for("ExecuteDueSipUseCase"),
+    DispatchSipInstallmentsUseCase: Symbol.for("DispatchSipInstallmentsUseCase"),
     SipDetailsUseCase: Symbol.for("SipDetailsUseCase"),
     UserSipDetailsUseCase: Symbol.for("UserSipDetailsUseCase"),
     PauseSipUseCase: Symbol.for("PauseSipUseCase"),

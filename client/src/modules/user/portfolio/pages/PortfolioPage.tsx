@@ -25,7 +25,7 @@ const PortfolioDashboard = () => {
         page, setPage, search, setSearch, status, setStatus,
         activeTab, setActiveTab, returnType, setReturnType, limit,
         summaryData, investments, totalCount, historyData,
-        isAssetsLoading, isHistoryLoading, isSummaryLoading, isError, error, handlePageChange
+        isAssetsLoading, isHistoryLoading, isSummaryLoading, isError, error: _error, handlePageChange
     } = usePortfolio();
 
     const xirrValue = summaryData?.xirr ? Number(summaryData.xirr).toFixed(2) : '0.00';
@@ -162,7 +162,7 @@ const PortfolioDashboard = () => {
                                 returnType={returnType}
                                 isLoading={isAssetsLoading}
                                 isError={isError}
-                                error={error}
+                                error={_error}
                                 search={search}
                                 onNavigate={(symbol) => navigate({ to: `/user/trading/${symbol}` })}
                             />

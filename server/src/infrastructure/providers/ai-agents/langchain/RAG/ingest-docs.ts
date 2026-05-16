@@ -1,12 +1,12 @@
-import path from "path";
+import path from "node:path";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { embeddings } from "./ollama.embedded";
 import { pineconeIndex } from "../pinecone-vector-db";
 import { loadTxtFiles } from "./text.loader";
-
+import { Document } from "@langchain/core/documents";
 
 const BATCH_SIZE = 50;
-async function upsertBatch(docs: Record<string, unknown>[]) {
+async function upsertBatch(docs: Document[]) {
     const texts = docs.map((d) => d.pageContent);
 
     const vectors = await embeddings.embedDocuments(texts);
@@ -26,7 +26,7 @@ async function upsertBatch(docs: Record<string, unknown>[]) {
     });
 }
 
-async function processInBatches(docs: Record<string, unknown>[]) {
+async function processInBatches(docs: Document[]) {
     for (let i = 0; i < docs.length; i += BATCH_SIZE) {
         const batch = docs.slice(i, i + BATCH_SIZE);
 

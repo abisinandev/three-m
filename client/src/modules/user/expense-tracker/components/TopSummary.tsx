@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, TrendingDown, PiggyBank } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, TrendingUp, TrendingDown, PiggyBank } from 'lucide-react';
 import { formatCurrency } from '../helpers/expense-helpers';
 
 interface StatColProps {

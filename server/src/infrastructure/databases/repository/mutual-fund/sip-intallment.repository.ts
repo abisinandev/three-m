@@ -149,6 +149,8 @@ export class SipInstallmentRepository extends BaseRepository<SipInstallmentEntit
 
         const docs = await this.model.find(
             {
+                userId,
+                sipId,
                 status: {
                     $in: [
                         SipInstallmentStatus.PENDING,

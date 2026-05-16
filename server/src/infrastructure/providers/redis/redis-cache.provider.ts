@@ -21,7 +21,7 @@ export class RedisCacheProvider implements ICacheProvider {
             value,
             "EX",
             ttlSeconds,
-            "NX"
+            "NX"//set only if key doesnt exists
         );
 
         return result === "OK";

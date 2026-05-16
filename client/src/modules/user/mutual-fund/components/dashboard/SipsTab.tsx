@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CalendarCheck, Pause, Play, Trash2, AlertCircle, ChevronDown, ChevronUp, Clock, Info } from 'lucide-react';
+import { CalendarCheck, Pause, Play, Trash2, AlertCircle, ChevronDown, Clock, Info } from 'lucide-react';
 import dayjs from 'dayjs';
 import type { SipDto } from '../../types/dashboard.types';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
@@ -101,24 +101,23 @@ const SipsTab: React.FC<SipsTabProps> = ({
                     {sips.map(sip => (
                         <div key={sip.id} className="group relative border border-[#1e2025] hover:border-[#2a2d35] rounded-2xl p-5 bg-[#0d0d0e] transition-all duration-300">
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
-                                
+
                                 <div className="flex items-center gap-4">
                                     <div className="relative">
-                                        <img 
-                                            src={sip.logo || 'https://placeholder.com/48'} 
-                                            alt={sip.schemeName} 
+                                        <img
+                                            src={sip.logo || 'https://placeholder.com/48'}
+                                            alt={sip.schemeName}
                                             className="w-12 h-12 rounded-xl object-cover bg-white/5 border border-[#1e2025]"
                                         />
-                                        <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-[#0d0d0e] flex items-center justify-center ${
-                                            sip.status === 'ACTIVE' ? 'bg-green-500' : 
-                                            sip.status === 'PAUSED' ? 'bg-amber-500' : 'bg-red-500'
-                                        }`}>
-                                            {sip.status === 'ACTIVE' ? <Play size={8} className="text-white fill-current" /> : 
-                                             sip.status === 'PAUSED' ? <Pause size={8} className="text-white fill-current" /> : 
-                                             <Trash2 size={8} className="text-white" />}
+                                        <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-[#0d0d0e] flex items-center justify-center ${sip.status === 'ACTIVE' ? 'bg-green-500' :
+                                                sip.status === 'PAUSED' ? 'bg-amber-500' : 'bg-red-500'
+                                            }`}>
+                                            {sip.status === 'ACTIVE' ? <Play size={8} className="text-white fill-current" /> :
+                                                sip.status === 'PAUSED' ? <Pause size={8} className="text-white fill-current" /> :
+                                                    <Trash2 size={8} className="text-white" />}
                                         </div>
                                     </div>
-                                    
+
                                     <div>
                                         <h4 className="text-[12px] font-semibold text-gray-200 line-clamp-1 mb-1 group-hover:text-green-400 transition-colors">
                                             {sip.schemeName || sip.schemeCode}
@@ -201,18 +200,16 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                     {sip.installments?.map((inst, idx) => (
                                         <div key={inst.id || idx} className="flex justify-between items-center bg-[#111214] p-3 rounded-xl border border-[#1e2025]">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-1.5 h-1.5 rounded-full ${
-                                                    inst.status === 'success' ? 'bg-green-500' :
-                                                    inst.status === 'failed' ? 'bg-red-500' : 'bg-amber-500'
-                                                }`} />
+                                                <div className={`w-1.5 h-1.5 rounded-full ${inst.status === 'success' ? 'bg-green-500' :
+                                                        inst.status === 'failed' ? 'bg-red-500' : 'bg-amber-500'
+                                                    }`} />
                                                 <span className="text-[11px] font-medium text-gray-400">{dayjs(inst.executionDate).format('DD MMM YYYY')}</span>
                                             </div>
                                             <div className="flex items-center gap-3">
                                                 <span className="text-[11px] font-semibold text-gray-200">₹{inst.amount.toLocaleString('en-IN')}</span>
-                                                <span className={`text-[9px] font-medium uppercase px-2 py-0.5 rounded-md ${
-                                                    inst.status === 'success' ? 'bg-green-500/10 text-green-500' :
-                                                    inst.status === 'failed' ? 'bg-red-500/10 text-red-500' : 'bg-amber-500/10 text-amber-500'
-                                                }`}>
+                                                <span className={`text-[9px] font-medium uppercase px-2 py-0.5 rounded-md ${inst.status === 'success' ? 'bg-green-500/10 text-green-500' :
+                                                        inst.status === 'failed' ? 'bg-red-500/10 text-red-500' : 'bg-amber-500/10 text-amber-500'
+                                                    }`}>
                                                     {inst.status}
                                                 </span>
                                             </div>

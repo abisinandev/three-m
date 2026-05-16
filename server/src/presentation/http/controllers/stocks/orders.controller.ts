@@ -33,7 +33,7 @@ export class OrdersController {
 
             const result = await this._buyOrderUseCase.execute(buyOrderDto, userId);
             
-            if (result && result.upgrade) {
+            if (result?.upgrade) {
                 return ResponseHelper.success(
                     res,
                     result.message,
@@ -60,7 +60,7 @@ export class OrdersController {
 
             const result = await this._sellOrderUseCase.execute(sellOrderDto, userId);
 
-            if (result && result.upgrade) {
+            if (result?.upgrade) {
                 return ResponseHelper.success(
                     res,
                     result.message,
@@ -87,7 +87,7 @@ export class OrdersController {
 
             const result = await this._limitBuyOrderUseCase.execute(limitBuyOrderDto, userId);
 
-            if (result && result.upgrade) {
+            if (result?.upgrade) {
                 return ResponseHelper.success(
                     res,
                     result.message,
@@ -114,7 +114,7 @@ export class OrdersController {
 
             const result = await this._limitSellOrderUseCase.execute(limitSellOrderDto, userId);
 
-            if (result && result.upgrade) {
+            if (result?.upgrade) {
                 return ResponseHelper.success(
                     res,
                     result.message,

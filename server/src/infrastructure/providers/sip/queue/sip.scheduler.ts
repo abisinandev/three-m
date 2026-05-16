@@ -1,28 +1,19 @@
-import { bullConnection } from '@infrastructure/providers/bullmq/queue.config';
-import { Queue } from 'bullmq';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
+import { BaseScheduler } from '@infrastructure/providers/cron-scheduler/base.scheduler';
+import { SIP_TYPES } from '@infrastructure/inversify_di/features/sip/sip.types';
+import { IDispatchSipInstallmentsUseCase } from '@application/use_cases/sip/interfaces/dispatch-sip-installments-usecase.interface';
 
 @injectable()
-export class SipScheduler {
-    private queue: Queue;
+export class SipScheduler extends BaseScheduler {
 
-    constructor() {
-        this.queue = new Queue('sip-execution-queue', {
-            connection: bullConnection
-        });
+    constructor(
+        @inject(SIP_TYPES.DispatchSipInstallmentsUseCase) private readonly _dispatchDueSips: IDispatchSipInstallmentsUseCase,
+    ) {
+        // Run every day at 6:00 AM and 9:00 AM IST
+        super('SIP-SCHEDULER', '0 6,9 * * *');
     }
 
-    public async start(): Promise<void> {
-        // Run every day at 6:00 AM and 9:00 AM
-        await this.queue.add(
-            'execute-due-sips',
-            {},
-            {
-                repeat: {
-                    pattern: '0 6,9 * * *',
-                },
-                jobId: 'sip-repeatable-job'
-            }
-        );
+    protected async execute(): Promise<void> {
+        await this._dispatchDueSips.execute();
     }
 }

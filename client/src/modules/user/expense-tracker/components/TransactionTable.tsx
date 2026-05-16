@@ -8,7 +8,7 @@ interface Transaction {
     category: string;
     description: string;
     amount: number;
-    type: 'income' | 'expense';
+    type: 'income' | 'expense' | 'investment';
 }
 
 interface TransactionTableProps {

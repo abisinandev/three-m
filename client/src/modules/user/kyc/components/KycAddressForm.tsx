@@ -30,14 +30,14 @@ export const KycAddressForm = ({ address, setAddress }: KycAddressFormProps) => 
                 if (!data.error) {
                     setStatesList(data.data.states);
                 }
-            } catch (error) {
-                console.error("Failed to fetch states", error);
+            } catch {
+                console.error("Failed to fetch states");
             } finally {
                 setIsLoadingStates(false);
             }
         };
         fetchStates();
-    }, []);
+    }, [stateUrl]);
 
     useEffect(() => {
         const fetchLocationByPin = async () => {
@@ -56,8 +56,8 @@ export const KycAddressForm = ({ address, setAddress }: KycAddressFormProps) => 
                     } else if (data && data[0].Status === 'Error') {
                         toast.error('Invalid PIN Code');
                     }
-                } catch (error) {
-                    console.error('Error fetching location from PIN:', error);
+                } catch {
+                    console.error('Error fetching location from PIN');
                 } finally {
                     setIsFetchingPin(false);
                 }
@@ -66,7 +66,7 @@ export const KycAddressForm = ({ address, setAddress }: KycAddressFormProps) => 
 
         const timeoutId = setTimeout(() => fetchLocationByPin(), 500);
         return () => clearTimeout(timeoutId);
-    }, [address.pincode, setAddress]);
+    }, [address.pincode, setAddress, statePinUrl]);
 
     return (
         <div className="space-y-4">

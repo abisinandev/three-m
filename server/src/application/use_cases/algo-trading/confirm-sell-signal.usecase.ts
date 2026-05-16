@@ -56,7 +56,7 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
 
     ) { }
 
-    async execute(order: ConfirmSignalDTO): Promise<void | { message: string, upgrade: boolean }> {
+    async execute(order: ConfirmSignalDTO): Promise<undefined | { message: string, upgrade: boolean }> {
         const hasAccess = await this._featureAccess.hasAccess(
             order.userId,
             Features.STOCK_TRADING,
@@ -183,7 +183,7 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
             marketOrder.updateFilledQty(execution.filledQty, execution.totalValue);
             marketOrder.markFilled();
 
-            const newOrder = await this._orderRepository.create(marketOrder, session);
+            const newOrder = await this._orderRepository.createOrder(marketOrder, session);
 
             const trade = TradeEntity.create({
                 userId,
@@ -225,7 +225,7 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
                 );
             }
 
-            newTransaction.markSucess();
+            newTransaction.markSuccess();
             await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);
 
             signal.approve();

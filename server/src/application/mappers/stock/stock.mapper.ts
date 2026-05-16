@@ -1,8 +1,8 @@
 import { StockEntity } from "@domain/entities/stock/stock.entity";
 import { StockDTO } from "@application/dto/stocks/stock.dto";
 
-export class StockMapper {
-    static toDTO(entity: StockEntity): StockDTO {
+export const StockMapper = {
+    toDTO: (entity: StockEntity): StockDTO => {
         return {
             id: entity.id as string,
             symbol: entity.symbol,
@@ -13,9 +13,9 @@ export class StockMapper {
             isTradable: entity.isTradable,
             isVisible: entity.isVisible,
         };
-    }
+    },
 
-    static toDTOList(entities: StockEntity[]): StockDTO[] {
-        return entities.map((entity) => this.toDTO(entity));
+    toDTOList: (entities: StockEntity[]): StockDTO[] => {
+        return entities.map((entity) => StockMapper.toDTO(entity));
     }
 }

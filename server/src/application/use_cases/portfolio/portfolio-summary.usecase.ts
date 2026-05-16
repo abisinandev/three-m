@@ -1,7 +1,6 @@
 import { inject, injectable } from "inversify";
 import { IPortfolioSummaryUseCase } from "./interfaces/portfolio-summary-usecase.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
-import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
@@ -17,8 +16,10 @@ import { TradeEntity } from "@domain/entities/stock/trade.entity";
 import { PortfolioSummaryDTO } from "@application/dto/portfolio/portfolio-summary.dto";
 import { PortfolioEntity } from "@domain/entities/portfolio/portfolio.entity";
 import { ICacheProvider } from "@application/interfaces/services/externals/redis-cache.provider.interface";
-import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
+import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
+import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
+import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
 
 
 @injectable()
@@ -28,12 +29,12 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
 
     constructor(
         @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
-        @inject(MUTUAL_FUND_TYPES.NavUpdateProvider) private readonly _navUpdateProvider: IMutualFundNavUpdateProvider,
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.MarketDataProvider) private readonly _marketDataProvider: IMarketDataProvider,
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
+        @inject(MUTUAL_FUND_TYPES.MutualFundNavService) private readonly _navService: IMutualFundNavService,
         @inject(EXTERNAL_TYPES.RedisCacheProvider) private readonly _cache: ICacheProvider,
     ) { }
 
@@ -92,18 +93,8 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
                 if (fund) {
                     assetInfoMap.set(asset.assetId, { schemeCode: fund.schemeCode, name: fund.schemeName });
 
-                    const cacheKey = `nav-cache:${fund.schemeCode}`;
-                    const cachedNav = await this._cache.get(cacheKey);
-                    if (cachedNav) {
-                        priceMap.set(asset.assetId, Number(cachedNav));
-                    } else {
-                        const navHistory = await this._navUpdateProvider.fetchNavHistories(fund.schemeCode);
-                        if (navHistory?.length) {
-                            const latestNav = Number(navHistory[0].nav);
-                            priceMap.set(asset.assetId, latestNav);
-                            await this._cache.set(cacheKey, latestNav.toString(), 3600); // 1 hour cache
-                        }
-                    }
+                    const { nav: latestNav } = await this._navService.getLatestNav(fund.schemeCode);
+                    priceMap.set(asset.assetId, latestNav);
                 }
             }
         }));
@@ -175,7 +166,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
     }
 
     private buildCashFlows(
-        investments: any[],
+        investments: InvestmentEntity[],
         trades: TradeEntity[],
         portfolioAssets: PortfolioEntity[],
         priceMap: Map<string, number>

@@ -13,8 +13,8 @@ const toDomain = (doc: TradeDocument): TradeEntity => {
         price: doc.price,
         profit: doc.profit,
         isAlgoTrade: doc.isAlgoTrade,
-        createdAt: (doc as Record<string, unknown>).createdAt,
-        updatedAt: (doc as Record<string, unknown>).updatedAt,
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt,
     });
 };
 

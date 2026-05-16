@@ -11,7 +11,7 @@ export abstract class BaseRepository<TDomain, TDocument>
     },
   ) { }
 
-  async create(entity: TDomain, session?: ClientSession): Promise<void | TDomain> {
+  async create(entity: TDomain, session?: ClientSession): Promise<void> {
     const data = this.mapper.toPersistance(entity);
     if (session) {
       await this.model.create([data], { session });
@@ -20,14 +20,14 @@ export abstract class BaseRepository<TDomain, TDocument>
     }
   }
 
-  async findById(id: string, session?: ClientSession): Promise<TDomain | null> {
+  async findById(id: string, _session?: ClientSession): Promise<TDomain | null> {
     const doc = await this.model.findById(id).exec();
     return doc ? this.mapper.toDomain(doc) : null;
   }
 
   async findOne(data: Partial<TDomain>, session?: ClientSession): Promise<TDomain | null> {
 
-    const query = this.model.findOne(data as import("mongoose").FilterQuery<T>);
+    const query = this.model.findOne(data as unknown as import("mongoose").FilterQuery<TDocument>);
     if (session) query.session(session);
 
     const doc = await query.exec();

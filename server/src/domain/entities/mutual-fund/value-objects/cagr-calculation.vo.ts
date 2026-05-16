@@ -28,7 +28,7 @@ export class Cagr {
         }
 
         const cagr =
-            Math.pow(endNav / startNav, 1 / years) - 1;
+            (endNav / startNav) ** (1 / years) - 1;
 
         return new Cagr(cagr * 100);
     }

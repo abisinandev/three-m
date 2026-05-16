@@ -1,4 +1,4 @@
-import { Document, model, Schema, SchemaType } from "mongoose";
+import { Document, model, Schema, } from "mongoose";
 import { ISubscription } from "../../interfaces/subscriptions/subscription-schema.interface";
 import { SubscriptionStatus } from "@domain/entities/subscription/enums/subscription-status.enums";
 

@@ -23,8 +23,8 @@ export class TransactionService implements ITransactionService {
         session: ClientSession
     ): Promise<TransactionEntity> {
         const transaction = TransactionEntity.create({
-            userId: user.id!,
-            userCode: user.userCode!,
+            userId: user.id as string,
+            userCode: user.userCode as string,
             amount,
             currency: CurrencyTypes.INR,
             status: TransactionStatus.PENDING,
@@ -43,7 +43,7 @@ export class TransactionService implements ITransactionService {
         transaction.markSuccess();
 
         await this._transactionRepository.update(
-            transaction.id!,
+            transaction.id as string,
             transaction,
             session
         );
@@ -56,7 +56,7 @@ export class TransactionService implements ITransactionService {
         transaction.markFailed();
 
         await this._transactionRepository.update(
-            transaction.id!,
+            transaction.id as string,
             transaction,
             session
         );
@@ -70,8 +70,8 @@ export class TransactionService implements ITransactionService {
         session: ClientSession
     ): Promise<TransactionEntity> {
         const transaction = TransactionEntity.create({
-            userId: user.id!,
-            userCode: user.userCode!,
+            userId: user.id as string,
+            userCode: user.userCode as string,
             amount,
             currency: CurrencyTypes.INR,
             status: TransactionStatus.PENDING,
@@ -92,8 +92,8 @@ export class TransactionService implements ITransactionService {
         session: ClientSession
     ): Promise<TransactionEntity> {
         const transaction = TransactionEntity.create({
-            userId: user.id!,
-            userCode: user.userCode!,
+            userId: user.id as string,
+            userCode: user.userCode as string,
             amount,
             currency: CurrencyTypes.INR,
             status: TransactionStatus.PENDING,

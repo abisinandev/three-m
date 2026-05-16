@@ -16,7 +16,7 @@ export class GetUserPlanUseCase implements IGetUserPlanUseCase {
     async execute(userId: string, planCode?: string): Promise<PlanEntity | null> {
         const subscription = await this._subscriptionRepo.findByUserId(userId);
 
-        if (subscription && subscription.isActive()) {
+        if (subscription?.isActive()) {
             const codeToFetch = planCode || subscription.planCode;
             return this._planRepo.findByCode(codeToFetch);
         }

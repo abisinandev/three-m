@@ -66,7 +66,8 @@ const MutualFundDetailsPage = () => {
 
 
   const { mutate: startSipMutate, isPending: isSipSubmitting } = useStartSip(
-    (result) => {
+    (result: { data?: { amount?: number; units?: number } }) => {
+      setSuccessData(result.data || null);
       setShowSipModal(false);
       setShowSuccessModal(true);
       setErrorMsg('');
@@ -308,7 +309,7 @@ const MutualFundDetailsPage = () => {
         <SuccessModal
           data={data}
           investment={investment}
-          successData={successData}
+          successData={successData ?? undefined}
           onClose={() => {
             setShowSuccessModal(false);
             setInvestment(0);

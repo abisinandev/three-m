@@ -1,8 +1,8 @@
-export type Category = 'NEED' | 'WANT';
+export type Category = 'NEED' | 'WANT' | 'SAVING' | 'INVESTMENT';
 
 export type InvestmentType = 'SIP' | 'LUMPSUM' | 'STOCKS';
 
-export type TransactionType = 'expense' | 'investment';
+export type TransactionType = 'expense' | 'investment' | 'income';
 
 export interface BaseTransaction {
     id: string;

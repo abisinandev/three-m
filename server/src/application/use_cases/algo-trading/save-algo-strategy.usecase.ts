@@ -15,7 +15,7 @@ export class SaveAlgoStrategyUseCase implements ISaveAlgoStrategyUseCase {
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
     ) { }
 
-    async execute(data: AlgoStrategyDTO): Promise<void> {
+    async execute(data: AlgoStrategyDTO): Promise<{message:string,upgrade:boolean} | undefined> {
 
         const hasAccess = await this._featureAccess.hasAccess(
             data.userId,

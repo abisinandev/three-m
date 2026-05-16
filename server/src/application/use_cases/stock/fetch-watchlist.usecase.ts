@@ -35,7 +35,6 @@ export class FetchWatchlistUseCase implements IFetchWatchlistUseCase {
                     logo: stock.logo,
                     isTradable: stock.isTradable,
                     isVisible: stock.isVisible,
-                    isTracked: stock.isTracked
                 });
             }
         }

@@ -16,6 +16,8 @@ import { inject, injectable } from "inversify";
 import type { IVerifyTwoFactorUseCase } from "./interfaces/verify-2fa-usecase.interface";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
+import { toUserResponse } from "@application/mappers/user/user.mapper";
+
 @injectable()
 export class VerifyTwoFactorUseCase implements IVerifyTwoFactorUseCase {
   constructor(
@@ -51,6 +53,10 @@ export class VerifyTwoFactorUseCase implements IVerifyTwoFactorUseCase {
     await redisClient.hset(key, "refreshToken", refreshToken);
     await redisClient.expire(key, ttl);
 
-    return { accessToken, refreshToken };
+    return {
+      accessToken,
+      refreshToken,
+      user: toUserResponse(user),
+    };
   }
 }

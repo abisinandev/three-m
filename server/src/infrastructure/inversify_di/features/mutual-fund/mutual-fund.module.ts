@@ -24,8 +24,8 @@ import { InvestmentValidationService } from "@application/services/mutual-fund/i
 import { NavUpdateQueue } from "@infrastructure/providers/mutual-fund/queue/nav-update-queue";
 import { NavUpdateWorker } from "@infrastructure/providers/mutual-fund/queue/workers/nav-update.worker";
 import { INavUpdateQueue } from "@application/interfaces/services/mutual-fund/nav-update.queue";
-import { SyncSingleFundNavUseCase } from "@application/use_cases/mutual-fund/sync-single-fund-nav.usecase";
-import { ISyncSingleFundNavUseCase } from "@application/use_cases/mutual-fund/interfaces/sync-single-fund-nav.usecase.interface";
+import { SyncFundNavUseCase } from "@application/use_cases/mutual-fund/sync-fund-nav.usecase";
+import { ISyncFundNavUseCase } from "@application/use_cases/mutual-fund/interfaces/sync-fund-nav.usecase.interface";
 import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
 import { MutualFundNavService } from "@application/services/mutual-fund/mutual-fund-nav.service";
 
@@ -78,7 +78,7 @@ export const MutualFundModule = new ContainerModule(({ bind }) => {
     bind<IOneTimeInvestmentUseCase>(MUTUAL_FUND_TYPES.InvestmentUseCase).to(OneTimeInvestmentUseCase);
     bind<INavAllocateUseCase>(MUTUAL_FUND_TYPES.NavAllocateUseCase).to(NavAllocateUseCase);
     bind<IMfInvestmentHistoryUseCase>(MUTUAL_FUND_TYPES.MfInvestmentHistoryUseCase).to(MfInvestmentHistoryUseCase);
-    bind<ISyncSingleFundNavUseCase>(MUTUAL_FUND_TYPES.SyncSingleFundNavUseCase).to(SyncSingleFundNavUseCase);
+    bind<ISyncFundNavUseCase>(MUTUAL_FUND_TYPES.SyncFundNavUseCase).to(SyncFundNavUseCase);
 
     // Providers
     bind<IMutualFundNavUpdateProvider>(MUTUAL_FUND_TYPES.NavUpdateProvider).to(NavUpdateProvider);

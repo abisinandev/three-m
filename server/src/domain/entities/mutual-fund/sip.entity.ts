@@ -136,6 +136,22 @@ export class SipEntity {
         });
     }
 
+    cancel() {
+
+        if (
+            this.status !== SipStatus.ACTIVE
+        ) {
+
+            throw new ValidationError(
+                "Only active SIP can cancel"
+            );
+        }
+
+        this._status = SipStatus.CANCELLED;
+
+        this._updatedAt = new Date();
+    }
+
 
     static fromPersistence(props: {
         id: string;
@@ -189,19 +205,5 @@ export class SipEntity {
     get createdAt() { return this._createdAt; }
     get updatedAt() { return this._updatedAt; }
 
-    cancel() {
 
-        if (
-            this.status !== SipStatus.ACTIVE
-        ) {
-
-            throw new ValidationError(
-                "Only active SIP can cancel"
-            );
-        }
-
-        this._status = SipStatus.CANCELLED;
-
-        this._updatedAt = new Date();
-    }
 }

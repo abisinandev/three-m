@@ -78,7 +78,7 @@ export class AdminSubscriptionManagementController {
         }
     }
 
-    async getStats(req: Request, res: Response, next: NextFunction) {
+    async getStats(_req: Request, res: Response, next: NextFunction) {
         try {
             const result = await this.getStatsUseCase.execute();
 

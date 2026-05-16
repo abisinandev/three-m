@@ -90,7 +90,7 @@ export class UpgradePremiumUseCase implements IUpgradePremiumUseCase {
                 throw error;
             }
 
-            let subId = await this._subscriptionRepository.findByUserId(data.userId);
+            const subId = await this._subscriptionRepository.findByUserId(data.userId);
             user.subscribePlan(subId?.id as string);
             await this._userRepository.update(user.id as string, user, session);
 

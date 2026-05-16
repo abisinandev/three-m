@@ -6,7 +6,8 @@ import {
     Lock, Info, AlertTriangle, Save, RefreshCw, CheckCircle2,
     TrendingUp, LineChart, Cpu, BarChart3, Zap
 } from "lucide-react";
-import subscriptionService, { type Plan } from "@/shared/services/subscription/subscription-service";
+import subscriptionService from "@/shared/services/subscription/subscription-service";
+import type { Plan } from "@/shared/services/subscription/subscriptionService";
 
 const FEATURE_SECTIONS = [
     {
@@ -50,7 +51,7 @@ const FEATURE_SECTIONS = [
     }
 ];
 
-const FreePlanCard = ({ plan }: { plan?: Plan }) => {
+const FreePlanCard = () => {
     return (
         <div className="bg-[#111] border border-neutral-800/60 rounded-xl p-5 flex flex-col h-full shadow-sm">
             <div className="flex justify-between items-start mb-4">
@@ -253,14 +254,13 @@ export const PlansTab = () => {
         queryFn: () => subscriptionService.getPlans({}),
     });
 
-    const freePlan = data?.plans.find(p => p.code === "FREE");
     const premiumPlan = data?.plans.find(p => p.code === "PREMIUM");
 
     if (isLoading) return <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">{[1, 2].map(i => <div key={i} className="h-[400px] bg-neutral-900/50 rounded-xl animate-pulse border border-neutral-800" />)}</div>;
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <FreePlanCard plan={freePlan} />
+            <FreePlanCard />
             <PremiumPlanCard plan={premiumPlan} />
         </div>
     );

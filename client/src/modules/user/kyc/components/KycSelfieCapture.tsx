@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import type { KycFiles, KycPreviews } from './KycTypes';
@@ -14,27 +14,27 @@ interface KycSelfieCaptureProps {
 export const KycSelfieCapture = ({ files, previews, handleFileChange, removeFile, isActive }: KycSelfieCaptureProps) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [stream, setStream] = useState<MediaStream | null>(null);
+    const streamRef = useRef<MediaStream | null>(null);
 
-    const startCamera = async () => {
+    const startCamera = useCallback(async () => {
         try {
             const mediaStream = await navigator.mediaDevices.getUserMedia({
                 video: { facingMode: 'user' },
                 audio: false,
             });
-            setStream(mediaStream);
+            streamRef.current = mediaStream;
             if (videoRef.current) {
                 videoRef.current.srcObject = mediaStream;
             }
-        } catch (err) {
+        } catch {
             toast.error('Camera access denied. Please allow permission.');
         }
-    };
+    }, []);
 
-    const stopCamera = () => {
-        stream?.getTracks().forEach(track => track.stop());
-        setStream(null);
-    };
+    const stopCamera = useCallback(() => {
+        streamRef.current?.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+    }, []);
 
     const capturePhoto = () => {
         if (!videoRef.current || !canvasRef.current) return;
@@ -64,7 +64,7 @@ export const KycSelfieCapture = ({ files, previews, handleFileChange, removeFile
         return () => {
             stopCamera();
         };
-    }, [isActive, files.selfie]);
+    }, [isActive, files.selfie, startCamera, stopCamera]);
 
     return (
         <div className="space-y-4">

@@ -27,7 +27,7 @@ export class LimitSellOrderUseCase implements ILimitSellOrderUseCase {
         @inject(SUBSCRIPTION_TYPES.FeatureAccessService) private readonly _featureAccess: IFeatureAccessService,
     ) { }
 
-    async execute(order: LimitSellOrderDTO, userId: string): Promise<void | { message: string, upgrade: boolean }> {
+    async execute(order: LimitSellOrderDTO, userId: string): Promise<undefined | { message: string, upgrade: boolean }> {
 
         const hasAccess = await this._featureAccess.hasAccess(userId, Features.STOCK_TRADING);
 

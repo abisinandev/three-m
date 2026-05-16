@@ -1,5 +1,5 @@
-export class AsyncHelper {
-    static async mapWithConcurrency<T, R>(
+export const AsyncHelper = {
+    async mapWithConcurrency<T, R>(
         items: T[],
         limit: number,
         mapper: (item: T) => Promise<R>
@@ -19,4 +19,4 @@ export class AsyncHelper {
 
         return results;
     }
-}
+};

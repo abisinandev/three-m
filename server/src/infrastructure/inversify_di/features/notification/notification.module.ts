@@ -3,7 +3,6 @@ import { ContainerModule } from "inversify";
 import { NOTIFICATION_TYEPS } from "./notification.type";
 import { NotificationService } from "@infrastructure/providers/notification/notification.service";
 import { NotificationController } from "@presentation/http/controllers/notification/notification.controller";
-import { ICreateNotificationUseCase } from "@application/use_cases/notification/interfaces/create-notification.usecase.interface";
 import { CreateNotificationUseCase } from "@application/use_cases/notification/create-notification.usecase";
 import { IGetNotificationsUseCase } from "@application/use_cases/notification/interfaces/get-notifications.usecase.interface";
 import { GetNotificationsUseCase } from "@application/use_cases/notification/get-notifications.usecase";
@@ -15,6 +14,7 @@ import { INotificationRepository } from "@application/interfaces/repositories/fe
 import { NotificationRepository } from "@infrastructure/databases/repository/notification/notification.repository";
 import { ISocketService } from "@application/interfaces/services/notification/socket-service.interface";
 import { SocketService } from "@infrastructure/providers/notification/socket.service";
+import { ICreateNotificationUseCase } from "@application/use_cases/notification/interfaces/create-notification-usecase.interface";
 
 export const NotificationModules = new ContainerModule(({ bind }) => {
     bind<INotificationService>(NOTIFICATION_TYEPS.NotificationService).to(NotificationService);

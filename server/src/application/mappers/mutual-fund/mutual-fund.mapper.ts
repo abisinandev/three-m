@@ -32,6 +32,10 @@ export const toMutualFundResponse = (data: MutualFundEntity, cagr?: ICagrDTO): F
         status: data.status,
         nav: data.latestNav?.nav as number,
         navDate: data.latestNav?.navDate as Date,
+        latestNav: data.latestNav ? {
+            nav: data.latestNav.nav,
+            navDate: data.latestNav.navDate,
+        } : undefined,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
         cagr: {

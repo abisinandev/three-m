@@ -28,7 +28,7 @@ const OtpVerificationPage = () => {
 
     useEffect(() => {
         startTimer();
-    }, []);;
+    }, [startTimer]);
 
     // --- VERIFY OTP MUTATION ---
     const verifyOtp = useMutation({
