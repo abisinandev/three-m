@@ -9,7 +9,6 @@ import {
   getActiveStrategyBySymbol,
   toggleAlgoStrategyStatus,
 } from "@/shared/services/algo-trading/algo-trading-api";
-import type { ActiveStrategyResponse } from "@/shared/services/algo-trading/algo-trading-api";
 
 import type { AlgoConsoleProps } from "@/shared/types/stock/stock.types";
 
