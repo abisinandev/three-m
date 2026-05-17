@@ -13,7 +13,7 @@ import { KycDetailsForm } from '../components/KycDetailsForm';
 import { KycAddressForm } from '../components/KycAddressForm';
 import { KycDocumentUpload } from '../components/KycDocumentUpload';
 import { KycSelfieCapture } from '../components/KycSelfieCapture';
-import type { AddressData, DetailsData, KycFiles, KycPreviews } from '@/shared/types/user/KycUserType';
+import type { AddressData, DetailsData, KycFiles, KycPreviews, kycDocuments } from '@/shared/types/user/KycUserType';
 
 const steps = [
     { id: 1, title: 'Your Details', field: 'details', isForm: true },
@@ -73,8 +73,6 @@ const KYCVerificationPage = () => {
     }, [user]);
 
 
-
-    // Auto-fill City and State when a 6-digit PIN is entered
     useEffect(() => {
         const fetchLocationByPin = async () => {
             if (address.pincode.length === 6) {
@@ -180,10 +178,10 @@ const KYCVerificationPage = () => {
                 }
             }
 
-            const documents: { type: string; fileName: string; fileUrl: string; }[] = [];
-            if (files.pan) documents.push({ type: 'pan', fileName: files.pan.name, fileUrl: uploadedFiles.pan });
-            if (files.aadhaar) documents.push({ type: 'aadhaar', fileName: files.aadhaar.name, fileUrl: uploadedFiles.aadhaar });
-            if (files.selfie) documents.push({ type: 'selfie', fileName: files.selfie.name, fileUrl: uploadedFiles.selfie });
+            const documents: kycDocuments[] = [];
+            if (files.pan) documents.push({ type: 'pan', fileName: files.pan.name, fileUrl: uploadedFiles.pan || '' });
+            if (files.aadhaar) documents.push({ type: 'aadhaar', fileName: files.aadhaar.name, fileUrl: uploadedFiles.aadhaar || '' });
+            if (files.selfie) documents.push({ type: 'selfie', fileName: files.selfie.name, fileUrl: uploadedFiles.selfie || '' });
 
             await api.post(KYC_SUMBIT_URL, {
                 userId: user?.id,

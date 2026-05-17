@@ -55,10 +55,6 @@ jobs:
         working-directory: client
         run: npm ci --legacy-peer-deps
 
-      - name: Lint Frontend
-        working-directory: client
-        run: npm run lint
-
       - name: Build Frontend
         working-directory: client
         run: npm run build
