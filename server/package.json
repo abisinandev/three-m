@@ -4,7 +4,7 @@
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/presentation/express/settings/server.js",
+    "start": "node -r tsconfig-paths/register dist/presentation/express/settings/server.js",
     "dev": "nodemon",
     "lint": "biome lint .",
     "check": "biome check .",
