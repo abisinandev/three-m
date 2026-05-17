@@ -8,10 +8,10 @@ services:
     - "9000:9000"
     restart: always
     env_file:
-      - .env
+      - server/.env
     depends_on:
       - redis
-      
+
   redis:
     image: redis:7
     container_name: redis-server
