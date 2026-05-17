@@ -1,10 +1,19 @@
 {
   "name": "three_m",
   "version": "1.0.0",
+
+  "_moduleAliases": {
+    "@application": "dist/application",
+    "@domain": "dist/domain",
+    "@infrastructure": "dist/infrastructure",
+    "@presentation": "dist/presentation",
+    "@shared": "dist/shared"
+  },
+
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node -r tsconfig-paths/register dist/presentation/express/settings/server.js",
+    "start": "node -r module-alias/register dist/presentation/express/settings/server.js",
     "dev": "nodemon",
     "lint": "biome lint .",
     "check": "biome check .",
@@ -50,6 +59,7 @@
     "ioredis": "^5.10.1",
     "jsonwebtoken": "^9.0.2",
     "langchain": "^1.2.30",
+    "module-alias": "^2.3.4",
     "mongoose": "^8.19.0",
     "morgan": "^1.10.1",
     "node-cron": "^4.2.1",
