@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npx tsr generate",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -41,6 +42,7 @@
   "devDependencies": {
     "@eslint/js": "^9.36.0",
     "@tanstack/router-plugin": "^1.133.22",
+    "@tanstack/router-cli": "^1.133.22",
     "@types/crypto-js": "^4.2.2",
     "@types/node": "^24.10.1",
     "@types/react": "^19.1.16",
