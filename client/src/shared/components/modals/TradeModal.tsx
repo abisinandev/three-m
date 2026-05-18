@@ -44,19 +44,9 @@ const TradeModal: React.FC<TradeModalProps> = ({
   const [type, setType] = useState<'buy' | 'sell'>(initialType);
   const [quantity, setQuantity] = useState<string>('');
   const [orderType, setOrderType] = useState<'MARKET_ORDER' | 'LIMIT_ORDER'>('MARKET_ORDER');
-  const [limitPrice, setLimitPrice] = useState<string>('');
+  const [limitPrice, setLimitPrice] = useState<string>(currentPrice.toString());
   const [stopLoss, setStopLoss] = useState<string>('');
   const [takeProfit, setTakeProfit] = useState<string>('');
-  useEffect(() => {
-    if (isOpen) {
-      setType(initialType);
-      setQuantity('');
-      setOrderType('MARKET_ORDER');
-      setLimitPrice(currentPrice.toString());
-      setStopLoss('');
-      setTakeProfit('');
-    }
-  }, [isOpen, symbol, currentPrice, initialType]);
 
   if (!isOpen) return null;
 
@@ -141,8 +131,8 @@ const TradeModal: React.FC<TradeModalProps> = ({
                     type="button"
                     onClick={() => setOrderType(mode.value)}
                     className={`py-2 px-3 text-[10px] font-black border transition-all rounded-xl ${orderType === mode.value
-                        ? `${borderColor} ${textColor} bg-[#111214]`
-                        : 'border-[#1e2025] text-[#5a5f6e] hover:border-[#333]'
+                      ? `${borderColor} ${textColor} bg-[#111214]`
+                      : 'border-[#1e2025] text-[#5a5f6e] hover:border-[#333]'
                       }`}
                   >
                     {mode.label}

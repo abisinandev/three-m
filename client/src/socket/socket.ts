@@ -6,7 +6,15 @@ class SocketService {
 
   connect() {
     if (!this.socket) {
-      this.socket = io(this.url, {
+      let socketUrl = this.url || 'http://localhost:9000';
+      if (socketUrl.endsWith('/api')) {
+        socketUrl = socketUrl.slice(0, -4);
+      }
+      if (socketUrl.endsWith('/api/')) {
+        socketUrl = socketUrl.slice(0, -5);
+      }
+
+      this.socket = io(socketUrl, {
         withCredentials: true,
         reconnection: true,
         reconnectionAttempts: 5,

@@ -3,7 +3,7 @@ import { API_ROUTES } from "@shared/constants/apiRoutes";
 import type { KycFilters } from "@shared/types/admin/user-management.types";
 import type { KycUser } from "@shared/types/user/KycUserType";
 
-export const fetchKycUsers = async ({ page = 1, status = "pending" }: KycFilters): Promise<{ users: KycUser[]; total: number }> => {
+export const fetchKycUsers = async ({ page = 1, status = "pending" }: KycFilters): Promise<{ data: KycUser[]; total: number }> => {
 
     const res = await adminApi.get(API_ROUTES.ADMIN.KYC.GET_ALL,
         {

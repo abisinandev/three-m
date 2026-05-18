@@ -72,8 +72,14 @@ const StockDetailPage = () => {
       }
     };
 
+    socketService.connect();
+    socketService.subscribeToSymbol(symbol);
     socketService.on("stock_update", handleUpdate);
-    return () => socketService.off("stock_update", handleUpdate);
+
+    return () => {
+      socketService.unsubscribeFromSymbol(symbol);
+      socketService.off("stock_update", handleUpdate);
+    };
   }, [symbol]);
 
 
@@ -81,8 +87,14 @@ const StockDetailPage = () => {
   const stockInfo = responseData?.data;
   const apiPrice = responseData?.latestPrice;
   const currentPrice = realtimePrice ?? apiPrice;
-  const change = responseData?.change ?? 0;
-  const changePercent = responseData?.changePercent ?? 0;
+  
+  const prevClose = responseData?.previousClose ?? 0;
+  const change = (realtimePrice !== null && realtimePrice !== undefined && prevClose > 0)
+    ? (realtimePrice - prevClose)
+    : (responseData?.change ?? 0);
+  const changePercent = (realtimePrice !== null && realtimePrice !== undefined && prevClose > 0)
+    ? ((realtimePrice - prevClose) / prevClose) * 100
+    : (responseData?.changePercent ?? 0);
   const isPositive = change >= 0;
 
   const fmt = (v: number | string | undefined | null, digits = 2) => {
@@ -238,18 +250,21 @@ const StockDetailPage = () => {
         </div>
       </div>
 
-      <TradeModal
-        isOpen={isTradeModalOpen}
-        onClose={() => setIsTradeModalOpen(false)}
-        symbol={symbol}
-        name={stockInfo.name || symbol}
-        currentPrice={currentPrice ?? 0}
-        initialType={tradeType}
-        isLoading={isTrading}
-        onConfirm={handleTradeConfirm}
-        availableQuantity={position?.units || position?.quantity}
-        balance={balance}
-      />
+      {isTradeModalOpen && (
+        <TradeModal
+          key={symbol}
+          isOpen={isTradeModalOpen}
+          onClose={() => setIsTradeModalOpen(false)}
+          symbol={symbol}
+          name={stockInfo.name || symbol}
+          currentPrice={currentPrice ?? 0}
+          initialType={tradeType}
+          isLoading={isTrading}
+          onConfirm={handleTradeConfirm}
+          availableQuantity={position?.units || position?.quantity}
+          balance={balance}
+        />
+      )}
     </div>
   );
 };
