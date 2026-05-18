@@ -12,11 +12,13 @@ const app = express();
 //Middlewares configs
 app.use(morgan("dev"));
 app.use(cors({
-    origin:
-        [
-            env.FRONTEND_URL,
-            env.FRONTEND_SUBDOMAIN_URL,
-        ], credentials: true
+    origin: [
+        env.FRONTEND_URL,
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://threem.abisinan.site"
+    ],
+    credentials: true
 }));
 app.use(helmet());
 
