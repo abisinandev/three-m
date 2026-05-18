@@ -14,8 +14,8 @@ app.use(morgan("dev"));
 app.use(cors({
     origin:
         [
-            env.FRONTEND_URL
-
+            env.FRONTEND_URL,
+            env.FRONTEND_SUBDOMAIN_URL,
         ], credentials: true
 }));
 app.use(helmet());
