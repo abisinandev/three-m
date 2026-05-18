@@ -11,7 +11,13 @@ const app = express();
 
 //Middlewares configs
 app.use(morgan("dev"));
-app.use(cors({ origin: env.FRONTEND_URL, credentials: true }));
+app.use(cors({
+    origin:
+        [
+            env.FRONTEND_URL
+
+        ], credentials: true
+}));
 app.use(helmet());
 
 //Stripe webhook

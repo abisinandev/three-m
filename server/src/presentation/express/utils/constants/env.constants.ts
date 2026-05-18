@@ -26,7 +26,7 @@ export const env = {
   EMAIL_USER: requireEnv("EMAIL_USER"),
   EMAIL_PASS: requireEnv("EMAIL_PASS"),
 
-  FRONTEND_URL: requireEnv("FRONTEND_URL") || "http://localhost:5173",
+  FRONTEND_URL: requireEnv("FRONTEND_URL"),
 
   ACCESS_SECRET: requireEnv("JWT_ACCESS_SECRET"),
   REFRESH_SECRET: requireEnv("JWT_REFRESH_SECRET"),
