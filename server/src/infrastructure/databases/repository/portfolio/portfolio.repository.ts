@@ -7,6 +7,7 @@ import { PortfolioMapper } from "@infrastructure/mappers/portfolio/portfolio.map
 import { ClientSession, QueryOptions, Types, PipelineStage } from "mongoose";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 import { PortfolioStockDTO } from "@application/dto/portfolio/aggregated-asset.dto";
+import { PortfolioStatus } from "@domain/entities/portfolio/enum/portfolio-status";
 
 @injectable()
 export class PortfolioRepository extends BaseRepository<PortfolioEntity, PortfolioDocument> implements IPortfolioRepository {
@@ -22,7 +23,7 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
 
     async findByUserId(userId: string, session?: ClientSession): Promise<PortfolioEntity[]> {
         const results = await this.model.find(
-            { userId, assetType: AssetType.STOCK },
+            { userId, assetType: AssetType.STOCK, status: PortfolioStatus.ACTIVE },
             null,
             { session }
         );
@@ -45,6 +46,7 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         const matchStage: Record<string, unknown> = {
             ...filter,
             userId: new Types.ObjectId(userId),
+            status: PortfolioStatus.ACTIVE,
         };
 
         const sort: Record<string, 1 | -1> = {
@@ -106,6 +108,7 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         const matchStage: Record<string, unknown> = {
             ...filter,
             userId: new Types.ObjectId(userId),
+            status: PortfolioStatus.ACTIVE,
         };
 
         const pipeline: PipelineStage[] = [
@@ -144,13 +147,28 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
     }
 
     async deleteByUserIdAndSymbol(userId: string, assetId: string, session?: ClientSession): Promise<boolean> {
-        const result = await this.model.deleteOne({ userId, assetId }, { session });
-        return result.deletedCount > 0;
+        const result = await this.model.updateOne(
+            { userId, assetId },
+            {
+                $set: {
+                    status: PortfolioStatus.CLOSED,
+                    quantity: 0,
+                    units: 0,
+                    investedAmount: 0,
+                    lockQty: 0,
+                    stopLoss: null,
+                    takeProfit: null
+                }
+            },
+            { session }
+        );
+        return result.modifiedCount > 0;
     }
 
     async getUserAssets(userId: string): Promise<PortfolioEntity[]> {
         const docs = await this.model.find({
-            userId: new Types.ObjectId(userId)
+            userId: new Types.ObjectId(userId),
+            status: PortfolioStatus.ACTIVE
         });
 
         return docs.length ? docs.map(doc => this.mapper.toDomain(doc)) : [];
@@ -161,6 +179,7 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         return this.model.countDocuments({
             userId: new Types.ObjectId(userId),
             assetType: AssetType.MUTUAL_FUND,
+            status: PortfolioStatus.ACTIVE
         });
     }
 
@@ -168,16 +187,17 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         return this.model.countDocuments({
             userId: new Types.ObjectId(userId),
             assetType: AssetType.STOCK,
+            status: PortfolioStatus.ACTIVE
         });
     }
 
     async calculateTotalStockAUM(): Promise<number> {
         const result = await this.model.aggregate([
-            { $match: { assetType: AssetType.STOCK } },
+            { $match: { assetType: AssetType.STOCK, status: PortfolioStatus.ACTIVE } },
             { $group: { _id: null, total: { $sum: "$investedAmount" } } }
         ]);
         return result.length > 0 ? result[0].total : 0;
     }
 
-    
+
 }

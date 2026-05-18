@@ -15,6 +15,7 @@ export const toDomain = (doc: PortfolioDocument): PortfolioEntity => {
         lockQty: doc.lockQty || 0,
         stopLoss: doc.stopLoss,
         takeProfit: doc.takeProfit,
+        status: doc.status,
         createdAt: doc.createdAt as Date,
         updatedAt: doc.updatedAt as Date,
     });
@@ -33,6 +34,7 @@ export const toPersistance = (entity: PortfolioEntity): Partial<PortfolioDocumen
         lockQty: data.lockQty,
         stopLoss: data.stopLoss,
         takeProfit: data.takeProfit,
+        status: data.status,
         createdAt: data.createdAt,
         updatedAt: new Date(),
     };

@@ -75,12 +75,12 @@ export class PortfolioService implements IPortfolioService {
         const newQuantity = (portfolio.quantity ?? 0) - quantity;
 
         if (newQuantity <= 0) {
-            await this._portfolioRepository.deleteByUserIdAndSymbol(userId, assetId, session);
+            portfolio.closePortfolio();
         } else {
             const costOfSharesSold = portfolio.avgPrice * quantity;
             const newInvestedAmount = portfolio.investedAmount - costOfSharesSold;
             portfolio.updateQuantityAndPrice(newQuantity, portfolio.avgPrice, newInvestedAmount);
-            await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
         }
+        await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
     }
 }

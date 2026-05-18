@@ -13,10 +13,8 @@ const app = express();
 app.use(morgan("dev"));
 app.use(cors({
     origin: [
-        env.FRONTEND_URL,
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "https://threem.abisinan.site"
+        env.FRONTEND_URL_DEV,
+        env.FRONTEND_URL_PRODUCION,
     ],
     credentials: true
 }));

@@ -1,5 +1,6 @@
 import { ValidationError } from "@presentation/express/utils/error-handling";
 import { AssetType } from "./enum/asset-type";
+import { PortfolioStatus } from "./enum/portfolio-status";
 
 export class PortfolioEntity {
     private readonly _id?: string;
@@ -17,6 +18,7 @@ export class PortfolioEntity {
 
     private _stopLoss?: number | null;
     private _takeProfit?: number | null;
+    private _status: PortfolioStatus;
 
     private readonly _createdAt: Date;
     private _updatedAt?: Date;
@@ -33,6 +35,7 @@ export class PortfolioEntity {
         lockQty?: number;
         stopLoss?: number | null;
         takeProfit?: number | null;
+        status?: PortfolioStatus;
         createdAt?: Date;
         updatedAt?: Date;
     }) {
@@ -51,6 +54,7 @@ export class PortfolioEntity {
 
         this._stopLoss = props.stopLoss ?? null;
         this._takeProfit = props.takeProfit ?? null;
+        this._status = props.status ?? PortfolioStatus.ACTIVE;
 
         this._createdAt = props.createdAt ?? new Date();
         this._updatedAt = props.updatedAt;
@@ -66,6 +70,7 @@ export class PortfolioEntity {
         investedAmount: number;
         stopLoss?: number | null;
         takeProfit?: number | null;
+        status?: PortfolioStatus;
     }): PortfolioEntity {
         return new PortfolioEntity({
             userId: data.userId,
@@ -77,7 +82,8 @@ export class PortfolioEntity {
             investedAmount: data.investedAmount,
             stopLoss: data.stopLoss ?? null,
             takeProfit: data.takeProfit ?? null,
-            lockQty: 0
+            lockQty: 0,
+            status: data.status ?? PortfolioStatus.ACTIVE
         });
     }
 
@@ -93,6 +99,7 @@ export class PortfolioEntity {
         lockQty: number;
         stopLoss?: number | null;
         takeProfit?: number | null;
+        status: PortfolioStatus;
         createdAt: Date;
         updatedAt?: Date;
     }): PortfolioEntity {
@@ -108,6 +115,7 @@ export class PortfolioEntity {
             lockQty: data.lockQty,
             stopLoss: data.stopLoss ?? null,
             takeProfit: data.takeProfit ?? null,
+            status: data.status,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
         });
@@ -153,6 +161,10 @@ export class PortfolioEntity {
         return this._takeProfit;
     }
 
+    get status(): PortfolioStatus {
+        return this._status;
+    }
+
     get id(): string | undefined {
         return this._id;
     }
@@ -192,17 +204,40 @@ export class PortfolioEntity {
         if (this._assetType === AssetType.MUTUAL_FUND) {
             this._units = quantity;
         }
+
+        if (quantity > 0) {
+            this._status = PortfolioStatus.ACTIVE;
+        } else if (quantity === 0) {
+            this._status = PortfolioStatus.CLOSED;
+        }
+
         this._updatedAt = new Date();
     }
 
     updateUnits(units: number) {
         this._units = units;
+        if (units > 0) {
+            this._status = PortfolioStatus.ACTIVE;
+        } else if (units === 0) {
+            this._status = PortfolioStatus.CLOSED;
+        }
         this._updatedAt = new Date();
     }
 
     updateRiskLevels(sl?: number | null, tp?: number | null) {
         if (sl !== undefined) this._stopLoss = sl;
         if (tp !== undefined) this._takeProfit = tp;
+        this._updatedAt = new Date();
+    }
+
+    closePortfolio() {
+        this._status = PortfolioStatus.CLOSED;
+        this._quantity = 0;
+        this._units = 0;
+        this._investedAmount = 0;
+        this._lockQty = 0;
+        this._stopLoss = null;
+        this._takeProfit = null;
         this._updatedAt = new Date();
     }
 
@@ -219,6 +254,7 @@ export class PortfolioEntity {
             lockQty: this._lockQty,
             stopLoss: this._stopLoss,
             takeProfit: this._takeProfit,
+            status: this._status,
             createdAt: this._createdAt,
             updatedAt: this._updatedAt,
         };

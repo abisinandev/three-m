@@ -152,20 +152,15 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
                 const newUnits = Number((currentUnits - unitsToRedeem).toFixed(4));
 
                 if (newUnits <= 0) {
-                    await this._portfolioRepository.deleteByUserIdAndSymbol(
-                        data.userId,
-                        fund.id as string,
-                        session
-                    );
+                    portfolio.closePortfolio();
                 } else {
-
                     const ratio = unitsToRedeem / currentUnits;
                     const amountToReduce = portfolio.investedAmount * ratio;
                     const newInvestedAmount = portfolio.investedAmount - amountToReduce;
 
                     portfolio.updateQuantityAndPrice(newUnits, portfolio.avgPrice, newInvestedAmount);
-                    await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
                 }
+                await this._portfolioRepository.update(portfolio.id as string, portfolio, session);
             }
 
             await session.commitTransaction();

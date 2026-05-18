@@ -25,8 +25,8 @@ export class StripePaymentGateway implements IPaymentGateway {
                 },
             ],
 
-            success_url: `${env.FRONTEND_URL}/user/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${env.FRONTEND_URL}/user/payment-failed`,
+            success_url: `${env.FRONTEND_URL_DEV}/user/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${env.FRONTEND_URL_DEV}/user/payment-failed`,
 
             payment_intent_data: {
                 metadata: {

@@ -1,4 +1,5 @@
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
+import { PortfolioStatus } from "@domain/entities/portfolio/enum/portfolio-status";
 import { Types } from "mongoose";
 
 export interface IPortfolio {
@@ -13,6 +14,7 @@ export interface IPortfolio {
     lockQty: number;
     stopLoss?: number | null;
     takeProfit?: number | null;
+    status: PortfolioStatus;
     createdAt?: Date;
     updatedAt?: Date;
 }

@@ -200,30 +200,23 @@ export class ConfirmSellSignalUseCase implements IConfirmSellSignalUseCase {
             const newQuantity = (portfolio.quantity ?? 0) - execution.filledQty;
 
             if (newQuantity <= 0) {
-                await this._portfolioRepository.deleteByUserIdAndSymbol(
-                    userId,
-                    stock.id as string,
-                    session
-                );
+                portfolio.closePortfolio();
             } else {
-
                 const costOfSharesSold = portfolio.avgPrice * execution.filledQty;
                 const newInvestedAmount = portfolio.investedAmount - costOfSharesSold;
-
 
                 portfolio.updateQuantityAndPrice(
                     newQuantity,
                     portfolio.avgPrice,
                     newInvestedAmount
                 );
-
-
-                await this._portfolioRepository.update(
-                    portfolio.id as string,
-                    portfolio,
-                    session
-                );
             }
+
+            await this._portfolioRepository.update(
+                portfolio.id as string,
+                portfolio,
+                session
+            );
 
             newTransaction.markSuccess();
             await this._transactionRepository.updateStatus(newTransaction.id as string, TransactionStatus.SUCCESSFUL, session);

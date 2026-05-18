@@ -40,7 +40,7 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
                 throw new UnauthorizedError(ErrorMessages.USER.WALLET_INCONSISTENCY);
 
             if (wallet && data.amount > 10_0000)
-                throw new ValidationError(ErrorMessages.TRANSACTIONS.MAX_TRANSACTION);
+                throw new ValidationError(ErrorMessages.TRANSACTIONS.MAX_TRANSACTION)
             
             const transactionEntity = toTransactionEntity({ ...data, userCode: user.userCode });
 

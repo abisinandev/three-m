@@ -21,13 +21,14 @@ export const env = {
   REDIS_PORT: Number(process.env.REDIS_PORT) || 6379,
 
   MONGO_URI: requireEnv("MONGO_URI"),
+  DB_NAME: requireEnv("DB_NAME"),
   REDIS_URL: requireEnv("REDIS_URL") || "redis://127.0.0.1:6379",
 
   EMAIL_USER: requireEnv("EMAIL_USER"),
   EMAIL_PASS: requireEnv("EMAIL_PASS"),
 
-  FRONTEND_URL: requireEnv("FRONTEND_URL"),
-  FRONTEND_SUBDOMAIN_URL: requireEnv("FRONTEND_SUBDOMAIN_URL"),
+  FRONTEND_URL_DEV: requireEnv("FRONTEND_URL_DEV"),
+  FRONTEND_URL_PRODUCION: requireEnv("FRONTEND_URL_PRODUCION"),
 
   ACCESS_SECRET: requireEnv("JWT_ACCESS_SECRET"),
   REFRESH_SECRET: requireEnv("JWT_REFRESH_SECRET"),

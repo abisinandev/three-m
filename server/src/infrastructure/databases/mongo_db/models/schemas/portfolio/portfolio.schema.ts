@@ -1,6 +1,7 @@
 import { model, Schema, Document } from "mongoose";
 import { IPortfolio } from "../../interfaces/portfolio/portfolio.schema.interface";
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
+import { PortfolioStatus } from "@domain/entities/portfolio/enum/portfolio-status";
 
 export type PortfolioDocument = Document & IPortfolio;
 
@@ -53,6 +54,12 @@ export const PortfolioSchema = new Schema<PortfolioDocument>(
         takeProfit: {
             type: Number,
             default: null
+        },
+        status: {
+            type: String,
+            enum: Object.values(PortfolioStatus),
+            default: PortfolioStatus.ACTIVE,
+            required: true
         }
     },
     {

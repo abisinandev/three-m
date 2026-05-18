@@ -57,9 +57,6 @@ const TransactionSchema = new Schema<TransactionDocument>(
         },
 
         referenceId: { type: String },
-        profit: { type: Number, default: 0 },
-        quantity: { type: Number, default: 0 },
-        price: { type: Number, default: 0 },
 
         receipt_url: {
             type: String,

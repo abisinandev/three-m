@@ -39,6 +39,7 @@ export class MarketDataService implements IMarketDataService {
     }
 
     public init() {
+        this.websocketClient.connect();
 
         this.websocketClient.onTrade((trade: Trade) => {
             this.candleEngine.processTrade(trade);
@@ -66,11 +67,13 @@ export class MarketDataService implements IMarketDataService {
         const candleEntity = CandleMapper.toEntity(candle);
 
         this.wsGateway.broadcastToSubscribers(candleEntity);
+        this.wsGateway.broadcastPriceUpdate(candle.symbol, candle.close);
     }
 
     public subscribeToSymbol(symbol: string) {
         console.log(`[MarketDataService] Subscribing to ${symbol}`);
         this.pollingService.addSymbol(symbol);
+        this.websocketClient.connect();
         this.websocketClient.subscribe(symbol);
     }
 

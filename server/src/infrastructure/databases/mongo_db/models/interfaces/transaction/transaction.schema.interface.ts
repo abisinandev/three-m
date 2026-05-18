@@ -1,6 +1,6 @@
 import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionTypes } from "@domain/enum/wallet/transaction-types.enum";
- import { Types } from "mongoose";
+import { Types } from "mongoose";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 
 export interface ITransactionSchema {
@@ -11,17 +11,10 @@ export interface ITransactionSchema {
   transactionId: string;
   type: TransactionTypes;
   status: TransactionStatus;
-  // isVerified: boolean;
   fundId?: string | null;
-  // units?: number | null;
-  // txHash: string;
-  // signature: string;
   referenceType: | TransactionReferenceType;
   referenceId: string;
   paymentIntentId: string;
-  profit?: number;
-  quantity?: number;
-  price?: number;
   receipt_url?: string | null;
   createdAt: Date;
   updatedAt: Date;

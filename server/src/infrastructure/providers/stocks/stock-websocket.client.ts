@@ -3,6 +3,7 @@ import { IStockWebsocketProvider } from "@application/interfaces/repositories/st
 import { env } from "@presentation/express/utils/constants/env.constants";
 import { injectable } from "inversify";
 import WebSocket from "ws";
+import { logger } from "../logger/pino.logger";
 
 /**
  * Handles connection to external stock WebSocket API and streams trade data.
@@ -39,18 +40,16 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
         this.ws = new WebSocket(`${env.FINNHUB_WEBSOCKET}${this.apiKey}`);
 
         this.ws.on('open', () => {
-            console.log("✅ Websocket connected");
+            logger.info("Websocket connected");
 
             this.activeSymbols.forEach(symbol => {
                 this.ws?.send(JSON.stringify({ type: "subscribe", symbol }));
-                console.log(`📡 Subscribed to ${symbol}`);
+                logger.info(`Subscribed to ${symbol}`);
             });
         })
 
         this.ws.on("message", (data) => {
             const parsed = JSON.parse(data.toString());
-
-            console.log("Parsed: ", parsed);
 
             if (parsed.type === "trade") {
                 parsed.data.forEach((t: Record<string, unknown>) => {

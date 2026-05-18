@@ -69,6 +69,21 @@ export class WsGateway implements IWsGateway {
                 console.log(`Socket ${socket.id} unsubscribed from ${room}`);
             });
 
+            socket.on("subscribe", (symbol: string) => {
+                if (!symbol) return;
+                const room = `symbol:${symbol}`;
+                socket.join(room);
+                this.marketDataService.subscribeToSymbol(symbol);
+                console.log(`Socket ${socket.id} subscribed to ${room}`);
+            });
+
+            socket.on("unsubscribe", (symbol: string) => {
+                if (!symbol) return;
+                const room = `symbol:${symbol}`;
+                socket.leave(room);
+                console.log(`Socket ${socket.id} unsubscribed from ${room}`);
+            });
+
             socket.on("disconnect", () => {
 
                 this.subscriptions.forEach((clients, room) => {
@@ -112,6 +127,16 @@ export class WsGateway implements IWsGateway {
                 low: candle.low,
                 close: candle.close,
                 volume: candle.volume,
+            });
+        }
+    }
+
+    public broadcastPriceUpdate(symbol: string, price: number) {
+        const room = `symbol:${symbol}`;
+        if (this.io) {
+            this.io.to(room).emit("stock_update", {
+                symbol,
+                price
             });
         }
     }

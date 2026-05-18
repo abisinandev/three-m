@@ -9,11 +9,13 @@ export const PortfolioMapper = {
             assetId: entity.assetId,
             assetType: entity.assetType,
             quantity: entity.quantity,
+            units: entity.units,
             avgPrice: entity.avgPrice,
             investedAmount: entity.investedAmount,
             lockQty: entity.lockQty,
             stopLoss: entity.stopLoss,
             takeProfit: entity.takeProfit,
+            status: entity.status,
             createdAt: entity.createdAt,
             updatedAt: entity.updatedAt,
         };
