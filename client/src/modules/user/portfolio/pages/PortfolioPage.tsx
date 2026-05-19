@@ -164,7 +164,7 @@ const PortfolioDashboard = () => {
                                 isError={isError}
                                 error={_error}
                                 search={search}
-                                onNavigate={(symbol) => navigate({ to: `/user/trading/${symbol}` })}
+                                onNavigate={(symbol) => navigate({ to: `/user/stocks/${symbol}` })}
                             />
                         )}
 

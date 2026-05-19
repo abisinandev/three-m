@@ -27,7 +27,7 @@ export const StockDetailHeader = ({
       <div className="max-w-[1600px] mx-auto px-6 h-14 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link
-            to="/user/trading"
+            to="/user/stocks"
             className="text-[#5a5f6e] hover:text-[#e8eaed] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />

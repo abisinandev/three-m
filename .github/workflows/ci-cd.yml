@@ -98,14 +98,14 @@ jobs:
             cd ~/app
             
             # Load new image
-            docker load < backend-app.tar.gz
+            sudo docker load < backend-app.tar.gz
             
             # Stop and remove old container
-            docker stop backend-api || true
-            docker rm backend-api || true
+            sudo docker stop backend-api || true
+            sudo docker rm backend-api || true
             
             # Run new container
-            docker run -d \
+            sudo docker run -d \
               --name backend-api \
               --restart unless-stopped \
               -p 9000:9000 \
@@ -114,9 +114,9 @@ jobs:
               backend-app:${{ github.sha }}
             
             # Cleanup
-            docker system prune -f
+            sudo docker system prune -f
             rm -f backend-app.tar.gz
             
             # Verify
             sleep 5
-            docker ps | grep backend-api
+            sudo docker ps | grep backend-api

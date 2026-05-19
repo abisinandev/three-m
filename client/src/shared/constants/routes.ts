@@ -23,7 +23,7 @@ export const ROUTES = {
             SUCCESS: "/user/payment-success",
             FAILED: "/user/payment-failed",
         },
-        TRADING: "/user/trading",
+        TRADING: "/user/stocks",
         AI_BOT: "/user/ai-bot",
     },
     AUTH: {

@@ -91,7 +91,7 @@ const StockDashboardPage = () => {
   };
 
   const handleNavigate = (symbol: string) => {
-    navigate({ to: '/user/trading/$symbol', params: (prev: Record<string, string>) => ({ ...prev, symbol }) });
+    navigate({ to: '/user/stocks/$symbol', params: (prev: Record<string, string>) => ({ ...prev, symbol }) });
   };
 
   const filtersRef = useRef(filters);
