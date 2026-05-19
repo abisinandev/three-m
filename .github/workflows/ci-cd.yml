@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   pull_request:
-    branches: ["main"]
+    branches: ["master"]
   push:
-    branches: ["main", "dev"]
+    branches: ["master", "dev"]
 
 jobs:
   # ==================== CI JOBS ====================
@@ -63,7 +63,7 @@ jobs:
   backend-cd:
     name: Backend CD (EC2)
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev') && github.event_name == 'push'
     needs: [backend-ci, frontend-ci]
 
     steps:
