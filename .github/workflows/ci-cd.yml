@@ -101,12 +101,12 @@ jobs:
             sudo docker load < backend-app.tar.gz
             
             # Stop and remove old container
-            sudo docker stop backend-api || true
-            sudo docker rm backend-api || true
+            sudo docker stop three-m-backend || true
+            sudo docker rm three-m-backend || true
             
             # Run new container
             sudo docker run -d \
-              --name backend-api \
+              --name three-m-backend \
               --restart unless-stopped \
               -p 9000:9000 \
               -e NODE_ENV=production \
@@ -119,4 +119,4 @@ jobs:
             
             # Verify
             sleep 5
-            sudo docker ps | grep backend-api
+            sudo docker ps | grep three-m-backend
