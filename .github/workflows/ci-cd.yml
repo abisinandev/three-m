@@ -84,7 +84,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT }}
           source: "server/backend-app.tar.gz"
-          target: "~/app"
+          target: "~/three-m/server"
           strip_components: 1
 
       - name: Deploy on EC2
@@ -95,7 +95,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            cd ~/app
+            cd ~/three-m/server
             
             # Load new image
             sudo docker load < backend-app.tar.gz
