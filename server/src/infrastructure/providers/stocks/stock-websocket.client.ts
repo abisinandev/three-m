@@ -26,6 +26,9 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
     private apiKey: string;
     private subscribers: ((trade: Trade) => void)[] = [];
     private activeSymbols = new Set<string>();
+    private reconnectDelay = 3000;
+    private readonly maxReconnectDelay = 60000;
+    private reconnectTimer: NodeJS.Timeout | null = null;
 
     constructor() {
         this.apiKey = env.FINNHUB_API_KEY_SECRET
@@ -37,10 +40,17 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
             return;
         }
 
+        // Prevent overlapping reconnect attempts
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = null;
+        }
+
         this.ws = new WebSocket(`${env.FINNHUB_WEBSOCKET}${this.apiKey}`);
 
         this.ws.on('open', () => {
-            logger.info("Websocket connected");
+            // logger.info("Websocket connected");
+            this.reconnectDelay = 3000; // Reset backoff delay upon successful handshake
 
             this.activeSymbols.forEach(symbol => {
                 this.ws?.send(JSON.stringify({ type: "subscribe", symbol }));
@@ -66,12 +76,22 @@ export class StockWebSocketClient implements IStockWebsocketProvider {
         })
 
         this.ws.on("close", () => {
-            console.log("⚠️ Websocket disconnected. Reconnecting...");
-            setTimeout(() => this.connect(), 3000);
+            // logger.warn(`⚠️ Websocket disconnected. Reconnecting in ${this.reconnectDelay / 1000}s...`);
+
+            if (this.reconnectTimer) {
+                clearTimeout(this.reconnectTimer);
+            }
+
+            this.reconnectTimer = setTimeout(() => {
+                this.connect();
+            }, this.reconnectDelay);
+
+            // Exponential Backoff
+            this.reconnectDelay = Math.min(this.reconnectDelay * 2, this.maxReconnectDelay);
         })
 
-        this.ws.on("error", (err) => {
-            console.error("❌ WS Error:", err);
+        this.ws.on("error", (_err) => {
+            // logger.error("❌ WS Error: ${_err}");
         });
     }
 

@@ -62,9 +62,9 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                     userId: asset.userId,
                     assetId: asset.assetId,
                     symbol: fund.schemeCode,
-                    name: fund.schemeName || fund.schemeCode,
+                    name: fund.schemeName,
                     schemeCode: fund.schemeCode,
-                    schemeName: fund.schemeName || fund.schemeCode,
+                    schemeName: fund.schemeName,
                     assetType: "MF",
                     quantity: holdingUnits,
                     avgPrice: asset.avgPrice || 0,
@@ -121,6 +121,8 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
         });
 
         const settledResults = await Promise.allSettled(assetProcessingPromises);
+        console.log(userAssets,' 00000000000 ')
+
 
         const allResults = settledResults
             .filter((r): r is PromiseFulfilledResult<PortfolioAssetDTO> =>
@@ -128,6 +130,8 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
             )
             .map((r) => r.value)
             .filter((v): v is PortfolioAssetDTO => v !== null);
+        
+        console.log(allResults,' ---------- ')
 
         const totalCount = allResults.length;
         const startIndex = (Number(page) - 1) * Number(limit);
