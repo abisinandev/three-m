@@ -34,4 +34,19 @@ RegisterRoutes(app);
 //AppError middleware
 app.use(errorMiddleware);
 
+
+app.get("/health", async (_req, res) => {
+    try {
+        res.status(200).json({
+            success: true,
+            uptime: process.uptime(),
+            timestamp: new Date(),
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+        });
+    }
+});
+
 export default app;
