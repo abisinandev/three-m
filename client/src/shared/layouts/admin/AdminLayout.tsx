@@ -183,25 +183,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             >
               <Menu size={20} className="text-neutral-400" />
             </button>
-
-            <div className="relative flex-1 max-w-md">
-              <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none"
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSearch(e);
-                  }
-                }}
-                placeholder="Search..."
-                className="w-full pl-9 pr-3 py-1.5 bg-neutral-800 border border-neutral-700 rounded-md text-[13px] placeholder-neutral-500 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 transition-colors"
-              />
-            </div>
+            
           </div>
 
           <div className="flex items-center gap-2">

@@ -53,7 +53,7 @@ const AdminDashboard = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
                 <RecentTransactions data={data.recentTransactions} formatCurrency={formatCurrency} />
-                <DashboardWidgets />
+                <DashboardWidgets stats={data.stats} recentTransactions={data.recentTransactions} formatCurrency={formatCurrency} />
             </div>
         </div>
     );

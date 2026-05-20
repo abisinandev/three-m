@@ -6,11 +6,27 @@ interface UserGrowthChartProps {
 }
 
 export const UserGrowthChart = ({ data }: UserGrowthChartProps) => {
+    const getGrowthData = () => {
+        if (!data || data.length < 2) return { text: '+0%', isPositive: true };
+        const last = data[data.length - 1].users;
+        const prev = data[data.length - 2].users;
+        if (prev === 0) return { text: last > 0 ? '+100%' : '+0%', isPositive: true };
+        const change = ((last - prev) / prev) * 100;
+        return {
+            text: `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`,
+            isPositive: change >= 0
+        };
+    };
+
+    const growth = getGrowthData();
+
     return (
         <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-md p-4 flex flex-col h-[280px]">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-[11px] font-semibold text-gray-200 uppercase tracking-wider">User & Premium Growth</h3>
-                <span className="text-[10px] text-emerald-500 font-medium bg-emerald-500/10 px-1.5 py-0.5 rounded">+28.4%</span>
+                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${growth.isPositive ? 'text-emerald-500 bg-emerald-500/10' : 'text-red-500 bg-red-500/10'}`}>
+                    {growth.text}
+                </span>
             </div>
             <div className="flex-1 min-h-0">
                 <ResponsiveContainer width="100%" height="100%">

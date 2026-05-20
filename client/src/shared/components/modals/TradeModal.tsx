@@ -47,15 +47,69 @@ const TradeModal: React.FC<TradeModalProps> = ({
   const [limitPrice, setLimitPrice] = useState<string>(currentPrice.toString());
   const [stopLoss, setStopLoss] = useState<string>('');
   const [takeProfit, setTakeProfit] = useState<string>('');
+  const [isSLEnabled, setIsSLEnabled] = useState(false);
+  const [isTPEnabled, setIsTPEnabled] = useState(false);
+
+  const qty = parseFloat(quantity) || 0;
+  const executionPrice = orderType === 'MARKET_ORDER' ? currentPrice : (parseFloat(limitPrice) || currentPrice);
+
+  const getTickSize = (price: number) => {
+    if (price < 10) return 0.05;
+    if (price < 100) return 0.1;
+    if (price < 500) return 0.5;
+    return 1.0;
+  };
+
+  const adjustStopLoss = (direction: 'up' | 'down') => {
+    const currentVal = parseFloat(stopLoss);
+    const tick = getTickSize(executionPrice);
+    if (isNaN(currentVal)) {
+      if (direction === 'down') {
+        setStopLoss((executionPrice - tick).toFixed(2));
+      } else {
+        setStopLoss((executionPrice + tick).toFixed(2));
+      }
+    } else {
+      if (direction === 'down') {
+        setStopLoss(Math.max(0, currentVal - tick).toFixed(2));
+      } else {
+        setStopLoss((currentVal + tick).toFixed(2));
+      }
+    }
+  };
+
+  const adjustTakeProfit = (direction: 'up' | 'down') => {
+    const currentVal = parseFloat(takeProfit);
+    const tick = getTickSize(executionPrice);
+    if (isNaN(currentVal)) {
+      if (direction === 'down') {
+        setTakeProfit((executionPrice - tick).toFixed(2));
+      } else {
+        setTakeProfit((executionPrice + tick).toFixed(2));
+      }
+    } else {
+      if (direction === 'down') {
+        setTakeProfit(Math.max(0, currentVal - tick).toFixed(2));
+      } else {
+        setTakeProfit((currentVal + tick).toFixed(2));
+      }
+    }
+  };
+
+  const isSLInvalid = type === 'buy' && isSLEnabled && stopLoss !== '' && parseFloat(stopLoss) >= executionPrice;
+  const isTPInvalid = type === 'buy' && isTPEnabled && takeProfit !== '' && parseFloat(takeProfit) <= executionPrice;
 
   if (!isOpen) return null;
 
-  const qty = parseFloat(quantity) || 0;
-  const executionPrice = orderType === 'MARKET_ORDER' ? currentPrice : (parseFloat(limitPrice) || 0);
   const total = qty * executionPrice;
   const isInsufficientFunds = type === 'buy' && total > balance;
   const isInsufficientShares = type === 'sell' && availableQuantity !== undefined && qty > availableQuantity;
-  const isValid = qty > 0 && (orderType === 'MARKET_ORDER' || parseFloat(limitPrice) > 0) && !isInsufficientFunds && !isInsufficientShares;
+  const isValid = qty > 0 && 
+    (orderType === 'MARKET_ORDER' || parseFloat(limitPrice) > 0) && 
+    !isInsufficientFunds && 
+    !isInsufficientShares &&
+    !isSLInvalid &&
+    !isTPInvalid;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,8 +122,8 @@ const TradeModal: React.FC<TradeModalProps> = ({
       price: executionPrice,
       total,
       orderType,
-      stopLoss: type === 'buy' && stopLoss ? parseFloat(stopLoss) : undefined,
-      takeProfit: type === 'buy' && takeProfit ? parseFloat(takeProfit) : undefined,
+      stopLoss: type === 'buy' && isSLEnabled && stopLoss ? parseFloat(stopLoss) : undefined,
+      takeProfit: type === 'buy' && isTPEnabled && takeProfit ? parseFloat(takeProfit) : undefined,
     });
   };
 
@@ -184,24 +238,136 @@ const TradeModal: React.FC<TradeModalProps> = ({
                 <label className="block text-[10px] text-[#5a5f6e] font-bold uppercase tracking-wider mb-3">Risk Management</label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[9px] text-[#5a5f6e] font-bold mb-1.5 uppercase">Stop Loss</label>
-                    <input
-                      type="number"
-                      placeholder="SL Price"
-                      value={stopLoss}
-                      onChange={(e) => setStopLoss(e.target.value)}
-                      className="w-full bg-[#111214] border border-[#1e2025] rounded-xl px-3 py-2 text-[11px] text-white focus:outline-none focus:border-red-500/50 placeholder:text-[#333]"
-                    />
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <input
+                        type="checkbox"
+                        id="sl-enable"
+                        checked={isSLEnabled}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setIsSLEnabled(checked);
+                          if (checked) {
+                            const tick = getTickSize(executionPrice);
+                            setStopLoss((executionPrice - tick).toFixed(2));
+                          } else {
+                            setStopLoss('');
+                          }
+                        }}
+                        className="rounded bg-[#111214] border-[#1e2025] text-red-500 focus:ring-0 focus:ring-offset-0 cursor-pointer w-3.5 h-3.5"
+                      />
+                      <label htmlFor="sl-enable" className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-wider cursor-pointer select-none">
+                        Stop Loss
+                      </label>
+                    </div>
+                    <div 
+                      onClick={() => {
+                        if (!isSLEnabled) {
+                          setIsSLEnabled(true);
+                          const tick = getTickSize(executionPrice);
+                          setStopLoss((executionPrice - tick).toFixed(2));
+                        }
+                      }}
+                      className={`flex items-center bg-[#111214] border rounded-xl overflow-hidden transition-all ${!isSLEnabled ? 'opacity-45 cursor-pointer border-[#1e2025]' : isSLInvalid ? 'border-red-500' : 'border-[#1e2025] focus-within:border-red-500/50'}`}
+                    >
+                      <button
+                        type="button"
+                        disabled={!isSLEnabled}
+                        onClick={(e) => { e.stopPropagation(); adjustStopLoss('down'); }}
+                        className="px-3 py-2 text-[#5a5f6e] hover:text-white transition-colors border-r border-[#1e2025] font-black text-sm select-none disabled:pointer-events-none"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        disabled={!isSLEnabled}
+                        placeholder={executionPrice.toFixed(2)}
+                        value={stopLoss}
+                        onChange={(e) => setStopLoss(e.target.value)}
+                        className="w-full bg-transparent px-2 py-2 text-[11px] text-white focus:outline-none placeholder:text-[#333] text-center font-bold disabled:cursor-not-allowed"
+                      />
+                      <button
+                        type="button"
+                        disabled={!isSLEnabled}
+                        onClick={(e) => { e.stopPropagation(); adjustStopLoss('up'); }}
+                        className="px-3 py-2 text-[#5a5f6e] hover:text-white transition-colors border-l border-[#1e2025] font-black text-sm select-none disabled:pointer-events-none"
+                      >
+                        +
+                      </button>
+                    </div>
+                    {isSLEnabled && isSLInvalid && (
+                      <p className="text-[8px] text-red-500 mt-1 font-medium text-center">Must be &lt; {executionPrice.toFixed(2)}</p>
+                    )}
+                    {isSLEnabled && stopLoss && (
+                      <p className="text-[8px] text-[#5a5f6e] mt-1 text-center font-semibold">
+                        Est. Value: ₹{((qty > 0 ? qty : 1) * (parseFloat(stopLoss) || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-[9px] text-[#5a5f6e] font-bold mb-1.5 uppercase">Take Profit</label>
-                    <input
-                      type="number"
-                      placeholder="TP Price"
-                      value={takeProfit}
-                      onChange={(e) => setTakeProfit(e.target.value)}
-                      className="w-full bg-[#111214] border border-[#1e2025] rounded-xl px-3 py-2 text-[11px] text-white focus:outline-none focus:border-green-500/50 placeholder:text-[#333]"
-                    />
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <input
+                        type="checkbox"
+                        id="tp-enable"
+                        checked={isTPEnabled}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setIsTPEnabled(checked);
+                          if (checked) {
+                            const tick = getTickSize(executionPrice);
+                            setTakeProfit((executionPrice + tick).toFixed(2));
+                          } else {
+                            setTakeProfit('');
+                          }
+                        }}
+                        className="rounded bg-[#111214] border-[#1e2025] text-green-500 focus:ring-0 focus:ring-offset-0 cursor-pointer w-3.5 h-3.5"
+                      />
+                      <label htmlFor="tp-enable" className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-wider cursor-pointer select-none">
+                        Take Profit
+                      </label>
+                    </div>
+                    <div 
+                      onClick={() => {
+                        if (!isTPEnabled) {
+                          setIsTPEnabled(true);
+                          const tick = getTickSize(executionPrice);
+                          setTakeProfit((executionPrice + tick).toFixed(2));
+                        }
+                      }}
+                      className={`flex items-center bg-[#111214] border rounded-xl overflow-hidden transition-all ${!isTPEnabled ? 'opacity-45 cursor-pointer border-[#1e2025]' : isTPInvalid ? 'border-red-500' : 'border-[#1e2025] focus-within:border-green-500/50'}`}
+                    >
+                      <button
+                        type="button"
+                        disabled={!isTPEnabled}
+                        onClick={(e) => { e.stopPropagation(); adjustTakeProfit('down'); }}
+                        className="px-3 py-2 text-[#5a5f6e] hover:text-white transition-colors border-r border-[#1e2025] font-black text-sm select-none disabled:pointer-events-none"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        disabled={!isTPEnabled}
+                        placeholder={executionPrice.toFixed(2)}
+                        value={takeProfit}
+                        onChange={(e) => setTakeProfit(e.target.value)}
+                        className="w-full bg-transparent px-2 py-2 text-[11px] text-white focus:outline-none placeholder:text-[#333] text-center font-bold disabled:cursor-not-allowed"
+                      />
+                      <button
+                        type="button"
+                        disabled={!isTPEnabled}
+                        onClick={(e) => { e.stopPropagation(); adjustTakeProfit('up'); }}
+                        className="px-3 py-2 text-[#5a5f6e] hover:text-white transition-colors border-l border-[#1e2025] font-black text-sm select-none disabled:pointer-events-none"
+                      >
+                        +
+                      </button>
+                    </div>
+                    {isTPEnabled && isTPInvalid && (
+                      <p className="text-[8px] text-red-500 mt-1 font-medium text-center">Must be &gt; {executionPrice.toFixed(2)}</p>
+                    )}
+                    {isTPEnabled && takeProfit && (
+                      <p className="text-[8px] text-[#5a5f6e] mt-1 text-center font-semibold">
+                        Est. Value: ₹{((qty > 0 ? qty : 1) * (parseFloat(takeProfit) || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
