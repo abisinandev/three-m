@@ -27,8 +27,6 @@ export interface InvestmentResponseDTO {
     redeemedAt?: Date;
     profit: number;
     xirr?: number;
-    stopLoss?: number | null;
-    takeProfit?: number | null;
     createdAt: Date;
     updatedAt?: Date;
 }

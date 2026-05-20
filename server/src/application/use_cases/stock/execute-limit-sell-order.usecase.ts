@@ -114,7 +114,7 @@ export class ExecuteLimitSellOrderUseCase implements IExecuteLimitSellOrderUseCa
             });
             await this._tradeRepository.create(trade, session);
 
-            await this._portfolioService.decreaseOrDeletePortfolio(
+            await this._portfolioService.reduceOrUpdatePortfolio(
                 order.userId,
                 stock.id as string,
                 execution.filledQty,

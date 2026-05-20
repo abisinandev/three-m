@@ -14,10 +14,8 @@ export class PortfolioEntity {
     private _avgPrice: number;
     private _investedAmount: number;
 
-    private _lockQty: number; 
+    private _lockQty: number;
 
-    private _stopLoss?: number | null;
-    private _takeProfit?: number | null;
     private _status: PortfolioStatus;
 
     private readonly _createdAt: Date;
@@ -33,8 +31,6 @@ export class PortfolioEntity {
         avgPrice: number;
         investedAmount: number;
         lockQty?: number;
-        stopLoss?: number | null;
-        takeProfit?: number | null;
         status?: PortfolioStatus;
         createdAt?: Date;
         updatedAt?: Date;
@@ -52,8 +48,6 @@ export class PortfolioEntity {
 
         this._lockQty = props.lockQty ?? 0;
 
-        this._stopLoss = props.stopLoss ?? null;
-        this._takeProfit = props.takeProfit ?? null;
         this._status = props.status ?? PortfolioStatus.ACTIVE;
 
         this._createdAt = props.createdAt ?? new Date();
@@ -68,8 +62,6 @@ export class PortfolioEntity {
         units?: number;
         avgPrice: number;
         investedAmount: number;
-        stopLoss?: number | null;
-        takeProfit?: number | null;
         status?: PortfolioStatus;
     }): PortfolioEntity {
         return new PortfolioEntity({
@@ -80,8 +72,6 @@ export class PortfolioEntity {
             units: data.units,
             avgPrice: data.avgPrice,
             investedAmount: data.investedAmount,
-            stopLoss: data.stopLoss ?? null,
-            takeProfit: data.takeProfit ?? null,
             lockQty: 0,
             status: data.status ?? PortfolioStatus.ACTIVE
         });
@@ -97,8 +87,6 @@ export class PortfolioEntity {
         avgPrice: number;
         investedAmount: number;
         lockQty: number;
-        stopLoss?: number | null;
-        takeProfit?: number | null;
         status: PortfolioStatus;
         createdAt: Date;
         updatedAt?: Date;
@@ -113,8 +101,6 @@ export class PortfolioEntity {
             avgPrice: data.avgPrice,
             investedAmount: data.investedAmount,
             lockQty: data.lockQty,
-            stopLoss: data.stopLoss ?? null,
-            takeProfit: data.takeProfit ?? null,
             status: data.status,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
@@ -153,13 +139,7 @@ export class PortfolioEntity {
         return this._lockQty;
     }
 
-    get stopLoss(): number | null | undefined {
-        return this._stopLoss;
-    }
 
-    get takeProfit(): number | null | undefined {
-        return this._takeProfit;
-    }
 
     get status(): PortfolioStatus {
         return this._status;
@@ -200,14 +180,14 @@ export class PortfolioEntity {
         this._quantity = quantity;
         this._avgPrice = avgPrice;
         this._investedAmount = investedAmount;
-        
+
         if (this._assetType === AssetType.MUTUAL_FUND) {
             this._units = quantity;
         }
 
         if (quantity > 0) {
             this._status = PortfolioStatus.ACTIVE;
-        } else if (quantity === 0) {
+        } else if (quantity <= 0) {
             this._status = PortfolioStatus.CLOSED;
         }
 
@@ -224,11 +204,7 @@ export class PortfolioEntity {
         this._updatedAt = new Date();
     }
 
-    updateRiskLevels(sl?: number | null, tp?: number | null) {
-        if (sl !== undefined) this._stopLoss = sl;
-        if (tp !== undefined) this._takeProfit = tp;
-        this._updatedAt = new Date();
-    }
+
 
     closePortfolio() {
         this._status = PortfolioStatus.CLOSED;
@@ -236,8 +212,6 @@ export class PortfolioEntity {
         this._units = 0;
         this._investedAmount = 0;
         this._lockQty = 0;
-        this._stopLoss = null;
-        this._takeProfit = null;
         this._updatedAt = new Date();
     }
 
@@ -245,15 +219,13 @@ export class PortfolioEntity {
         return {
             id: this._id,
             userId: this._userId,
-            assetId: this._assetId,  
-            assetType: this._assetType, 
+            assetId: this._assetId,
+            assetType: this._assetType,
             quantity: this._quantity,
             units: this._units,
             avgPrice: this._avgPrice,
             investedAmount: this._investedAmount,
             lockQty: this._lockQty,
-            stopLoss: this._stopLoss,
-            takeProfit: this._takeProfit,
             status: this._status,
             createdAt: this._createdAt,
             updatedAt: this._updatedAt,

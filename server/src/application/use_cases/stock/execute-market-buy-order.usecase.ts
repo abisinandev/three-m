@@ -104,8 +104,7 @@ export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCa
                 AssetType.STOCK,
                 execution.filledQty,
                 execution.avgPrice,
-                session,
-                { stopLoss: order.stopLoss, takeProfit: order.takeProfit }
+                session
             );
 
             await this._transactionService.markSuccess(newTransaction, session);

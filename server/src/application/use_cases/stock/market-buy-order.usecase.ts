@@ -61,7 +61,6 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
                 session
             );
 
-
             const marketOrder = OrderEntity.create({
                 userId,
                 symbol: order.symbol,
@@ -90,4 +89,3 @@ export class MarketBuyOrderUseCase implements IMarketBuyOrderUseCase {
         }
     }
 }
-  

@@ -13,8 +13,6 @@ export const PortfolioMapper = {
             avgPrice: entity.avgPrice,
             investedAmount: entity.investedAmount,
             lockQty: entity.lockQty,
-            stopLoss: entity.stopLoss,
-            takeProfit: entity.takeProfit,
             status: entity.status,
             createdAt: entity.createdAt,
             updatedAt: entity.updatedAt,

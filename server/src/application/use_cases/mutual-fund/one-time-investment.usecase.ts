@@ -29,7 +29,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
 
         const session = await mongoose.startSession();
 
-        try {
+        try { 
             await session.withTransaction(async () => {
                 const { user, wallet, fund } = await this._validationService.validateInvestment(
                     userId,
@@ -55,7 +55,6 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
                     paymentMethod,
                 });
                 await this._investmentRepository.createInvestment(investment, session);
-
 
                 await this._transactionService.markSuccess(newTransaction, session);
             });

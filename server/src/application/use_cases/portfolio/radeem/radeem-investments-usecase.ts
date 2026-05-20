@@ -31,7 +31,6 @@ export class RadeemInvestmentUseCase implements IRadeemInvestmentUseCase {
 
             //roi calculation
             const roi = (profit / fundGroup.totalInvestment) * 100;
-            console.log('roi:', roi);
 
             data.push({
                 mfId: fund.id as string,

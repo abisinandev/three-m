@@ -47,14 +47,6 @@ export const PortfolioSchema = new Schema<PortfolioDocument>(
             required: true,
             default: 0
         },
-        stopLoss: {
-            type: Number,
-            default: null
-        },
-        takeProfit: {
-            type: Number,
-            default: null
-        },
         status: {
             type: String,
             enum: Object.values(PortfolioStatus),

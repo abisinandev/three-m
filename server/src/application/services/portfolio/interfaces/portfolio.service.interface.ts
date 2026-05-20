@@ -8,11 +8,10 @@ export interface IPortfolioService {
         assetType: AssetType,
         amount: number,
         price: number,
-        session: ClientSession,
-        riskLevels?: { stopLoss?: number | null, takeProfit?: number | null }
+        session: ClientSession
     ): Promise<void>;
 
-    decreaseOrDeletePortfolio(
+    reduceOrUpdatePortfolio(
         userId: string,
         assetId: string,
         quantity: number,

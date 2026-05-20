@@ -27,6 +27,22 @@ export class SipInstallmentRepository extends BaseRepository<SipInstallmentEntit
     }
 
 
+    async updateInstallment(id: string, units: number, nav: number, session?: ClientSession): Promise<void> {
+        await this.model.findByIdAndUpdate(
+            id,
+            {
+                $set:
+                {
+                    units, nav
+                },
+            },
+            {
+                session,
+                new: true//return update new doc
+            }
+        )
+    }
+
 
     async markFailed(installmentId: string, reason: string): Promise<void> {
         await this.model.findByIdAndUpdate(
@@ -97,11 +113,7 @@ export class SipInstallmentRepository extends BaseRepository<SipInstallmentEntit
         return docs.map(doc => this.mapper.toDomain(doc));
     }
 
-    async findInstallmentsBySip(
-        userId: string,
-        sipId: string
-    ): Promise<SipInstallmentEntity[] | null> {
-
+    async findInstallmentsBySip(userId: string, sipId: string): Promise<SipInstallmentEntity[] | null> {
 
         const userObjectId = new Types.ObjectId(userId);
         const sipObjectId = new Types.ObjectId(sipId);

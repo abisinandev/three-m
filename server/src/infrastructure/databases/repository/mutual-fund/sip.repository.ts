@@ -22,7 +22,6 @@ export class SipRepository extends BaseRepository<SipEntity, SipDocument> implem
         return this.mapper.toDomain(doc[0]);
     }
 
-
     async fetchAllSips(options: QueryOptions): Promise<SipEntity[]> {
         const {
             page = 1,
@@ -73,7 +72,48 @@ export class SipRepository extends BaseRepository<SipEntity, SipDocument> implem
         }
     }
 
-    async findSipsByUser(options: QueryOptions, _userId: string): Promise<SipEntity[] | null> {
+    async findSipsByUser(options: QueryOptions, userId: string): Promise<SipEntity[] | null> {
+        const {
+            page = 1,
+            limit = 10,
+            search = "",
+            searchField = ["schemeCode"],
+            sortBy = "createdAt",
+            sortOrder = "desc",
+            filter = {},
+        } = options;
+
+
+        const skip = (page - 1) * limit;
+
+        type SipFilter = Record<string, unknown> & {
+            $or?: Array<Record<string, unknown>>;
+        };
+
+        const finalFilter: SipFilter = { ...filter, userId };
+
+        if (search.trim()) {
+            const searchRegex = { $regex: search.trim(), $options: "i" };
+            finalFilter.$or = searchField.map((field: string) => ({
+                [field]: searchRegex,
+            }));
+        }
+
+        const sort: Record<string, 1 | -1> = {
+            [sortBy]: sortOrder === "asc" ? 1 : -1,
+        };
+
+        const docs = await this.model
+            .find(finalFilter)
+            .sort(sort)
+            .skip(skip)
+            .limit(limit)
+            .exec();
+
+        return Promise.all(docs.map((doc) => this.mapper.toDomain(doc)));
+    }
+
+    async findAllSips(options: QueryOptions): Promise<SipEntity[] | null> {
         const {
             page = 1,
             limit = 10,

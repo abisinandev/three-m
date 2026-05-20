@@ -30,12 +30,12 @@ export class WalletRepository extends BaseRepository<WalletEntity, WalletDocumen
     };
 
     async credit(userId: string, amount: number, session: ClientSession): Promise<void> {
-        const res = await this.model.findOneAndUpdate(
+        await this.model.findOneAndUpdate(
             { userId },
             { $inc: { balance: amount } },
             { session }
         );
-        console.log(res,'000000')
+
     }
 
     async findByUserId(userId: string, session?: ClientSession): Promise<WalletEntity | null> {

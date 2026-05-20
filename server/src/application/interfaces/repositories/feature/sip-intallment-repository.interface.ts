@@ -5,6 +5,7 @@ import { ClientSession, QueryOptions } from "mongoose";
 export interface ISipInstallmentRepository extends IBaseRepository<SipInstallmentEntity> {
     findActiveDueSips(): Promise<SipInstallmentEntity[] | null>;
     markFailed(installmentId: string, reason: string): Promise<void>;
+    updateInstallment(id: string, units: number, nav: number, session?: ClientSession): Promise<void>;
     markSuccess(installmentId: string, investmentId: string): Promise<void>;
     findInstallmentsByUser(userId: string, options?: QueryOptions): Promise<SipInstallmentEntity[] | null>;
     countInstallments(userId: string, options?: QueryOptions): Promise<number>;

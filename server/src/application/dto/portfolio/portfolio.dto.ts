@@ -11,8 +11,6 @@ export interface PortfolioDTO {
     avgPrice: number;
     investedAmount: number;
     lockQty: number;
-    stopLoss?: number | null;
-    takeProfit?: number | null;
     status?: PortfolioStatus;
     createdAt?: Date;
     updatedAt?: Date;

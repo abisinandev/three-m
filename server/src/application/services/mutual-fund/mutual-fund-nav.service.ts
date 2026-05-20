@@ -27,6 +27,7 @@ export class MutualFundNavService implements IMutualFundNavService {
                     navDate: new Date()
                 };
             }
+            
             const persistentNav = await this._navRepository.getLatestNav(schemeCode);
             if (persistentNav) {
                 const nav = Number(persistentNav.nav);

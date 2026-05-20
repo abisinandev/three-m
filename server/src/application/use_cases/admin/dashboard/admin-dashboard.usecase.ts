@@ -12,6 +12,8 @@ import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
+import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
+import { ISubscriptionRepository } from "@application/interfaces/repositories/subscriptions/subscriptions-repository.interface";
 import { IAdminDashboardUseCase } from "./admin-dashboard-usecase.interface";
 
 @injectable()
@@ -25,6 +27,7 @@ export class AdminDashboardUseCase implements IAdminDashboardUseCase {
         @inject(SIP_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
         @inject(PORTFOLIO_TYPES.PortfolioRepository) private readonly _portfolioRepository: IPortfolioRepository,
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
+        @inject(SUBSCRIPTION_TYPES.SubscriptionRepository) private readonly _subscriptionRepository: ISubscriptionRepository,
     ) { }
 
     async execute(): Promise<AdminDashboardDTO> {
@@ -48,7 +51,7 @@ export class AdminDashboardUseCase implements IAdminDashboardUseCase {
             this._investmentRepository.calculateTotalAUM(),
             this._portfolioRepository.calculateTotalStockAUM(),
             this._tradeRepository.calculateTotalAlgoAUM(),
-            this._transactionRepository.getTotalMRR(),
+            this._subscriptionRepository.getTotalMRR(),
             this._sipRepository.getTotalActiveSipsCount(),
             this._userRepository.getUserRegistrationGrowthByMonth(6), // Last 6 months
             this._transactionRepository.getWeeklyCashFlow(),
@@ -70,9 +73,19 @@ export class AdminDashboardUseCase implements IAdminDashboardUseCase {
 
         const totalAum = mfAum + stockAum + algoAum;
 
+        // Dynamic user names lookup for recent transactions
+        const userIds = Array.from(new Set(recentTransactionsData.map(tx => tx.userId)));
+        const users = await Promise.all(userIds.map(id => this._userRepository.findById(id)));
+        const userMap = new Map<string, string>();
+        for (const user of users) {
+            if (user && user.id && user.fullName) {
+                userMap.set(user.id, user.fullName);
+            }
+        }
+
         const recentTransactions = recentTransactionsData.map(tx => ({
             id: tx.transactionId,
-            user: "User", 
+            user: userMap.get(tx.userId) || "Unknown User",
             amount: tx.amount,
             type: tx.type,
             status: tx.status,

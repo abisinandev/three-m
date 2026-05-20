@@ -216,9 +216,7 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
                     newTotalInvested
                 );
 
-                if (order.stopLoss || order.takeProfit) {
-                    portfolio.updateRiskLevels(order.stopLoss, order.takeProfit);
-                }
+
 
                 await this._portfolioRepository.update(
                     portfolio.id as string,
@@ -235,9 +233,7 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
                     investedAmount: execution.totalValue,
                 });
 
-                if (order.stopLoss || order.takeProfit) {
-                    portfolio.updateRiskLevels(order.stopLoss, order.takeProfit);
-                }
+
 
                 await this._portfolioRepository.create(portfolio, session);
             }

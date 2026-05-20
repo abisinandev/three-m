@@ -111,8 +111,7 @@ export class ExecuteLimitBuyOrderUseCase implements IExecuteLimitBuyOrderUseCase
                 AssetType.STOCK,
                 execution.totalValue,
                 execution.avgPrice,
-                session,
-                { stopLoss: order.stopLoss, takeProfit: order.takeProfit }
+                session
             );
 
             await this._transactionService.markSuccess(newTransaction, session);

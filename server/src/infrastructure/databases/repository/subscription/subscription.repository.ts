@@ -171,6 +171,30 @@ export class SubscriptionRepository extends
         return this.mapper.toDomain(doc);
     }
 
-
-    
+    async getTotalMRR(): Promise<number> {
+        const result = await this.model.aggregate([
+            {
+                $match: {
+                    status: SubscriptionStatus.ACTIVE,
+                    endDate: { $gt: new Date() }
+                }
+            },
+            {
+                $lookup: {
+                    from: "plans",
+                    localField: "planCode",
+                    foreignField: "code",
+                    as: "planData"
+                }
+            },
+            { $unwind: "$planData" },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: "$planData.price" }
+                }
+            }
+        ]);
+        return result.length > 0 ? result[0].total : 0;
+    }
 }

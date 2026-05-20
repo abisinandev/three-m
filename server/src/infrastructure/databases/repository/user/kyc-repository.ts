@@ -55,6 +55,6 @@ export class KycRepository extends BaseRepository<KycEntity, KycDocument> implem
   }
 
   async getPendingKycCount(): Promise<number> {
-    return this.model.countDocuments({ status: "PENDING" });
+    return this.model.countDocuments({ status: "pending" });
   }
 }

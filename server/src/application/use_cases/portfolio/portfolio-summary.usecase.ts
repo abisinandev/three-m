@@ -97,7 +97,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
                     priceMap.set(asset.assetId, latestNav);
                 }
             }
-        }));
+        })); 
 
         for (const asset of portfolioAssets) {
             totalInvestment += asset.investedAmount;

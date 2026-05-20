@@ -155,9 +155,7 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
                     quantity: 0,
                     units: 0,
                     investedAmount: 0,
-                    lockQty: 0,
-                    stopLoss: null,
-                    takeProfit: null
+                    lockQty: 0
                 }
             },
             { session }

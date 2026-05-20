@@ -1,11 +1,10 @@
 import { inject, injectable } from "inversify";
 import { INavAllocateUseCase } from "./interfaces/nav-allocate-usecase.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
-import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 import { getNavDate, isSameDate } from "@shared/utils/mutual-fund/nav-allocation-utils";
 import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
-import { InvestmentStatus, InvestmentType } from "@domain/enum/funds/investment.enums";
+import { InvestmentType } from "@domain/enum/funds/investment.enums";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
 import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
@@ -14,6 +13,8 @@ import { IMutualFundRepository } from "@application/interfaces/repositories/feat
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import mongoose from "mongoose";
+import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
+import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 
 @injectable()
 export class NavAllocateUseCase implements INavAllocateUseCase {
@@ -35,14 +36,9 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
                 await session.withTransaction(async () => {
                     const navDate = getNavDate(investment.createdAt);
 
-                    const navHistories = await this._navProvider.fetchNavHistories(
-                        investment.schemeCode
-                    );
+                    const latestNav = await this._navProvider.fetchNavHistories(investment.schemeCode);
 
-                    const navForDate = navHistories.find(nav =>
-                        isSameDate(new Date(nav.navDate), navDate)//check today NAV value is available
-                    );
-
+                    const navForDate = isSameDate(new Date(latestNav[0].navDate), navDate)//check today NAV value is available
                     if (!navForDate) {
                         logger.info(`No NAV found for date ${navDate}`);
                         return;
@@ -51,8 +47,8 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
                     const updatedInvestment = InvestmentEntity.allotNav(
                         investment,
                         {
-                            nav: Number(navForDate.nav),
-                            navDate: new Date(navForDate.navDate),
+                            nav: Number(latestNav[0].nav),
+                            navDate: new Date(latestNav[0].navDate),
                         }
                     );
 
@@ -62,21 +58,20 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
                     }
 
                     if (investment.investmentType === InvestmentType.SIP) {
-                        await this._sipInstallmentRepository.update(
+                        await this._sipInstallmentRepository.updateInstallment(
                             investment.sipInstallmentId as string,
-                            {
-                                units: updatedInvestment.units,
-                                nav: updatedInvestment.nav,
-                            },
+                            Number(updatedInvestment.units),
+                            Number(updatedInvestment.nav),
                             session
                         );
                     }
 
-                    await this._investmentRepository.update(
-                        investment.id as string,
-                        { ...updatedInvestment, status: InvestmentStatus.ALLOTTED },
-                        session
-                    );
+                    await this._investmentRepository.allotNav({
+                        investmentId: investment.id as string,
+                        nav: latestNav[0].nav,
+                        navDate: new Date(latestNav[0].navDate),
+                        units: Number(updatedInvestment.units),
+                    });
 
                     await this._portfolioService.updateOrCreatePortfolio(
                         investment.userId,

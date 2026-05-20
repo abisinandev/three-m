@@ -32,6 +32,7 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
             this._portfolioRepository.getUserAssets(userId),
             this._investmentRepository.findGroupedInvestmentsByUser(userId)
         ]);
+        console.log('groupd: ', groupedInvestments);
 
         const assetProcessingPromises = userAssets.map(async (asset): Promise<PortfolioAssetDTO | null> => {
 
@@ -48,8 +49,9 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
                 const { nav: currentNav, navDate } = await this._navService.getLatestNav(fund.schemeCode);
 
                 const fundGroup = groupedInvestments?.find(g => g.schemeCode === fund.schemeCode);
+                console.log(fundGroup, 'fundGroup');
                 const investmentList = fundGroup?.investments;
-
+                console.log(investmentList, 'investmentList');
                 if (!investmentList || investmentList.length === 0) return null;
 
                 const holdingUnits = asset.units ?? 0;
@@ -121,8 +123,6 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
         });
 
         const settledResults = await Promise.allSettled(assetProcessingPromises);
-        console.log(userAssets,' 00000000000 ')
-
 
         const allResults = settledResults
             .filter((r): r is PromiseFulfilledResult<PortfolioAssetDTO> =>
@@ -130,8 +130,6 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
             )
             .map((r) => r.value)
             .filter((v): v is PortfolioAssetDTO => v !== null);
-        
-        console.log(allResults,' ---------- ')
 
         const totalCount = allResults.length;
         const startIndex = (Number(page) - 1) * Number(limit);
