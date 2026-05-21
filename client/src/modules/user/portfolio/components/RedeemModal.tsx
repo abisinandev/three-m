@@ -57,7 +57,7 @@ export const RedeemModal = ({
                         </p>
                         <button
                             onClick={onClose}
-                            className="w-full mt-8 py-3.5 bg-[#00C853] hover:bg-[#00E676] text-black text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/10"
+                            className="w-full mt-8 py-3.5 bg-[#00C853] hover:bg-[#00E676] text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/10"
                         >
                             Back to Portfolio
                         </button>

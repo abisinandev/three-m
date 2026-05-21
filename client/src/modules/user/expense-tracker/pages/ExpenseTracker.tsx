@@ -98,7 +98,7 @@ const ExpenseTracker = () => {
         <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] pb-12 font-sans">
             <div className="max-w-[1400px] mx-auto px-6 py-5 flex flex-col gap-4">
 
-                <header className="flex items-center justify-between">
+                <header className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div>
                         <h1 className="text-base font-semibold text-[#e8eaed] m-0">Expense Tracker</h1>
                         <p className="text-[11px] text-[#5a5f6e] mt-0.5 m-0">Manage your 50-30-20 budget rules</p>
@@ -155,7 +155,7 @@ const ExpenseTracker = () => {
                             filteredSavings={filteredSavings}
                         />
 
-                        <div className="grid grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
+                        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
                             <div className="flex flex-col gap-4">
                                 <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-4">
                                     <div className="flex justify-between items-center mb-4">

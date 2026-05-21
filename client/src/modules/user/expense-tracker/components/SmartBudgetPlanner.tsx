@@ -188,7 +188,7 @@ export const SmartBudgetPlanner = ({ dashboardData, budgetPlanMutation, month }:
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-3 mb-5">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
                                     <div className="bg-[#0b0c0e] border border-[#1e2025] rounded p-3 text-center">
                                         <p className="text-[10px] text-[#5a5f6e] uppercase mb-1">Income</p>
                                         <p className="text-[14px] font-bold text-[#3B82F6] tabular-nums">₹{Number(income).toLocaleString()}</p>

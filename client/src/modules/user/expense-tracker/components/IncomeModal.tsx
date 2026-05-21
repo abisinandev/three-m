@@ -78,7 +78,7 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
                         <button
                             onClick={handleAddIncomeSource}
                             disabled={isAddingIncome}
-                            className="w-full py-3.5 bg-[#00C853] hover:bg-[#00E676] text-black text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/10 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="w-full py-3.5 bg-[#00C853] hover:bg-[#00E676] text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/10 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                             {isAddingIncome ? <Loader2 size={14} className="animate-spin" /> : 'Confirm Income'}
                         </button>

@@ -30,7 +30,7 @@ export function VerificationAlertCard() {
             <div className="mt-4 flex flex-wrap items-center gap-4">
               <Link
                 to={ROUTES.USER.PROFILE}
-                className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-sans text-black transition-all hover:bg-amber-400 hover:shadow-amber-400/20 active:scale-98 transition-all"
+                className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-sans text-white transition-all hover:bg-amber-400 hover:shadow-amber-400/20 active:scale-98 transition-all"
               >
                 Verify Now
               </Link>
@@ -59,7 +59,7 @@ export function PremiumUpgradeCard({ onUpgrade }: { onUpgrade?: () => void }) {
       </div>
       <button
         onClick={onUpgrade}
-        className="shrink-0 px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 active:scale-95 transition-all text-black text-[11px] font-bold rounded whitespace-nowrap tracking-wide"
+        className="shrink-0 px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 active:scale-95 transition-all text-white text-[11px] font-bold rounded whitespace-nowrap tracking-wide"
       >
         Go Premium
       </button>

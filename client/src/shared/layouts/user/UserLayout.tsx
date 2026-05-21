@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import api from '@/lib/axios-user';
 import { useUserStore } from '@stores/user/UserStore';
-import { Wallet, ChevronDown, LogOut, User, Menu, Bell } from 'lucide-react';
+import { Wallet, ChevronDown, LogOut, User, Menu, Bell, X } from 'lucide-react';
 import { Footer } from '@shared/components/LandingPage/Footer';
 import { LOGOUT } from '@shared/constants/userContants';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
@@ -15,8 +15,19 @@ import PremiumPaymentModal from '@shared/components/modals/premium-payment/Premi
 import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 import type { UserType } from '@/shared/types/user/UserType';
 
+const NAV_ITEMS = [
+    { to: ROUTES.USER.HOME, label: 'Dashboard' },
+    { to: ROUTES.USER.EXPENSE_TRACKER, label: 'Expense tracker' },
+    { to: ROUTES.USER.WALLET.ROOT, label: 'Wallet' },
+    { to: ROUTES.USER.MUTUAL_FUNDS.ROOT, label: 'Mutual Funds' },
+    { to: ROUTES.USER.TRADING, label: 'Stocks' },
+    { to: ROUTES.USER.PORTFOLIO.ROOT, label: 'Portfolio' },
+    { to: ROUTES.USER.MARKET_NEWS, label: "News" },
+];
+
 const UserLayout = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -73,16 +84,7 @@ const UserLayout = () => {
                     </Link>
 
                     <nav className="hidden lg:flex items-center gap-8 font-medium text-gray-400">
-                        {([
-                            { to: ROUTES.USER.HOME, label: 'Dashboard' },
-                            { to: ROUTES.USER.EXPENSE_TRACKER, label: 'Expense tracker' },
-                            { to: ROUTES.USER.WALLET.ROOT, label: 'Wallet' },
-                            { to: ROUTES.USER.MUTUAL_FUNDS.ROOT, label: 'Mutual Funds' },
-                            { to: ROUTES.USER.TRADING, label: 'Stocks' },
-                            { to: ROUTES.USER.PORTFOLIO.ROOT, label: 'Portfolio' },
-                            { to: ROUTES.USER.MARKET_NEWS, label: "News" },
-                            // { to: ROUTES.USER.AI_BOT, label: "AI bot" }
-                        ] as { to: string; label: string }[]).map((item) => (
+                        {NAV_ITEMS.map((item) => (
                             <Link
                                 key={item.to}
                                 to={item.to}
@@ -110,7 +112,7 @@ const UserLayout = () => {
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg hover:bg-[#1a1a1a] transition text-xs font-medium tracking-wide border border-transparent hover:border-[#333]"
                             >
-                                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#22C55E] to-[#16a34a] flex items-center justify-center text-xs font-bold text-black">
+                                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#22C55E] to-[#16a34a] flex items-center justify-center text-xs font-bold text-white">
                                     {user?.fullName ? user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
                                 </div>
                                 <span className="text-gray-300 hidden sm:block">
@@ -154,11 +156,32 @@ const UserLayout = () => {
                             )}
                         </div>
 
-                        <button className="lg:hidden">
-                            <Menu size={20} className="text-gray-400" />
+                        <button 
+                            className="lg:hidden p-1"
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        >
+                            {isMobileMenuOpen ? <X size={20} className="text-gray-400" /> : <Menu size={20} className="text-gray-400" />}
                         </button>
                     </div>
                 </div>
+
+                {/* Mobile Navigation Menu */}
+                {isMobileMenuOpen && (
+                    <div className="lg:hidden border-t border-[#1f1f1f] bg-[#0f0f0f] animate-slide-down">
+                        <nav className="flex flex-col px-4 py-2">
+                            {NAV_ITEMS.map((item) => (
+                                <Link
+                                    key={item.to}
+                                    to={item.to}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="py-3 border-b border-[#1f1f1f]/50 last:border-0 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[status=active]:text-[#22C55E]"
+                                >
+                                    {item.label}
+                                </Link>
+                            ))}
+                        </nav>
+                    </div>
+                )}
             </header>
 
             <main className="max-w-7xl mx-auto px-4 py-6">

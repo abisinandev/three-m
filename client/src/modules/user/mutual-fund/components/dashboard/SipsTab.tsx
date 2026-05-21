@@ -147,7 +147,7 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                                 {sip.status === 'ACTIVE' ? (
                                                     <button
                                                         onClick={() => openConfirmModal('pause', sip.id, sip.schemeName || sip.schemeCode)}
-                                                        className={`w-9 h-9 flex items-center justify-center bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-xl hover:bg-amber-500 hover:text-black transition-all duration-300 ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
+                                                        className={`w-9 h-9 flex items-center justify-center bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-xl hover:bg-amber-500 hover:text-white transition-all duration-300 ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
                                                         title="Pause SIP"
                                                     >
                                                         <Pause size={16} strokeWidth={2.5} />
@@ -161,7 +161,7 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                                             }
                                                             handleResume(sip.id);
                                                         }}
-                                                        className={`w-9 h-9 flex items-center justify-center bg-green-500/10 text-green-500 border border-green-500/20 rounded-xl hover:bg-green-500 hover:text-black transition-all duration-300 ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
+                                                        className={`w-9 h-9 flex items-center justify-center bg-green-500/10 text-green-500 border border-green-500/20 rounded-xl hover:bg-green-500 hover:text-white transition-all duration-300 ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
                                                         title="Resume SIP"
                                                     >
                                                         <Play size={16} strokeWidth={2.5} />

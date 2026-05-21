@@ -326,7 +326,7 @@ const KYCVerificationPage = () => {
                                         onClick={currentStep === steps.length - 1 ? handleSubmit : goNext}
                                         disabled={!isStepComplete() || isSubmitting}
                                         className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[12px] font-bold tracking-tight transition-all shadow-lg ${isStepComplete() && !isSubmitting
-                                            ? 'bg-[#00C853] hover:bg-[#00E676] text-black shadow-green-500/10'
+                                            ? 'bg-[#00C853] hover:bg-[#00E676] text-white shadow-green-500/10'
                                             : 'bg-[#111214] text-[#5a5f6e] cursor-not-allowed border border-[#1e2025]'
                                             }`}
                                     >

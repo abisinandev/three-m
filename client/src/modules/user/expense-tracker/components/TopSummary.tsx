@@ -32,7 +32,10 @@ const StatCol = ({
     const subColorClass = positive === undefined ? 'text-[#5a5f6e]' : textColorClass;
 
     return (
-        <div className={`${plain ? 'pl-0 border-none' : 'pl-4 border-l border-[#1e2025]'}`}>
+        <div className={plain
+            ? 'pl-0 border-none'
+            : 'pl-0 sm:pl-4 pt-4 sm:pt-0 border-t border-l-0 sm:border-t-0 sm:border-l border-[#1e2025]'
+        }>
             <p className="text-[10px] text-[#5a5f6e] tracking-[0.06em] uppercase flex items-center gap-1.5 m-0 mb-1">
                 {icon} {label}
             </p>
@@ -77,8 +80,8 @@ export const TopSummary = ({
     const netSavings = filteredSavings + Math.max(0, currentBalance);
 
     return (
-        <div className="bg-[#111214] border border-[#1e2025] rounded-lg py-5 px-6 grid grid-cols-[300px_1fr] gap-6 items-center">
-            <div className="border-r border-[#1e2025] pr-6">
+        <div className="bg-[#111214] border border-[#1e2025] rounded-lg py-5 px-6 grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6 items-center">
+            <div className="border-b border-[#1e2025] md:border-b-0 md:border-r md:pr-6 pb-4 md:pb-0 mb-0">
                 <p className="text-[10px] text-[#5a5f6e] tracking-[0.08em] uppercase m-0 mb-1">
                     Available Balance
                 </p>
@@ -93,7 +96,7 @@ export const TopSummary = ({
                 </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-0">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-0">
 
                 <StatCol
                     label="Total Income"

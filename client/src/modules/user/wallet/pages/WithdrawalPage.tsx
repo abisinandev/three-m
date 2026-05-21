@@ -33,14 +33,14 @@ const WithdrawPage = () => {
               Amount to withdraw
             </label>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="number"
                 placeholder="0.00"
                 className="flex-1 bg-[#111] border border-[#333] rounded-xl px-4 py-3 text-xl font-semibold focus:outline-none focus:border-green-500 transition"
               />
 
-              <button className="px-6 py-3 bg-gradient-to-r from-[#22C55E] to-[#16a34a] rounded-xl font-medium text-sm hover:from-[#1fa856] hover:to-[#15803d] transition">
+              <button className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-[#22C55E] to-[#16a34a] rounded-xl font-medium text-sm hover:from-[#1fa856] hover:to-[#15803d] transition">
                 Withdraw
               </button>
             </div>
@@ -53,7 +53,7 @@ const WithdrawPage = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 pt-4 border-t border-[#1f1f1f]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 pt-4 border-t border-[#1f1f1f]">
             <div>
               <div className="text-xs text-gray-400">Closing balance</div>
               <div className="text-lg font-medium mt-1">₹0.00</div>

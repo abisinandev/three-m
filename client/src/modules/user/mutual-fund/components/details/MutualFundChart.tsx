@@ -42,7 +42,7 @@ const MutualFundChart: React.FC<MutualFundChartProps> = ({
                             toolbar: { show: false },
                             zoom: { enabled: false },
                             animations: { enabled: false },
-                            fontFamily: 'Inter, system-ui, sans-serif',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                         },
                         colors: ['#2962ff'],
                         stroke: { curve: 'straight', width: 1.5 },

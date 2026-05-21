@@ -16,7 +16,7 @@ const CHART_OPTIONS: DeepPartial<ChartOptions> = {
     layout: {
         background: { color: 'transparent' },
         textColor: '#D9D9D9',
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     },
     grid: {
         vertLines: { color: 'rgba(255, 255, 255, 0.05)' },

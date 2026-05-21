@@ -199,7 +199,7 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
                                         type="button"
                                         onClick={() => verifyOtpMutation.mutate()}
                                         disabled={verifyOtpMutation.isPending || otp.length !== 6}
-                                        className="px-4 py-2 bg-[#00C853] hover:bg-[#00E676] disabled:opacity-30 text-black text-[10px] font-black rounded-xl transition uppercase tracking-widest"
+                                        className="px-4 py-2 bg-[#00C853] hover:bg-[#00E676] disabled:opacity-30 text-white text-[10px] font-black rounded-xl transition uppercase tracking-widest"
                                     >
                                         {verifyOtpMutation.isPending ? '...' : 'Verify'}
                                     </button>
@@ -249,7 +249,7 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
                         <button
                             type="submit"
                             disabled={updateProfileMutation.isPending || (isEmailChanged && !isEmailVerified)}
-                            className="flex-1 px-4 py-3 bg-[#00C853] hover:bg-[#00E676] disabled:opacity-30 text-black text-[12px] font-bold tracking-tight rounded-xl transition-all shadow-lg shadow-green-500/10 flex items-center justify-center gap-2"
+                            className="flex-1 px-4 py-3 bg-[#00C853] hover:bg-[#00E676] disabled:opacity-30 text-white text-[12px] font-bold tracking-tight rounded-xl transition-all shadow-lg shadow-green-500/10 flex items-center justify-center gap-2"
                         >
                             {updateProfileMutation.isPending ? (
                                 <Loader2 size={14} className="animate-spin" />

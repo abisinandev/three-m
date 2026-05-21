@@ -20,9 +20,9 @@ export const SuccessModal = ({ data, investment, successData, onClose }: Success
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-4 bg-[#00C853]">
                     <div className="flex items-center gap-3">
-                        <span className="text-[12px] font-black text-black uppercase tracking-widest">Investment Success</span>
+                        <span className="text-[12px] font-black text-white uppercase tracking-widest">Investment Success</span>
                     </div>
-                    <button onClick={onClose} className="text-black/60 hover:text-black transition-colors">
+                    <button onClick={onClose} className="text-white/60 hover:text-white transition-colors">
                         <X size={16} />
                     </button>
                 </div>
@@ -59,7 +59,7 @@ export const SuccessModal = ({ data, investment, successData, onClose }: Success
 
                     <button
                         onClick={onClose}
-                        className="w-full py-3.5 bg-[#00C853] hover:bg-[#00E676] text-black text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/10"
+                        className="w-full py-3.5 bg-[#00C853] hover:bg-[#00E676] text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/10"
                     >
                         Back to Portfolio
                     </button>

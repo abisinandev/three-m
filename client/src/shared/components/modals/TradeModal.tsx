@@ -143,13 +143,13 @@ const TradeModal: React.FC<TradeModalProps> = ({
 
         <div className={`px-5 py-4 flex items-center justify-between ${themeBg}`}>
           <div className="flex items-center gap-3">
-            <span className="text-[12px] font-black text-black uppercase tracking-widest">
+            <span className="text-[12px] font-black text-white uppercase tracking-widest">
               {type} {symbol}
             </span>
           </div>
           <button
             onClick={onClose}
-            className="text-black/60 hover:text-black transition-colors"
+            className="text-white/60 hover:text-white transition-colors"
           >
             <X size={16} />
           </button>
@@ -387,7 +387,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
             <button
               type="submit"
               disabled={!isValid || isLoading}
-              className={`px-8 py-3 rounded-xl text-[11px] font-black text-black uppercase tracking-widest shadow-lg transition-all flex items-center justify-center gap-2 ${themeBg} hover:scale-[1.02] active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed`}
+              className={`px-8 py-3 rounded-xl text-[11px] font-black text-white uppercase tracking-widest shadow-lg transition-all flex items-center justify-center gap-2 ${themeBg} hover:scale-[1.02] active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed`}
             >
               {isLoading ? <Loader2 size={14} className="animate-spin" /> : type}
             </button>

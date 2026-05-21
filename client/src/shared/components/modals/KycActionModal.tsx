@@ -122,7 +122,7 @@ export default function KycActionModal({
                         onClick={activeTab === "approve" ? onApprove : handleReject}
                         disabled={isLoading || (activeTab === "reject" && reason.trim().length < 10)}
                         className={`flex-1 py-3.5 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${activeTab === "approve"
-                            ? "bg-[#00C853] hover:bg-[#00E676] text-black shadow-lg shadow-green-500/10"
+                            ? "bg-[#00C853] hover:bg-[#00E676] text-white shadow-lg shadow-green-500/10"
                             : "bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-500/10"
                             } disabled:opacity-30`}
                     >

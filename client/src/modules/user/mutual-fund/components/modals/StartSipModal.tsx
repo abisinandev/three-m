@@ -86,7 +86,7 @@ export const StartSipModal = ({
 
                 <div className="px-5 py-4 flex items-center justify-between bg-[#2962ff]">
                     <div className="flex items-center gap-3">
-                        <span className="text-[12px] font-black text-black uppercase tracking-widest">
+                        <span className="text-[12px] font-black text-white uppercase tracking-widest">
                             Start SIP
                         </span>
                     </div>

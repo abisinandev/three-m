@@ -27,7 +27,7 @@ const ConfirmModal = ({
 
   const variantStyles = {
     destructive: "bg-red-600 hover:bg-red-500 shadow-lg shadow-red-500/10 text-white",
-    success: "bg-[#00C853] hover:bg-[#00E676] shadow-lg shadow-green-500/10 text-black",
+    success: "bg-[#00C853] hover:bg-[#00E676] shadow-lg shadow-green-500/10 text-white",
     warning: "bg-amber-600 hover:bg-amber-500 shadow-lg shadow-amber-500/10 text-white",
     default: "bg-[#2962ff] hover:bg-[#3d72ff] shadow-lg shadow-blue-500/10 text-white",
   };

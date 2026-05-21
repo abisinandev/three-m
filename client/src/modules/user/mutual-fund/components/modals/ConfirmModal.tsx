@@ -28,7 +28,7 @@ export const ConfirmModal = ({
                     <div className="flex items-center gap-3">
                         <span className="text-[12px] font-black text-white uppercase tracking-widest">Confirm Order</span>
                     </div>
-                    <button onClick={onClose} disabled={isSubmitting} className="text-black/60 hover:text-black transition-colors">
+                    <button onClick={onClose} disabled={isSubmitting} className="text-white/60 hover:text-white transition-colors">
                         <X size={16} />
                     </button>
                 </div>
@@ -67,7 +67,7 @@ export const ConfirmModal = ({
                     <button
                         onClick={onConfirm}
                         disabled={isSubmitting}
-                        className="w-full py-3.5 bg-[#00C853] hover:bg-[#00E676] disabled:opacity-30 text-black text-[11px] font-black uppercase tracking-[0.15em] rounded-xl shadow-lg shadow-green-500/10 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                        className="w-full py-3.5 bg-[#00C853] hover:bg-[#00E676] disabled:opacity-30 text-white text-[11px] font-black uppercase tracking-[0.15em] rounded-xl shadow-lg shadow-green-500/10 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                     >
                         {isSubmitting ? (
                             <>

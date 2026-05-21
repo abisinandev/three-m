@@ -32,7 +32,7 @@ export const PlanCard = ({
             : 'bg-[#111214] border-[#1e2025]'
     }`}>
         {best && (
-            <div className="absolute -top-px right-3 px-2 py-0.5 bg-amber-500 rounded-b text-[8px] font-black uppercase tracking-widest text-black">
+            <div className="absolute -top-px right-3 px-2 py-0.5 bg-amber-500 rounded-b text-[8px] font-black uppercase tracking-widest text-white">
                 Best
             </div>
         )}

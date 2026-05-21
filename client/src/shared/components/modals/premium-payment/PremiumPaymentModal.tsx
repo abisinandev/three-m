@@ -123,7 +123,7 @@ const PremiumPaymentModal = ({ isOpen, onClose }: PremiumPaymentModalProps) => {
                                 <button
                                     onClick={handleUpgrade}
                                     disabled={loading || !plan?.price}
-                                    className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 active:scale-[0.99] transition-all text-black text-xs font-black uppercase tracking-widest rounded-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 active:scale-[0.99] transition-all text-white text-xs font-black uppercase tracking-widest rounded-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                                     {loading ? "Processing..." : "Upgrade to Premium"}

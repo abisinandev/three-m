@@ -24,7 +24,7 @@ const CHART_OPTIONS: DeepPartial<ChartOptions> = {
   layout: {
     background: { color: '#000000' },
     textColor: '#D9D9D9',
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   },
   grid: {
     vertLines: { color: '#1F1F1F' },
@@ -345,7 +345,7 @@ export const useRealtimeChart = (
       toolTip.style.pointerEvents = 'none';
       toolTip.style.border = '1px solid #2a2a2a';
       toolTip.style.borderRadius = '8px';
-      toolTip.style.fontFamily = "'Inter', sans-serif";
+      toolTip.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       toolTip.style.background = '#0a0a0a';
       toolTip.style.color = '#fff';
       toolTip.style.boxShadow = '0 6px 16px rgba(0,0,0,0.6)';

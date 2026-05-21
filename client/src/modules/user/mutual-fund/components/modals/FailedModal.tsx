@@ -16,9 +16,9 @@ export const FailedModal = ({ data, onClose, error }: FailedModalProps) => {
             <div className="relative w-full max-w-[340px] bg-[#0b0c0e] border border-[#1e2025] rounded-2xl overflow-hidden shadow-2xl">
                 <div className="flex items-center justify-between px-5 py-4 bg-[#FF1744]">
                     <div className="flex items-center gap-3">
-                        <span className="text-[12px] font-black text-black uppercase tracking-widest">Investment Failed</span>
+                        <span className="text-[12px] font-black text-white uppercase tracking-widest">Investment Failed</span>
                     </div>
-                    <button onClick={onClose} className="text-black/60 hover:text-black transition-colors">
+                    <button onClick={onClose} className="text-white/60 hover:text-white transition-colors">
                         <X size={16} />
                     </button>
                 </div>

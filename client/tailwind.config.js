@@ -10,8 +10,8 @@ export default {
     extend: {
       // === FONT FAMILY - ZERODHA EXACT ===
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'], // Zerodha uses Inter
-        inter: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+        inter: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
       },
 
       // === COLORS - Keep yours + Add Zerodha precision ===
