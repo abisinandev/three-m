@@ -41,12 +41,12 @@ const WalletPage = () => {
 
     return (
         <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] font-sans selection:bg-[#00C853]/20 pb-12">
-            <div className="max-w-[900px] mx-auto px-6 py-8 space-y-5">
+            <div className="max-w-[900px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5">
 
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-[16px] font-semibold text-[#e8eaed] tracking-tight m-0 uppercase">Account Funds</h1>
-                        <p className="text-[11px] text-[#5a5f6e] mt-0.5 m-0 uppercase tracking-wider">Wallet & Transaction Audit</p>
+                        <h1 className="text-sm sm:text-[16px] font-semibold text-[#e8eaed] tracking-tight m-0 uppercase">Account Funds</h1>
+                        <p className="text-[10px] sm:text-[11px] text-[#5a5f6e] mt-0.5 m-0 uppercase tracking-wider">Wallet & Transaction Audit</p>
                     </div>
                     <button
                         onClick={() => refetch()}
