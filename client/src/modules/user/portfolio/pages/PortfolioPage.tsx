@@ -31,49 +31,25 @@ const PortfolioDashboard = () => {
     const xirrValue = summaryData?.xirr ? Number(summaryData.xirr).toFixed(2) : '0.00';
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            background: '#0b0c0e',
-            color: '#e8eaed',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            paddingBottom: 48,
-        }}>
-            <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] font-sans pb-12">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-5 flex flex-col gap-4">
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
-                        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                        <h1 className="text-base font-semibold text-[#e8eaed] tracking-tight m-0">
                             Portfolio
                         </h1>
-                        <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+                        <p className="text-[11px] text-[#5a5f6e] mt-0.5 m-0">
                             Holdings & performance
                         </p>
                     </div>
 
-                    <div style={{
-                        display: 'flex',
-                        background: '#111214',
-                        border: '1px solid #1e2025',
-                        borderRadius: 6,
-                        padding: 2,
-                        gap: 2,
-                    }}>
+                    <div className="flex bg-[#111214] border border-[#1e2025] rounded-md p-0.5 gap-0.5">
                         {(['Absolute', 'XIRR'] as const).map(t => (
                             <button
                                 key={t}
                                 onClick={() => setReturnType(t)}
-                                style={{
-                                    padding: '4px 10px',
-                                    fontSize: 10,
-                                    fontWeight: 700,
-                                    letterSpacing: '0.05em',
-                                    borderRadius: 4,
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.15s',
-                                    background: returnType === t ? '#1e2025' : 'transparent',
-                                    color: returnType === t ? '#e8eaed' : '#5a5f6e',
-                                }}
+                                className={`px-3 py-1.5 text-[10px] font-bold tracking-wider rounded border-none cursor-pointer transition-all duration-150 ${returnType === t ? 'bg-[#1e2025] text-[#e8eaed]' : 'bg-transparent text-[#5a5f6e]'}`}
                             >
                                 {t.toUpperCase()}
                             </button>
@@ -82,36 +58,19 @@ const PortfolioDashboard = () => {
                 </div>
 
                 {!user?.isSubscribed && (
-                    <div style={{
-                        background: 'rgba(245, 158, 11, 0.05)',
-                        border: '1px solid rgba(245, 158, 11, 0.2)',
-                        borderRadius: 8,
-                        padding: '12px 16px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: 16
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <div style={{ 
-                                width: 28, height: 28, borderRadius: 6, 
-                                background: 'rgba(245, 158, 11, 0.1)', 
-                                display: 'flex', alignItems: 'center', justifyContent: 'center' 
-                            }}>
-                                <span style={{ color: '#f59e0b', fontSize: 10, fontWeight: 900, fontStyle: 'italic' }}>P</span>
+                    <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-amber-500/10 flex items-center justify-center">
+                                <span className="text-amber-500 text-[10px] font-black italic">P</span>
                             </div>
                             <div>
-                                <p style={{ fontSize: 12, fontWeight: 700, color: '#e8eaed', padding: 0, margin: 0 }}>Unlock Enhanced Intelligence</p>
-                                <p style={{ fontSize: 10, color: '#5a5f6e', padding: 0, margin: 0 }}>Upgrade to Premium for advanced portfolio analytics, AI projections, and more.</p>
+                                <p className="text-xs font-bold text-[#e8eaed] m-0">Unlock Enhanced Intelligence</p>
+                                <p className="text-[10px] text-[#5a5f6e] m-0">Upgrade to Premium for advanced portfolio analytics, AI projections, and more.</p>
                             </div>
                         </div>
                         <button 
                             onClick={openPremiumModal}
-                            style={{
-                                padding: '6px 14px', borderRadius: 6,
-                                background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.2)',
-                                color: '#f59e0b', fontSize: 10, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap'
-                            }}
+                            className="w-full sm:w-auto px-4 py-1.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-bold cursor-pointer whitespace-nowrap hover:bg-amber-500/20 transition-colors"
                         >
                             LEARN MORE
                         </button>
@@ -127,9 +86,9 @@ const PortfolioDashboard = () => {
                     isLoading={isSummaryLoading}
                 />
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, alignItems: 'start' }}>
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4 items-start">
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div className="flex flex-col gap-3 order-2 lg:order-1">
                         <HoldingsFilters 
                             activeTab={activeTab}
                             setActiveTab={setActiveTab}
@@ -140,37 +99,38 @@ const PortfolioDashboard = () => {
                             setPage={setPage}
                         />
 
-                        {activeTab === 'history' ? (
-                            <TradeHistoryTable 
-                                data={(historyData?.data as unknown as React.ComponentProps<typeof TradeHistoryTable>['data']) || []}
-                                total={historyData?.total || 0}
-                                page={page}
-                                limit={limit}
-                                onPageChange={handlePageChange}
-                                isLoading={isHistoryLoading}
-                            />
-                        ) : activeTab === 'pending' ? (
-                            <PendingOrdersTable />
-                        ) : (
-                            <HoldingsTable 
-                                items={investments}
-                                total={totalCount}
-                                page={page}
-                                limit={limit}
-                                onPageChange={handlePageChange}
-                                activeTab={activeTab}
-                                returnType={returnType}
-                                isLoading={isAssetsLoading}
-                                isError={isError}
-                                error={_error}
-                                search={search}
-                                onNavigate={(symbol) => navigate({ to: `/user/stocks/${symbol}` })}
-                            />
-                        )}
-
+                        <div className="overflow-x-auto">
+                            {activeTab === 'history' ? (
+                                <TradeHistoryTable
+                                    data={(historyData?.data as unknown as React.ComponentProps<typeof TradeHistoryTable>['data']) || []}
+                                    total={historyData?.total || 0}
+                                    page={page}
+                                    limit={limit}
+                                    onPageChange={handlePageChange}
+                                    isLoading={isHistoryLoading}
+                                />
+                            ) : activeTab === 'pending' ? (
+                                <PendingOrdersTable />
+                            ) : (
+                                <HoldingsTable
+                                    items={investments}
+                                    total={totalCount}
+                                    page={page}
+                                    limit={limit}
+                                    onPageChange={handlePageChange}
+                                    activeTab={activeTab}
+                                    returnType={returnType}
+                                    isLoading={isAssetsLoading}
+                                    isError={isError}
+                                    error={_error}
+                                    search={search}
+                                    onNavigate={(symbol) => navigate({ to: `/user/stocks/${symbol}` })}
+                                />
+                            )}
+                        </div>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div className="flex flex-col gap-3 order-1 lg:order-2">
                         <PortfolioXirrCard xirrValue={xirrValue} />
                         
                         <AssetAllocationDonut allocations={summaryData?.allocations} />
@@ -186,19 +146,7 @@ const PortfolioDashboard = () => {
                                 }
                                 navigate({ to: ROUTES.USER.PORTFOLIO.REDEEM_PROFIT });
                             }}
-                            style={{
-                                width: '100%', padding: '10px 0',
-                                background: !user?.isVerified ? 'rgba(50,50,50,0.1)' : 'rgba(0,200,83,0.1)',
-                                border: !user?.isVerified ? '1px solid rgba(50,50,50,0.25)' : '1px solid rgba(0,200,83,0.25)',
-                                borderRadius: 6,
-                                color: !user?.isVerified ? '#5a5f6e' : '#00C853',
-                                fontSize: 12, fontWeight: 700,
-                                cursor: !user?.isVerified ? 'not-allowed' : 'pointer',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                gap: 6, transition: 'all 0.15s', letterSpacing: '0.03em',
-                                filter: !user?.isVerified ? 'grayscale(1)' : 'none',
-                                opacity: !user?.isVerified ? 0.6 : 1
-                            }}
+                            className={`w-full py-2.5 rounded-md flex items-center justify-center gap-2 text-xs font-bold transition-all duration-150 tracking-wide ${!user?.isVerified ? 'bg-gray-500/5 border border-gray-500/20 text-gray-500 cursor-not-allowed opacity-60 grayscale' : 'bg-emerald-500/5 border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10 cursor-pointer'}`}
                         >
                             <TrendingUp size={14} />
                             Redeem Profit

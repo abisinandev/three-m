@@ -77,8 +77,8 @@ export const TopSummary = ({
     const netSavings = filteredSavings + Math.max(0, currentBalance);
 
     return (
-        <div className="bg-[#111214] border border-[#1e2025] rounded-lg py-5 px-6 grid grid-cols-[300px_1fr] gap-6 items-center">
-            <div className="border-r border-[#1e2025] pr-6">
+        <div className="bg-[#111214] border border-[#1e2025] rounded-lg py-5 px-6 flex flex-col lg:flex-row gap-6 items-start lg:items-center">
+            <div className="w-full lg:w-[300px] lg:border-r border-[#1e2025] lg:pr-6 pb-4 lg:pb-0 border-b lg:border-b-0">
                 <p className="text-[10px] text-[#5a5f6e] tracking-[0.08em] uppercase m-0 mb-1">
                     Available Balance
                 </p>
@@ -93,7 +93,7 @@ export const TopSummary = ({
                 </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-0">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-0 flex-1 w-full">
 
                 <StatCol
                     label="Total Income"

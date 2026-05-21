@@ -10,6 +10,7 @@ export const useAddIncomeMutation = () => {
         mutationFn: (data: AddIncomeRequest) => addIncomeApi(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["expense-details"] });
+            queryClient.invalidateQueries({ queryKey: ["expense-analytics"] });
         },
         onError: (error: { response?: { data?: { message?: string } } }) => {
             console.error("Failed to add income:", error);
@@ -25,6 +26,7 @@ export const useAddExpenseMutation = () => {
         mutationFn: (data: AddExpenseRequest) => addExpenseApi(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["expense-details"] });
+            queryClient.invalidateQueries({ queryKey: ["expense-analytics"] });
         },
         onError: (error: { response?: { data?: { message?: string } } }) => {
             console.error("Failed to add expense:", error);
@@ -40,6 +42,7 @@ export const useDeleteExpenseMutation = () => {
         mutationFn: (index: number) => deleteExpenseApi(index),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["expense-details"] });
+            queryClient.invalidateQueries({ queryKey: ["expense-analytics"] });
         },
         onError: (error: { response?: { data?: { message?: string } } }) => {
             console.error("Failed to delete expense:", error);
