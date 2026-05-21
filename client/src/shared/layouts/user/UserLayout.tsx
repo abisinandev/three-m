@@ -184,6 +184,55 @@ const UserLayout = () => {
                 )}
             </header>
 
+            {/* Mobile Navigation */}
+            {isMobileMenuOpen && (
+                <div className="fixed inset-0 z-[100] lg:hidden">
+                    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+                    <div className="fixed inset-y-0 left-0 w-3/4 max-w-sm bg-[#0f0f0f] border-r border-[#1f1f1f] p-6 shadow-2xl flex flex-col">
+                        <div className="flex items-center justify-between mb-8">
+                            <h1 className="text-xl font-bold tracking-tighter">
+                                <span className="text-white">three</span>
+                                <span className="text-[#22C55E]">M</span>
+                            </h1>
+                            <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-400">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <nav className="flex flex-col gap-4">
+                            {([
+                                { to: ROUTES.USER.HOME, label: 'Dashboard' },
+                                { to: ROUTES.USER.EXPENSE_TRACKER, label: 'Expense tracker' },
+                                { to: ROUTES.USER.WALLET.ROOT, label: 'Wallet' },
+                                { to: ROUTES.USER.MUTUAL_FUNDS.ROOT, label: 'Mutual Funds' },
+                                { to: ROUTES.USER.TRADING, label: 'Stocks' },
+                                { to: ROUTES.USER.PORTFOLIO.ROOT, label: 'Portfolio' },
+                                { to: ROUTES.USER.MARKET_NEWS, label: "News" },
+                            ] as { to: string; label: string }[]).map((item) => (
+                                <Link
+                                    key={item.to}
+                                    to={item.to}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="text-lg font-medium text-gray-400 hover:text-white transition-colors py-2 border-b border-[#1f1f1f]"
+                                >
+                                    {item.label}
+                                </Link>
+                            ))}
+                        </nav>
+
+                        <div className="mt-auto pt-6">
+                            <div className="flex items-center gap-3 bg-[#171717] px-4 py-3 rounded-xl border border-[#2a2a2a] mb-4">
+                                <Wallet className="w-5 h-5 text-[#22C55E]" />
+                                <div>
+                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Balance</p>
+                                    <p className="text-sm font-bold">₹{user?.wallet?.balance?.toLocaleString() || '0'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <main className="max-w-7xl mx-auto px-4 py-6">
                 <Outlet />
             </main>

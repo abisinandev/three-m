@@ -91,12 +91,20 @@ const ExpenseTracker = () => {
             description: exp.description || exp.category || 'No description',
             amount: exp.amount || 0,
             type: 'expense' as TransactionType
+        })),
+        ...incomeSources.map((inc: { source: string; amount: number; date?: string }, idx: number) => ({
+            id: `inc-${idx}`,
+            date: inc.date ? new Date(inc.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A',
+            category: 'INCOME' as Category,
+            description: inc.source || 'Income',
+            amount: inc.amount || 0,
+            type: 'income' as TransactionType
         }))
     ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return (
         <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] pb-12 font-sans">
-            <div className="max-w-[1400px] mx-auto px-6 py-5 flex flex-col gap-4">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-5 flex flex-col gap-4">
 
                 <header className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div>
@@ -104,7 +112,7 @@ const ExpenseTracker = () => {
                         <p className="text-[11px] text-[#5a5f6e] mt-0.5 m-0">Manage your 50-30-20 budget rules</p>
                     </div>
 
-                    <div className="flex gap-3 items-center">
+                    <div className="flex flex-wrap gap-3 items-center w-full sm:w-auto">
                         <MonthPicker
                             selectedMonth={selectedMonth}
                             setSelectedMonth={setSelectedMonth}
@@ -158,15 +166,15 @@ const ExpenseTracker = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
                             <div className="flex flex-col gap-4">
                                 <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-4">
-                                    <div className="flex justify-between items-center mb-4">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
                                         <h3 className="text-xs font-bold m-0 text-[#e8eaed]">TRANSACTIONS</h3>
-                                        <div className="flex gap-2">
-                                            <div className="relative">
+                                        <div className="flex gap-2 w-full sm:w-auto">
+                                            <div className="relative flex-1 sm:flex-initial">
                                                 <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#5a5f6e]" />
                                                 <input
                                                     type="text"
                                                     placeholder="Search..."
-                                                    className="bg-[#0b0c0e] border border-[#1e2025] rounded-md text-[10px] text-white py-1.5 pr-3 pl-[30px] outline-none w-[200px]"
+                                                    className="bg-[#0b0c0e] border border-[#1e2025] rounded-md text-[10px] text-white py-1.5 pr-3 pl-[30px] outline-none w-full sm:w-[200px]"
                                                     value={searchQuery}
                                                     onChange={(e) => setSearchQuery(e.target.value)}
                                                 />
@@ -191,7 +199,7 @@ const ExpenseTracker = () => {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-4 order-1 lg:order-2">
                                 <BudgetPattern
                                     finalChartData={finalChartData}
                                     activeChartData={activeChartData}

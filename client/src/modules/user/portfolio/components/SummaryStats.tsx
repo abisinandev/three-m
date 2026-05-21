@@ -18,29 +18,29 @@ const StatCol = ({
     plain,
     showArrow,
 }: StatColProps) => {
-    const color = plain
-        ? '#e8eaed'
+    const colorClass = plain
+        ? 'text-[#e8eaed]'
         : positive === undefined
-            ? '#5a5f6e'
+            ? 'text-[#5a5f6e]'
             : positive
-                ? '#00C853'
-                : '#FF1744';
+                ? 'text-[#00C853]'
+                : 'text-[#FF1744]';
 
     return (
-        <div style={{ paddingLeft: plain ? 0 : 16, borderLeft: plain ? 'none' : '1px solid #1e2025' }}>
-            <p style={{ fontSize: 10, color: '#5a5f6e', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4, margin: '0 0 4px' }}>
+        <div className={`flex flex-col ${plain ? 'pl-0 border-none' : 'pl-4 sm:pl-6 border-l border-[#1e2025]'}`}>
+            <p className="text-[10px] text-[#5a5f6e] tracking-wider uppercase mb-1 m-0">
                 {label}
             </p>
-            <p style={{ fontSize: 14, fontWeight: 700, color, display: 'flex', alignItems: 'center', gap: 4, margin: 0 }}>
+            <p className={`text-sm font-bold flex items-center gap-1 m-0 ${colorClass}`}>
                 {showArrow && positive !== undefined && (
                     positive
-                        ? <ArrowUpRight size={13} color="#00C853" />
-                        : <ArrowDownRight size={13} color="#FF1744" />
+                        ? <ArrowUpRight size={13} className="text-[#00C853]" />
+                        : <ArrowDownRight size={13} className="text-[#FF1744]" />
                 )}
                 {value}
             </p>
             {sub && (
-                <p style={{ fontSize: 10, color: positive === undefined ? '#5a5f6e' : color, marginTop: 2, margin: '2px 0 0' }}>
+                <p className={`text-[10px] mt-0.5 m-0 ${positive === undefined ? 'text-[#5a5f6e]' : colorClass}`}>
                     {sub}
                 </p>
             )}
@@ -68,26 +68,21 @@ export const SummaryStats = ({
     const positive = totalReturns >= 0;
 
     return (
-        <div style={{
-            background: '#111214',
-            border: '1px solid #1e2025',
-            borderRadius: 8,
-            padding: '20px 24px',
-        }}>
-            <div style={{ marginBottom: 16 }}>
-                <p style={{ fontSize: 11, color: '#5a5f6e', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4, margin: '0 0 4px' }}>
+        <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 sm:p-6 shadow-sm">
+            <div className="mb-6">
+                <p className="text-[11px] text-[#5a5f6e] tracking-wider uppercase mb-1 m-0">
                     Portfolio Value
                 </p>
                 {isLoading ? (
-                    <div style={{ height: 36, width: 200, background: '#1e2025', borderRadius: 4, animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div className="h-9 w-48 bg-[#1e2025] rounded animate-pulse" />
                 ) : (
-                    <p style={{ fontSize: 30, fontWeight: 700, color: '#e8eaed', letterSpacing: '-0.5px', lineHeight: 1, margin: 0 }}>
+                    <p className="text-[28px] sm:text-[32px] font-bold text-[#e8eaed] tracking-tight leading-none m-0">
                         ₹{formatCurrency(currentValue, 2)}
                     </p>
                 )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 0 }}>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0">
                 <StatCol
                     label="Invested"
                     value={`₹${formatCurrency(totalInvestment, 2)}`}
