@@ -15,7 +15,7 @@ export class InvestmentEntity {
 
     private _remainingUnits?: number;
     private _redeemedUnits?: number;
-    private _redemeedAmount?: number;
+    private _redeemedAmount?: number;
     private _redeemedAt?: Date;
 
     private _status: InvestmentStatus;
@@ -61,7 +61,7 @@ export class InvestmentEntity {
         this._remainingUnits = props.remainingUnits;
         this._redeemedUnits = props.redeemedUnits;
         this._redeemedAt = props.redeemedAt;
-        this._redemeedAmount = props.redeemedAmount;
+        this._redeemedAmount = props.redeemedAmount;
         this._status = props.status;
         this._paymentMethod = props.paymentMethod;
         this._investmentType = props.investmentType;
@@ -123,12 +123,12 @@ export class InvestmentEntity {
         });
     }
 
-    static redeemUnits(
+    redeemUnits(
         remainingUnits: number,
         redeemedUnits: number | undefined,
         unitsToRedeem: number,
         redeemedAmount: number,
-    ): InvestmentRedeemResult {
+    ): InvestmentEntity {
 
         if (unitsToRedeem <= 0 || unitsToRedeem > remainingUnits) {
             throw new ValidationError("Invalid redeem units");
@@ -142,21 +142,20 @@ export class InvestmentEntity {
             ((redeemedUnits ?? 0) + unitsToRedeem).toFixed(4)
         );
 
-        const result: InvestmentRedeemResult = {
-            remainingUnits: newRemaining <= 0 ? 0 : newRemaining,
-            redeemedUnits: newRedeemed,
-            updatedAt: new Date(),
-            redeemedAmount,
-        };
+        this._remainingUnits = newRemaining <= 0 ? 0 : newRemaining;
+        this._redeemedAmount = (this._redeemedAmount ?? 0) + redeemedAmount;
+        this._updatedAt = new Date();
+        this._redeemedUnits = newRedeemed;
 
         if (newRemaining <= 0) {
-            result.status = InvestmentStatus.REDEEMED;
-            result.redeemedAt = new Date();
+            this._status = InvestmentStatus.REDEEMED;
+            this._redeemedAt = new Date();
         } else {
-            result.status = InvestmentStatus.PARTIALLY_REDEEMED;
-            result.redeemedAt = new Date();
+            this._status = InvestmentStatus.PARTIALLY_REDEEMED;
+            this._redeemedAt = new Date();
         }
-        return result;
+
+        return this;
     }
 
     static fromPersistence(props: {
@@ -210,7 +209,7 @@ export class InvestmentEntity {
     get units() { return this._units; }
     get remainingUnits() { return this._remainingUnits; }
     get redeemedUnits() { return this._redeemedUnits; }
-    get redeemedAmount() { return this._redemeedAmount; }
+    get redeemedAmount() { return this._redeemedAmount; }
     get redeemedAt() { return this._redeemedAt; }
     get nav() { return this._nav; }
     get navDate() { return this._navDate; }

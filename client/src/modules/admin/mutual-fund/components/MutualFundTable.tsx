@@ -18,6 +18,7 @@ export function MutualFundsTable({
     onEdit,
     onStatusToggle,
 }: Props) {
+    console.log('funds:::::', funds);
     return (
         <DataTable
             data={funds}

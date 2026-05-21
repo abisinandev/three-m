@@ -62,6 +62,7 @@ export class PortFolioController {
     async confirmRedeem(req: Request, res: Response, next: NextFunction) {
         try {
             const dto = { ...req.body }
+            console.log(dto)
             const userId = req?.user?.id;
             const result = await this._confirmRedeem.execute({ ...dto, userId });
             return ResponseHelper.success(
@@ -74,7 +75,6 @@ export class PortFolioController {
             next(error)
         }
     }
-
 
     async xirrCalculation(req: Request, res: Response, next: NextFunction) {
         try {

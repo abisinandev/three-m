@@ -11,7 +11,6 @@ import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 import { IMutualFundRepository } from "@application/interfaces/repositories/feature/mutual-fund-repository.interface";
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
 import { QueryOptions } from "mongoose";
-
 import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
 
 @injectable()
@@ -32,7 +31,6 @@ export class FetchPortfolioAssetsUseCases implements IFetchPortfolioAssetsUsecas
             this._portfolioRepository.getUserAssets(userId),
             this._investmentRepository.findGroupedInvestmentsByUser(userId)
         ]);
-        console.log('groupd: ', groupedInvestments);
 
         const assetProcessingPromises = userAssets.map(async (asset): Promise<PortfolioAssetDTO | null> => {
 

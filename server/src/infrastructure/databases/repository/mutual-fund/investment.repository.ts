@@ -53,6 +53,9 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
                     nav: data.nav,
                     navDate: data.navDate,
                     units: data.units,
+                    remainingUnits: data.units,
+                    redeemedAmount: 0,
+                    redeemedUnits: 0,
                     status: InvestmentStatus.ALLOTTED,
                 },
             }
@@ -340,7 +343,12 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             {
                 $match: {
                     userId: new Types.ObjectId(userId),
-                    status: InvestmentStatus.ALLOTTED
+                    status: {
+                        $in: [
+                            InvestmentStatus.ALLOTTED,
+                            InvestmentStatus.PARTIALLY_REDEEMED
+                        ]
+                    }
                 }
             },
             {
@@ -377,16 +385,21 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
 
     async redeemInvestments(
         investmentId: string,
-        userId: string,
-        update: InvestmentRedeemResult,
+        data: InvestmentEntity,
         session: ClientSession
     ): Promise<void> {
-        await this.model.findOneAndUpdate(
+
+        await this.model.findByIdAndUpdate(
+            investmentId,
             {
-                _id: investmentId,
-                userId: new Types.ObjectId(userId),
+                $set: {
+                    remainingUnits: data.remainingUnits,
+                    redeemedAmount: data.redeemedAmount,
+                    redeemedUnits: data.redeemedUnits,
+                    redeemedAt: data.redeemedAt,
+                    status: data.status,
+                }
             },
-            { $set: update },
             { session }
         );
     };

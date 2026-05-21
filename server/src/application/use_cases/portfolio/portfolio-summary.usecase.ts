@@ -20,6 +20,7 @@ import { IMutualFundRepository } from "@application/interfaces/repositories/feat
 import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
 import { EXTERNAL_TYPES } from "@infrastructure/inversify_di/features/external/external.types";
 import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 
 
 @injectable()
@@ -45,6 +46,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             this._investmentRepository.findUserInvestmentsForXirr(userId),
             this._tradeRepository.findByUserId(userId)
         ]);
+        console.log(portfolioAssets, '--');
 
         const investments = allInvestments || [];
         const trades = allTrades || [];
@@ -97,7 +99,7 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
                     priceMap.set(asset.assetId, latestNav);
                 }
             }
-        })); 
+        }));
 
         for (const asset of portfolioAssets) {
             totalInvestment += asset.investedAmount;
@@ -120,22 +122,25 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             return acc;
         }, 0);
 
-        const mfRealizedProfit = investments.reduce((acc, inv) => {
-            if (inv.status === "REDEEMED" || inv.status === "PARTIALLY_REDEEMED") {
 
-                const costOfRedeemedUnits = (inv.redeemedUnits || 0) * Number(inv.nav);
-                return acc + (inv.redeemedAmount || 0) - costOfRedeemedUnits;
+        let mfRealizedProfit = 0;
+        for (let inv of investments) {
+            if (inv.status === "REDEEMED" || inv.status === "PARTIALLY_REDEEMED") {
+                mfRealizedProfit += Number(inv.redeemedAmount) - Number(inv.amount)
             }
-            return acc;
-        }, 0);
+        }
+
+        logger.info(`mfRealizedProfit: ${mfRealizedProfit}`);
+        logger.info(`stockRealizedProfit: ${stockRealizedProfit}`);
 
         const profitAfterSell = stockRealizedProfit + mfRealizedProfit;
+        logger.info(`profitAfterSell: ${profitAfterSell}`);
+
 
         const totalProfit = currentValue - totalInvestment;
         const totalReturns = totalProfit + profitAfterSell;
 
         const profitPercentage = totalInvestment > 0 ? (totalReturns / totalInvestment) * 100 : 0;
-
 
         // XIRR Calculation
         const cashflows = await this.buildCashFlows(

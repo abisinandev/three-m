@@ -15,8 +15,8 @@ export const useRedeem = () => {
     const [selectedFund, setSelectedFund] = useState<IRedeemedInvestment | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [redeemType, setRedeemType] = useState<'full' | 'partial'>('full');
-    const [redeemAmount, setRedeemAmount] = useState('');
-    const [redeemUnits, setRedeemUnits] = useState('');
+    const [redeemAmount, setRedeemAmount] = useState<number>(0);
+    const [redeemUnits, setRedeemUnits] = useState<number>(0);
     const [confirmStep, setConfirmStep] = useState<'input' | 'processing' | 'success' | 'error'>('input');
     const [redeemMode, setRedeemMode] = useState<'amount' | 'units'>('amount');
 
@@ -24,8 +24,8 @@ export const useRedeem = () => {
         setSelectedFund(fund);
         setRedeemType('full');
         setConfirmStep('input');
-        setRedeemAmount('');
-        setRedeemUnits('');
+        setRedeemAmount(0);
+        setRedeemUnits(0);
         setIsModalOpen(true);
     };
 
@@ -59,17 +59,17 @@ export const useRedeem = () => {
     const estimatedRedeemValue = useMemo(() => {
         if (!selectedFund) return 0;
         if (redeemType === 'full') return selectedFund.currentValue;
-        return redeemMode === 'amount' ? (Number(redeemAmount) || 0) : ((Number(redeemUnits) * selectedFund.nav) || 0);
+        return redeemMode === 'amount' ? redeemAmount : (redeemUnits * selectedFund.nav) || 0;
     }, [selectedFund, redeemType, redeemMode, redeemAmount, redeemUnits]);
 
     const isValidRedemption = useMemo(() => {
         if (!selectedFund) return false;
         if (redeemType === 'full') return true;
         if (redeemMode === 'amount') {
-            const amt = Number(redeemAmount);
+            const amt = redeemAmount;
             return amt >= 100 && amt <= selectedFund.currentValue;
         } else {
-            const units = Number(redeemUnits);
+            const units = redeemUnits;
             return units > 0 && units <= selectedFund.totalUnits;
         }
     }, [selectedFund, redeemType, redeemMode, redeemAmount, redeemUnits]);

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/axios-user';
 import type { InvestmentPayload } from '../types/mutual-fund.types';
 import { createIdempotencyKey } from '@/utils/uuid/generate-idempotency-key';
+import { toast } from 'sonner';
 
 
 export const useInvestMutualFund = <T = { data?: unknown }>(onSuccess: (data: T) => void, onError: (msg: string) => void) => {
@@ -25,6 +26,7 @@ export const useInvestMutualFund = <T = { data?: unknown }>(onSuccess: (data: T)
 
         onError: (error: { response?: { data?: { message?: string } } }) => {
             const msg = error?.response?.data?.message || 'Investment failed. Please try again.';
+            toast.error(msg)
             onError(msg);
         },
     });

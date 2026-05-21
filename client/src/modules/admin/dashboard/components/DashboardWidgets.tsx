@@ -1,5 +1,6 @@
 import { AlertCircle, Lightbulb, CheckCircle2, ShieldAlert } from 'lucide-react';
 import type { AdminDashboardData } from '../types/dashboard.types';
+import { JSX } from 'react';
 
 interface DashboardWidgetsProps {
     stats: AdminDashboardData['stats'];

@@ -8,16 +8,16 @@ interface RedeemModalProps {
     setRedeemType: (t: 'full' | 'partial') => void;
     redeemMode: 'amount' | 'units';
     setRedeemMode: (m: 'amount' | 'units') => void;
-    redeemAmount: string;
-    setRedeemAmount: (a: string) => void;
-    redeemUnits: string;
-    setRedeemUnits: (u: string) => void;
+    redeemAmount: number;
+    setRedeemAmount: (a: number) => void;
+    redeemUnits: number;
+    setRedeemUnits: (u: number) => void;
     confirmStep: 'input' | 'processing' | 'success' | 'error';
     onConfirm: () => void;
     estimatedValue: number;
     isValid: boolean;
 }
-
+ 
 const formatCurrency = (value: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value);
 
@@ -112,7 +112,7 @@ export const RedeemModal = ({
                                     <input
                                         type="number"
                                         value={redeemMode === 'amount' ? redeemAmount : redeemUnits}
-                                        onChange={(e) => redeemMode === 'amount' ? setRedeemAmount(e.target.value) : setRedeemUnits(e.target.value)}
+                                        onChange={(e) => redeemMode === 'amount' ? setRedeemAmount(Number(e.target.value)) : setRedeemUnits(Number(e.target.value))}
                                         placeholder="0.00"
                                         className="w-full h-11 bg-[#111214] border border-[#1e2025] rounded-xl px-4 text-[13px] font-black text-white focus:outline-none focus:border-[#00C853] transition-all placeholder:text-[#333]"
                                     />

@@ -57,7 +57,7 @@ const RedeemProfitPage = () => {
                 ) : (
                     <div className="flex flex-col gap-3">
                         {investments.map((fund) => (
-                            <RedeemCard 
+                            <RedeemCard
                                 key={fund.schemeCode}
                                 fund={fund}
                                 onRedeem={openRedeemModal}
@@ -68,7 +68,7 @@ const RedeemProfitPage = () => {
             </div>
 
             {isModalOpen && selectedFund && (
-                <RedeemModal 
+                <RedeemModal
                     fund={selectedFund}
                     onClose={closeRedeemModal}
                     redeemType={redeemType}

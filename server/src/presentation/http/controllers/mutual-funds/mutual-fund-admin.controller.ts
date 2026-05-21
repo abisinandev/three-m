@@ -1,5 +1,5 @@
-import { IChangeFundStatusUseCase } from "@application/use_cases/mutual-fund/interfaces/change-fund-status-usecase.interface";
-import { IFetchAllFundsUseCases } from "@application/use_cases/mutual-fund/interfaces/fetch-all-funds-usecase.interface";
+import { IChangeFundStatusUseCase } from "@application/use_cases/admin/mf-management/interface/change-fund-status-usecase.interface";
+import { IFetchAllFundsUseCases } from "@application/use_cases/admin/mf-management/interface/fetch-all-funds-usecase.interface";
 import { IMfCagrUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-cagr-usecse.interface";
 import { IMutualFundNavUpdatesUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-nav-udpate-usecase.interface";
 import { IMutualFundsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-usecase.interface";

@@ -9,8 +9,8 @@ import { InvestmentRepository } from "@infrastructure/databases/repository/mutua
 
 // UseCases
 import { MutualFundsUseCase } from "@application/use_cases/mutual-fund/mutual-fund.usecase";
-import { FetchAllFundUseCases } from "@application/use_cases/mutual-fund/fetch-all-funds.usecase";
-import { ChangeStatusUseCase } from "@application/use_cases/mutual-fund/change-status.usecase";
+import { FetchAllFundUseCases } from "@application/use_cases/admin/mf-management/fetch-all-funds.usecase";
+import { ChangeStatusUseCase } from "@application/use_cases/admin/mf-management/change-status.usecase";
 import { ListFundUserSideUseCase } from "@application/use_cases/mutual-fund/list-funds.usecase";
 import { MfCagrUseCase } from "@application/use_cases/mutual-fund/mf-cagr-usecase";
 import { MutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/mutual-fund-details.usecase";
@@ -45,9 +45,9 @@ import { IMutualFundNavRepository } from "@application/interfaces/repositories/f
 import { IMfCagrRepository } from "@application/interfaces/repositories/feature/mf-cagr-repository.interface";
 import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
 import { IMutualFundsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-usecase.interface";
-import { IFetchAllFundsUseCases } from "@application/use_cases/mutual-fund/interfaces/fetch-all-funds-usecase.interface";
+import { IFetchAllFundsUseCases } from "@application/use_cases/admin/mf-management/interface/fetch-all-funds-usecase.interface";
 import { IMutualFundNavUpdatesUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-nav-udpate-usecase.interface";
-import { IChangeFundStatusUseCase } from "@application/use_cases/mutual-fund/interfaces/change-fund-status-usecase.interface";
+import { IChangeFundStatusUseCase } from "@application/use_cases/admin/mf-management/interface/change-fund-status-usecase.interface";
 import { IListFundsUserSideUseCase } from "@application/use_cases/mutual-fund/interfaces/list-fund-usecase.interface";
 import { IMfCagrUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-cagr-usecse.interface";
 import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-details-usecase.interface";

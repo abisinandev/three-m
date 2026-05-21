@@ -21,6 +21,7 @@ import { TransactionStatus } from "@domain/enum/wallet/transaction-status.enum";
 import { TransactionReferenceType } from "@domain/enum/wallet/transaction-reference-type";
 import { IPortfolioRepository } from "@application/interfaces/repositories/feature/portfolio-repository.interface";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
+import AppError from "@presentation/express/utils/error-handling/app.error";
 
 @injectable()
 export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
@@ -100,17 +101,18 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
                     remainingUnitsToRedeem,
                 );
 
-                const updated = InvestmentEntity.redeemUnits(
+                const updated = inv.redeemUnits(
                     inv.remainingUnits as number,
                     inv.redeemedUnits,
                     redeemableUnits,
                     Number((redeemableUnits * latestNav).toFixed(2)),
                 );
 
+                console.log(updated, '---');
+                
                 remainingUnitsToRedeem = Number((remainingUnitsToRedeem - redeemableUnits).toFixed(4));
                 await this._investmentRepository.redeemInvestments(
                     inv.id as string,
-                    data.userId,
                     updated,
                     session,
                 );
@@ -140,7 +142,6 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
                 session
             );
 
-
             const portfolio = await this._portfolioRepository.findByUserIdAndSymbol(
                 data.userId,
                 fund.id as string,
@@ -166,10 +167,10 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
             await session.commitTransaction();
         } catch (error) {
             await session.abortTransaction();
-            throw error;
+            console.error("Confirm redeem: ", error);
+            throw new AppError(ErrorMessages.MUTUAL_FUND.REDEMPTION_FAILED);
         } finally {
             session.endSession();
         }
-
     }
-}; 
+};

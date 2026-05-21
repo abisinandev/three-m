@@ -42,7 +42,6 @@ const MutualFundDetailsPage = () => {
   });
 
   const latestNav = data?.nav ?? 0;
-  console.log('Latest: ', latestNav);
 
   const units = useMemo(
     () => (investment > 0 && latestNav > 0 ? calculateUnitPrice(investment, latestNav) : 0),

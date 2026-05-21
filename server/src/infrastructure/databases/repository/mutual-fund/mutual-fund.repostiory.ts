@@ -51,33 +51,33 @@ export class MutualFundRepository extends BaseRepository<MutualFundEntity, Mutua
             { $sort: sort },
             { $skip: skip },
             { $limit: limitNumber },
-            {
-                $lookup: {
-                    from: "mutualfundnavs",
-                    let: { schemeCode: "$schemeCode" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $eq: ["$schemeCode", "$$schemeCode"] },
-                                        { $eq: ["$interval", "DAILY"] }
-                                    ]
-                                }
-                            }
-                        },
-                        { $sort: { navDate: -1 } },
-                        { $limit: 1 },
-                    ],
-                    as: "latestNav",
-                },
-            },
-            {
-                $unwind: {
-                    path: "$latestNav",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
+            // {
+            //     $lookup: {
+            //         from: "mutualfundnavs",
+            //         let: { schemeCode: "$schemeCode" },
+            //         pipeline: [
+            //             {
+            //                 $match: {
+            //                     $expr: {
+            //                         $and: [
+            //                             { $eq: ["$schemeCode", "$$schemeCode"] },
+            //                             { $eq: ["$interval", "DAILY"] }
+            //                         ]
+            //                     }
+            //                 }
+            //             },
+            //             { $sort: { navDate: -1 } },
+            //             { $limit: 1 },
+            //         ],
+            //         as: "latestNav",
+            //     },
+            // },
+            // {
+            //     $unwind: {
+            //         path: "$latestNav",
+            //         preserveNullAndEmptyArrays: true,
+            //     },
+            // },
         ]);
 
         return docs.map((doc) => this.mapper.toDomain(doc));

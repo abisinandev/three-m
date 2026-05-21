@@ -1,10 +1,5 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsNumberString,
-  ValidateIf
-} from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, ValidateIf, IsNumber } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class ConfirmRedeemDTO {
 
@@ -18,12 +13,14 @@ export class ConfirmRedeemDTO {
   schemeCode!: string;
 
   @IsOptional()
-  @IsNumberString({ no_symbols: true })
-  @ValidateIf(o => !o.amount) 
-  units?: string;
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
+  @ValidateIf(o => !o.amount)
+  units?: number;
 
   @IsOptional()
-  @IsNumberString({ no_symbols: true })
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
   @ValidateIf(o => !o.units)
-  amount?: string;
+  amount?: number;
 }

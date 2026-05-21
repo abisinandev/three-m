@@ -13,7 +13,6 @@ import { IMutualFundRepository } from "@application/interfaces/repositories/feat
 import { AssetType } from "@domain/entities/portfolio/enum/asset-type";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
 import mongoose from "mongoose";
-import { IMutualFundNavService } from "@application/services/mutual-fund/interfaces/mutual-fund-nav.service.interface";
 import { IMutualFundNavUpdateProvider } from "@application/interfaces/services/externals/mutual-fund-nav-update-provider.interface";
 
 @injectable()
