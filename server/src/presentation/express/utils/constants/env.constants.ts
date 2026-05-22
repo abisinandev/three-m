@@ -22,7 +22,7 @@ export const env = {
 
   MONGO_URI: requireEnv("MONGO_URI"),
   DB_NAME: requireEnv("DB_NAME"),
-  REDIS_URL: requireEnv("REDIS_URL") || "redis://127.0.0.1:6379",
+  REDIS_URL: requireEnv("REDIS_URL"),
 
   EMAIL_USER: requireEnv("EMAIL_USER"),
   EMAIL_PASS: requireEnv("EMAIL_PASS"),
