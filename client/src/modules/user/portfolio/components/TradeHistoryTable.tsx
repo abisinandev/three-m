@@ -183,9 +183,9 @@ export const TradeHistoryTable = ({
                                 <div style={{ textAlign: 'right' }}>
                                     <p style={{
                                         fontSize: 12, fontWeight: 700, margin: 0,
-                                        color: isSell ? '#FF1744' : '#00C853',
+                                        // color: isSell ? '#FF1744' : '#00C853',
                                     }}>
-                                        {isSell ? '-' : '+'}₹{formatCurrency(tradeValue, 2)}
+                                        ₹{formatCurrency(tradeValue, 2)}
                                     </p>
                                 </div>
 

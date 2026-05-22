@@ -30,6 +30,23 @@ export class PortfolioRepository extends BaseRepository<PortfolioEntity, Portfol
         return results.map((doc) => this.mapper.toDomain(doc))
     }
 
+    async updatePortfolio(id: string, quantity: number, units: number, avgPrice: number, investedAmount: number, session: ClientSession): Promise<void> {
+        await this.model.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    quantity,
+                    units,
+                    avgPrice,
+                    investedAmount
+                }
+            },
+            {
+                session
+            }
+        )
+
+    }
 
     async findWithFilters(userId: string, options: QueryOptions): Promise<PortfolioStockDTO[]> {
         const {

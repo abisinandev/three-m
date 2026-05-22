@@ -18,16 +18,16 @@ export const FinancialIntelligentTool = tool(
     name: "financial_intelligents",
 
     description: `
-        Search the financial knowledge base for information about:
+          Search the financial knowledge base for information about:
 
-        - SIP investments
-        - Mutual funds
-        - SEBI regulations
-        - Equity and debt funds
-        - Indian financial markets
+          - SIP investments
+          - Mutual funds
+          - SEBI regulations
+          - Equity and debt funds
+          - Indian financial markets
 
-        Use this tool when the user asks financial knowledge questions.
-    `,
+          Use this tool when the user asks financial knowledge questions.
+      `,
 
     schema: z.object({
       query: z.string().describe("User question about finance")

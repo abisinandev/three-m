@@ -58,4 +58,14 @@ export class OrderRepository extends BaseRepository<OrderEntity, OrderDocument> 
         if (!docs) return null
         return docs.map(doc => this.mapper.toDomain(doc));
     }
+
+    async findUserAllOrders(userId: string, page: number, limit: number): Promise<{ orders: OrderEntity[]; total: number }> {
+        const skip = (page - 1) * limit;
+        const [docs, total] = await Promise.all([
+            this.model.find({ userId }).sort({ createdAt: -1 }).skip(skip).limit(limit).exec(),
+            this.model.countDocuments({ userId }).exec()
+        ]);
+        const orders = await Promise.all(docs.map(doc => this.mapper.toDomain(doc)));
+        return { orders, total };
+    }
 }

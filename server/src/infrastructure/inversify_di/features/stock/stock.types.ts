@@ -79,6 +79,7 @@ export const STOCK_TYPES = {
     RemoveFromWatchlistUseCase: Symbol.for("RemoveFromWatchlistUseCase"),
     FetchWatchlistUseCase: Symbol.for("FetchWatchlistUseCase"),
     GetMarketMoversUseCase: Symbol.for("GetMarketMoversUseCase"),
+    FetchOrderHistoryUseCase: Symbol.for("FetchOrderHistoryUseCase"),
     StockValidationService: Symbol.for("StockValidationService"),
 }
 

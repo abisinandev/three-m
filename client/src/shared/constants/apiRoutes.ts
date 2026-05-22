@@ -73,6 +73,7 @@ export const API_ROUTES = {
             DETAILS: (symbol: string) => `/user/stocks/${symbol}`,
             CANDLES: (symbol: string) => `/user/stocks/${symbol}/candles`,
             MARKET_MOVERS: "/user/stocks/market/movers",
+            ORDER_HISTORY: "/user/stocks/orders/history",
             ORDERS: {
                 BUY: (symbol: string) => `/user/stock/order/${symbol}/buy`,
                 SELL: (symbol: string) => `/user/stock/order/${symbol}/sell`,

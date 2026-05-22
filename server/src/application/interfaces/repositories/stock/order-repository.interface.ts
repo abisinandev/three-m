@@ -8,4 +8,5 @@ export interface IOrderRepository extends IBaseRepository<OrderEntity> {
     findPendingLimitOrdersByUserId(userId: string, symbol?: string): Promise<OrderEntity[]>;
     countCancelledOrders(): Promise<number>;
     findFilledOrders(): Promise<OrderEntity[] | null>;
+    findUserAllOrders(userId: string, page: number, limit: number): Promise<{ orders: OrderEntity[]; total: number }>;
 }

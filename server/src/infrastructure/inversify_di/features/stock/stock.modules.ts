@@ -21,6 +21,8 @@ import { IRemoveFromWatchlistUseCase } from "@application/use_cases/stock/interf
 import { RemoveFromWatchlistUseCase } from "@application/use_cases/stock/remove-from-watchlist.usecase";
 import { IFetchWatchlistUseCase } from "@application/use_cases/stock/interfaces/fetch-watchlist-usecase.interface";
 import { FetchWatchlistUseCase } from "@application/use_cases/stock/fetch-watchlist.usecase";
+import { IFetchOrderHistoryUseCase } from "@application/use_cases/stock/interfaces/fetch-order-history.interface";
+import { FetchOrderHistoryUseCase } from "@application/use_cases/stock/fetch-order-history.usecase";
 import { MarketDataService } from "@infrastructure/providers/stocks/market-data.service";
 import { WsGateway } from "@presentation/express/websocket/ws.gateway";
 import { CandleEngineService } from "@infrastructure/providers/stocks/market-data/services/candle-engine.service";
@@ -194,5 +196,6 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IRemoveFromWatchlistUseCase>(STOCK_TYPES.RemoveFromWatchlistUseCase).to(RemoveFromWatchlistUseCase);
     bind<IFetchWatchlistUseCase>(STOCK_TYPES.FetchWatchlistUseCase).to(FetchWatchlistUseCase);
     bind<IGetMarketMoversUseCase>(STOCK_TYPES.GetMarketMoversUseCase).to(GetMarketMoversUseCase);
+    bind<IFetchOrderHistoryUseCase>(STOCK_TYPES.FetchOrderHistoryUseCase).to(FetchOrderHistoryUseCase);
 
 });

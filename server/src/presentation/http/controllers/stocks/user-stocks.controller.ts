@@ -10,6 +10,7 @@ import { IRemoveFromWatchlistUseCase } from "@application/use_cases/stock/interf
 import { StockQueryOptions } from "@application/dto/stocks/stock.dto";
 import { WatchlistDTO } from "@application/dto/stocks/watchlist.dto";
 import { IGetMarketMoversUseCase } from "@application/use_cases/stock/interfaces/get-market-movers.interface";
+import { IFetchOrderHistoryUseCase } from "@application/use_cases/stock/interfaces/fetch-order-history.interface";
 
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { SuccessMessages } from "@shared/constants/success.messages";
@@ -25,6 +26,7 @@ export class UserStocksController {
         @inject(STOCK_TYPES.AddToWatchlistUseCase) private _addToWatchlistUseCase: IAddToWatchlistUseCase,
         @inject(STOCK_TYPES.RemoveFromWatchlistUseCase) private _removeFromWatchlistUseCase: IRemoveFromWatchlistUseCase,
         @inject(STOCK_TYPES.GetMarketMoversUseCase) private _getMarketMoversUseCase: IGetMarketMoversUseCase,
+        @inject(STOCK_TYPES.FetchOrderHistoryUseCase) private _fetchOrderHistoryUseCase: IFetchOrderHistoryUseCase,
     ) { }
 
 
@@ -154,6 +156,25 @@ export class UserStocksController {
             return ResponseHelper.success(
                 res,
                 SuccessMessages.STOCK.STOCK_FETCHED,
+                result,
+                HttpStatus.OK
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getOrderHistory(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user?.id as string;
+            const page = Number(req.query.page) || 1;
+            const limit = Number(req.query.limit) || 10;
+
+            const result = await this._fetchOrderHistoryUseCase.execute(userId, page, limit);
+
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
             );

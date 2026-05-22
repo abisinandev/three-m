@@ -5,6 +5,7 @@ export enum StockTradingRoutes {
     GET_CANDLES = "/:symbol/candles",
     WATCHLIST = "/all/watchlist",
     MOVERS = "/market/movers",
+    ORDER_HISTORY = "/orders/history",
 }
 
 export enum OrderRoutes {

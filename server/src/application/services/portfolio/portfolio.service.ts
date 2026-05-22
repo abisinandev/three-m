@@ -101,15 +101,13 @@ export class PortfolioService implements IPortfolioService {
             );
         }
 
-        await this._portfolioRepository.update(
+        await this._portfolioRepository.updatePortfolio(
             portfolio.id as string,
-            {
-                quantity: portfolio.quantity,
-                units: portfolio.units,
-                avgPrice: portfolio.avgPrice,
-                investedAmount: portfolio.investedAmount
-            },
-            session
+            portfolio.quantity ?? 0,
+            portfolio.units ?? 0,
+            portfolio.avgPrice,
+            portfolio.investedAmount,
+            session,
         );
     }
 

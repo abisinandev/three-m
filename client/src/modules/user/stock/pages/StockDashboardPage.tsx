@@ -4,7 +4,7 @@ import { Search, SlidersHorizontal, Filter, ChevronDown } from 'lucide-react';
 import { useQuery, keepPreviousData, useQueryClient } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { FetchUserStocksApi } from '@/shared/services/stock/fetch-stocks-api';
+import { FetchUserStocksApi, FetchUserOrderHistoryApi } from '@/shared/services/stock/fetch-stocks-api';
 import { useGetWatchlist, useWatchlistMutation } from '@shared/hooks/useWatchlist';
 import { getStockHoldings } from '@/shared/services/portfolio/portfolio-api';
 import { socket } from '@socket';
@@ -14,6 +14,7 @@ import StockTable from '../components/StockTable';
 import StockDashboardTabs from '../components/StockDashboardTabs';
 import MarketMovers from '../components/MarketMovers';
 import RecentActivity from '../components/RecentActivity';
+import { OrderHistoryTable } from '../components/OrderHistoryTable';
 
 import type { UserStockFilters, StockListResponse } from '@/shared/services/stock/fetch-stocks-api';
 import type { Stock } from '@shared/components/interfaces/IStockTable';
@@ -22,7 +23,8 @@ import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 
 const TABS: DashboardTab[] = [
   { id: 'all', label: 'All Stocks' },
-  { id: 'watchlist', label: 'Watchlist' }
+  { id: 'watchlist', label: 'Watchlist' },
+  { id: 'orders', label: 'Order Histories' }
 ];
 
 const StockDashboardPage = () => {
@@ -36,10 +38,18 @@ const StockDashboardPage = () => {
     limit: 10,
     search: '',
   });
+  const [ordersPage, setOrdersPage] = useState(1);
 
   const { data: stocksResponse, isLoading: isStocksLoading, isError: isStocksError } = useQuery({
     queryKey: ['user-stocks', filters],
     queryFn: () => FetchUserStocksApi(filters),
+    placeholderData: keepPreviousData,
+  });
+
+  const { data: orderHistoryResponse, isLoading: isOrdersLoading } = useQuery({
+    queryKey: ['user-orders', ordersPage],
+    queryFn: () => FetchUserOrderHistoryApi(ordersPage, 10),
+    enabled: activeTab === 'orders',
     placeholderData: keepPreviousData,
   });
 
@@ -184,24 +194,38 @@ const StockDashboardPage = () => {
           </div>
 
           <div className="bg-[#111214] rounded-lg border border-[#1e2025] overflow-hidden">
-            <StockTable
-              stocks={stocks}
-              isLoading={isStocksLoading || (activeTab === 'watchlist' && isWatchlistLoading)}
-              isError={isStocksError}
-              watchlistSymbols={watchlistSymbols}
-              onToggleWatchlist={handleToggleWatchlist}
-              onNavigate={handleNavigate}
-            />
-
-            {!isStocksLoading && !isStocksError && activeTab === 'all' && stocks.length > 0 && (
-              <div className="p-4 border-t border-[#1e2025] bg-[#0b0c0e]">
-                <Pagination
-                  page={filters.page as number}
-                  limit={filters.limit as number}
-                  total={total}
-                  onPageChange={(page) => updateFilters({ page })}
+            {activeTab === 'orders' ? (
+              <OrderHistoryTable
+                orders={orderHistoryResponse?.data?.orders ?? []}
+                total={orderHistoryResponse?.data?.total ?? 0}
+                page={ordersPage}
+                limit={10}
+                onPageChange={setOrdersPage}
+                isLoading={isOrdersLoading}
+                onNavigate={handleNavigate}
+              />
+            ) : (
+              <>
+                <StockTable
+                  stocks={stocks}
+                  isLoading={isStocksLoading || (activeTab === 'watchlist' && isWatchlistLoading)}
+                  isError={isStocksError}
+                  watchlistSymbols={watchlistSymbols}
+                  onToggleWatchlist={handleToggleWatchlist}
+                  onNavigate={handleNavigate}
                 />
-              </div>
+
+                {!isStocksLoading && !isStocksError && activeTab === 'all' && stocks.length > 0 && (
+                  <div className="p-4 border-t border-[#1e2025] bg-[#0b0c0e]">
+                    <Pagination
+                      page={filters.page as number}
+                      limit={filters.limit as number}
+                      total={total}
+                      onPageChange={(page) => updateFilters({ page })}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

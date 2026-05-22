@@ -118,7 +118,7 @@ export const Footer: React.FC = () => {
           <div className="flex items-center gap-4 text-cool-white/60">
             <div className="flex items-center gap-2">
               <Shield size={14} className="text-teal-green" /> {/* smaller icons */}
-              <span className="text-xs">Secured by Blockchain</span>
+              <span className="text-xs">Encrypted & Secure  </span>
             </div>
             <div className="w-1 h-1 bg-teal-green rounded-full animate-pulse" />
             <div className="flex items-center gap-2">

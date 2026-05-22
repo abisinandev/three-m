@@ -16,6 +16,7 @@ router.get(StockTradingRoutes.DEFAUTL, userStocksController.getStocks.bind(userS
 router.get(StockTradingRoutes.GET_STOCKS, userStocksController.getStockDetails.bind(userStocksController));
 router.get(StockTradingRoutes.GET_CANDLES, userStocksController.getStockCandles.bind(userStocksController));
 router.get(StockTradingRoutes.MOVERS, userStocksController.getMarketMovers.bind(userStocksController));
+router.get(StockTradingRoutes.ORDER_HISTORY, userStocksController.getOrderHistory.bind(userStocksController));
 
 
 

@@ -34,6 +34,8 @@ export class NavAllocateUseCase implements INavAllocateUseCase {
             try {
                 await session.withTransaction(async () => {
                     const navDate = getNavDate(investment.createdAt);
+                    console.log("nav: ", navDate);
+                    
 
                     const latestNav = await this._navProvider.fetchNavHistories(investment.schemeCode);
 

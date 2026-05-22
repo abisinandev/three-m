@@ -19,11 +19,10 @@ export const toDomain = (doc: PortfolioDocument): PortfolioEntity => {
     });
 };
 
-export const toPersistance = (entity: PortfolioEntity): Partial<PortfolioDocument> => {
-    const data = entity.toPersistence();
+export const toPersistance = (data: PortfolioEntity): Partial<PortfolioDocument> => {
     return {
         userId: new Types.ObjectId(data.userId),
-        assetId: new Types.ObjectId(entity.assetId),
+        assetId: new Types.ObjectId(data.assetId),
         assetType: data.assetType,
         quantity: data.quantity,
         units: data.units,

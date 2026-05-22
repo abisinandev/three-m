@@ -2,6 +2,7 @@ import { injectable } from "inversify";
 import { groqModel } from "@infrastructure/providers/ai-agents/groq.config";
 import { IDetectAgent } from "@application/interfaces/services/ai-chatbot/detect-agent.interface";
 import { BaseMessageChunk } from "@langchain/core/messages";
+import { logger } from "@infrastructure/providers/logger/pino.logger";
 
 export type IntentType =
   | "simple"
@@ -23,7 +24,7 @@ export class DetectAgent implements IDetectAgent {
 
     const educationPatterns = [
       /rbi/i, /sip/i, /risk/i, /sweep/i, /compliance/i,
-      "should i", "which is better", "how to invest", "strategy", "plan", "compare"
+      "should i", "which is better", "how to invest", "strategy", "plan", "compare", "what is"
     ];
     if (educationPatterns.some((p) => typeof p === 'string' ? text.includes(p) : p.test(text))) return "education";
 
@@ -31,6 +32,7 @@ export class DetectAgent implements IDetectAgent {
   }
 
   async directLLM(message: string): Promise<BaseMessageChunk> {
+    logger.info(`FALLBACK AGENT WORKING...`)
     return await groqModel.invoke([
       {
         role: "system",

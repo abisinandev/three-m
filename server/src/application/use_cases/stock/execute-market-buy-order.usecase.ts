@@ -24,6 +24,7 @@ import { NotFoundError } from "@presentation/express/utils/error-handling";
 import { ErrorMessages } from "@shared/constants/error.messages";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
 import mongoose from "mongoose";
+import AppError from "@presentation/express/utils/error-handling/app.error";
 
 @injectable()
 export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCase {
@@ -122,7 +123,7 @@ export class ExecuteMarketBuyOrderUseCase implements IExecuteMarketBuyOrderUseCa
         } catch (error) {
             await session.abortTransaction();
             console.error(`[ExecuteMarketBuyOrder] Failed for order ${orderId}:`, error);
-            throw error;
+            throw new AppError(`Order execution failed`);
         } finally {
             session.endSession();
         }
