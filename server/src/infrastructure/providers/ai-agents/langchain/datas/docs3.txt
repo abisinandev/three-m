@@ -1,0 +1,143 @@
+========================================
+CHAPTER 2 - STOCK MARKET & REGULATION
+========================================
+
+Topic:
+Understanding the stock market, market participants, and SEBI regulation.
+
+----------------------------------------
+WHAT IS A STOCK MARKET?
+----------------------------------------
+
+The stock market is a place where people buy and sell shares of publicly listed companies.
+
+Examples of companies:
+- Infosys
+- Reliance Industries
+- TCS
+
+Purpose of Stock Market:
+- Helps investors buy shares
+- Helps investors sell shares
+- Connects buyers and sellers electronically
+
+In India, stock markets operate digitally through computers and mobile applications.
+
+Main Stock Exchanges in India:
+1. Bombay Stock Exchange (BSE)
+2. National Stock Exchange (NSE)
+
+Investors cannot directly access stock exchanges. Transactions happen through registered stock brokers.
+
+----------------------------------------
+MARKET PARTICIPANTS
+----------------------------------------
+
+Anyone who buys or sells in the stock market is called a market participant.
+
+Types of Participants:
+1. Retail Investors
+   - Normal individual investors
+
+2. Domestic Institutions
+   - Large Indian organizations like LIC
+
+3. Mutual Fund Companies (AMC)
+   - SBI Mutual Fund
+   - HDFC AMC
+
+4. Foreign Institutional Investors (FII)
+   - Foreign investment companies and funds
+
+5. NRIs and OCIs
+   - Indians living outside India
+
+Main Goal:
+All participants aim to generate profits from investments.
+
+----------------------------------------
+WHY REGULATION IS IMPORTANT
+----------------------------------------
+
+Since money is involved, markets can be affected by:
+- Greed
+- Fear
+- Fraud
+- Manipulation
+- Insider trading
+
+To ensure fairness, stock markets require proper regulation and monitoring.
+
+----------------------------------------
+SEBI - MARKET REGULATOR
+----------------------------------------
+
+SEBI stands for:
+Securities and Exchange Board of India
+
+SEBI is the main regulator of Indian financial markets.
+
+Main Objectives of SEBI:
+1. Protect investors
+2. Regulate stock exchanges
+3. Prevent market manipulation
+4. Ensure fair trading practices
+5. Promote market development
+
+SEBI monitors:
+- Stock exchanges
+- Brokers
+- Mutual funds
+- Listed companies
+- Market participants
+
+----------------------------------------
+IMPORTANT MARKET ENTITIES
+----------------------------------------
+
+1. Stock Brokers
+Help investors buy and sell shares.
+
+Examples:
+- Zerodha
+- ICICI Direct
+- Sharekhan
+
+2. Depositories
+Store shares electronically in DEMAT accounts.
+
+Examples:
+- NSDL
+- CDSL
+
+3. Asset Management Companies (AMC)
+Manage mutual funds.
+
+Examples:
+- SBI Mutual Fund
+- HDFC AMC
+
+4. Merchant Bankers
+Help companies launch IPOs.
+
+5. Credit Rating Agencies
+Evaluate financial strength of companies.
+
+Examples:
+- CRISIL
+- ICRA
+
+----------------------------------------
+KEY TAKEAWAYS
+----------------------------------------
+
+1. Stock markets help investors trade shares.
+2. Indian stock markets are mainly BSE and NSE.
+3. Investors trade through stock brokers.
+4. Many participants operate in the market.
+5. SEBI regulates and protects the market.
+6. Regulation helps maintain fairness and investor confidence.
+
+========================================
+END OF DOCUMENT
+========================================

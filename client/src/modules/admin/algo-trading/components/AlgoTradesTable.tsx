@@ -1,0 +1,106 @@
+import { type FC } from 'react';
+import dayjs from 'dayjs';
+import { Search } from 'lucide-react';
+import { LoadingRow, EmptyRow } from './StrategiesTable';
+import type { AdminAlgoTrade } from '@/shared/types/admin/algo-trading.types';
+
+interface AlgoTradesTableProps {
+    items: AdminAlgoTrade[];
+    isLoading: boolean;
+    search: string;
+    onSearchChange: (val: string) => void;
+}
+
+export const AlgoTradesTable: FC<AlgoTradesTableProps> = ({
+    items,
+    isLoading,
+    search,
+    onSearchChange
+}) => {
+    return (
+        <div className="bg-[#111214] rounded-xl border border-[#1e2025] overflow-hidden shadow-xl">
+            <div className="p-4 border-b border-[#1e2025] flex justify-between items-center bg-[#111214]">
+                <h2 className="text-[14px] font-semibold text-white uppercase tracking-wider">Algo Trades</h2>
+                <div className="relative">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5f6e]" />
+                    <input
+                        type="text"
+                        placeholder="Search trades..."
+                        value={search}
+                        onChange={(e) => onSearchChange(e.target.value)}
+                        className="pl-9 pr-3 py-1.5 bg-[#0b0c0e] border border-[#1e2025] rounded-md text-[13px] text-white focus:outline-none focus:border-emerald-500/50 w-[240px] placeholder-[#5a5f6e] transition-all font-medium"
+                    />
+                </div>
+            </div>
+
+            <div className="overflow-x-auto min-h-[400px]">
+                <table className="w-full text-left border-collapse">
+                    <thead>
+                        <tr className="border-b border-[#1e2025] bg-[#111214]">
+                            <th style={headerStyle}>Symbol / ID</th>
+                            <th style={headerStyle}>User ID</th>
+                            <th style={headerStyle}>Side</th>
+                            <th style={headerStyle}>Quantity</th>
+                            <th style={headerStyle}>Price</th>
+                            <th style={headerStyle}>P&L</th>
+                            <th style={headerStyle}>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody className="bg-[#111214]">
+                        {isLoading ? (
+                            <LoadingRow colSpan={7} unit="trades" />
+                        ) : items.length === 0 ? (
+                            <EmptyRow colSpan={7} unit="trades" />
+                        ) : (
+                            items.map((item) => (
+                                <tr key={item.id} className="border-b border-[#1e2025] hover:bg-[#15171a] transition-colors group text-[13px]">
+                                    <td className="px-6 py-4">
+                                        <div className="font-semibold text-white mb-0.5">{item.symbol}</div>
+                                        <div className="text-[10px] text-[#5a5f6e] font-mono tracking-tight">{item.id}</div>
+                                    </td>
+                                    <td className="px-6 py-4 text-[#5a5f6e] font-mono text-[11px]">
+                                        {item.userId}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${item.side === 'BUY' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'
+                                            }`}>
+                                            {item.side}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-white font-medium">
+                                        {item.quantity}
+                                    </td>
+                                    <td className="px-6 py-4 font-mono text-white">
+                                        ₹{item.price.toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {item.side === 'SELL' && item.profit !== undefined ? (
+                                            <span className={`font-mono font-medium ${Number(item.profit) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                                {Number(item.profit) >= 0 ? '+' : ''}₹{Number(item.profit).toLocaleString()}
+                                            </span>
+                                        ) : (
+                                            <span className="text-[#5a5f6e]">-</span>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4 text-[11px] text-[#5a5f6e]">
+                                        {dayjs(item.createdAt).format('MMM DD, HH:mm')}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
+const headerStyle: Record<string, string | number> = {
+    fontSize: 10,
+    fontWeight: 600,
+    color: '#5a5f6e',
+    textTransform: 'uppercase',
+    letterSpacing: '0.06em',
+    padding: '10px 24px',
+    textAlign: 'left'
+};

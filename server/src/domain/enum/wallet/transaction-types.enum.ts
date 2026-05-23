@@ -1,0 +1,10 @@
+export enum TransactionTypes {
+    INVESTMENT = "INVESTMENT",
+    ADD_TO_WALLET = "TOPUP",
+    WITHDRAW = "WITHDRAW",
+    BUY = "BUY",
+    SELL = 'SELL',
+    SIP_INSTALLMENT = 'SIP_INSTALLMENT',
+    REDEMPTION = "REDEMPTION",
+    SUBSCRIPTION = "SUBSCRIPTION",
+}

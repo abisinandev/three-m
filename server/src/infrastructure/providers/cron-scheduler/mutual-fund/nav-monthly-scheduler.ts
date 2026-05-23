@@ -1,0 +1,26 @@
+import { MutualFundNavUpdateUsecase } from '@application/use_cases/mutual-fund/mutual-fund-nav-update.usecase';
+import { NavInterval } from '@domain/enum/funds/nav-intervals.enums';
+import { container } from '@infrastructure/inversify_di/container';
+import cron from 'node-cron';
+
+export function NavMontlyScheduler() {
+    cron.schedule(
+        "* * * * *",
+        // "0 2,3,9 * * *",
+        async () => {
+            console.log("[NAV-CRON] NAV sync started");
+
+            try {
+                const useCase = container.get<MutualFundNavUpdateUsecase>(MutualFundNavUpdateUsecase);
+                await useCase.execute(NavInterval.MONTHLY);
+
+                console.log("[NAV-CRON] NAV sync completed");
+            } catch (error) {
+                console.error("[NAV-CRON] NAV sync failed", error);
+            }
+        },
+        {
+            timezone: "Asia/Kolkata",
+        }
+    );
+}

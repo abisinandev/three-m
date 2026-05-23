@@ -1,0 +1,10 @@
+Smart Portfolio Allocation Strategy
+
+Default allocation:
+- 50% in large-cap stocks
+- 30% in index funds
+- 20% in liquid assets
+
+Adjustment Rule:
+If market volatility index exceeds 70,
+reduce stock allocation by 20% and shift funds to liquid assets.

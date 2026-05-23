@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global reset for dark theme */
+html, body {
+  @apply bg-deep-charcoal text-cool-white font-sans;
+}

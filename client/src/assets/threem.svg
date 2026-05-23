@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="135" height="135" viewBox="0 0 128 128" role="img" aria-labelledby="title2-desc2"> 
+  <title id="title2">threeM monogram</title>
+  <desc id="desc2">Single green M for favicon</desc>
+
+  <rect width="100%" height="100%" fill="transparent"/>
+
+  <!-- Big centered M -->
+  <text x="50%" y="50%"
+        dominant-baseline="central"
+        text-anchor="middle"
+        font-family="Segoe UI, Roboto, Arial, sans-serif"
+        font-weight="800"
+        font-size="72"
+        fill="#2db84d">
+    M
+  </text>
+</svg>

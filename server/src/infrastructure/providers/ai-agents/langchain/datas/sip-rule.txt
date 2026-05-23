@@ -1,0 +1,9 @@
+SIP Drop-Off Prediction Rule
+
+If a user misses 2 consecutive SIP installments and
+their wallet balance remains below ₹5,000 for more than 10 days,
+the system marks SIP cancellation probability as HIGH.
+
+System Actions:
+- Send reminder notification
+- Suggest lower SIP plan
