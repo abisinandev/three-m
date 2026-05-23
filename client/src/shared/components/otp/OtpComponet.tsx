@@ -86,7 +86,7 @@ const OTPVerification: React.FC<OTPProps> = ({
                             onPaste={handlePaste}
                             className="
                                 w-10 h-10 text-base font-semibold text-center 
-                                bg-white text-white rounded-md
+                                bg-white text-black rounded-md
                                 focus:ring-2 focus:ring-teal-400 outline-none
                                 transition-all duration-150
                             "
