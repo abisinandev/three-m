@@ -16,6 +16,9 @@ export const getNotifications = async (
         message: item.message,
         read: item.read,
         createdAt: item.createdAt,
+        signalId: item.signalId ?? (item.data?.signalId as string | undefined),
+        expiresAt: item.expiresAt ?? (item.data?.expiresAt as string | undefined),
+        data: item.data,
     }));
 };
 

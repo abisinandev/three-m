@@ -175,4 +175,28 @@ export class SipInstallmentRepository extends BaseRepository<SipInstallmentEntit
         );
         return docs.map(doc => this.mapper.toDomain(doc));
     }
+
+    async findFailedInstallmentsForRetry(): Promise<SipInstallmentEntity[]> {
+        const docs = await this.model.find({
+            status: SipInstallmentStatus.FAILED,
+            retryCount: { $lt: 3 }
+        })
+            .sort({ executionDate: 1 })
+            .exec();
+
+        return docs.map(doc => this.mapper.toDomain(doc));
+    }
+
+    async updateFailedRetry(installmentId: string, reason: string, retryCount: number, session?: ClientSession): Promise<void> {
+        await this.model.findByIdAndUpdate(
+            new Types.ObjectId(installmentId),
+            {
+                $set: {
+                    retryCount,
+                    failureReason: reason
+                }
+            },
+            { session }
+        );
+    }
 }

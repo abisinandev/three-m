@@ -15,9 +15,9 @@ export class StrategyScheduler extends BaseScheduler implements IStrategySchedul
     }
 
     protected async execute(): Promise<void> {
-        if (!isIndianMarketOpen()) {
-            return;
-        }
+        // if (!isIndianMarketOpen()) {
+        //     return;
+        // }
 
         // logger.info("[STRATEGY-SCHEDULER] sync started");
         await this._getValidStrategiesUseCase.execute();

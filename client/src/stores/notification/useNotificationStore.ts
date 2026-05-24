@@ -7,7 +7,9 @@ export interface Notification {
     message: string;
     read: boolean;
     createdAt: string;
-    signalId?: string; // only present on ALGO_SIGNAL notifications
+    signalId?: string;       // only present on ALGO_SIGNAL notifications
+    expiresAt?: string;      // signal expiry timestamp (ISO string)
+    data?: Record<string, unknown>;
 }
 
 interface NotificationStore {

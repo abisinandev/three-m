@@ -20,6 +20,7 @@ export interface SipInstallmentDocument extends Document {
 
     failureReason?: string;
     investmentId?: string;
+    retryCount: number;
 
     createdAt: Date;
 }

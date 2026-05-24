@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { CheckCircle2, AlertTriangle, Zap, Activity, Info } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, Zap, Activity, Info, Clock } from 'lucide-react';
+import { isAxiosError } from 'axios';
 import { AlgoTradingApiService } from '@shared/services/stock/algo-trading-api';
 import type { Notification } from '../types/notification.types';
 
@@ -9,10 +10,51 @@ interface NotificationItemProps {
     onMarkAsRead: (id: string, e?: React.MouseEvent) => void;
 }
 
+/** Returns seconds remaining until expiresAt, or 0 if expired / not set */
+const useSignalCountdown = (expiresAt?: string | Date): number => {
+    const getSecondsLeft = () => {
+        if (!expiresAt) return 0;
+        const diff = Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000);
+        return Math.max(0, diff);
+    };
+
+    const [secondsLeft, setSecondsLeft] = useState(getSecondsLeft);
+
+    useEffect(() => {
+        if (!expiresAt) return;
+        if (getSecondsLeft() <= 0) return;
+
+        const interval = setInterval(() => {
+            const left = getSecondsLeft();
+            setSecondsLeft(left);
+            if (left <= 0) clearInterval(interval);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [expiresAt]);
+
+    return secondsLeft;
+};
+
+const formatCountdown = (seconds: number): string => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+};
+
 export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps) => {
     const [confirming, setConfirming] = useState(false);
     const [confirmed, setConfirmed] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Resolve expiresAt from top-level or nested data field
+    const expiresAt = notif.expiresAt ?? notif.data?.expiresAt;
+    const signalId   = notif.signalId  ?? notif.data?.signalId;
+
+    const secondsLeft  = useSignalCountdown(expiresAt);
+    const isExpired    = expiresAt ? secondsLeft <= 0 : !signalId; // fallback: treat missing signalId as expired
+    const isUrgent     = secondsLeft > 0 && secondsLeft <= 60;     // last 60 s — highlight in amber
 
     const getIcon = (type: string) => {
         switch (type) {
@@ -36,6 +78,8 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
     };
 
     const handleConfirm = async (e: React.MouseEvent) => {
+        // Guard against double clicks or repeated executions
+        if (confirming || confirmed) return;
         e.stopPropagation();
         const action = (notif.data?.action || extractAction(notif.message)) as 'BUY' | 'SELL';
         const symbol = (notif.data?.symbol || extractSymbol(notif.message)) as string;
@@ -44,19 +88,26 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
 
         setConfirming(true);
         setError(null);
-
         try {
             await AlgoTradingApiService.confirmSignal({
                 notificationId: notif.id,
-                signalId: (notif.signalId || notif.data?.signalId)!,
+                signalId: signalId!,
                 symbol,
                 action,
                 quantity: 1,
             });
             setConfirmed(true);
             onMarkAsRead(notif.id);
-        } catch {
-            setError('Order failed. Try again.');
+        } catch (err: unknown) {
+            // Extract the actual server error message (e.g. "Market is currently closed")
+            // falling back to a generic message if none is present
+            const serverMessage =
+                isAxiosError(err)
+                    ? (err.response?.data?.message ?? err.message)
+                    : err instanceof Error
+                        ? err.message
+                        : null;
+            setError(serverMessage || 'Order failed. Please try again.');
         } finally {
             setConfirming(false);
         }
@@ -102,24 +153,39 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
 
                     {isAlgo && !notif.read && !confirmed && (
                         <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
-                            {(notif.signalId || notif.data?.signalId) ? (
-                                <button
-                                    onClick={handleConfirm}
-                                    disabled={confirming}
-                                    className="text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 px-4 py-1.5 rounded-md transition-all disabled:opacity-50 flex items-center gap-2"
-                                >
-                                    {confirming ? (
-                                        <>
-                                            <div className="w-2 h-2 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
-                                            Executing...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Zap size={10} />
-                                            Execute
-                                        </>
-                                    )}
-                                </button>
+                            {!isExpired ? (
+                                <div className="flex items-center gap-1.5">
+                                    {/* Live countdown badge */}
+                                    <span className={`flex items-center gap-0.5 text-[9px] font-bold tabular-nums ${
+                                        isUrgent ? 'text-amber-400' : 'text-neutral-500'
+                                    }`}>
+                                        <Clock size={8} />
+                                        {formatCountdown(secondsLeft)}
+                                    </span>
+                                    <button
+                                        onClick={handleConfirm}
+                                        disabled={confirming || confirmed}
+                                        className={`text-[10px] font-bold px-4 py-1.5 rounded-md border transition-all disabled:opacity-50 flex items-center gap-2 ${
+                                            isUrgent
+                                                ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
+                                                : 'bg-purple-500/10 text-purple-400 border-purple-500/20 hover:bg-purple-500/20'
+                                        }`}
+                                    >
+                                        {confirming ? (
+                                            <>
+                                                <div className={`w-2 h-2 border-2 border-t-transparent rounded-full animate-spin ${
+                                                    isUrgent ? 'border-amber-400' : 'border-purple-400'
+                                                }`} />
+                                                Executing...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Zap size={10} />
+                                                Execute
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
                             ) : (
                                 <span className="text-[9px] text-neutral-600 uppercase tracking-widest">Signal expired</span>
                             )}
@@ -133,7 +199,12 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
                     )}
                 </div>
 
-                {error && <p className="text-[10px] text-rose-400 mt-1">{error}</p>}
+                {error && (
+                    <p className="text-[10px] text-rose-400 mt-2 flex items-start gap-1 leading-relaxed">
+                        <AlertTriangle size={10} className="flex-shrink-0 mt-[1px]" />
+                        <span>{error}</span>
+                    </p>
+                )}
             </div>
         </div>
     );

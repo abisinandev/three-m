@@ -67,6 +67,7 @@ export class SipDetailsUseCase implements ISipDetailsUseCase {
                 status: i.status,
                 failureReason: i.failureReason ?? undefined,
                 investmentId: i.investmentId ?? undefined,
+                retryCount: i.retryCount,
                 createdAt: i.createdAt,
             }));
 

@@ -50,13 +50,15 @@ const SipInstallmentSchema = new Schema<SipInstallmentDocument>(
         investmentId: {
             type: String,
         },
-        createdAt: {
-            type: Date,
-            default: Date.now,
+        retryCount: {
+            type: Number,
+            required: true,
+            default: 0,
         },
     },
     {
         versionKey: false,
+        timestamps:true
     }
 );
 

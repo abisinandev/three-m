@@ -13,6 +13,7 @@ export const SIP_TYPES = {
     CancelSipUseCase: Symbol.for("CancelSipUseCase"),
     ResumeSipUseCase: Symbol.for("ResumeSipUseCase"),
     SipBlockUseCase: Symbol.for('SipBlockUseCase'),
+    AnalyzeFailedInstallmentsUseCase: Symbol.for("AnalyzeFailedInstallmentsUseCase"),
     // controllers
     MutualFundSipController: Symbol.for("MutualFundSipController"),
 
@@ -20,5 +21,6 @@ export const SIP_TYPES = {
     SipQueue: Symbol.for("SipQueue"),
     SipWorker: Symbol.for("SipWorker"),
     SipScheduler: Symbol.for("SipScheduler"),
+    FailedSipScheduler: Symbol.for("FailedSipScheduler"),
 };
 

@@ -20,6 +20,7 @@ export class SipInstallmentEntity {
     private readonly _failureReason?: string;
 
     private readonly _investmentId?: string;
+    private readonly _retryCount: number;
 
     private readonly _createdAt: Date;
 
@@ -36,6 +37,7 @@ export class SipInstallmentEntity {
         units?: number;
         failureReason?: string;
         investmentId?: string;
+        retryCount?: number;
         createdAt: Date;
     }) {
         this._id = props.id;
@@ -50,6 +52,7 @@ export class SipInstallmentEntity {
         this._units = props.units;
         this._failureReason = props.failureReason;
         this._investmentId = props.investmentId;
+        this._retryCount = props.retryCount ?? 0;
         this._createdAt = props.createdAt;
     }
 
@@ -65,6 +68,7 @@ export class SipInstallmentEntity {
         return new SipInstallmentEntity({
             ...data,
             status: SipInstallmentStatus.PENDING,
+            retryCount: 0,
             createdAt: new Date(),
         });
     }
@@ -123,6 +127,7 @@ export class SipInstallmentEntity {
         units?: number;
         failureReason?: string;
         investmentId?: string;
+        retryCount?: number;
         createdAt: Date;
     }): SipInstallmentEntity {
         return new SipInstallmentEntity(props);
@@ -142,6 +147,7 @@ export class SipInstallmentEntity {
             units: this._units,
             failureReason: this._failureReason,
             investmentId: this._investmentId,
+            retryCount: this._retryCount,
             createdAt: this._createdAt,
         };
     }
@@ -159,5 +165,6 @@ export class SipInstallmentEntity {
     get units() { return this._units; }
     get failureReason() { return this._failureReason; }
     get investmentId() { return this._investmentId; }
+    get retryCount() { return this._retryCount; }
     get createdAt() { return this._createdAt; }
 }

@@ -24,6 +24,7 @@ export const toDomain = (
 
         failureReason: doc.failureReason,
         investmentId: doc.investmentId,
+        retryCount: doc.retryCount ?? 0,
 
         createdAt: doc.createdAt,
     });
@@ -49,6 +50,7 @@ export const toPersistance = (
 
         failureReason: data.failureReason,
         investmentId: data.investmentId,
+        retryCount: data.retryCount,
 
         createdAt: data.createdAt,
     };
