@@ -14,5 +14,6 @@ export const toSipInstallmentResponse = (e: SipInstallmentEntity): SipInstallmen
     status: e.status,
     failureReason: e.failureReason,
     investmentId: e.investmentId,
+    retryCount: e.retryCount,
     createdAt: e.createdAt,
 });

@@ -28,6 +28,9 @@ import { ISipQueue } from "@application/interfaces/services/sip/sip-queue.interf
 import { SipQueue } from "@infrastructure/providers/sip/queue/sip.queue";
 import { SipWorker } from "@infrastructure/providers/sip/queue/workers/sip.worker";
 import { SipScheduler } from "@infrastructure/providers/sip/queue/sip.scheduler";
+import { FailedSipScheduler } from "@infrastructure/providers/sip/queue/failed-sip.scheduler";
+import { IAnalyzeFailedInstallmentsUseCase } from "@application/use_cases/sip/interfaces/analyze-failed-installments-usecase.interface";
+import { AnalyzeFailedInstallmentsUseCase } from "@application/use_cases/sip/analyze-failed-installments.usecase";
 
 export const SipModule = new ContainerModule(({ bind }) => {
     // Repositories
@@ -44,6 +47,7 @@ export const SipModule = new ContainerModule(({ bind }) => {
     bind<ICancelSipUseCase>(SIP_TYPES.CancelSipUseCase).to(CancelSipUseCase);
     bind<IResumeSipUseCase>(SIP_TYPES.ResumeSipUseCase).to(ResumeSipUseCase);
     bind<ISipBlockUseCase>(SIP_TYPES.SipBlockUseCase).to(SipBlockUseCase);
+    bind<IAnalyzeFailedInstallmentsUseCase>(SIP_TYPES.AnalyzeFailedInstallmentsUseCase).to(AnalyzeFailedInstallmentsUseCase);
 
     // Controllers
     bind<MutualFundSipController>(SIP_TYPES.MutualFundSipController).to(MutualFundSipController);
@@ -52,5 +56,6 @@ export const SipModule = new ContainerModule(({ bind }) => {
     bind<ISipQueue>(SIP_TYPES.SipQueue).to(SipQueue).inSingletonScope();
     bind<SipWorker>(SIP_TYPES.SipWorker).to(SipWorker).inSingletonScope();
     bind<SipScheduler>(SIP_TYPES.SipScheduler).to(SipScheduler).inSingletonScope();
+    bind<FailedSipScheduler>(SIP_TYPES.FailedSipScheduler).to(FailedSipScheduler).inSingletonScope();
 });
 

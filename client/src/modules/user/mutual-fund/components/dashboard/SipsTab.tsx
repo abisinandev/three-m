@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { CalendarCheck, Pause, Play, Trash2, AlertCircle, ChevronDown, Clock, Info } from 'lucide-react';
 import dayjs from 'dayjs';
-import type { SipDto } from '../../types/dashboard.types';
+import type { SipResponse } from '../../types/dashboard.types';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
 import { toast } from 'sonner';
 
 interface SipsTabProps {
     sipsLoading: boolean;
-    sips: SipDto[];
+    sips: SipResponse[];
     handlePause: (id: string) => void;
     handleResume: (id: string) => void;
     handleEdit: (id: string) => void;
@@ -198,21 +198,29 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                 </summary>
                                 <div className="mt-4 grid gap-2">
                                     {sip.installments?.map((inst, idx) => (
-                                        <div key={inst.id || idx} className="flex justify-between items-center bg-[#111214] p-3 rounded-xl border border-[#1e2025]">
-                                            <div className="flex items-center gap-3">
-                                                <div className={`w-1.5 h-1.5 rounded-full ${inst.status === 'success' ? 'bg-green-500' :
-                                                        inst.status === 'failed' ? 'bg-red-500' : 'bg-amber-500'
-                                                    }`} />
-                                                <span className="text-[11px] font-medium text-gray-400">{dayjs(inst.executionDate).format('DD MMM YYYY')}</span>
+                                        <div key={inst.id || idx} className="flex flex-col bg-[#111214] p-3 rounded-xl border border-[#1e2025] gap-1.5">
+                                            <div className="flex justify-between items-center w-full">
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${inst.status === 'SUCCESS' ? 'bg-green-500' :
+                                                            inst.status === 'FAILED' ? 'bg-red-500' : 'bg-amber-500'
+                                                        }`} />
+                                                    <span className="text-[11px] font-medium text-gray-400">{dayjs(inst.executionDate).format('DD MMM YYYY')}</span>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-[11px] font-semibold text-gray-200">₹{inst.amount.toLocaleString('en-IN')}</span>
+                                                    <span className={`text-[9px] font-medium uppercase px-2 py-0.5 rounded-md ${inst.status === 'SUCCESS' ? 'bg-green-500/10 text-green-500' :
+                                                            inst.status === 'FAILED' ? 'bg-red-500/10 text-red-500' : 'bg-amber-500/10 text-amber-500'
+                                                        }`}>
+                                                        {inst.status}
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-3">
-                                                <span className="text-[11px] font-semibold text-gray-200">₹{inst.amount.toLocaleString('en-IN')}</span>
-                                                <span className={`text-[9px] font-medium uppercase px-2 py-0.5 rounded-md ${inst.status === 'success' ? 'bg-green-500/10 text-green-500' :
-                                                        inst.status === 'failed' ? 'bg-red-500/10 text-red-500' : 'bg-amber-500/10 text-amber-500'
-                                                    }`}>
-                                                    {inst.status}
-                                                </span>
-                                            </div>
+                                            {inst.status === 'FAILED' && inst.failureReason && (
+                                                <div className="flex items-center gap-1.5 text-[10px] text-red-400 bg-red-500/5 px-2 py-1 rounded-lg border border-red-500/10 self-start">
+                                                    <AlertCircle size={12} className="shrink-0" />
+                                                    <span>Reason: {inst.failureReason}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                     {(!sip.installments || sip.installments.length === 0) && (

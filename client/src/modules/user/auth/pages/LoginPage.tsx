@@ -48,7 +48,6 @@ export const LoginPage: React.FC = () => {
             toast.info("Scan QR Code and verify your 2FA");
         },
         onError: (err: { response?: { data?: { message?: string } } }) => {
-            console.log(err, '==============')
             toast.error(err.response?.data?.message || "Login failed")
         },
     })
@@ -77,7 +76,7 @@ export const LoginPage: React.FC = () => {
                     setIs2faModalOpen(false);
                     const userData = res.data.data.user;
                     useUserStore.getState().setUser(userData);
-                    navigate({ to: ROUTES.USER.PROFILE, replace: true });
+                    navigate({ to: ROUTES.USER.HOME, replace: true });
                 },
                 onError: () => toast.error("Invalid 2FA code"),
             }

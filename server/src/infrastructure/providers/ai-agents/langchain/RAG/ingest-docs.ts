@@ -1,11 +1,14 @@
 import path from "node:path";
-import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import crypto from "node:crypto";
+
 import { embeddings } from "./ollama.embedded";
 import { pineconeIndex } from "../pinecone-vector-db";
 import { loadTxtFiles } from "./text.loader";
+
 import { Document } from "@langchain/core/documents";
 
 const BATCH_SIZE = 50;
+
 async function upsertBatch(docs: Document[]) {
     const texts = docs.map((d) => d.pageContent);
 
@@ -17,7 +20,7 @@ async function upsertBatch(docs: Document[]) {
         metadata: {
             text: docs[i].pageContent,
             source: docs[i].metadata?.source || "",
-            page: docs[i].metadata?.loc?.pageNumber || 0
+            topic: docs[i].metadata?.topic || "",
         }
     }));
 
@@ -36,33 +39,55 @@ async function processInBatches(docs: Document[]) {
     }
 }
 
+function splitKnowledgeBase(content: string): Document[] {
+
+    const sections = content
+        .split("========================================")
+        .map(section => section.trim())
+        .filter(section =>
+            section.length > 0 &&
+            section.includes("Question:")
+        );
+
+    return sections.map((section, index) => {
+
+        const topicMatch = section.match(/Question:\s*(.+)/i);
+
+        const topic = topicMatch
+            ? topicMatch[1].trim()
+            : `topic-${index}`;
+
+        return new Document({
+            pageContent: section,
+            metadata: {
+                source: "financial-kb",
+                topic
+            }
+        });
+    });
+}
+
 export async function IngestDocuments() {
+
     const folderPath = path.join(
         process.cwd(),
         "src/infrastructure/providers/ai-agents/langchain/datas"
     );
 
-    // const loader = new DirectoryLoader(folderPath, {
-    //     ".pdf": (path: string) => new PDFLoader(path),
-    // });
-
-    // const pdfDocs = await loader.load();
-
     const txtDocs = await loadTxtFiles(folderPath);
 
-    const docs = [
-        // ...pdfDocs, 
-        ...txtDocs];
+    console.log(`Loaded ${txtDocs.length} text files`);
 
-    console.log(`Loaded ${docs.length} documents`);
+    const splitDocs: Document[] = [];
 
-    const splitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 500,
-        chunkOverlap: 50,
-    });
+    for (const doc of txtDocs) {
 
-    const splitDocs = await splitter.splitDocuments(docs);
-    console.log(`Created ${splitDocs.length} chunks`);
+        const docs = splitKnowledgeBase(doc.pageContent);
+
+        splitDocs.push(...docs);
+    }
+
+    console.log(`Created ${splitDocs.length} semantic chunks`);
 
     console.log("Embedding + uploading to Pinecone...");
 

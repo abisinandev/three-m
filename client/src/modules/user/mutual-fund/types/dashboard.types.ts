@@ -1,4 +1,4 @@
-export interface SipInstallmentDto {
+export interface SipInstallment {
     id?: string;
     sipId: string;
     userId: string;
@@ -8,13 +8,13 @@ export interface SipInstallmentDto {
     amount: number;
     nav?: number;
     units?: number;
-    status: 'pending' | 'success' | 'failed';
+    status: 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELLED';
     failureReason?: string;
     investmentId?: string;
     createdAt: string;
 }
 
-export interface SipDto {
+export interface SipResponse {
     id: string;
     userId: string;
     userCode?: string;
@@ -31,5 +31,5 @@ export interface SipDto {
     status: 'ACTIVE' | 'PAUSED' | 'CANCELLED';
     createdAt: string;
     updatedAt?: string;
-    installments?: SipInstallmentDto[];
+    installments?: SipInstallment[];
 }

@@ -11,4 +11,6 @@ export interface ISipInstallmentRepository extends IBaseRepository<SipInstallmen
     countInstallments(userId: string, options?: QueryOptions): Promise<number>;
     findInstallmentsBySip(userId: string, sipId: string): Promise<SipInstallmentEntity[] | null>;
     findActiveAndPendingInstallments(userId: string, sipId: string, session: ClientSession): Promise<SipInstallmentEntity[]>;
+    findFailedInstallmentsForRetry(): Promise<SipInstallmentEntity[]>;
+    updateFailedRetry(installmentId: string, reason: string, retryCount: number, session?: ClientSession): Promise<void>;
 }

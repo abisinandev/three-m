@@ -7,6 +7,7 @@ import { CagrUpdateScheduler } from "@infrastructure/providers/cron-scheduler/mu
 import { NavAllocationScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-allocatation-scheduler";
 import { NavDailyScheduler } from "@infrastructure/providers/cron-scheduler/mutual-fund/nav-cron.scheduler";
 import { SipScheduler } from "@infrastructure/providers/sip/queue/sip.scheduler";
+import { FailedSipScheduler } from "@infrastructure/providers/sip/queue/failed-sip.scheduler";
 import { LimitOrderScheduler } from "@infrastructure/providers/stocks/queue/limit-order-scheduler";
 import { SlTpOrderScheduler } from "@infrastructure/providers/stocks/queue/sl-tp-order.scheduler";
 
@@ -25,4 +26,6 @@ export const startSchedulers = async () => {
     container.get<SlTpOrderScheduler>(STOCK_TYPES.SlTpOrderScheduler).start();
 
     container.get<SipScheduler>(SIP_TYPES.SipScheduler).start();
+
+    container.get<FailedSipScheduler>(SIP_TYPES.FailedSipScheduler).start();
 }

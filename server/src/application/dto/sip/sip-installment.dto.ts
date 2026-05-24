@@ -19,6 +19,7 @@ export interface SipInstallmentDto {
     failureReason?: string;
 
     investmentId?: string;
+    retryCount: number;
 
     createdAt: Date;
 }
