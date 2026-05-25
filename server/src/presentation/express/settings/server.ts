@@ -31,3 +31,5 @@ const bootstrap = async () => {
 };
 
 bootstrap();
+
+console.log("git")
