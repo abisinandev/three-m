@@ -36,7 +36,7 @@ export const DashboardWidgets = ({ stats, recentTransactions, formatCurrency }: 
         } else {
             return (
                 <>
-                    AI detected exceptional user loyalty with a <span className="text-emerald-400 font-semibold">{conversionRate.toFixed(1)}% Premium conversion rate</span>. 
+                    System detected exceptional user loyalty with a <span className="text-emerald-400 font-semibold">{conversionRate.toFixed(1)}% Premium conversion rate</span>. 
                     Platform Assets (AUM) are healthy at <span className="text-emerald-400 font-semibold">{formatCurrency(stats.totalAum)}</span> with <span className="text-emerald-400 font-semibold">{stats.activeSips} running SIPs</span>.
                 </>
             );
@@ -52,16 +52,16 @@ export const DashboardWidgets = ({ stats, recentTransactions, formatCurrency }: 
                     <h3 className="text-[11px] font-semibold text-gray-200 uppercase tracking-wider">System Status</h3>
                 </div>
                 <div className="space-y-2">
-                    <div className={`p-2.5 rounded text-[10px] font-medium flex items-center justify-between ${isCpuHigh ? 'bg-red-500/10 border border-red-500/20 text-red-400' : 'bg-[#161616] border border-[#1f1f1f] text-gray-400'}`}>
+                    {/* <div className={`p-2.5 rounded text-[10px] font-medium flex items-center justify-between ${isCpuHigh ? 'bg-red-500/10 border border-red-500/20 text-red-400' : 'bg-[#161616] border border-[#1f1f1f] text-gray-400'}`}>
                         <span>Server Load (CPU: {cpuLoad}%)</span>
                         <span className={`text-[8px] font-semibold uppercase px-1 rounded ${isCpuHigh ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
                             {isCpuHigh ? 'High Load' : 'Optimal'}
                         </span>
-                    </div>
-                    <div className="bg-[#161616] border border-[#1f1f1f] text-gray-400 p-2.5 rounded text-[10px] font-medium flex items-center justify-between">
+                    </div> */}
+                    {/* <div className="bg-[#161616] border border-[#1f1f1f] text-gray-400 p-2.5 rounded text-[10px] font-medium flex items-center justify-between">
                         <span>Memory Usage</span>
                         <span className="text-[9px] font-semibold text-gray-300">{memoryLoad}%</span>
-                    </div>
+                    </div> */}
                     {stats.pendingKyc > 0 ? (
                         <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 p-2.5 rounded text-[10px] font-medium flex items-center justify-between">
                             <span>{stats.pendingKyc} users awaiting KYC approval</span>

@@ -129,13 +129,6 @@ export default function MutualFundsPage() {
                 <h1 className="text-xl font-semibold text-white">Mutual Funds</h1>
 
                 <div className="flex items-center gap-2">
-                    <button
-                        aria-label="Export funds"
-                        className="flex items-center gap-1.5 px-3 py-2 text-xs bg-neutral-800 hover:bg-neutral-700 rounded-md transition"
-                    >
-                        <Download size={14} />
-                        Export
-                    </button>
 
                     <button
                         onClick={() => navigate({ to: ROUTES.ADMIN.MUTUAL_FUNDS_MANAGEMENT.ADD_NEW })}

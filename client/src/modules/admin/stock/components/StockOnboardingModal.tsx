@@ -140,8 +140,6 @@ export const StockOnboardingModal: FC<StockOnboardingModalProps> = ({ isOpen, on
                 className="w-full max-w-lg bg-[#0b0c0e] border border-[#1e2025] rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
                 style={{ fontFamily: 'Inter, sans-serif' }}
             >
-                {/* Header */}
-                <div className="relative h-1 bg-teal-500 w-full" />
                 <div className="flex justify-between items-center px-6 py-4 border-b border-[#1e2025]">
                     <div className="flex items-center gap-3">
                         {step === 'details' && (
