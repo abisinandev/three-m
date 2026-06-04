@@ -1,6 +1,7 @@
 import { SubscriptionEntity } from "@domain/entities/subscription/subscription.entity";
 import { IBaseRepository } from "../base-repository.interface";
 import { FilterQuery, QueryOptions } from "mongoose";
+import { SubscriptionStatus } from "@domain/entities/subscription/enums/subscription-status.enums";
 
 export interface ISubscriptionRepository extends IBaseRepository<SubscriptionEntity> {
     findWithFilters(options: QueryOptions): Promise<SubscriptionEntity[]>;
@@ -11,4 +12,5 @@ export interface ISubscriptionRepository extends IBaseRepository<SubscriptionEnt
     monthlyGrowth(): Promise<{ month: string, revenue: number, subscriptions: number }[]>;
     findByUserId(userId: string): Promise<SubscriptionEntity | null>;
     getTotalMRR(): Promise<number>;
+    updateStatus(subscriptionId: string, status: SubscriptionStatus): Promise<void>;
 }

@@ -15,4 +15,5 @@ export interface IUserRepository extends IBaseRepository<UserEntity> {
   getTotalUsersCount(): Promise<number>;
   getPremiumUsersCount(): Promise<number>;
   getUserRegistrationGrowthByMonth(months: number): Promise<{ month: string; users: number; premium: number }[]>;
+  updateSubscriptionData(userId: string, data: { subscriptionStatus: string; subscriptionPlan: string; subscriptionId?: string | null }): Promise<void>;
 }

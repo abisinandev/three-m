@@ -408,8 +408,14 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
     async findUserInvestmentsForXirr(userId: string): Promise<InvestmentEntity[] | null> {
         const docs = await this.model.find({
             userId,
-            status: { $in: [InvestmentStatus.ALLOTTED, InvestmentStatus.REDEEMED] }
-        })
+            status: {
+                $in: [
+                    InvestmentStatus.ALLOTTED,
+                    InvestmentStatus.REDEEMED,
+                    InvestmentStatus.PARTIALLY_REDEEMED,
+                ]
+            }
+        });
         if (!docs) return null;
         return docs.map(doc => this.mapper.toDomain(doc));
     }

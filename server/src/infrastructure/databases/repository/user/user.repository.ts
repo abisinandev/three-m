@@ -51,7 +51,7 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
     type UserFilter = Record<string, unknown> & {
       $or?: Array<Record<string, unknown>>;
     };
- 
+
     const finalFilter: UserFilter = { ...filter };
 
     if (search.trim()) {
@@ -96,16 +96,16 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
   }
 
   async getPremiumUsersCount(): Promise<number> {
-    return this.model.countDocuments({ 
-        subscriptionStatus: "ACTIVE", 
-        subscriptionPlan: "PREMIUM" 
+    return this.model.countDocuments({
+      subscriptionStatus: "ACTIVE",
+      subscriptionPlan: "PREMIUM"
     });
   }
 
   async getUserRegistrationGrowthByMonth(months: number): Promise<{ month: string; users: number; premium: number }[]> {
     const date = new Date();
     date.setMonth(date.getMonth() - months);
-    
+
     const pipeline = [
       {
         $match: {
@@ -122,7 +122,7 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
           premium: {
             $sum: {
               $cond: [
-                { $and: [ { $eq: ["$subscriptionStatus", "ACTIVE"] }, { $eq: ["$subscriptionPlan", "PREMIUM"] } ] },
+                { $and: [{ $eq: ["$subscriptionStatus", "ACTIVE"] }, { $eq: ["$subscriptionPlan", "PREMIUM"] }] },
                 1,
                 0
               ]
@@ -134,13 +134,30 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
     ];
 
     const result = await this.model.aggregate(pipeline);
-    
+
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    
+
     return result.map((item: { _id: { month: number }; users: number; premium: number }) => ({
       month: monthNames[item._id.month - 1],
       users: item.users,
       premium: item.premium
     }));
+  }
+
+  async updateSubscriptionData(
+    userId: string,
+    data: { subscriptionStatus: string; subscriptionPlan: string; subscriptionId?: string | null }
+  ): Promise<void> {
+
+    const res = await this.model.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          subscriptionStatus: data.subscriptionStatus,
+          subscriptionPlan: data.subscriptionPlan,
+        }
+      }
+    );
+    console.log('updateSubscriptionData: ', res);
   }
 }

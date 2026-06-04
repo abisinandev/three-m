@@ -197,4 +197,11 @@ export class SubscriptionRepository extends
         ]);
         return result.length > 0 ? result[0].total : 0;
     }
+
+    async updateStatus(subscriptionId: string, status: SubscriptionStatus): Promise<void> {
+        await this.model.updateOne(
+            { _id: subscriptionId },
+            { $set: { status } }
+        );
+    }
 }
