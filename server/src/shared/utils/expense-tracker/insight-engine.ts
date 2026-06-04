@@ -14,7 +14,7 @@ export const generateInsights = (summary: FinancialSummary): InsightResult => {
             title: 'Critical Overspending',
             message: `You have spent ${excess}% more than your total income. Immediate adjustment required.`
         });
-        healthScore -= 40 + (summary.spendingRatio - 1) * 50; // Dynamic penalty
+        healthScore -= 40 + (summary.spendingRatio - 1) * 50;
     }
 
     // 2. Needs Ratio (Goal: <= 0.5)
@@ -27,7 +27,7 @@ export const generateInsights = (summary: FinancialSummary): InsightResult => {
             title: 'Needs Above 50%',
             message: `Essential spending is at ${(summary.needsRatio * 100).toFixed(1)}%. Try to reduce by ${excessPercent}% to hit target.`
         });
-        healthScore -= (summary.needsRatio - 0.5) * 60; // 0.6 -> -6 points, 0.7 -> -12 points etc.
+        healthScore -= (summary.needsRatio - 0.5) * 60; 
     }
 
     // 3. Wants Ratio (Goal: <= 0.3)

@@ -17,7 +17,7 @@ import { IFetchPremiumPlanUseCase } from "@application/use_cases/user/subscripti
 import { FetchPremiumPlanUseCase } from "@application/use_cases/user/subscription/fetch-premium-plan.usecase";
 import { UserSubscriptionController } from "@presentation/http/controllers/user/user-subscription.controller";
 import { IFeatureAccessService } from "@application/interfaces/services/subscription/feature-access-service.interface";
-import { FeatureAccessService } from "@infrastructure/providers/subscription/feature-access.service";
+import { FeatureAccessService } from "@application/services/subscription/feature-access.service";
 import { IUpgradePremiumUseCase } from "@application/use_cases/user/subscription/interfaces/upgrade-premium-usecase.interface";
 import { UpgradePremiumUseCase } from "@application/use_cases/user/subscription/upgrade-premium.usecase";
 import { IGetUserPlanUseCase } from "@application/use_cases/user/subscription/interfaces/get-user-plan.usecase.interface";

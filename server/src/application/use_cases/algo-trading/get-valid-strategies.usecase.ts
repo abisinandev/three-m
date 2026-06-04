@@ -27,7 +27,7 @@ export class StrategiesUseCase implements IStrategiesUseCase {
             if (hasAccess) {
                 await this._strategyQueue.addStrategyJob(strategy.id as string);
             } else {
-                console.warn(`[GetValidStrategiesUseCase] User ${strategy.userId} lacks access for strategy ${strategy.id}. Skipping.`);
+                // console.warn(`[GetValidStrategiesUseCase] User ${strategy.userId} lacks access for strategy ${strategy.id}. Skipping.`);
             }
         }
     }

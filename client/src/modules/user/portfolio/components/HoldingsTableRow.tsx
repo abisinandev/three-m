@@ -202,12 +202,21 @@ export const HoldingsTableRow = ({
                             </p>
                         </>
                     ) : (
-                        <p style={{
-                            fontSize: 12, fontWeight: 700, margin: 0,
-                            color: inv.xirr !== undefined ? (inv.xirr >= 0 ? '#00C853' : '#FF1744') : '#5a5f6e',
-                        }}>
-                            {inv.xirr !== undefined ? `${(inv.xirr * 100).toFixed(2)}%` : '—'}
-                        </p>
+                        inv.xirr !== undefined ? (
+                            <p style={{
+                                fontSize: 12, fontWeight: 700, margin: 0,
+                                color: inv.xirr >= 0 ? '#00C853' : '#FF1744',
+                            }}>
+                                {(inv.xirr * 100).toFixed(2)}%
+                            </p>
+                        ) : (
+                            <>
+                                <p style={{ fontSize: 12, fontWeight: 700, margin: 0, color: pnlColor }}>
+                                    {profit >= 0 ? '+' : ''}{profitPct.toFixed(2)}%
+                                </p>
+                                <p style={{ fontSize: 9, color: '#5a5f6e', margin: '1px 0 0' }}>ABS</p>
+                            </>
+                        )
                     )}
                 </div>
 

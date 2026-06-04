@@ -321,6 +321,13 @@ export class UserEntity {
     this._subscriptionId = subId;
   }
 
+  expireSubscription(): void {
+    this._subscriptionPlan = SubscriptionPlans.FREE;
+    this._subscriptionStatus = SubscriptionStatus.INACTIVE;
+    this._subscriptionId = undefined;
+    this._updatedAt = new Date();
+  }
+
   enable2FA(secret: string): void {
     this._twoFactorSecret = secret;
   }

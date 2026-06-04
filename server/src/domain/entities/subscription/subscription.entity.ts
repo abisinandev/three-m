@@ -2,7 +2,7 @@ import { SubscriptionPlans } from "./enums/plans.enum";
 import { SubscriptionStatus } from "./enums/subscription-status.enums";
 
 export class SubscriptionEntity {
-    private readonly _id?: string | null;
+    private readonly _id?: string;
     private readonly _userId: string;
     private _planCode: SubscriptionPlans;
     private _startDate: Date;
@@ -12,7 +12,7 @@ export class SubscriptionEntity {
     private _updatedAt?: Date;
 
     private constructor(props: {
-        id?: string | null;
+        id?: string;
         userId: string;
         planCode: SubscriptionPlans;
         startDate: Date;
@@ -21,7 +21,7 @@ export class SubscriptionEntity {
         createdAt?: Date;
         updatedAt?: Date;
     }) {
-        this._id = props.id ?? null;
+        this._id = props.id;
         this._userId = props.userId;
         this._planCode = props.planCode;
         this._startDate = props.startDate;

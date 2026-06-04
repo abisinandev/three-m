@@ -46,7 +46,6 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
             this._investmentRepository.findUserInvestmentsForXirr(userId),
             this._tradeRepository.findByUserId(userId)
         ]);
-        console.log(portfolioAssets, '--');
 
         const investments = allInvestments || [];
         const trades = allTrades || [];
@@ -151,7 +150,8 @@ export class PortfolioSummaryUseCase implements IPortfolioSummaryUseCase {
         );
 
         const xirr = this.xirrService.calculate(cashflows);
-
+        logger.info(`XIRR Result: ${xirr}`);
+        
         const allocations = [
             { assetType: "STOCK", currentValue: stockAllocation },
             { assetType: "MUTUAL_FUND", currentValue: mfAllocation }
