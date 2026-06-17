@@ -5,7 +5,7 @@ import { SipStatusBadge } from '../components/SipStatusBadges';
 import { useNavigate } from '@tanstack/react-router';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchSipsApi } from '@shared/services/admin/sip-management/sip-management-admin-api';
 

@@ -73,7 +73,7 @@ export const BudgetPattern = ({
 
     return (
         <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-5 h-[340px] flex flex-col relative">
-            <h3 className="text-[10px] font-bold text-[#5a5f6e] uppercase tracking-[0.1em] m-0 mb-3">
+            <h3 className="text-xs font-bold text-[#5a5f6e] uppercase tracking-widest m-0 mb-3">
                 Budget Allocation
             </h3>
 
@@ -81,15 +81,15 @@ export const BudgetPattern = ({
 
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none z-10 -mt-1.5">
                     <p
-                        className="text-[9px] font-bold uppercase tracking-[0.05em] m-0"
+                        className="text-xs font-bold uppercase tracking-wider m-0"
                         style={{ color: activeItem ? activeItem.color : '#5a5f6e' }}
                     >
                         {activeItem ? activeItem.name : 'Total Out'}
                     </p>
-                    <p className="text-[15px] font-extrabold text-[#e8eaed] mt-0.5 m-0">
+                    <p className="text-lg font-extrabold text-[#e8eaed] mt-0.5 m-0 tabular-nums">
                         {formatCurrency(activeItem ? activeItem.value : totalOutput)}
                     </p>
-                    <p className="text-[9px] font-semibold text-[#5a5f6e] m-0">
+                    <p className="text-xs font-semibold text-[#5a5f6e] m-0 tabular-nums">
                         {activeItem
                             ? `${totalIncome > 0 ? ((activeItem.value / totalIncome) * 100).toFixed(1) : 0}%`
                             : 'of Income'
@@ -135,16 +135,16 @@ export const BudgetPattern = ({
                             className="w-1.5 h-1.5 rounded-full"
                             style={{ backgroundColor: item.color }}
                         />
-                        <span className="text-[10px] font-bold text-[#e8eaed]">{item.name}</span>
-                        <span className="text-[9px] text-[#5a5f6e]">{totalIncome > 0 ? ((item.value / totalIncome) * 100).toFixed(0) : 0}%</span>
+                        <span className="text-xs font-bold text-[#e8eaed]">{item.name}</span>
+                        <span className="text-xs text-[#5a5f6e] tabular-nums">{totalIncome > 0 ? ((item.value / totalIncome) * 100).toFixed(0) : 0}%</span>
                     </div>
                 ))}
 
                 {unspentBalance > 0 && (
                     <div className="flex items-center gap-1.5 opacity-60">
                         <div className="w-1.5 h-1.5 rounded-full border border-[#5a5f6e]" />
-                        <span className="text-[10px] font-bold text-[#5a5f6e]">Remaining Amount</span>
-                        <span className="text-[9px] text-[#5a5f6e]">{totalIncome > 0 ? ((unspentBalance / totalIncome) * 100).toFixed(0) : 0}%</span>
+                        <span className="text-xs font-bold text-[#5a5f6e]">Remaining Amount</span>
+                        <span className="text-xs text-[#5a5f6e] tabular-nums">{totalIncome > 0 ? ((unspentBalance / totalIncome) * 100).toFixed(0) : 0}%</span>
                     </div>
                 )}
             </div>

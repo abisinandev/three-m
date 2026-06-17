@@ -9,7 +9,7 @@ import {
     Loader2,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
 import { SipStatusBadge } from '../components/SipStatusBadges';
 import { fetchSipDetailsApi } from '@shared/services/admin/sip-management/sip-management-admin-api';

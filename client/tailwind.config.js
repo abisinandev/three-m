@@ -10,8 +10,18 @@ export default {
     extend: {
       // === FONT FAMILY - ZERODHA EXACT ===
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
-        inter: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
+      },
+      // === TYPE SCALE - FINTECH REDESIGN ===
+      fontSize: {
+        'xs': ['12px', { lineHeight: '16px' }],
+        'sm': ['13px', { lineHeight: '18px' }],
+        'base': ['14px', { lineHeight: '20px' }],
+        'lg': ['16px', { lineHeight: '24px' }],
+        'xl': ['20px', { lineHeight: '28px' }],
+        '2xl': ['24px', { lineHeight: '32px' }],
+        '4xl': ['36px', { lineHeight: '40px' }],
       },
 
       // === COLORS - Keep yours + Add Zerodha precision ===

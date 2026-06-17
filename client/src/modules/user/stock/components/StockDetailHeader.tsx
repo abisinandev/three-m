@@ -42,7 +42,7 @@ export const StockDetailHeader = ({
                   className="w-5 h-5 object-contain"
                 />
               ) : (
-                <span className="text-[10px] font-bold text-[#5a5f6e]">
+                <span className="text-xs font-bold text-[#5a5f6e]">
                   {(stockInfo.symbol || symbol).slice(0, 2).toUpperCase()}
                 </span>
               )}
@@ -52,11 +52,11 @@ export const StockDetailHeader = ({
                 <span className="text-sm font-bold tracking-tight text-[#e8eaed]">
                   {stockInfo.symbol || symbol}
                 </span>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#1e2025] text-[#5a5f6e] font-bold uppercase tracking-wider">
+                <span className="text-xs px-1.5 py-0.5 rounded bg-[#1e2025] text-[#5a5f6e] font-bold uppercase tracking-wider">
                   {stockInfo.exchange || "NSE"}
                 </span>
               </div>
-              <span className="text-[10px] text-[#5a5f6e] font-medium leading-none">
+              <span className="text-xs text-[#5a5f6e] font-medium leading-none">
                 {stockInfo.name || symbol}
               </span>
             </div>
@@ -65,11 +65,11 @@ export const StockDetailHeader = ({
 
         <div className="flex items-center gap-6">
           <div className="text-right">
-            <div className="text-sm font-bold tracking-tight">
+            <div className="text-sm font-bold tracking-tight tabular-nums">
               {stockCurrencyService.formatCurrency(currentPrice, "INR")}
             </div>
             <div
-              className={`text-[10px] font-bold flex items-center justify-end gap-1 ${isPositive ? "text-[#00C853]" : "text-[#FF1744]"
+              className={`text-xs font-bold flex items-center justify-end gap-1 tabular-nums ${isPositive ? "text-[#00C853]" : "text-[#FF1744]"
                 }`}
             >
               <span>
@@ -83,13 +83,13 @@ export const StockDetailHeader = ({
           <div className="flex gap-2">
             <button
               onClick={() => onTradeClick("buy")}
-              className={`px-5 py-1.5 bg-[#00C853] text-white text-[11px] font-bold rounded hover:bg-[#00e676] transition-all active:scale-95 uppercase tracking-wider ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed active:scale-100' : ''}`}
+              className={`px-5 py-1.5 bg-[#00C853] text-white text-xs font-bold rounded hover:bg-[#00e676] transition-all active:scale-95 uppercase tracking-wider ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed active:scale-100' : ''}`}
             >
               Buy
             </button>
             <button
               onClick={() => onTradeClick("sell")}
-              className={`px-5 py-1.5 bg-[#FF1744] text-[#e8eaed] text-[11px] font-bold rounded hover:bg-[#ff5252] transition-all active:scale-95 uppercase tracking-wider ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed active:scale-100' : ''}`}
+              className={`px-5 py-1.5 bg-[#FF1744] text-[#e8eaed] text-xs font-bold rounded hover:bg-[#ff5252] transition-all active:scale-95 uppercase tracking-wider ${!isVerified ? 'opacity-50 grayscale cursor-not-allowed active:scale-100' : ''}`}
             >
               Sell
             </button>

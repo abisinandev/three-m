@@ -118,14 +118,13 @@ const MutualFundDashboard = () => {
     return (
         <div
             className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] pb-10 selection:bg-[#2962ff]/30"
-            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
         >
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pt-6 px-6 max-w-[1600px] mx-auto">
                 <div>
-                    <h2 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                    <h1 className="text-2xl font-semibold text-[#e8eaed] tracking-tight m-0">
                         Mutual Funds Dashboard
-                    </h2>
-                    <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+                    </h1>
+                    <p className="text-sm text-[#5a5f6e] mt-1 m-0">
                         Manage your investments, SIPs, and mutual fund history.
                     </p>
                 </div>

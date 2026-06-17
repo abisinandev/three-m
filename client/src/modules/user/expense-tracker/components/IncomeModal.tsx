@@ -45,7 +45,7 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
 
                 <div className="flex justify-between items-center px-5 py-4 border-b border-[#1e2025]">
                     <div className="flex items-center gap-3">
-                        <span className="text-[12px] font-black text-[#e8eaed] uppercase tracking-widest">Add Income</span>
+                        <span className="text-sm font-black text-[#e8eaed] uppercase tracking-widest">Add Income</span>
                     </div>
                     <button onClick={onClose} className="text-[#5a5f6e] hover:text-white transition-colors">
                         <X size={16} />
@@ -54,9 +54,9 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
 
                 <div className="p-5 space-y-5">
                     <div>
-                        <label className="text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Source Name</label>
+                        <label className="text-xs font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Source Name</label>
                         <input
-                            className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-[12px] text-white outline-none focus:border-[#00C853]/50 transition-all font-bold placeholder:text-[#333]"
+                            className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-[#00C853]/50 transition-all font-bold placeholder:text-[#333]"
                             placeholder="e.g. Primary Salary"
                             value={newSourceName}
                             onChange={(e) => setNewSourceName(e.target.value)}
@@ -64,9 +64,9 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
                     </div>
 
                     <div>
-                        <label className="text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Amount (₹)</label>
+                        <label className="text-xs font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Amount (₹)</label>
                         <input
-                            className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-[12px] text-white outline-none focus:border-[#00C853]/50 transition-all font-black placeholder:text-[#333]"
+                            className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-[#00C853]/50 transition-all font-black placeholder:text-[#333] tabular-nums"
                             type="number"
                             placeholder="0.00"
                             value={newSourceAmount}
@@ -78,25 +78,25 @@ export const IncomeModal = ({ isOpen, onClose, incomeSources }: IncomeModalProps
                         <button
                             onClick={handleAddIncomeSource}
                             disabled={isAddingIncome}
-                            className="w-full py-3.5 bg-[#00C853] hover:bg-[#00E676] text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/10 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="w-full py-3.5 bg-[#00C853] hover:bg-[#00E676] text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-green-500/10 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                             {isAddingIncome ? <Loader2 size={14} className="animate-spin" /> : 'Confirm Income'}
                         </button>
                     </div>
 
                     <div className="pt-5 border-t border-[#1e2025]">
-                        <p className="text-[9px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-3">Current Monthly Sources</p>
+                        <p className="text-xs font-bold text-[#5a5f6e] uppercase tracking-widest mb-3">Current Monthly Sources</p>
                         <div className="space-y-2 max-h-[120px] overflow-y-auto pr-1 custom-scrollbar">
                             {incomeSources.length === 0 ? (
-                                <p className="text-[10px] text-[#3a3d45] font-bold uppercase italic">No income recorded.</p>
+                                <p className="text-xs text-[#3a3d45] font-bold uppercase italic">No income recorded.</p>
                             ) : (
                                 incomeSources.map((source, i) => (
                                     <div key={i} className="flex justify-between items-center bg-[#111214] p-3 rounded-xl border border-[#1e2025]">
                                         <div className="flex items-center gap-2">
                                             <DollarSign size={12} className="text-[#00C853]" />
-                                            <span className="text-[11px] font-bold text-[#e8eaed] uppercase tracking-tight">{source.source}</span>
+                                            <span className="text-sm font-bold text-[#e8eaed] uppercase tracking-tight">{source.source}</span>
                                         </div>
-                                        <span className="text-[11px] font-black text-white">{formatCurrency(source.amount)}</span>
+                                        <span className="text-sm font-black text-white tabular-nums">{formatCurrency(source.amount)}</span>
                                     </div>
                                 ))
                             )}

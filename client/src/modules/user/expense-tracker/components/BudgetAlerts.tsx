@@ -125,16 +125,16 @@ export const BudgetAlerts = ({
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-0.5">
-                                <p className={`text-[11px] font-extrabold m-0 uppercase tracking-wide ${s.title}`}>
+                                <p className={`text-xs font-extrabold m-0 uppercase tracking-wide ${s.title}`}>
                                     {alert.title}
                                 </p>
                                 {alert.extra && (
-                                    <span className={`text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase ${s.badge}`}>
+                                    <span className={`text-xs font-extrabold px-1.5 py-0.5 rounded uppercase ${s.badge}`}>
                                         {alert.extra}
                                     </span>
                                 )}
                             </div>
-                            <p className="text-[10px] text-[#9ca3af] m-0 leading-[1.5]">
+                            <p className="text-xs text-[#9ca3af] m-0 leading-relaxed">
                                 {alert.message}
                             </p>
                         </div>

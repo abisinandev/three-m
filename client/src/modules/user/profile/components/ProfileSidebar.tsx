@@ -1,7 +1,7 @@
 import { Camera } from 'lucide-react';
 import { useUserStore } from '@stores/user/UserStore';
 
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 
 interface KycInfo {
   badgeBg: string;

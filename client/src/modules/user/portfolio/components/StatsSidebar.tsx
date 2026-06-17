@@ -8,31 +8,18 @@ interface PortfolioXirrCardProps {
 export const PortfolioXirrCard = ({ xirrValue }: PortfolioXirrCardProps) => {
     const isPositive = Number(xirrValue) >= 0;
     return (
-        <div style={{
-            background: '#111214',
-            border: '1px solid #1e2025',
-            borderRadius: 8,
-            padding: '14px 16px',
-        }}>
-            <p style={{ fontSize: 10, color: '#5a5f6e', letterSpacing: '0.06em', textTransform: 'uppercase', margin: '0 0 4px' }}>
+        <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-4">
+            <p className="text-xs font-semibold text-[#5a5f6e] uppercase tracking-wider mb-1">
                 Portfolio XIRR
             </p>
-            <p style={{
-                fontSize: 22,
-                fontWeight: 700,
-                color: isPositive ? '#00C853' : '#FF1744',
-                margin: 0,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-            }}>
+            <p className="text-2xl font-bold flex items-center gap-1.5 m-0 tabular-nums" style={{ color: isPositive ? '#00C853' : '#FF1744' }}>
                 {isPositive
-                    ? <TrendingUp size={16} color="#00C853" />
-                    : <TrendingDown size={16} color="#FF1744" />
+                    ? <TrendingUp size={18} color="#00C853" />
+                    : <TrendingDown size={18} color="#FF1744" />
                 }
                 {xirrValue}%
             </p>
-            <p style={{ fontSize: 10, color: '#5a5f6e', margin: '4px 0 0' }}>Annualised return</p>
+            <p className="text-xs text-[#5a5f6e] mt-1">Annualised return</p>
         </div>
     );
 };
@@ -58,40 +45,36 @@ export const PortfolioForecastCard = ({ projectionData, isLoading }: ForecastCar
                 pointerEvents: 'none',
             }} />
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <p style={{ fontSize: 11, fontWeight: 600, color: '#9ca3af', letterSpacing: '0.06em', textTransform: 'uppercase', margin: 0 }}>
+                <p className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider m-0">
                     10-Year Forecast
                 </p>
-                <span style={{
-                    fontSize: 9, fontWeight: 700, color: '#00C853',
-                    background: 'rgba(0,200,83,0.1)', border: '1px solid rgba(0,200,83,0.2)',
-                    padding: '2px 6px', borderRadius: 3,
-                }}>
+                <span className="text-xs font-bold text-[#00C853] bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
                     12% CAGR
                 </span>
             </div>
 
             {isLoading ? (
-                <div style={{ fontSize: 11, color: '#5a5f6e', textAlign: 'center', padding: '12px 0' }}>Calculating…</div>
+                <div className="text-xs text-[#5a5f6e] text-center py-3">Calculating…</div>
             ) : projectionData ? (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                     <div>
-                        <p style={{ fontSize: 10, color: '#5a5f6e', margin: '0 0 3px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Projected</p>
-                        <p style={{ fontSize: 16, fontWeight: 700, color: '#e8eaed', margin: 0 }}>
+                        <p className="text-xs text-[#5a5f6e] uppercase tracking-wider mb-1">Projected</p>
+                        <p className="text-lg font-bold text-[#e8eaed] m-0 tabular-nums">
                             ₹{projectionData.projectedValue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                         </p>
                     </div>
                     <div>
-                        <p style={{ fontSize: 10, color: '#5a5f6e', margin: '0 0 3px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Growth</p>
-                        <p style={{ fontSize: 16, fontWeight: 700, color: '#00C853', margin: 0 }}>
+                        <p className="text-xs text-[#5a5f6e] uppercase tracking-wider mb-1">Growth</p>
+                        <p className="text-lg font-bold text-[#00C853] m-0 tabular-nums">
                             +₹{projectionData.projectedProfit.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                         </p>
                     </div>
-                    <p style={{ gridColumn: '1/-1', fontSize: 9, color: '#5a5f6e', margin: '8px 0 0', borderTop: '1px solid #1e2025', paddingTop: 8, lineHeight: 1.5 }}>
+                    <p className="col-span-2 text-xs text-[#5a5f6e] mt-2 border-t border-[#1e2025] pt-2 leading-relaxed">
                         Based on current value and conservative 12% annual return over 10 years.
                     </p>
                 </div>
             ) : (
-                <div style={{ fontSize: 11, color: '#5a5f6e', textAlign: 'center', padding: '12px 0' }}>No data available</div>
+                <div className="text-xs text-[#5a5f6e] text-center py-3">No data available</div>
             )}
         </div>
     );

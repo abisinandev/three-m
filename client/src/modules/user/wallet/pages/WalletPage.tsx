@@ -45,8 +45,8 @@ const WalletPage = () => {
 
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-sm sm:text-[16px] font-semibold text-[#e8eaed] tracking-tight m-0 uppercase">Account Funds</h1>
-                        <p className="text-[10px] sm:text-[11px] text-[#5a5f6e] mt-0.5 m-0 uppercase tracking-wider">Wallet & Transaction Audit</p>
+                        <h1 className="text-2xl font-semibold text-[#e8eaed] tracking-tight m-0">Account Funds</h1>
+                        <p className="text-xs text-[#5a5f6e] mt-1 m-0 uppercase tracking-wider">Wallet & Transaction Audit</p>
                     </div>
                     <button
                         onClick={() => refetch()}
@@ -70,7 +70,7 @@ const WalletPage = () => {
                 <div className="space-y-3 pt-2">
                     <div className="flex items-center gap-2 px-1">
                         <History size={13} className="text-[#5a5f6e]" />
-                        <h2 className="text-[11px] font-bold text-[#5a5f6e] uppercase tracking-wider">Transaction Ledger</h2>
+                        <h2 className="text-xs font-semibold text-[#5a5f6e] uppercase tracking-wider">Transaction Ledger</h2>
                     </div>
 
                     <div className="bg-[#111214] border border-[#1e2025] rounded-lg overflow-hidden shadow-sm">

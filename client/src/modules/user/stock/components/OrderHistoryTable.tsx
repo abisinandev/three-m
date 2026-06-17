@@ -17,17 +17,8 @@ interface OrderHistoryTableProps {
 const SideTag: React.FC<{ side?: string }> = ({ side }) => {
     const isSell = side?.toLowerCase() === 'sell';
     return (
-        <div style={{
-            display: 'flex', alignItems: 'center', gap: 4,
-            fontSize: 9, fontWeight: 800,
-            padding: '2px 7px', borderRadius: 4,
-            background: isSell ? 'rgba(255,23,68,0.12)' : 'rgba(0,200,83,0.12)',
-            color: isSell ? '#FF1744' : '#00C853',
-            border: isSell ? '1px solid rgba(255,23,68,0.2)' : '1px solid rgba(0,200,83,0.2)',
-            textTransform: 'uppercase', letterSpacing: '0.06em',
-            flexShrink: 0,
-        }}>
-            {isSell ? <ArrowUpRight size={9} /> : <ArrowDownLeft size={9} />}
+        <div className={`flex items-center gap-1 text-xs font-extrabold px-1.5 py-0.5 rounded border uppercase tracking-wider shrink-0 ${isSell ? 'bg-red-500/10 text-[#FF1744] border-red-500/20' : 'bg-emerald-500/10 text-[#00C853] border-emerald-500/20'}`}>
+            {isSell ? <ArrowUpRight size={10} /> : <ArrowDownLeft size={10} />}
             {side || '—'}
         </div>
     );
@@ -36,22 +27,12 @@ const SideTag: React.FC<{ side?: string }> = ({ side }) => {
 const OrderTypeBadge: React.FC<{ type?: string; isAlgo?: boolean }> = ({ type, isAlgo }) => {
     if (!type) return null;
     return (
-        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-            <span style={{
-                fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 3,
-                background: 'rgba(90,95,110,0.15)', color: '#9ca3af',
-                border: '1px solid rgba(90,95,110,0.2)', textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-            }}>
+        <div className="flex gap-1 items-center">
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider bg-[#5a5f6e]/15 text-[#9ca3af] border-[#5a5f6e]/20">
                 {type.replace('_', ' ')}
             </span>
             {isAlgo && (
-                <span style={{
-                    fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 3,
-                    background: 'rgba(41,98,255,0.15)', color: '#2962ff',
-                    border: '1px solid rgba(41,98,255,0.2)', textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                }}>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider bg-[#2962ff]/15 text-[#2962ff] border-[#2962ff]/20">
                     ALGO
                 </span>
             )}
@@ -79,13 +60,8 @@ const StatusBadge: React.FC<{ status?: string }> = ({ status }) => {
     }
 
     return (
-        <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 4,
-            fontSize: 9, fontWeight: 700,
-            padding: '2px 7px', borderRadius: 4,
-            background: bg, color: color, border: border,
-            textTransform: 'uppercase', letterSpacing: '0.06em',
-        }}>
+        <div className={`inline-flex items-center gap-1 text-xs font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider`}
+            style={{ color, background: bg, border }}>
             {icon}
             {s}
         </div>
@@ -128,14 +104,14 @@ export const OrderHistoryTable: React.FC<OrderHistoryTableProps> = ({
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-[#1e2025] text-[#5a5f6e] uppercase tracking-widest bg-[#0e1014]">
-                            <th style={{ fontSize: 10, fontWeight: 600, padding: '10px 16px', letterSpacing: '0.06em' }}>Asset</th>
-                            <th style={{ fontSize: 10, fontWeight: 600, padding: '10px 16px', letterSpacing: '0.06em' }}>Side</th>
-                            <th style={{ fontSize: 10, fontWeight: 600, padding: '10px 16px', letterSpacing: '0.06em' }}>Type</th>
-                            <th style={{ fontSize: 10, fontWeight: 600, padding: '10px 16px', letterSpacing: '0.06em', textAlign: 'right' }}>Quantity</th>
-                            <th style={{ fontSize: 10, fontWeight: 600, padding: '10px 16px', letterSpacing: '0.06em', textAlign: 'right' }}>Price</th>
-                            <th style={{ fontSize: 10, fontWeight: 600, padding: '10px 16px', letterSpacing: '0.06em', textAlign: 'right' }}>Total Value</th>
-                            <th style={{ fontSize: 10, fontWeight: 600, padding: '10px 16px', letterSpacing: '0.06em', textAlign: 'center' }}>Status</th>
-                            <th style={{ fontSize: 10, fontWeight: 600, padding: '10px 16px', letterSpacing: '0.06em', textAlign: 'right' }}>Date</th>
+                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-left">Asset</th>
+                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-left">Side</th>
+                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-left">Type</th>
+                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-right">Quantity</th>
+                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-right">Price</th>
+                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-right">Total Value</th>
+                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-center">Status</th>
+                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-right">Date</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[#1e2025]">
@@ -159,9 +135,9 @@ export const OrderHistoryTable: React.FC<OrderHistoryTableProps> = ({
                                             )}
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <span style={{ fontSize: 13, fontWeight: 600, color: '#e8eaed' }}>{item.symbol}</span>
+                                                    <span className="text-sm font-semibold text-[#e8eaed]">{item.symbol}</span>
                                                 </div>
-                                                <div style={{ fontSize: 10, color: '#5a5f6e' }} className="max-w-[150px] truncate" title={item.name}>
+                                                <div className="text-xs text-[#5a5f6e] max-w-[150px] truncate" title={item.name}>
                                                     {item.name}
                                                 </div>
                                             </div>
@@ -175,44 +151,35 @@ export const OrderHistoryTable: React.FC<OrderHistoryTableProps> = ({
                                         </div>
                                     </td>
 
-                                    {/* Type column */}
                                     <td className="px-4 py-3">
                                         <OrderTypeBadge type={item.orderType} isAlgo={item.isAlgoTrade} />
                                     </td>
 
-                                    {/* Quantity column */}
                                     <td className="px-4 py-3 text-right">
-                                        <div style={{ fontSize: 12, fontWeight: 600, color: '#e8eaed' }}>
+                                        <div className="text-sm font-semibold text-[#e8eaed] tabular-nums">
                                             {item.filledQty}
                                         </div>
-                                        <p style={{ fontSize: 10, color: '#5a5f6e', margin: '2px 0 0' }}>shares</p>
+                                        <p className="text-xs text-[#5a5f6e] mt-0.5">shares</p>
                                     </td>
 
-                                    {/* Price column */}
                                     <td className="px-4 py-3 text-right font-medium">
-                                        <div style={{ fontSize: 12, fontWeight: 600, color: '#e8eaed' }}>
+                                        <div className="text-sm font-semibold text-[#e8eaed] tabular-nums">
                                             {stockCurrencyService.formatCurrency(price, 'INR')}
                                         </div>
                                         {item.limitPrice && item.limitPrice > 0 && (
-                                            <p style={{ fontSize: 10, color: '#5a5f6e', margin: '2px 0 0' }}>
+                                            <p className="text-xs text-[#5a5f6e] mt-0.5 tabular-nums">
                                                 Limit: {stockCurrencyService.formatCurrency(item.limitPrice, 'INR')}
                                             </p>
                                         )}
                                     </td>
 
-                                    {/* Total Value column */}
                                     <td className="px-4 py-3 text-right">
-                                        <div style={{
-                                            fontSize: 12,
-                                            fontWeight: 700,
-                                            color: side.toLowerCase() === 'sell' ? '#FF1744' : '#00C853'
-                                        }}>
+                                        <div className="text-sm font-bold tabular-nums" style={{ color: side.toLowerCase() === 'sell' ? '#FF1744' : '#00C853' }}>
                                             {side.toLowerCase() === 'sell' ? '-' : '+'}
                                             {stockCurrencyService.formatCurrency(tradeValue, 'INR')}
                                         </div>
                                     </td>
 
-                                    {/* Status column */}
                                     <td className="px-4 py-3 text-center">
                                         <StatusBadge status={item.status} />
                                     </td>
@@ -221,15 +188,15 @@ export const OrderHistoryTable: React.FC<OrderHistoryTableProps> = ({
                                     <td className="px-4 py-3 text-right">
                                         {tradeDate ? (
                                             <>
-                                                <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}>
+                                                <p className="text-xs text-[#9ca3af] m-0 tabular-nums">
                                                     {tradeDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}
                                                 </p>
-                                                <p style={{ fontSize: 10, color: '#5a5f6e', margin: '2px 0 0' }}>
+                                                <p className="text-xs text-[#5a5f6e] mt-0.5 tabular-nums">
                                                     {tradeDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                                                 </p>
                                             </>
                                         ) : (
-                                            <p style={{ fontSize: 11, color: '#5a5f6e', margin: 0 }}>—</p>
+                                            <p className="text-xs text-[#5a5f6e] m-0">—</p>
                                         )}
                                     </td>
                                 </tr>

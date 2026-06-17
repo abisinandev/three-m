@@ -19,16 +19,16 @@ const MarketMoverCard: React.FC<MarketMoverProps> = ({
       className="p-3 bg-[#0b0c0e] border border-[#1e2025] rounded-lg hover:border-[#2962ff]/50 transition-all cursor-pointer group"
     >
       <div className="flex items-center justify-between mb-2">
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#e8eaed' }}>{symbol}</span>
+        <span className="text-sm font-bold text-[#e8eaed]">{symbol}</span>
         <ChevronRight size={12} className="text-[#5a5f6e] group-hover:text-[#2962ff] transition-colors" />
       </div>
       <div className="flex items-end justify-between">
-        <div style={{ fontSize: 12, fontWeight: 700, color: '#e8eaed' }}>
+        <div className="text-sm font-bold text-[#e8eaed] tabular-nums">
           {stockCurrencyService.formatCurrency(price, 'INR')}
         </div>
         <div
-          style={{ fontSize: 10, fontWeight: 700, color: isPositive ? '#00C853' : '#FF1744' }}
-          className="flex items-center gap-1"
+          className="text-xs font-bold flex items-center gap-1 tabular-nums"
+          style={{ color: isPositive ? '#00C853' : '#FF1744' }}
         >
           {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
           {isPositive ? '+' : ''}{changePercent.toFixed(2)}%
@@ -50,16 +50,10 @@ const MarketMovers: React.FC<{ onNavigate: (symbol: string) => void }> = ({ onNa
   return (
     <div className="bg-[#111214] rounded-lg border border-[#1e2025] p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 style={{
-          fontSize: 11,
-          fontWeight: 600,
-          color: '#5a5f6e',
-          letterSpacing: '0.06em',
-          textTransform: 'uppercase'
-        }}>
+        <h3 className="text-xs font-semibold text-[#5a5f6e] uppercase tracking-wider">
           Market Movers
         </h3>
-        <button style={{ fontSize: 10, color: '#2962ff', fontWeight: 700 }}>VIEW ALL</button>
+        <button className="text-xs font-bold text-[#2962ff] tracking-wider">VIEW ALL</button>
       </div>
 
       {isLoading ? (
@@ -69,11 +63,11 @@ const MarketMovers: React.FC<{ onNavigate: (symbol: string) => void }> = ({ onNa
           ))}
         </div>
       ) : isError ? (
-        <div className="text-center py-4 text-[#FF1744] text-[10px]">
+        <div className="text-center py-4 text-[#FF1744] text-xs">
           Failed to load movers
         </div>
       ) : movers.length === 0 ? (
-        <div className="text-center py-4 text-[#5a5f6e] text-[10px]">
+        <div className="text-center py-4 text-[#5a5f6e] text-xs">
           No active movers
         </div>
       ) : (

@@ -44,7 +44,7 @@ export const HoldingsTable = ({
 
     if (isLoading) {
         return (
-            <div style={{ padding: '40px 0', textAlign: 'center', fontSize: 12, color: '#5a5f6e', background: '#111214', border: '1px solid #1e2025', borderRadius: 8 }}>
+            <div className="py-10 text-center text-sm text-[#5a5f6e] bg-[#111214] border border-[#1e2025] rounded-lg">
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
                     <div style={{
                         width: 24, height: 24, borderRadius: '50%',
@@ -60,7 +60,7 @@ export const HoldingsTable = ({
 
     if (isError) {
         return (
-            <div style={{ padding: '40px 0', textAlign: 'center', fontSize: 12, color: '#FF1744', background: '#111214', border: '1px solid #1e2025', borderRadius: 8 }}>
+            <div className="py-10 text-center text-sm text-[#FF1744] bg-[#111214] border border-[#1e2025] rounded-lg">
                 Failed — {(error as { message?: string })?.message || 'Unknown error'}
             </div>
         );
@@ -83,17 +83,15 @@ export const HoldingsTable = ({
                 background: '#0e1014',
             }}>
                 {headers.map((h, i) => (
-                    <p key={i} style={{
-                        fontSize: 10, fontWeight: 600, color: '#5a5f6e',
-                        letterSpacing: '0.06em', textTransform: 'uppercase',
-                        textAlign: i > 0 ? 'right' : 'left', margin: 0,
-                    }}>{h}</p>
+                    <p key={i} className={`text-xs font-semibold text-[#5a5f6e] tracking-wider uppercase m-0 ${i > 0 ? 'text-right' : 'text-left'}`}>
+                        {h}
+                    </p>
                 ))}
             </div>
 
             {/* Empty state */}
             {items.length === 0 ? (
-                <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 12, color: '#5a5f6e' }}>
+                <div className="py-12 text-center text-sm text-[#5a5f6e]">
         
                     {search
                         ? 'No matching holdings found'
@@ -127,19 +125,16 @@ export const HoldingsTable = ({
                         borderTop: '1px solid #1e2025',
                         background: '#0e1014',
                     }}>
-                        <p style={{ fontSize: 11, fontWeight: 600, color: '#5a5f6e', margin: 0 }}>
+                        <p className="text-sm font-semibold text-[#5a5f6e] m-0">
                             {items.length} holding{items.length !== 1 ? 's' : ''}
                         </p>
-                        <p style={{ textAlign: 'right', fontSize: 11, fontWeight: 600, color: '#9ca3af', margin: 0 }}>
+                        <p className="text-right text-sm font-semibold text-[#9ca3af] m-0 tabular-nums">
                             ₹{formatCurrency(totalInvested, 2)}
                         </p>
-                        <p style={{ textAlign: 'right', fontSize: 11, fontWeight: 600, color: '#e8eaed', margin: 0 }}>
+                        <p className="text-right text-sm font-semibold text-[#e8eaed] m-0 tabular-nums">
                             ₹{formatCurrency(totalValue, 2)}
                         </p>
-                        <p style={{
-                            textAlign: 'right', fontSize: 11, fontWeight: 700, margin: 0,
-                            color: getPnlColor(totalPnl),
-                        }}>
+                        <p className="text-right text-sm font-bold m-0 tabular-nums" style={{ color: getPnlColor(totalPnl) }}>
                             {`${totalPnl >= 0 ? '+' : ''}₹${formatCurrency(Math.abs(totalPnl), 2)}`}
                         </p>
                         <p style={{ margin: 0 }} />

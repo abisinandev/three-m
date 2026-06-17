@@ -27,7 +27,7 @@ const TransactionStatusBadge: React.FC<{ status: string }> = ({ status }) => {
     const style = getStatusStyle(status);
     return (
         <span
-            className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border"
+            className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border"
             style={{ color: style.color, backgroundColor: style.bg, borderColor: style.border }}
         >
             {status}
@@ -46,7 +46,7 @@ export const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = (
                 <div className="overflow-x-auto min-h-[400px]">
                     <table className="w-full text-left border-collapse">
                         <thead className="bg-[#111214] border-b border-[#1e2025]">
-                            <tr className="text-[10px] font-semibold text-[#5a5f6e] uppercase tracking-wider">
+                            <tr className="text-xs font-semibold text-[#5a5f6e] uppercase tracking-wider">
                                 <th className="px-5 py-3">Status</th>
                                 <th className="px-5 py-3">Reference</th>
                                 <th className="px-5 py-3">Timestamp</th>
@@ -61,7 +61,7 @@ export const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = (
                                     </td>
                                     <td className="px-5 py-3.5">
                                         <div className="flex flex-col">
-                                            <span className="text-[12px] font-bold text-[#e8eaed] uppercase tracking-tight">
+                                            <span className="text-sm font-bold text-[#e8eaed] uppercase tracking-tight">
                                                 {(() => {
                                                     switch (tx.type) {
                                                         case 'TOPUP': return 'Wallet Deposit';
@@ -76,13 +76,13 @@ export const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = (
                                                     }
                                                 })()}
                                             </span>
-                                            <span className="text-[10px] text-[#5a5f6e] font-mono mt-0.5">
+                                            <span className="text-xs text-[#5a5f6e] font-mono mt-0.5 tabular-nums">
                                                 REF: {tx.transactionId || '---'}
                                             </span>
                                         </div>
                                     </td>
                                     <td className="px-5 py-3.5">
-                                        <span className="text-[11px] text-[#5a5f6e] font-medium">
+                                        <span className="text-xs text-[#5a5f6e] font-medium tabular-nums">
                                             {new Date(tx.createdAt).toLocaleDateString('en-IN', {
                                                 day: '2-digit',
                                                 month: 'short',
@@ -91,7 +91,7 @@ export const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = (
                                         </span>
                                     </td>
                                     <td className="px-5 py-3.5 text-right">
-                                        <span className={`text-[13px] font-bold font-mono ${tx.type === 'TOPUP' || tx.type === 'REDEMPTION' || tx.type === 'SELL' ? 'text-emerald-400' : 'text-[#e8eaed]/60'}`}>
+                                        <span className={`text-sm font-bold tabular-nums ${tx.type === 'TOPUP' || tx.type === 'REDEMPTION' || tx.type === 'SELL' ? 'text-emerald-400' : 'text-[#e8eaed]/60'}`}>
                                             {tx.type === 'TOPUP' || tx.type === 'REDEMPTION' || tx.type === 'SELL' ? '+' : '-'} ₹{fmt(tx.amount)}
                                         </span>
                                     </td>

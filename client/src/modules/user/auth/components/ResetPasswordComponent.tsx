@@ -7,7 +7,7 @@ import { useAuthStore } from "@stores/user/UserAuthStore";
 import { ArrowLeft } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { ResetPasswordApi } from "@shared/services/user/reset-password-api";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES } from "@shared/constants/apiRoutes";
 
 export const ResetPasswordForm = () => {
   const navigate = useNavigate();

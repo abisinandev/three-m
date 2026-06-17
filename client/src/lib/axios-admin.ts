@@ -1,8 +1,8 @@
-import { REFRESH_TOKEN_URL } from "@shared/constants/adminConstants";
+
 import { useAdminStore } from "@stores/admin/useAdminStore";
 import { notFound, redirect } from '@tanstack/react-router'
 import axios, { isAxiosError, type InternalAxiosRequestConfig } from "axios";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 
 const adminApi = axios.create({
     baseURL: import.meta.env.VITE_ADMIN_BASE_URL,
@@ -69,7 +69,7 @@ adminApi.interceptors.response.use(
                 isRefreshing = true;
 
                 try {
-                    await adminApi.post(REFRESH_TOKEN_URL, {}, { withCredentials: true });
+                    await adminApi.post(API_ROUTES.ADMIN.AUTH.REFRESH_TOKEN, {}, { withCredentials: true });
                 } catch {
                     useAdminStore.getState().logout();
                     throw redirect({ to: ROUTES.ADMIN.AUTH.LOGIN })

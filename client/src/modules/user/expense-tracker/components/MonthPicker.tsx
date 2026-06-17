@@ -34,7 +34,7 @@ export const MonthPicker = ({ selectedMonth, setSelectedMonth, displayMonth }: M
                 className="flex items-center gap-2 bg-[#111214] py-1.5 px-3 rounded-md border border-[#1e2025] cursor-pointer transition-colors duration-150 hover:border-[#3a3d45]"
             >
                 <Calendar size={13} className="text-[#5a5f6e]" />
-                <span className="text-[11px] font-bold text-[#e8eaed] tracking-[-0.2px]">{displayMonth.toUpperCase()}</span>
+                <span className="text-xs font-bold text-[#e8eaed] tracking-tight">{displayMonth.toUpperCase()}</span>
                 <ChevronDown size={12} className={`text-[#5a5f6e] transition-transform duration-200 ${isMonthPickerOpen ? 'rotate-180' : ''}`} />
             </button>
 
@@ -48,7 +48,7 @@ export const MonthPicker = ({ selectedMonth, setSelectedMonth, displayMonth }: M
                         >
                             <ChevronLeft size={16} />
                         </button>
-                        <span className="text-[11px] font-extrabold text-[#e8eaed] tracking-[0.1em]">{pickerYear}</span>
+                        <span className="text-xs font-extrabold text-[#e8eaed] tracking-widest tabular-nums">{pickerYear}</span>
                         <button
                             onClick={() => setPickerYear(prev => prev + 1)}
                             className="bg-transparent border-none cursor-pointer text-[#5a5f6e] p-1 hover:text-[#e8eaed] transition-colors"
@@ -74,7 +74,7 @@ export const MonthPicker = ({ selectedMonth, setSelectedMonth, displayMonth }: M
                                         setSelectedMonth(monthDate);
                                         setIsMonthPickerOpen(false);
                                     }}
-                                    className={`py-2 rounded text-[10px] font-bold cursor-pointer transition-colors duration-150 ${btnBorder} ${btnBg} ${btnText}`}
+                                    className={`py-2 rounded text-xs font-bold cursor-pointer transition-colors duration-150 ${btnBorder} ${btnBg} ${btnText}`}
                                 >
                                     {format(monthDate, 'MMM').toUpperCase()}
                                 </button>
@@ -88,7 +88,7 @@ export const MonthPicker = ({ selectedMonth, setSelectedMonth, displayMonth }: M
                                 setSelectedMonth(startOfMonth(new Date()));
                                 setIsMonthPickerOpen(false);
                             }}
-                            className="bg-transparent border-none cursor-pointer text-[9px] font-extrabold text-[#3B82F6] tracking-[0.05em] hover:text-blue-400 transition-colors"
+                            className="bg-transparent border-none cursor-pointer text-xs font-extrabold text-[#3B82F6] tracking-wider hover:text-blue-400 transition-colors"
                         >
                             CURRENT MONTH
                         </button>

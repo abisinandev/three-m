@@ -7,7 +7,7 @@ import { useNavigate } from '@tanstack/react-router';
 
 import type { KycUser } from '@shared/types/user/KycUserType';
 import { fetchKycUsers } from '@shared/services/admin/user-management/kyc-apis';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 
 import { Pagination } from '@shared/components/pagination/Pagination';
 import { KycUsersTable } from '../components/KycTable';

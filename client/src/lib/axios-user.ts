@@ -1,8 +1,8 @@
 import axios, { isAxiosError, type InternalAxiosRequestConfig } from "axios"
 import { useUserStore } from "@stores/user/UserStore";
 import { redirect, notFound } from '@tanstack/react-router'
-import { USER_REFRESH_TOKEN } from "@shared/constants/userContants";
-import { ROUTES } from "@shared/constants/routes";
+
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_USER_BASE_URL,
@@ -73,7 +73,7 @@ api.interceptors.response.use(
                 isRefreshing = true;
 
                 try {
-                    await api.post(USER_REFRESH_TOKEN, {}, { withCredentials: true });
+                    await api.post(API_ROUTES.USER.AUTH.REFRESH_TOKEN, {}, { withCredentials: true });
                 } catch {
 
                     useUserStore.getState().logout();

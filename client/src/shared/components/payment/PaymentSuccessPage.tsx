@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Check, ArrowLeft, Wallet, ExternalLink, Crown, Sparkles, Loader2, AlertCircle } from "lucide-react";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES } from "@shared/constants/apiRoutes";
 import { VerifyPaymentApi } from "@shared/services/user/verify-payment-api";
 
 const PaymentSuccessPage = () => {

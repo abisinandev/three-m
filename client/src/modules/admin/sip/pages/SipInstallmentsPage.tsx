@@ -4,7 +4,7 @@ import type { SipInstallment } from '../types/SipTypes';
 import { InstallmentStatusBadge } from '../components/SipStatusBadges';
 import { useNavigate } from '@tanstack/react-router';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 
 const MOCK_INSTALLMENTS: SipInstallment[] = [
     {

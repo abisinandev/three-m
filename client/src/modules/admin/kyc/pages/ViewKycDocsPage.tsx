@@ -5,7 +5,7 @@ import { FetchUserKycApi, approveKycApi, rejectKycApi } from "@shared/services/a
 import { toast } from "sonner";
 import { useState } from "react";
 import KycActionModal from "@shared/components/modals/KycActionModal";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES } from "@shared/constants/apiRoutes";
 import { AdminKycUserInfo } from "../components/AdminKycUserInfo";
 import { AdminKycDocuments } from "../components/AdminKycDocuments";
 

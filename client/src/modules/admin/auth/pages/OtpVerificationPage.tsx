@@ -1,8 +1,8 @@
 import adminApi from '@/lib/axios-admin';
 import OTPVerification from '@shared/components/otp/OtpComponet'
-import { RESEND_OTP, VERIFY_OTP } from '@shared/constants/adminConstants';
+
 import { useOtpControls } from '@shared/hooks/auth/useOtpControls';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 import { useAuthStore } from '@stores/user/UserAuthStore';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -33,7 +33,7 @@ const OtpVerificationPage = () => {
     // --- VERIFY OTP MUTATION ---
     const verifyOtp = useMutation({
         mutationFn: async (otp: string) => {
-            return await adminApi.post(VERIFY_OTP, { email, otp });
+            return await adminApi.post(API_ROUTES.ADMIN.AUTH.VERIFY_OTP, { email, otp });
         },
         onSuccess: (res) => {
             toast.success(res.data.message || "Email verified successfully");
@@ -48,7 +48,7 @@ const OtpVerificationPage = () => {
 
     // --- RESEND OTP MUTATION ---
     const resendOtp = useMutation({
-        mutationFn: async () => await adminApi.post(RESEND_OTP, { email }),
+        mutationFn: async () => await adminApi.post(API_ROUTES.ADMIN.AUTH.RESEND_OTP, { email }),
         onSuccess: (res) => {
             toast.success(res?.data?.message || "OTP resent successfully");
             saveResendMeta();

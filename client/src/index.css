@@ -4,5 +4,7 @@
 
 /* Global reset for dark theme */
 html, body {
-  @apply bg-deep-charcoal text-cool-white font-sans;
+  @apply bg-deep-charcoal text-cool-white font-sans antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

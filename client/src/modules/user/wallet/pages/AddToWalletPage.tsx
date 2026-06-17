@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import api from "@/lib/axios-user";
-import { PAYMENT_ROUTE } from "@shared/constants/userContants";
+
 import { useUserStore } from "@stores/user/UserStore";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 
 import { AddFundsForm, SupportedGateways } from "../components/AddFundsForm";
 
@@ -60,7 +60,7 @@ const AddToWallet = () => {
         try {
             localStorage.setItem('paymentPurpose', 'TOPUP');
             localStorage.setItem('paymentAmount', String(amount));
-            const res = await api.post(PAYMENT_ROUTE, {
+            const res = await api.post(API_ROUTES.USER.PAYMENT.CHECKOUT_SESSION, {
                 amount: Number(amount),
                 purpose: "TOPUP",
             });

@@ -13,7 +13,7 @@ import { Pagination } from '@shared/components/pagination/Pagination';
 import { MutualFundsTable } from '../components/MutualFundTable';
 import { fetchMutualFunds, updateStatus } from '@shared/services/admin/mutual-fund-management/mutual-fund-admin-side';
 import { StatsCardComponent } from '@shared/components/cards/StatCardComponent';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
 
 

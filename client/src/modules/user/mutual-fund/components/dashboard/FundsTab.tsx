@@ -84,7 +84,7 @@ const FundsTab: React.FC<FundsTabProps> = ({
                                             }}
                                         />
                                     ) : (
-                                        <span className="text-lg font-semibold text-gray-500">
+                                        <span className="text-sm font-semibold text-gray-500">
                                             {fund.schemeName?.charAt(0) || '?'}
                                         </span>
                                     )}
@@ -107,12 +107,12 @@ const FundsTab: React.FC<FundsTabProps> = ({
                             </div>
 
                             <div className="text-right flex-shrink-0">
-                                <p className="text-base font-semibold text-white">
+                                <p className="text-base font-semibold text-white tabular-nums">
                                     ₹{fund.nav || '—'}
                                 </p>
                                 <div className="flex items-center justify-end gap-1.5 mt-1">
                                     <TrendingUp
-                                        size={14}
+                                        size={12}
                                         className={
                                             (fund.cagr?.cagr1Y || 0) >= 0
                                                 ? 'text-green-400'
@@ -120,7 +120,7 @@ const FundsTab: React.FC<FundsTabProps> = ({
                                         }
                                     />
                                     <span
-                                        className={`text-sm font-medium ${(fund.cagr?.cagr1Y || 0) >= 0
+                                        className={`text-xs font-semibold tabular-nums ${(fund.cagr?.cagr1Y || 0) >= 0
                                             ? 'text-green-400'
                                             : 'text-red-400'
                                             }`}

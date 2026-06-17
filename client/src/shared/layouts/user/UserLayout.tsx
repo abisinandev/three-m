@@ -5,12 +5,11 @@ import api from '@/lib/axios-user';
 import { useUserStore } from '@stores/user/UserStore';
 import { Wallet, ChevronDown, LogOut, User, Menu, Bell, X } from 'lucide-react';
 import { Footer } from '@shared/components/LandingPage/Footer';
-import { LOGOUT } from '@shared/constants/userContants';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
 import { NotificationDropdown } from '@modules/user/notifications/components/NotificationDropdown';
 import { useProfileQuery } from '@shared/services/user/profile-api';
 import AiAssistantPanel from '@shared/components/ai-chatbot/AiChatbot';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 import PremiumPaymentModal from '@shared/components/modals/premium-payment/PremiumPaymentModal';
 import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 import type { UserType } from '@/shared/types/user/UserType';
@@ -56,7 +55,7 @@ const UserLayout = () => {
     const handleLogout = async () => {
         setLoggingOut(true);
         try {
-            await api.post(LOGOUT, {}, { withCredentials: true });
+            await api.post(ROUTES.AUTH.LOGOUT, {}, { withCredentials: true });
             logout();
             useUserStore.persist.clearStorage();
             navigate({ to: ROUTES.AUTH.LOGIN, replace: true });
@@ -112,8 +111,21 @@ const UserLayout = () => {
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg hover:bg-[#1a1a1a] transition text-xs font-medium tracking-wide border border-transparent hover:border-[#333]"
                             >
-                                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#22C55E] to-[#16a34a] flex items-center justify-center text-xs font-bold text-white">
-                                    {user?.fullName ? user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
+                                <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-br from-[#22C55E] to-[#16a34a] text-xs font-bold text-white">
+                                    {user?.avatar ? (
+                                        <img
+                                            src={user.avatar}
+                                            alt={user.fullName || "User"}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        user?.fullName
+                                            ?.split(" ")
+                                            .map((n) => n[0])
+                                            .join("")
+                                            .toUpperCase()
+                                            .slice(0, 2) || "U"
+                                    )}
                                 </div>
                                 <span className="text-gray-300 hidden sm:block">
                                     {user?.userCode || user?.fullName?.split(' ')[0] || 'User'}
@@ -132,14 +144,6 @@ const UserLayout = () => {
                                             <User size={16} />
                                             Profile
                                         </Link>
-                                        <Link
-                                            to={ROUTES.USER.HOME}
-                                            onClick={() => setIsDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] transition"
-                                        >
-                                            <Bell size={16} />
-                                            Notifications
-                                        </Link>
                                         <div className="h-px bg-[#2a2a2a]" />
                                         <button
                                             onClick={() => {
@@ -156,7 +160,7 @@ const UserLayout = () => {
                             )}
                         </div>
 
-                        <button 
+                        <button
                             className="lg:hidden p-1"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         >

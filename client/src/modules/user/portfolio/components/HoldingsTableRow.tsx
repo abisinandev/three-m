@@ -11,8 +11,8 @@ interface DetailRowProps {
 
 const DetailRow = ({ k, v, vc }: DetailRowProps) => (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 11, color: '#5a5f6e' }}>{k}</span>
-        <span style={{ fontSize: 11, fontWeight: 600, color: vc || '#e8eaed' }}>{v}</span>
+        <span className="text-xs text-[#5a5f6e]">{k}</span>
+        <span className="text-xs font-semibold tabular-nums" style={{ color: vc || '#e8eaed' }}>{v}</span>
     </div>
 );
 
@@ -23,7 +23,7 @@ interface DetailGroupProps {
 
 const DetailGroup = ({ label, children }: DetailGroupProps) => (
     <div>
-        <p style={{ fontSize: 9, fontWeight: 700, color: '#5a5f6e', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8, margin: '0 0 8px' }}>
+        <p className="text-xs font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 mt-0">
             {label}
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
@@ -122,39 +122,24 @@ export const HoldingsTableRow = ({
 
                     <div style={{ minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <p style={{
-                                fontSize: 13, fontWeight: 600, color: '#e8eaed',
-                                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                                maxWidth: isStock ? 160 : 220, margin: 0,
-                            }}>
+                            <p className="text-sm font-semibold text-[#e8eaed] m-0 overflow-hidden text-ellipsis whitespace-nowrap" style={{ maxWidth: isStock ? 160 : 220 }}>
                                 {isStock
                                     ? (inv.schemeCode || inv.symbol || '—')
                                     : (inv.schemeName || inv.schemeCode || '—')
                                 }
                             </p>
 
-                            <span style={{
-                                fontSize: 8, fontWeight: 800, padding: '1px 5px', borderRadius: 3,
-                                background: isStock ? 'rgba(99,179,237,0.1)' : 'rgba(167,139,250,0.1)',
-                                color: isStock ? '#63b3ed' : '#a78bfa',
-                                border: isStock ? '1px solid rgba(99,179,237,0.2)' : '1px solid rgba(167,139,250,0.2)',
-                                textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0,
-                            }}>
+                            <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded border uppercase tracking-wider shrink-0 ${isStock ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-purple-500/10 text-purple-400 border-purple-500/20'}`}>
                                 {isStock ? 'EQ' : 'MF'}
                             </span>
 
-                            <span style={{
-                                fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 3,
-                                border: `1px solid ${statusStyle.border}`, background: statusStyle.bg,
-                                color: statusStyle.color, textTransform: 'uppercase', letterSpacing: '0.04em',
-                                flexShrink: 0,
-                            }}>
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider shrink-0" style={{ borderColor: statusStyle.border, background: statusStyle.bg, color: statusStyle.color }}>
                                 {inv.status || '—'}
                             </span>
                         </div>
 
                         {/* Subtitle */}
-                        <p style={{ fontSize: 10, color: '#5a5f6e', margin: '2px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 240 }}>
+                        <p className="text-xs text-[#5a5f6e] m-0 mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap max-w-[240px]">
                             {isStock
                                 ? (inv.schemeName || inv.name || inv.schemeCode || '—') // Full company name as subtitle
                                 : `${inv.schemeCode ? inv.schemeCode + ' · ' : ''}${inv.category || '—'}`
@@ -166,18 +151,18 @@ export const HoldingsTableRow = ({
                 <div style={{ textAlign: 'right' }}>
                     {isStock ? (
                         <>
-                            <p style={{ fontSize: 12, fontWeight: 600, color: '#e8eaed', margin: 0 }}>
-                                {quantity} <span style={{ fontSize: 10, color: '#5a5f6e' }}>qty</span>
+                            <p className="text-sm font-semibold text-[#e8eaed] m-0 tabular-nums">
+                                {quantity} <span className="text-xs text-[#5a5f6e]">qty</span>
                             </p>
-                            <p style={{ fontSize: 10, color: '#9ca3af', margin: '2px 0 0' }}>
+                            <p className="text-xs text-[#9ca3af] m-0 mt-0.5 tabular-nums">
                                 Avg ₹{formatCurrency(avgPrice, 2)}
                             </p>
                         </>
                     ) : (
                         <>
-                            <p style={{ fontSize: 12, color: '#e8eaed', margin: 0 }}>₹{formatCurrency(investedAmount, 2)}</p>
+                            <p className="text-sm text-[#e8eaed] m-0 tabular-nums">₹{formatCurrency(investedAmount, 2)}</p>
                             {quantity > 0 && (
-                                <p style={{ fontSize: 10, color: '#5a5f6e', margin: '2px 0 0' }}>
+                                <p className="text-xs text-[#5a5f6e] m-0 mt-0.5 tabular-nums">
                                     {Number(quantity).toFixed(3)} units
                                 </p>
                             )}
@@ -186,7 +171,7 @@ export const HoldingsTableRow = ({
                 </div>
 
                 <div style={{ textAlign: 'right' }}>
-                    <p style={{ fontSize: 12, fontWeight: 600, color: '#e8eaed', margin: 0 }}>
+                    <p className="text-sm font-semibold text-[#e8eaed] m-0 tabular-nums">
                         ₹{formatCurrency(currentValue, 2)}
                     </p>
                 </div>
@@ -194,27 +179,24 @@ export const HoldingsTableRow = ({
                 <div style={{ textAlign: 'right' }}>
                     {returnType === 'Absolute' ? (
                         <>
-                            <p style={{ fontSize: 12, fontWeight: 700, margin: 0, color: pnlColor }}>
+                            <p className="text-sm font-bold m-0 tabular-nums" style={{ color: pnlColor }}>
                                 {profit >= 0 ? '+' : ''}₹{formatCurrency(Math.abs(profit), 2)}
                             </p>
-                            <p style={{ fontSize: 10, color: pnlColor, margin: '1px 0 0', opacity: 0.85 }}>
+                            <p className="text-xs m-0 mt-0.5 tabular-nums opacity-85" style={{ color: pnlColor }}>
                                 {profit >= 0 ? '+' : ''}{profitPct.toFixed(2)}%
                             </p>
                         </>
                     ) : (
                         inv.xirr !== undefined ? (
-                            <p style={{
-                                fontSize: 12, fontWeight: 700, margin: 0,
-                                color: inv.xirr >= 0 ? '#00C853' : '#FF1744',
-                            }}>
+                            <p className="text-sm font-bold m-0 tabular-nums" style={{ color: inv.xirr >= 0 ? '#00C853' : '#FF1744' }}>
                                 {(inv.xirr * 100).toFixed(2)}%
                             </p>
                         ) : (
                             <>
-                                <p style={{ fontSize: 12, fontWeight: 700, margin: 0, color: pnlColor }}>
+                                <p className="text-sm font-bold m-0 tabular-nums" style={{ color: pnlColor }}>
                                     {profit >= 0 ? '+' : ''}{profitPct.toFixed(2)}%
                                 </p>
-                                <p style={{ fontSize: 9, color: '#5a5f6e', margin: '1px 0 0' }}>ABS</p>
+                                <p className="text-[10px] text-[#5a5f6e] m-0 mt-0.5 uppercase">ABS</p>
                             </>
                         )
                     )}
@@ -223,25 +205,25 @@ export const HoldingsTableRow = ({
                 <div style={{ textAlign: 'right' }}>
                     {isStock ? (
                         <>
-                            <p style={{ fontSize: 12, color: '#e8eaed', margin: 0, fontWeight: 600 }}>
+                            <p className="text-sm font-semibold text-[#e8eaed] m-0 tabular-nums">
                                 {ltp ? `₹${formatCurrency(ltp, 2)}` : '—'}
                             </p>
                             {profit !== 0 && (
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2, marginTop: 2 }}>
                                     {profit >= 0
-                                        ? <TrendingUp size={10} color="#00C853" />
-                                        : <TrendingDown size={10} color="#FF1744" />
+                                        ? <TrendingUp size={12} color="#00C853" />
+                                        : <TrendingDown size={12} color="#FF1744" />
                                     }
                                 </div>
                             )}
                         </>
                     ) : (
                         <>
-                            <p style={{ fontSize: 12, color: '#9ca3af', margin: 0 }}>
+                            <p className="text-sm text-[#9ca3af] m-0 tabular-nums">
                                 {ltp ? `₹${formatCurrency(ltp, 2)}` : '—'}
                             </p>
                             {inv.navDate && (
-                                <p style={{ fontSize: 10, color: '#5a5f6e', margin: '1px 0 0' }}>
+                                <p className="text-xs text-[#5a5f6e] m-0 mt-0.5 tabular-nums">
                                     {new Date(inv.navDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
                                 </p>
                             )}
