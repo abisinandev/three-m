@@ -19,6 +19,7 @@ export interface InvestmentDocument extends Document {
     investmentType: InvestmentType,
     paymentMethod: PaymentMethod
     status: InvestmentStatus;
+    retryCount: number;
 
     createdAt: Date;
     updatedAt: Date;

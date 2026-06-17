@@ -12,10 +12,7 @@ const app = express();
 //Middlewares configs
 app.use(morgan("dev"));
 app.use(cors({
-    origin: [
-        env.FRONTEND_URL_DEV,
-        env.FRONTEND_URL_PRODUCION,
-    ],
+    origin: env.CORS_ORIGINS.split(","),
     credentials: true
 }));
 app.use(helmet());
@@ -42,20 +39,5 @@ app.get("/health", (req, res) => {
 
 //AppError middleware
 app.use(errorMiddleware);
-
-
-app.get("/health", async (_req, res) => {
-    try {
-        res.status(200).json({
-            success: true,
-            uptime: process.uptime(),
-            timestamp: new Date(),
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-        });
-    }
-});
 
 export default app;
