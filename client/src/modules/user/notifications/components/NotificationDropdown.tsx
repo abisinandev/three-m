@@ -33,7 +33,7 @@ export const NotificationDropdown = () => {
                             {unreadCount > 0 && (
                                 <button
                                     onClick={handleMarkAllRead}
-                                    className="text-[10px] font-bold text-blue-400 hover:text-blue-300 px-2 py-1 uppercase tracking-widest transition-colors"
+                                    className="text-xs font-bold text-blue-400 hover:text-blue-300 px-2 py-1 uppercase tracking-widest transition-colors"
                                 >
                                     Mark all read
                                 </button>
@@ -58,7 +58,7 @@ export const NotificationDropdown = () => {
 
                     {/* Footer */}
                     <div className="p-3 border-t border-neutral-800 bg-neutral-900/40 text-center">
-                        <button className="text-[10px] font-bold text-neutral-500 hover:text-white transition-colors uppercase tracking-widest flex items-center justify-center gap-2 mx-auto">
+                        <button className="text-xs font-semibold text-neutral-500 hover:text-white transition-colors uppercase tracking-widest flex items-center justify-center gap-2 mx-auto">
                             View All Activity <MoreHorizontal size={12} />
                         </button>
                     </div>

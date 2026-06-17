@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { RightSidePanel } from "@shared/components/auth/RightSidePanel";
 import ForgotPasswordForm from "../components/ForgotPasswordComponent";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES } from "@shared/constants/apiRoutes";
 
 const ForgotPasswordPage = () => {
     const navigate = useNavigate();

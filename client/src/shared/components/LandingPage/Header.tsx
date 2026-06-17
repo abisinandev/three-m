@@ -1,7 +1,7 @@
 import React from "react";
 import { Menu, X } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES } from "@shared/constants/apiRoutes";
 
 interface HeaderProps {
   scrolled: boolean;

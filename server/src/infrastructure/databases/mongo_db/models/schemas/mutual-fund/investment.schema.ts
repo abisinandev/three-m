@@ -77,6 +77,7 @@ const InvestmentSchema = new Schema<InvestmentDocument>(
             enum: Object.values(InvestmentType),
             required: true,
         },
+        retryCount: { type: Number, max: 3 },
     },
     {
         timestamps: true,

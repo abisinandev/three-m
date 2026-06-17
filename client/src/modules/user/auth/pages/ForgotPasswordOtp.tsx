@@ -3,10 +3,10 @@ import { useAuthStore } from "@stores/user/UserAuthStore";
 import OTPVerification from "@shared/components/otp/OtpComponet";
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
-import { FORGOT_PASSWORD_VERIFY, FORGOT_PASSWORD_RESEND } from "@shared/constants/userContants";
+
 import api from "@/lib/axios-user";
 import { toast } from "sonner";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 
 export default function ForgotPasswordOTP() {
   const { email, setData } = useAuthStore();
@@ -17,7 +17,7 @@ export default function ForgotPasswordOTP() {
   // --- VERIFY OTP ---
   const verifyOtp = useMutation({
     mutationFn: async (otp: string) =>
-      await api.post(FORGOT_PASSWORD_VERIFY, { email, otp }),
+      await api.post(API_ROUTES.USER.AUTH.FORGOT_PASSWORD_VERIFY, { email, otp }),
 
     onSuccess: (res) => {
       toast.success(res.data.message || "Otp verified. You can reset your password");
@@ -33,7 +33,7 @@ export default function ForgotPasswordOTP() {
 
   // --- RESEND OTP ---
   const resendOtp = useMutation({
-    mutationFn: async () => await api.post(FORGOT_PASSWORD_RESEND, { email }),
+    mutationFn: async () => await api.post(API_ROUTES.USER.AUTH.FORGOT_PASSWORD_RESEND, { email }),
 
     onSuccess: () => {
       toast.success("OTP resent");

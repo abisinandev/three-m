@@ -36,10 +36,10 @@ const StatCol = ({
             ? 'pl-0 border-none'
             : 'pl-0 sm:pl-4 pt-4 sm:pt-0 border-t border-l-0 sm:border-t-0 sm:border-l border-[#1e2025]'
         }>
-            <p className="text-[10px] text-[#5a5f6e] tracking-[0.06em] uppercase flex items-center gap-1.5 m-0 mb-1">
+            <p className="text-xs text-[#5a5f6e] tracking-[0.06em] uppercase flex items-center gap-1.5 m-0 mb-1">
                 {icon} {label}
             </p>
-            <p className={`text-[13px] font-bold flex items-center gap-1 m-0 ${textColorClass}`}>
+            <p className={`text-sm font-bold flex items-center gap-1 m-0 tabular-nums ${textColorClass}`}>
                 {showArrow && positive !== undefined && (
                     positive
                         ? <ArrowUpRight size={13} color="#00C853" />
@@ -48,7 +48,7 @@ const StatCol = ({
                 {value}
             </p>
             {sub && (
-                <p className={`text-[9px] font-bold mt-0.5 m-0 mb-0 text-opacity-80 uppercase ${subColorClass}`}>
+                <p className={`text-xs font-bold mt-0.5 m-0 mb-0 text-opacity-80 uppercase tabular-nums ${subColorClass}`}>
                     {sub}
                 </p>
             )}
@@ -82,17 +82,17 @@ export const TopSummary = ({
     return (
         <div className="bg-[#111214] border border-[#1e2025] rounded-lg py-5 px-6 grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6 items-center">
             <div className="border-b border-[#1e2025] md:border-b-0 md:border-r md:pr-6 pb-4 md:pb-0 mb-0">
-                <p className="text-[10px] text-[#5a5f6e] tracking-[0.08em] uppercase m-0 mb-1">
+                <p className="text-xs text-[#5a5f6e] tracking-[0.08em] uppercase m-0 mb-1">
                     Available Balance
                 </p>
-                <p className={`text-[28px] font-bold tracking-[-0.5px] leading-none m-0 ${positive ? 'text-[#e8eaed]' : 'text-[#F43F5E]'}`}>
+                <p className={`text-4xl font-bold tracking-tight leading-none m-0 tabular-nums ${positive ? 'text-[#e8eaed]' : 'text-[#F43F5E]'}`}>
                     {formatCurrency(currentBalance)}
                 </p>
                 <div className="flex items-center gap-1.5 mt-2.5">
                     <div className="w-10 h-1 bg-[#1e2025] rounded-sm overflow-hidden">
                         <div className={`h-full ${usagePercent > 100 ? 'bg-[#F43F5E]' : 'bg-[#3B82F6]'}`} style={{ width: `${Math.min(100, usagePercent)}%` }} />
                     </div>
-                    <span className="text-[9px] font-extrabold text-[#5a5f6e]">{usagePercent.toFixed(0)}% UTILIZED</span>
+                    <span className="text-xs font-extrabold text-[#5a5f6e] tabular-nums">{usagePercent.toFixed(0)}% UTILIZED</span>
                 </div>
             </div>
 

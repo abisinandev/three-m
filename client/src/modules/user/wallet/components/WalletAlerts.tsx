@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { AlertTriangle } from 'lucide-react';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 
 export const KycWarningBox: React.FC = () => {
     const navigate = useNavigate();

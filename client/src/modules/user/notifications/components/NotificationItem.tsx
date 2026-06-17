@@ -142,12 +142,12 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
                     )}
                 </div>
 
-                <p className={`text-[11px] leading-relaxed mb-2 ${notif.read ? 'text-neutral-500' : 'text-neutral-400'}`}>
+                <p className={`text-xs leading-relaxed mb-2 ${notif.read ? 'text-neutral-500' : 'text-neutral-400'}`}>
                     {notif.message}
                 </p>
 
                 <div className="flex items-center justify-between gap-2">
-                    <span className="text-[9px] font-bold text-neutral-600 uppercase tracking-widest">
+                    <span className="text-xs font-semibold text-neutral-600 uppercase tracking-widest">
                         {notif.createdAt ? formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true }) : 'Just now'}
                     </span>
 
@@ -165,7 +165,7 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
                                     <button
                                         onClick={handleConfirm}
                                         disabled={confirming || confirmed}
-                                        className={`text-[10px] font-bold px-4 py-1.5 rounded-md border transition-all disabled:opacity-50 flex items-center gap-2 ${
+                                        className={`text-xs font-bold px-4 py-1.5 rounded-md border transition-all disabled:opacity-50 flex items-center gap-2 ${
                                             isUrgent
                                                 ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
                                                 : 'bg-purple-500/10 text-purple-400 border-purple-500/20 hover:bg-purple-500/20'
@@ -187,20 +187,20 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
                                     </button>
                                 </div>
                             ) : (
-                                <span className="text-[9px] text-neutral-600 uppercase tracking-widest">Signal expired</span>
+                                <span className="text-xs text-neutral-600 uppercase tracking-widest">Signal expired</span>
                             )}
                         </div>
                     )}
 
                     {confirmed && (
-                        <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
                             <CheckCircle2 size={10} /> Order Placed
                         </span>
                     )}
                 </div>
 
                 {error && (
-                    <p className="text-[10px] text-rose-400 mt-2 flex items-start gap-1 leading-relaxed">
+                    <p className="text-xs text-rose-400 mt-2 flex items-start gap-1 leading-relaxed">
                         <AlertTriangle size={10} className="flex-shrink-0 mt-[1px]" />
                         <span>{error}</span>
                     </p>

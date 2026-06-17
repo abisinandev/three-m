@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Home, ArrowLeft, Ghost } from 'lucide-react';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 
 const NotFoundPage = () => {
     const navigate = useNavigate();

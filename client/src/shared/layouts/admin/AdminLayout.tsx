@@ -6,31 +6,23 @@ import {
   DollarSign,
   TrendingUp,
   Receipt,
-  
-  
-  
   LogOut,
   Menu,
   X,
-  Search,
   BadgeCheck,
-  
-  
   AlignHorizontalDistributeCenter,
   Cpu,
   CreditCard,
   Activity
 } from 'lucide-react';
 import adminApi from '@/lib/axios-admin';
-import { LOGOUT } from '@shared/constants/adminConstants';
 import { toast } from 'sonner';
 import { useAdminStore } from '@stores/admin/useAdminStore';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 import ConfirmModal from '@shared/components/modals/ConfirmModal';
 
 const navItems = [
   { to: ROUTES.ADMIN.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
-  // { to: ROUTES.ADMIN.INSTALLMENTS, label: 'Installments', icon: Receipt },
   { to: ROUTES.ADMIN.USERS_MANAGEMENT, label: 'Users', icon: Users },
   { to: ROUTES.ADMIN.KYC_MANAGEMENT.ROOT, label: 'KYC Verification', icon: BadgeCheck },
   { to: ROUTES.ADMIN.MUTUAL_FUNDS_MANAGEMENT.ROOT, label: 'Mutual Funds', icon: TrendingUp },
@@ -57,7 +49,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleLogout = async () => {
     try {
-      await adminApi.post(LOGOUT, {}, { withCredentials: true });
+      await adminApi.post(API_ROUTES.ADMIN.AUTH.LOGOUT, {}, { withCredentials: true });
       logout();
       setIsLogoutModalOpen(false);
       toast.success('Logged out successfully');

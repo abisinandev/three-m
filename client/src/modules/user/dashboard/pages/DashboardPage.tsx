@@ -65,16 +65,15 @@ const DashboardPage = () => {
             minHeight: '100vh',
             background: '#0b0c0e',
             color: '#e8eaed',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             paddingBottom: 48,
         }}>
             <div style={{ maxWidth: 1400, margin: '0 auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div>
-                        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                        <h1 className="text-2xl font-semibold text-[#e8eaed] tracking-tight m-0">
                             Dashboard
                         </h1>
-                        <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+                        <p className="text-sm text-[#5a5f6e] mt-1 m-0">
                             Overview & summary
                         </p>
                     </div>
@@ -91,13 +90,13 @@ const DashboardPage = () => {
                                 <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500/20" />
                             </div>
                             <div>
-                                <p className="text-[11px] font-semibold text-[#e8eaed]">Premium Intelligence Active</p>
-                                <p className="text-[9px] text-[#5a5f6e] uppercase tracking-wider font-medium mt-0.5">
+                                <p className="text-sm font-semibold text-[#e8eaed]">Premium Intelligence Active</p>
+                                <p className="text-xs text-[#5a5f6e] uppercase tracking-wider font-medium mt-0.5">
                                     Full access to advanced trading & analytics
                                 </p>
                             </div>
                         </div>
-                        <div className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-[9px] font-semibold text-amber-500 uppercase tracking-wide">
+                        <div className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-xs font-semibold text-amber-500 uppercase tracking-wide">
                             Verified
                         </div>
                     </div>
@@ -113,7 +112,7 @@ const DashboardPage = () => {
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <stat.icon className="w-3.5 h-3.5 text-gray-400" />
-                                    <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">
+                                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         {stat.label}
                                     </span>
                                 </div>
@@ -127,8 +126,8 @@ const DashboardPage = () => {
                                     ? <><Skeleton className="h-4 w-24 mb-1.5" /><Skeleton className="h-2.5 w-16" /></>
                                     : (
                                         <>
-                                            <p className="text-sm font-semibold text-gray-100 tracking-tight">{stat.value}</p>
-                                            <p className={`text-[10px] mt-0.5 font-medium ${stat.isPositive ? 'text-emerald-500/90' : 'text-red-500/90'}`}>
+                                            <p className="text-2xl font-bold text-gray-100 tracking-tight tabular-nums">{stat.value}</p>
+                                            <p className={`text-xs mt-1 font-medium ${stat.isPositive ? 'text-emerald-500/90' : 'text-red-500/90'}`}>
                                                 {stat.change}
                                             </p>
                                         </>
@@ -146,11 +145,11 @@ const DashboardPage = () => {
                         <div className="flex justify-between items-center mb-3">
                             <div className="flex items-center gap-2">
                                 <PieChart className="w-4 h-4 text-gray-400" />
-                                <h3 className="text-[11px] font-semibold text-gray-200 uppercase tracking-wider">
+                                <h3 className="text-sm font-semibold text-gray-200 uppercase tracking-wider">
                                     Expense Breakdown
                                 </h3>
                             </div>
-                            <span className="text-[10px] text-gray-500 font-medium bg-[#1a1a1a] px-2 py-0.5 rounded">
+                            <span className="text-xs text-gray-500 font-medium bg-[#1a1a1a] px-2 py-0.5 rounded">
                                 This Month
                             </span>
                         </div>
@@ -168,17 +167,17 @@ const DashboardPage = () => {
                         <div className="flex justify-between items-center mb-3">
                             <div className="flex items-center gap-2">
                                 <TrendingUp className="w-4 h-4 text-gray-400" />
-                                <h3 className="text-[11px] font-semibold text-gray-200 uppercase tracking-wider">
+                                <h3 className="text-sm font-semibold text-gray-200 uppercase tracking-wider">
                                     Portfolio Growth
                                 </h3>
                             </div>
                             <div className="flex items-center gap-2">
                                 {!isLoading && totalStockValue > 0 && (
-                                    <span className="text-[10px] text-gray-400 font-medium">
+                                    <span className="text-xs text-gray-400 font-medium tabular-nums">
                                         Stocks: {formatCompact(totalStockValue)}
                                     </span>
                                 )}
-                                <span className="text-[10px] text-gray-500 font-medium bg-[#1a1a1a] px-2 py-0.5 rounded">
+                                <span className="text-xs text-gray-500 font-medium bg-[#1a1a1a] px-2 py-0.5 rounded">
                                     Last 6 Months
                                 </span>
                             </div>

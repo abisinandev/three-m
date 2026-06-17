@@ -4,11 +4,11 @@ import api from '@/lib/axios-user';
 import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import { useUserStore } from '@stores/user/UserStore';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
-import { KYC_SUMBIT_URL } from '@shared/constants/userContants';
+
 import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 import { KycDetailsForm } from '../components/KycDetailsForm';
 import { KycAddressForm } from '../components/KycAddressForm';
 import { KycDocumentUpload } from '../components/KycDocumentUpload';
@@ -183,7 +183,7 @@ const KYCVerificationPage = () => {
             if (files.aadhaar) documents.push({ type: 'aadhaar', fileName: files.aadhaar.name, fileUrl: uploadedFiles.aadhaar || '' });
             if (files.selfie) documents.push({ type: 'selfie', fileName: files.selfie.name, fileUrl: uploadedFiles.selfie || '' });
 
-            await api.post(KYC_SUMBIT_URL, {
+            await api.post(API_ROUTES.USER.KYC.SUBMIT, {
                 userId: user?.id,
                 fullName: details.fullName,
                 panNumber: details.panNumber.toUpperCase(),

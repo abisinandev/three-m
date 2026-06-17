@@ -108,8 +108,8 @@ const ExpenseTracker = () => {
 
                 <header className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div>
-                        <h1 className="text-base font-semibold text-[#e8eaed] m-0">Expense Tracker</h1>
-                        <p className="text-[11px] text-[#5a5f6e] mt-0.5 m-0">Manage your 50-30-20 budget rules</p>
+                        <h1 className="text-2xl font-semibold text-[#e8eaed] tracking-tight m-0">Expense Tracker</h1>
+                        <p className="text-sm text-[#5a5f6e] mt-0.5 m-0">Manage your 50-30-20 budget rules</p>
                     </div>
 
                     <div className="flex flex-wrap gap-3 items-center w-full sm:w-auto">
@@ -122,13 +122,13 @@ const ExpenseTracker = () => {
                         <div className="flex bg-[#111214] border border-[#1e2025] rounded-md p-0.5 gap-0.5">
                             <button
                                 onClick={() => setActiveTab('dashboard')}
-                                className={`px-3 py-1.5 text-[10px] font-bold rounded cursor-pointer border-none transition-all duration-150 flex items-center gap-1 ${activeTab === 'dashboard' ? 'bg-[#1e2025] text-[#e8eaed]' : 'bg-transparent text-[#5a5f6e]'}`}
+                                className={`px-3 py-1.5 text-xs font-bold rounded cursor-pointer border-none transition-all duration-150 flex items-center gap-1 ${activeTab === 'dashboard' ? 'bg-[#1e2025] text-[#e8eaed]' : 'bg-transparent text-[#5a5f6e]'}`}
                             >
                                 <LayoutDashboard size={12} /> DASHBOARD
                             </button>
                             <button
                                 onClick={() => setActiveTab('analytics')}
-                                className={`px-3 py-1.5 text-[10px] font-bold rounded cursor-pointer border-none transition-all duration-150 flex items-center gap-1 ${activeTab === 'analytics' ? 'bg-[#1e2025] text-[#e8eaed]' : 'bg-transparent text-[#5a5f6e]'}`}
+                                className={`px-3 py-1.5 text-xs font-bold rounded cursor-pointer border-none transition-all duration-150 flex items-center gap-1 ${activeTab === 'analytics' ? 'bg-[#1e2025] text-[#e8eaed]' : 'bg-transparent text-[#5a5f6e]'}`}
                             >
                                 <PieIcon size={12} /> ANALYTICS
                             </button>
@@ -139,7 +139,7 @@ const ExpenseTracker = () => {
                 {(isDashboardLoading || isAnalyticsLoading) ? (
                     <div className="flex flex-col items-center justify-center py-15 text-[#5a5f6e]">
                         <Activity size={32} className="opacity-50 mb-3" />
-                        <p className="text-[11px] font-bold tracking-wider">FETCHING ACCOUNTS...</p>
+                        <p className="text-xs font-bold tracking-widest">FETCHING ACCOUNTS...</p>
                     </div>
                 ) : activeTab === 'dashboard' ? (
                     <div className="flex flex-col gap-4">
@@ -218,13 +218,13 @@ const ExpenseTracker = () => {
                                 <div className="flex flex-col gap-3">
                                     <button
                                         onClick={() => setIsExpenseModalOpen(true)}
-                                        className="w-full py-2.5 bg-rose-500/5 border border-rose-500/15 rounded-md text-[#F43F5E] text-[11px] font-bold cursor-pointer flex items-center justify-center gap-2"
+                                        className="w-full py-2.5 bg-rose-500/5 border border-rose-500/15 rounded-md text-[#F43F5E] text-xs font-bold cursor-pointer flex items-center justify-center gap-2"
                                     >
                                         <TrendingDown size={14} /> ADD EXPENSE
                                     </button>
                                     <button
                                         onClick={() => setIsIncomeModalOpen(true)}
-                                        className="w-full py-2.5 bg-green-500/5 border border-green-500/20 rounded-md text-[#00C853] text-[11px] font-bold cursor-pointer flex items-center justify-center gap-2"
+                                        className="w-full py-2.5 bg-green-500/5 border border-green-500/20 rounded-md text-[#00C853] text-xs font-bold cursor-pointer flex items-center justify-center gap-2"
                                     >
                                         <TrendingUp size={14} /> ADD INCOME
                                     </button>

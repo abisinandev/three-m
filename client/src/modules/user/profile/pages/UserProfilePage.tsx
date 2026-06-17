@@ -9,8 +9,8 @@ import { useNavigate } from '@tanstack/react-router';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import api from '@/lib/axios-user';
-import { UPLOAD_PROFILE_IMAGE } from '@shared/constants/userContants';
-import { ROUTES } from '@shared/constants/routes';
+
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 
 import { ProfileSidebar } from '../components/ProfileSidebar';
 import { PersonalInfoCard } from '../components/PersonalInfoCard';
@@ -52,7 +52,7 @@ const UserProfilePage = () => {
         badgeBorder: "rgba(16, 185, 129, 0.2)",
         badgeText: "VERIFIED",
         message: "Your KYC is approved! You can now withdraw and access all features.",
-        button: <div className="flex items-center gap-1.5 text-[#10b981] text-[10px] font-bold">
+        button: <div className="flex items-center gap-1.5 text-[#10b981] text-xs font-bold">
           <CheckCircle className="w-3.5 h-3.5" />
           VERIFIED
         </div>,
@@ -66,7 +66,7 @@ const UserProfilePage = () => {
         badgeBorder: "rgba(245, 158, 11, 0.2)",
         badgeText: "PENDING REVIEW",
         message: "Your documents are under review. We'll notify you soon.",
-        button: <div className="text-[#f59e0b] text-[10px] font-bold flex items-center gap-2">
+        button: <div className="text-[#f59e0b] text-xs font-bold flex items-center gap-2">
           <div className="w-1.5 h-1.5 bg-[#f59e0b] rounded-full animate-pulse" />
           UNDER REVIEW
         </div>,
@@ -108,7 +108,7 @@ const UserProfilePage = () => {
     try {
       const signatureData = await GetSignatureApi("profile", user.id);
       const result = await uploadToCloudinary(file, signatureData.data);
-      await api.patch(UPLOAD_PROFILE_IMAGE, {
+      await api.patch(API_ROUTES.USER.PROFILE.UPLOAD_IMAGE, {
         userId: user?.id,
         url: result.secure_url
       });
@@ -121,22 +121,16 @@ const UserProfilePage = () => {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#0b0c0e',
-      color: '#e8eaed',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      paddingBottom: 48,
-    }}>
-      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] pb-12">
+      <div className="max-w-[1000px] mx-auto px-6 py-5 flex flex-col gap-4">
 
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="flex items-center justify-between">
           <div>
-            <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+            <h1 className="text-2xl font-semibold text-[#e8eaed] tracking-tight m-0">
               Profile Settings
             </h1>
-            <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+            <p className="text-sm text-[#5a5f6e] mt-1 m-0">
               Manage your account and security
             </p>
           </div>

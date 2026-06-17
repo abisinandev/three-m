@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 import { LandingPage } from '@/modules/user/dashboard/components/LandingPageComponent';
 
 export const Route = createFileRoute('/')({

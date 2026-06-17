@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { AuthenticationApi } from "@/shared/services/admin/auth/authentication-api";
 import { useAuthStore } from "@stores/user/UserAuthStore";
 import { useNavigate } from "@tanstack/react-router";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES } from "@shared/constants/apiRoutes";
 
 interface FormErrors {
     adminCode?: string;

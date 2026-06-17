@@ -6,8 +6,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "@stores/user/UserAuthStore";
 import { useMutation } from "@tanstack/react-query";
 import api from "@/lib/axios-user";
-import { FORGOT_PASSWORD } from "@shared/constants/userContants";
-import { ROUTES } from "@shared/constants/routes";
+
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 
 const ForgotPasswordForm: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +16,7 @@ const ForgotPasswordForm: React.FC = () => {
   const navigate = useNavigate();
 
   const forgotPasswordMutation = useMutation({
-    mutationFn: async () => await api.post(FORGOT_PASSWORD, { email }),
+    mutationFn: async () => await api.post(API_ROUTES.USER.AUTH.FORGOT_PASSWORD, { email }),
 
     onSuccess: (res) => {
       toast.success(`${res.data.message} 🎉`);

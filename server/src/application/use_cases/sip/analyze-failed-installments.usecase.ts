@@ -154,7 +154,7 @@ export class AnalyzeFailedInstallmentsUseCase implements IAnalyzeFailedInstallme
                     sipId: sip.id as string,
                     userId: sip.userId,
                     schemeCode: sip.schemeCode,
-                    installmentNo: updatedSip.executedInstallments + 1,
+                    installmentNo: updatedSip.executedInstallments,
                     executionDate: updatedSip.nextExecutionDate,
                     amount: sip.amount,
                 });

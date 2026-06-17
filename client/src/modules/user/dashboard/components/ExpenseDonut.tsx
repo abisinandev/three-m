@@ -44,10 +44,10 @@ export const ExpenseDonut = ({
                                 style={{ transform: 'rotate(-90deg)', transformOrigin: `${cx}px ${cy}px` }}
                             />
                         ))}
-                        <text x={cx} y={cy - 7} textAnchor="middle" fill="#f3f4f6" fontSize="11" fontWeight="700" fontFamily="monospace">
+                        <text x={cx} y={cy - 7} textAnchor="middle" fill="#f3f4f6" fontSize="13" fontWeight="700" fontFamily="Inter, sans-serif">
                             {formatCompact(totalExpenses)}
                         </text>
-                        <text x={cx} y={cy + 8} textAnchor="middle" fill="#6b7280" fontSize="8" fontFamily="sans-serif">
+                        <text x={cx} y={cy + 8} textAnchor="middle" fill="#6b7280" fontSize="10" fontWeight="500" fontFamily="Inter, sans-serif">
                             SPENT
                         </text>
                     </svg>
@@ -64,11 +64,11 @@ export const ExpenseDonut = ({
                             <div key={cat.label} className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
-                                    <span className="text-[10px] text-gray-400 font-medium">{cat.label}</span>
+                                    <span className="text-xs text-gray-400 font-medium">{cat.label}</span>
                                 </div>
                                 <div className="text-right">
-                                    <span className="text-[10px] font-semibold text-gray-200">{formatCompact(cat.value)}</span>
-                                    <span className="text-[9px] text-gray-600 ml-1">({pct}%)</span>
+                                    <span className="text-sm font-semibold text-gray-200 tabular-nums">{formatCompact(cat.value)}</span>
+                                    <span className="text-xs text-gray-500 ml-1 tabular-nums">({pct}%)</span>
                                 </div>
                             </div>
                         );

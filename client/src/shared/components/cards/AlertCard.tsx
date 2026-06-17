@@ -1,6 +1,6 @@
 import { AlertTriangle, Crown } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 
 export function VerificationAlertCard() {
   return (

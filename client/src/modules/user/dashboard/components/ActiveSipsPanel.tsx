@@ -9,9 +9,9 @@ export const ActiveSipsPanel = ({ recentSips, isLoading }: { recentSips: Dashboa
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-gray-400" />
-                    <h3 className="text-[11px] font-semibold text-gray-200 uppercase tracking-wider">Active SIPs</h3>
+                    <h3 className="text-sm font-semibold text-gray-200 uppercase tracking-wider">Active SIPs</h3>
                 </div>
-                <button className="text-[9px] text-blue-400 hover:text-blue-300 flex items-center transition-colors font-medium">
+                <button className="text-xs text-blue-400 hover:text-blue-300 flex items-center transition-colors font-semibold uppercase tracking-wide">
                     Manage SIPs <ChevronRight className="w-3 h-3 ml-0.5" />
                 </button>
             </div>
@@ -35,22 +35,22 @@ export const ActiveSipsPanel = ({ recentSips, isLoading }: { recentSips: Dashboa
                                     </div>
                                 )}
                                 <div>
-                                    <p className="text-[11px] text-gray-200 font-semibold line-clamp-1">{sip.schemeName || sip.schemeCode}</p>
-                                    <p className="text-[9px] text-gray-500 mt-0.5">
+                                    <p className="text-sm text-gray-200 font-semibold line-clamp-1">{sip.schemeName || sip.schemeCode}</p>
+                                    <p className="text-xs text-gray-500 mt-1">
                                         {sip.frequency} • Next: {new Date(sip.nextExecutionDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                                     </p>
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="text-[11px] font-bold text-gray-100">{formatCurrency(sip.amount)}</p>
-                                <p className="text-[9px] text-emerald-500 mt-0.5 font-medium">
+                                <p className="text-base font-bold text-gray-100 tabular-nums">{formatCurrency(sip.amount)}</p>
+                                <p className="text-xs text-emerald-500 mt-1 font-medium tabular-nums">
                                     {sip.executedInstallments}/{sip.totalInstallments} Paid
                                 </p>
                             </div>
                         </div>
                     )) : (
                         <div className="py-8 flex flex-col items-center justify-center text-gray-600 border border-dashed border-[#1f1f1f] rounded-md">
-                            <p className="text-[10px] uppercase tracking-widest font-medium">No Active SIPs</p>
+                            <p className="text-xs uppercase tracking-widest font-semibold">No Active SIPs</p>
                         </div>
                     )
                 }

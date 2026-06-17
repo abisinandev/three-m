@@ -1,4 +1,4 @@
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 import { useNavigate } from '@tanstack/react-router';
 import { ArrowLeft, Info, ShieldCheck } from 'lucide-react';
 

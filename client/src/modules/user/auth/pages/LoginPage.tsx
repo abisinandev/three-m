@@ -10,8 +10,8 @@ import { RightSidePanel } from "@shared/components/auth/RightSidePanel";
 import { TwoFAModal } from "@shared/components/modals/TwoFaModal";
 import { useMutation } from "@tanstack/react-query";
 import api from "@/lib/axios-user";
-import { LOGIN_API } from "@shared/constants/userContants";
-import { ROUTES } from "@shared/constants/routes";
+
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 import { useUserStore } from "@stores/user/UserStore";
 
 export const LoginPage: React.FC = () => {
@@ -39,7 +39,7 @@ export const LoginPage: React.FC = () => {
     };
 
     const loginMutation = useMutation({
-        mutationFn: async () => await api.post(LOGIN_API,
+        mutationFn: async () => await api.post(API_ROUTES.USER.AUTH.LOGIN,
             { email: formData.email, password: formData.password }
         ),
         onSuccess: (res) => {

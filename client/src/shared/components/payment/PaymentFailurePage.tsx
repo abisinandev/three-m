@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { XCircle, ArrowLeft, RefreshCw, AlertTriangle } from "lucide-react";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES } from "@shared/constants/apiRoutes";
 
 const PaymentFailurePage = () => {
     const navigate = useNavigate();

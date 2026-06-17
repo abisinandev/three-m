@@ -23,7 +23,7 @@ const PendingOrdersTable: React.FC<PendingOrdersTableProps> = ({ symbol }) => {
       <div className="bg-[#111214] border border-[#1e2025] rounded-lg p-12 text-center">
         <Clock className="w-8 h-8 text-[#5a5f6e] mx-auto mb-3 opacity-20" />
         <p className="text-sm text-[#5a5f6e]">No pending limit orders found</p>
-        <p className="text-[10px] text-[#3c4043] mt-1">Orders will appear here until price conditions are met</p>
+        <p className="text-xs text-[#3c4043] mt-1">Orders will appear here until price conditions are met</p>
       </div>
     );
   }
@@ -41,7 +41,7 @@ const PendingOrdersTable: React.FC<PendingOrdersTableProps> = ({ symbol }) => {
             Pending Limit Orders
           </h3>
         </div>
-        <span className="text-[10px] text-[#5f6368] bg-[#1e2025] px-2 py-0.5 rounded uppercase font-bold">
+        <span className="text-xs text-[#5f6368] bg-[#1e2025] px-2 py-0.5 rounded uppercase font-bold">
           {pendingOrders.length} {pendingOrders.length === 1 ? 'Order' : 'Orders'}
         </span>
       </div>
@@ -49,36 +49,36 @@ const PendingOrdersTable: React.FC<PendingOrdersTableProps> = ({ symbol }) => {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-[#0b0c0e]/50 border-b border-[#1e2025]">
-              <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-[#5f6368]">Symbol</th>
-              <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-[#5f6368]">Side</th>
-              <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-[#5f6368] text-right">Qty</th>
-              <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-[#5f6368] text-right">Price</th>
-              <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-[#5f6368] text-right">Total (Est.)</th>
-              <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-[#5f6368]">Trigger Condition</th>
-              <th className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-[#5f6368] text-center">Action</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#5f6368]">Symbol</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#5f6368]">Side</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#5f6368] text-right">Qty</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#5f6368] text-right">Price</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#5f6368] text-right">Total (Est.)</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#5f6368]">Trigger Condition</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#5f6368] text-center">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#1e2025]">
             {pendingOrders.map((order) => (
               <tr key={order.id} className="hover:bg-[#1e2025]/30 transition-colors">
                 <td className="px-4 py-3">
-                  <div className="text-xs font-bold text-[#e8eaed]">{order.symbol}</div>
-                  <div className="text-[9px] text-[#5f6368] mt-0.5">Limit Order</div>
+                  <div className="text-sm font-bold text-[#e8eaed]">{order.symbol}</div>
+                  <div className="text-xs text-[#5f6368] mt-0.5">Limit Order</div>
                 </td>
                 <td className="px-4 py-3">
-                  <span className={`text-[9px] px-2 py-0.5 rounded-full font-black ${
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-black ${
                     order.side === "BUY" ? "bg-[#1b5e20]/20 text-[#4caf50]" : "bg-[#b71c1c]/20 text-[#f44336]"
                   }`}>
                     {order.side}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-xs text-right font-medium text-[#e8eaed]">{order.quantity || 0}</td>
-                <td className="px-4 py-3 text-xs text-right font-medium text-[#e8eaed]">₹{(order.limitPrice || order.price || 0).toLocaleString()}</td>
-                <td className="px-4 py-3 text-xs text-right font-bold text-[#9aa0a6]">₹{((order.limitPrice || order.price || 0) * (order.quantity || 0)).toLocaleString()}</td>
+                <td className="px-4 py-3 text-sm text-right font-semibold text-[#e8eaed] tabular-nums">{order.quantity || 0}</td>
+                <td className="px-4 py-3 text-sm text-right font-semibold text-[#e8eaed] tabular-nums">₹{(order.limitPrice || order.price || 0).toLocaleString()}</td>
+                <td className="px-4 py-3 text-sm text-right font-bold text-[#9aa0a6] tabular-nums">₹{((order.limitPrice || order.price || 0) * (order.quantity || 0)).toLocaleString()}</td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-1.5">
                     <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${order.side === 'BUY' ? 'bg-[#4caf50]' : 'bg-[#f44336]'}`} />
-                    <span className="text-[10px] text-[#9aa0a6] font-medium">
+                    <span className="text-xs text-[#9aa0a6] font-medium tabular-nums">
                       Execute when price goes {order.side === "BUY" ? "below" : "above"} ₹{order.limitPrice || order.price || 0}
                     </span>
                   </div>
@@ -90,7 +90,7 @@ const PendingOrdersTable: React.FC<PendingOrdersTableProps> = ({ symbol }) => {
                     <button
                       onClick={() => handleCancel(order.id, order.symbol)}
                       disabled={cancelMutation.isPending}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#b71c1c]/10 text-[#f44336] hover:bg-[#b71c1c]/20 transition-all text-[10px] font-bold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed group border border-[#b71c1c]/20"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#b71c1c]/10 text-[#f44336] hover:bg-[#b71c1c]/20 transition-all text-xs font-bold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed group border border-[#b71c1c]/20"
                     >
                       {cancelMutation.isPending && cancelMutation.variables?.orderId === order.id ? (
                         <Loader2 className="w-3 h-3 animate-spin" />

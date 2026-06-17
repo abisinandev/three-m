@@ -1,5 +1,5 @@
 import adminApi from "@/lib/axios-admin";
-import { SYSTEM_LOGS } from "@/shared/constants/adminConstants";
+import { API_ROUTES } from '@shared/constants/apiRoutes';
 
 export interface IJobLog {
     id: string;
@@ -22,11 +22,11 @@ export interface IJobLogsResponse {
 }
 
 export const getJobLogs = async (params: { jobName?: string; status?: string; page?: number; limit?: number }) => {
-    const { data } = await adminApi.get(SYSTEM_LOGS, { params });
+    const { data } = await adminApi.get(API_ROUTES.ADMIN.SYSTEM_MANAGEMENT.LOGS, { params });
     return data.data as IJobLogsResponse;
 };
 
 export const getJobLogDetail = async (id: string) => {
-    const { data } = await adminApi.get(`${SYSTEM_LOGS}/${id}`);
+    const { data } = await adminApi.get(`${API_ROUTES.ADMIN.SYSTEM_MANAGEMENT.LOGS}/${id}`);
     return data.data as IJobLog;
 };

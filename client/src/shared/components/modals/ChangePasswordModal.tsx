@@ -78,8 +78,6 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
             <div className="fixed inset-0 bg-black/80" onClick={onClose} />
 
             <div className="relative w-full max-w-[340px] bg-[#0b0c0e] border border-[#1e2025] rounded-2xl overflow-hidden shadow-2xl">
-                {/* Top Accent Bar */}
-                <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#10b981]" />
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3 border-b border-[#1e2025]">

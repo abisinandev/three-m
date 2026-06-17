@@ -135,15 +135,14 @@ const StockDashboardPage = () => {
   return (
     <div
       className="min-h-screen bg-[#0b0c0e] text-[#e8eaed] pb-10 selection:bg-[#2962ff]/30"
-      style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
     >
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pt-6 px-6 max-w-[1600px] mx-auto">
         <div>
-          <h2 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+          <h1 className="text-2xl font-semibold text-[#e8eaed] tracking-tight m-0">
             Stocks Dashboard
-          </h2>
-          <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+          </h1>
+          <p className="text-sm text-[#5a5f6e] mt-1 m-0">
             Monitor market conditions and execute trades instantly.
           </p>
         </div>
@@ -155,16 +154,7 @@ const StockDashboardPage = () => {
               type="text"
               placeholder="Search stocks, ETFs..."
               onChange={(e) => debouncedSearch(e.target.value)}
-              style={{
-                width: '100%',
-                background: '#111214',
-                border: '1px solid #1e2025',
-                borderRadius: 6,
-                padding: '7px 10px 7px 32px',
-                fontSize: 12,
-                color: '#e8eaed',
-                outline: 'none',
-              }}
+              className="w-full bg-[#111214] border border-[#1e2025] rounded-md py-2 pl-8 pr-3 text-sm text-[#e8eaed] outline-none placeholder:text-[#5a5f6e] focus:border-[#2962ff]/50 transition-colors"
             />
           </div>
           <button className="bg-[#111214] border border-[#1e2025] p-2 rounded-md hover:bg-[#1a1c20] transition-colors">

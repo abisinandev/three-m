@@ -11,9 +11,9 @@ import z from "zod";
 import { useGoogleLogin } from "@react-oauth/google";
 import api from "@/lib/axios-user";
 import { useMutation } from "@tanstack/react-query";
-import { GOOGLE_AUTH } from "@shared/constants/userContants";
+
 import { useUserStore } from "@stores/user/UserStore";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 
 export const SignupPage: React.FC = () => {
     const navigate = useNavigate();
@@ -65,7 +65,7 @@ export const SignupPage: React.FC = () => {
     const googleMutation = useMutation({
         mutationFn: async (credential: string) =>
             await api.post(
-                GOOGLE_AUTH,
+                API_ROUTES.USER.AUTH.GOOGLE_AUTH,
                 { provider: "google", token: credential },
                 { withCredentials: true }
             ),

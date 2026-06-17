@@ -4,10 +4,10 @@ import { useMutation } from "@tanstack/react-query";
 import { useOtpControls } from "@shared/hooks/auth/useOtpControls";
 import { useAuthStore } from "@stores/user/UserAuthStore";
 import OTPVerification from "@shared/components/otp/OtpComponet";
-import { RESEND_OTP, VERIFY_OTP } from "@shared/constants/userContants";
+
 import api from "@/lib/axios-user";
 import { toast } from "sonner";
-import { ROUTES } from "@shared/constants/routes";
+import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
 
 
 
@@ -34,7 +34,7 @@ export default function SignupOTP() {
     // --- VERIFY OTP MUTATION ---
     const verifyOtp = useMutation({
         mutationFn: async (otp: string) => {
-            return await api.post(VERIFY_OTP, { email, otp });
+            return await api.post(API_ROUTES.USER.AUTH.VERIFY_OTP, { email, otp });
         },
         onSuccess: (res) => {
             toast.success(res.data.message || "Email verified successfully");
@@ -49,7 +49,7 @@ export default function SignupOTP() {
 
     // --- RESEND OTP MUTATION ---
     const resendOtp = useMutation({
-        mutationFn: async () => await api.post(RESEND_OTP, { email }),
+        mutationFn: async () => await api.post(API_ROUTES.USER.AUTH.RESEND_OTP, { email }),
         onSuccess: (res) => {
             toast.success(res?.data?.message || "OTP resent successfully");
             saveResendMeta();

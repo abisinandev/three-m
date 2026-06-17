@@ -52,7 +52,7 @@ export const ExpenseModal = ({ isOpen, onClose }: ExpenseModalProps) => {
 
                 <div className="flex justify-between items-center py-4 px-5 border-b border-[#1e2025]">
                     <div className="flex items-center gap-3">
-                        <span className="text-[12px] font-black text-[#e8eaed] uppercase tracking-widest">Record Expense</span>
+                        <span className="text-sm font-black text-[#e8eaed] uppercase tracking-widest">Record Expense</span>
                     </div>
                     <button onClick={onClose} className="text-[#5a5f6e] hover:text-white transition-colors">
                         <X size={16} />
@@ -62,9 +62,9 @@ export const ExpenseModal = ({ isOpen, onClose }: ExpenseModalProps) => {
                 {/* Body */}
                 <div className="p-5 space-y-5">
                     <div>
-                        <label className="text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Description</label>
+                        <label className="text-xs font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Description</label>
                         <input
-                            className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-[12px] text-white outline-none focus:border-blue-500/50 transition-all font-bold placeholder:text-[#333]"
+                            className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-blue-500/50 transition-all font-bold placeholder:text-[#333]"
                             placeholder="e.g. Monthly Rent"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -73,9 +73,9 @@ export const ExpenseModal = ({ isOpen, onClose }: ExpenseModalProps) => {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Amount (₹)</label>
+                            <label className="text-xs font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Amount (₹)</label>
                             <input
-                                className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-[12px] text-white outline-none focus:border-blue-500/50 transition-all font-black placeholder:text-[#333]"
+                                className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-blue-500/50 transition-all font-black placeholder:text-[#333] tabular-nums"
                                 type="number"
                                 placeholder="0.00"
                                 value={amount}
@@ -83,9 +83,9 @@ export const ExpenseModal = ({ isOpen, onClose }: ExpenseModalProps) => {
                             />
                         </div>
                         <div>
-                            <label className="text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Category</label>
+                            <label className="text-xs font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Category</label>
                             <select
-                                className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-[12px] text-white outline-none focus:border-blue-500/50 transition-all font-bold appearance-none cursor-pointer"
+                                className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-blue-500/50 transition-all font-bold appearance-none cursor-pointer"
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
                             >
@@ -98,9 +98,9 @@ export const ExpenseModal = ({ isOpen, onClose }: ExpenseModalProps) => {
                     </div>
 
                     <div>
-                        <label className="text-[10px] font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Date</label>
+                        <label className="text-xs font-bold text-[#5a5f6e] uppercase tracking-widest mb-2 block">Date</label>
                         <input
-                            className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-[12px] text-white outline-none focus:border-blue-500/50 transition-all font-bold [color-scheme:dark]"
+                            className="w-full bg-[#111214] border border-[#1e2025] rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-blue-500/50 transition-all font-bold [color-scheme:dark]"
                             type="date"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
@@ -111,7 +111,7 @@ export const ExpenseModal = ({ isOpen, onClose }: ExpenseModalProps) => {
                         <button
                             onClick={handleAddExpense}
                             disabled={isAddingExpense}
-                            className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-blue-500/10 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-blue-500/10 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                             {isAddingExpense ? <Loader2 size={14} className="animate-spin" /> : 'Confirm Transaction'}
                         </button>

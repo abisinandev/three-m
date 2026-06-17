@@ -33,19 +33,10 @@ interface TradeHistoryTableProps {
 const SideTag = ({ side }: { side?: string }) => {
     const isSell = side?.toLowerCase() === 'sell';
     return (
-        <div style={{
-            display: 'flex', alignItems: 'center', gap: 4,
-            fontSize: 9, fontWeight: 800,
-            padding: '2px 7px', borderRadius: 4,
-            background: isSell ? 'rgba(255,23,68,0.12)' : 'rgba(0,200,83,0.12)',
-            color: isSell ? '#FF1744' : '#00C853',
-            border: isSell ? '1px solid rgba(255,23,68,0.2)' : '1px solid rgba(0,200,83,0.2)',
-            textTransform: 'uppercase', letterSpacing: '0.06em',
-            flexShrink: 0,
-        }}>
+        <div className={`flex items-center gap-1 text-xs font-extrabold px-1.5 py-0.5 rounded border uppercase tracking-wider shrink-0 ${isSell ? 'bg-red-500/10 text-[#FF1744] border-red-500/20' : 'bg-emerald-500/10 text-[#00C853] border-emerald-500/20'}`}>
             {isSell
-                ? <ArrowUpRight size={9} />
-                : <ArrowDownLeft size={9} />
+                ? <ArrowUpRight size={10} />
+                : <ArrowDownLeft size={10} />
             }
             {side || '—'}
         </div>
@@ -55,12 +46,7 @@ const SideTag = ({ side }: { side?: string }) => {
 const OrderTypeBadge = ({ type }: { type?: string }) => {
     if (!type) return null;
     return (
-        <span style={{
-            fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 3,
-            background: 'rgba(90,95,110,0.15)', color: '#9ca3af',
-            border: '1px solid rgba(90,95,110,0.2)', textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-        }}>
+        <span className="text-xs font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider bg-[#5a5f6e]/15 text-[#9ca3af] border-[#5a5f6e]/20">
             {type}
         </span>
     );
@@ -76,10 +62,7 @@ export const TradeHistoryTable = ({
 }: TradeHistoryTableProps) => {
     if (isLoading) {
         return (
-            <div style={{
-                padding: '40px 0', textAlign: 'center', fontSize: 12, color: '#5a5f6e',
-                background: '#111214', border: '1px solid #1e2025', borderRadius: 8,
-            }}>
+            <div className="py-10 text-center text-sm text-[#5a5f6e] bg-[#111214] border border-[#1e2025] rounded-lg">
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
                     <div style={{
                         width: 24, height: 24, borderRadius: '50%',
@@ -94,7 +77,7 @@ export const TradeHistoryTable = ({
     }
 
     return (
-        <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 8, overflow: 'hidden' }}>
+        <div className="bg-[#111214] border border-[#1e2025] rounded-lg overflow-hidden">
 
             <div style={{
                 display: 'grid',
@@ -105,17 +88,13 @@ export const TradeHistoryTable = ({
                 background: '#0e1014',
             }}>
                 {TABLE_HEADERS.history.map((h, i) => (
-                    <p key={i} style={{
-                        fontSize: 10, fontWeight: 600, color: '#5a5f6e',
-                        letterSpacing: '0.06em', textTransform: 'uppercase',
-                        textAlign: i > 0 ? 'right' : 'left', margin: 0,
-                    }}>{h}</p>
+                    <p key={i} className={`text-xs font-semibold text-[#5a5f6e] tracking-wider uppercase m-0 ${i > 0 ? 'text-right' : 'text-left'}`}>{h}</p>
                 ))}
             </div>
 
             {!data || data.length === 0 ? (
-                <div style={{ padding: '48px 0', textAlign: 'center', fontSize: 12, color: '#5a5f6e' }}>
-                    <div style={{ fontSize: 24, marginBottom: 8 }}>📋</div>
+                <div className="py-12 text-center text-sm text-[#5a5f6e]">
+                    <div className="text-2xl mb-2">📋</div>
                     No transaction history found
                 </div>
             ) : (
@@ -145,17 +124,13 @@ export const TradeHistoryTable = ({
                                     <SideTag side={side} />
                                     <div style={{ minWidth: 0 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                            <p style={{
-                                                fontSize: 13, fontWeight: 600, color: '#e8eaed', margin: 0,
-                                                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                                                maxWidth: 160,
-                                            }}>
+                                            <p className="text-sm font-semibold text-[#e8eaed] m-0 overflow-hidden text-ellipsis whitespace-nowrap max-w-[160px]">
                                                 {item.assetName || item.symbol || item.assetId || '—'}
                                             </p>
                                             {assetType === 'STOCK' && <OrderTypeBadge type={item.orderType || 'MARKET'} />}
                                             {assetType === 'MF' && <OrderTypeBadge type="MF" />}
                                         </div>
-                                        <p style={{ fontSize: 10, color: '#5a5f6e', margin: '2px 0 0' }}>
+                                        <p className="text-xs text-[#5a5f6e] m-0 mt-0.5">
                                             {assetType === 'STOCK' ? (item.exchange || 'NSE') : 'Mutual Fund'}
                                             {item.productType ? ` · ${item.productType}` : ''}
                                         </p>
@@ -163,28 +138,25 @@ export const TradeHistoryTable = ({
                                 </div>
 
                                 <div style={{ textAlign: 'right' }}>
-                                    <p style={{ fontSize: 12, fontWeight: 600, color: '#e8eaed', margin: 0 }}>
+                                    <p className="text-sm font-semibold text-[#e8eaed] m-0 tabular-nums">
                                         {item.quantity ?? '—'}
                                     </p>
-                                    <p style={{ fontSize: 10, color: '#5a5f6e', margin: '2px 0 0' }}>{assetType === 'STOCK' ? 'shares' : 'units'}</p>
+                                    <p className="text-xs text-[#5a5f6e] m-0 mt-0.5">{assetType === 'STOCK' ? 'shares' : 'units'}</p>
                                 </div>
 
                                 <div style={{ textAlign: 'right' }}>
-                                    <p style={{ fontSize: 12, fontWeight: 600, color: '#e8eaed', margin: 0 }}>
+                                    <p className="text-sm font-semibold text-[#e8eaed] m-0 tabular-nums">
                                         ₹{formatCurrency(item.price, 2)}
                                     </p>
                                     {item.triggerPrice && (
-                                        <p style={{ fontSize: 10, color: '#5a5f6e', margin: '2px 0 0' }}>
+                                        <p className="text-xs text-[#5a5f6e] m-0 mt-0.5 tabular-nums">
                                             Trig: ₹{formatCurrency(item.triggerPrice, 2)}
                                         </p>
                                     )}
                                 </div>
 
                                 <div style={{ textAlign: 'right' }}>
-                                    <p style={{
-                                        fontSize: 12, fontWeight: 700, margin: 0,
-                                        // color: isSell ? '#FF1744' : '#00C853',
-                                    }}>
+                                    <p className="text-sm font-bold text-[#e8eaed] m-0 tabular-nums">
                                         ₹{formatCurrency(tradeValue, 2)}
                                     </p>
                                 </div>
@@ -192,15 +164,15 @@ export const TradeHistoryTable = ({
                                 <div style={{ textAlign: 'right' }}>
                                     {tradeDate ? (
                                         <>
-                                            <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}>
+                                            <p className="text-xs text-[#9ca3af] m-0 tabular-nums">
                                                 {tradeDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}
                                             </p>
-                                            <p style={{ fontSize: 10, color: '#5a5f6e', margin: '2px 0 0' }}>
+                                            <p className="text-xs text-[#5a5f6e] m-0 mt-0.5 tabular-nums">
                                                 {tradeDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                                             </p>
                                         </>
                                     ) : (
-                                        <p style={{ fontSize: 11, color: '#5a5f6e', margin: 0 }}>—</p>
+                                        <p className="text-xs text-[#5a5f6e] m-0">—</p>
                                     )}
                                 </div>
 
@@ -214,19 +186,12 @@ export const TradeHistoryTable = ({
                         );
                     })}
 
-                    <div style={{
-                        padding: '10px 16px',
-                        borderTop: '1px solid #1e2025',
-                        background: '#0e1014',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                    }}>
-                        <p style={{ fontSize: 11, color: '#5a5f6e', margin: 0 }}>
+                    <div className="py-2.5 px-4 border-t border-[#1e2025] bg-[#0e1014] flex justify-between items-center">
+                        <p className="text-xs text-[#5a5f6e] m-0">
                             {data.length} transaction{data.length !== 1 ? 's' : ''} on this page
                         </p>
-                        <p style={{ fontSize: 11, color: '#5a5f6e', margin: 0 }}>
-                            Total value: <span style={{ color: '#e8eaed', fontWeight: 600 }}>
+                        <p className="text-xs text-[#5a5f6e] m-0">
+                            Total value: <span className="text-[#e8eaed] font-semibold tabular-nums">
                                 ₹{formatCurrency(data.reduce((s, t) => s + (t.price ?? 0) * (t.quantity ?? 0), 0), 2)}
                             </span>
                         </p>

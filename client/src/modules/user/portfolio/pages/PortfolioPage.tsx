@@ -2,7 +2,7 @@
 import { TrendingUp } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useUserStore } from '@stores/user/UserStore';
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 import { SummaryStats } from '../components/SummaryStats';
 import { HoldingsFilters } from '../components/HoldingsFilters';
 import { HoldingsTable } from '../components/HoldingsTable';
@@ -36,10 +36,10 @@ const PortfolioDashboard = () => {
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-base font-semibold text-[#e8eaed] tracking-tight m-0">
+                        <h1 className="text-2xl font-semibold text-[#e8eaed] tracking-tight m-0">
                             Portfolio
                         </h1>
-                        <p className="text-[11px] text-[#5a5f6e] mt-0.5 m-0">
+                        <p className="text-sm text-[#5a5f6e] mt-1 m-0">
                             Holdings & performance
                         </p>
                     </div>
@@ -49,7 +49,7 @@ const PortfolioDashboard = () => {
                             <button
                                 key={t}
                                 onClick={() => setReturnType(t)}
-                                className={`px-3 py-1.5 text-[10px] font-bold tracking-wider rounded border-none cursor-pointer transition-all duration-150 ${returnType === t ? 'bg-[#1e2025] text-[#e8eaed]' : 'bg-transparent text-[#5a5f6e]'}`}
+                                className={`px-3 py-1.5 text-xs font-bold tracking-wider rounded border-none cursor-pointer transition-all duration-150 ${returnType === t ? 'bg-[#1e2025] text-[#e8eaed]' : 'bg-transparent text-[#5a5f6e]'}`}
                             >
                                 {t.toUpperCase()}
                             </button>
@@ -61,16 +61,16 @@ const PortfolioDashboard = () => {
                     <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
                             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-amber-500/10 flex items-center justify-center">
-                                <span className="text-amber-500 text-[10px] font-black italic">P</span>
+                                <span className="text-amber-500 text-xs font-black italic">P</span>
                             </div>
                             <div>
-                                <p className="text-xs font-bold text-[#e8eaed] m-0">Unlock Enhanced Intelligence</p>
-                                <p className="text-[10px] text-[#5a5f6e] m-0">Upgrade to Premium for advanced portfolio analytics, AI projections, and more.</p>
+                                <p className="text-sm font-bold text-[#e8eaed] m-0">Unlock Enhanced Intelligence</p>
+                                <p className="text-xs text-[#5a5f6e] mt-0.5 m-0">Upgrade to Premium for advanced portfolio analytics, AI projections, and more.</p>
                             </div>
                         </div>
                         <button 
                             onClick={openPremiumModal}
-                            className="w-full sm:w-auto px-4 py-1.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-bold cursor-pointer whitespace-nowrap hover:bg-amber-500/20 transition-colors"
+                            className="w-full sm:w-auto px-4 py-1.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold cursor-pointer whitespace-nowrap hover:bg-amber-500/20 transition-colors"
                         >
                             LEARN MORE
                         </button>

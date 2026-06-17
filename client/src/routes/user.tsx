@@ -1,7 +1,7 @@
 import NotFoundPage from '@shared/components/error/NotFoundComponent';
 import UserLayout from '@shared/layouts/user/UserLayout';
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { ROUTES } from '@shared/constants/routes';
+import { ROUTES } from '@shared/constants/apiRoutes';
 import { useUserStore } from '@stores/user/UserStore';
 
 export const Route = createFileRoute('/user')({

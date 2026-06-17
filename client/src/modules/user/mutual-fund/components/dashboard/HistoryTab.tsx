@@ -95,19 +95,19 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                                             )}
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="font-semibold text-[13px] text-gray-200 line-clamp-1">{tx.schemeName || 'Mutual Fund Investment'}</p>
-                                            <div className="flex items-center gap-2 mt-0.5 text-[11px] text-gray-500">
+                                            <p className="font-semibold text-sm text-gray-200 line-clamp-1">{tx.schemeName || 'Mutual Fund Investment'}</p>
+                                            <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
                                                 <span className="font-bold text-gray-400 uppercase tracking-tighter">{tx.investmentType}</span>
                                                 <span className="w-1 h-1 bg-gray-700 rounded-full"></span>
-                                                <span>{dayjs(tx.createdAt).format('DD MMM YYYY, hh:mm A')}</span>
+                                                <span className="tabular-nums">{dayjs(tx.createdAt).format('DD MMM YYYY, hh:mm A')}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className={`font-semibold ${tx.paymentMethod === 'Debit' ? 'text-red-400' : 'text-green-400'}`}>
+                                        <p className={`text-sm font-semibold tabular-nums ${tx.paymentMethod === 'Debit' ? 'text-red-400' : 'text-green-400'}`}>
                                             {tx.paymentMethod === 'Debit' ? '-' : '+'}₹{tx.amount.toLocaleString()}
                                         </p>
-                                        <p className="text-[10px] text-gray-500">{tx.status || 'Completed'}</p>
+                                        <p className="text-xs text-gray-500 tabular-nums">{tx.status || 'Completed'}</p>
                                     </div>
                                 </div>
                             ))}
