@@ -5,12 +5,15 @@ import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.t
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
 import { FetchDataResponseDTO } from "@application/dto/admin/fetch-data.response.dto";
 import { AdminAlgoTradeResponseDTO } from "@application/dto/admin/algo-trading/algo-trade-response.dto";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 
 @injectable()
 export class AdminGetAlgoTradesUseCase implements IAdminGetAlgoTradesUseCase {
 
     constructor(
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
+        @inject(USER_TYPES.UserRepository) private _userRepo: IUserRepository,
     ) { }
 
     async execute(query: QueryOptions): Promise<FetchDataResponseDTO<AdminAlgoTradeResponseDTO>> {
@@ -26,17 +29,23 @@ export class AdminGetAlgoTradesUseCase implements IAdminGetAlgoTradesUseCase {
 
         const totalCount = await this._tradeRepository.countAlgoTrades(search);
 
-        const data: AdminAlgoTradeResponseDTO[] = trades.map(entity => ({
-            id: entity.id as string,
-            userId: entity.userId,
-            orderId: entity.orderId,
-            symbol: entity.symbol,
-            side: entity.side,
-            quantity: entity.quantity,
-            price: entity.price,
-            profit: entity.profit,
-            createdAt: entity.createdAt,
-        }));
+        const data: AdminAlgoTradeResponseDTO[] = await Promise.all(
+            trades.map(async (entity) => {
+                const user = await this._userRepo.findById(entity.userId);
+
+                return {
+                    id: String(entity.id).slice(17).toLocaleUpperCase(),
+                    userId: user?.userCode as string,
+                    orderId: entity.orderId,
+                    symbol: entity.symbol,
+                    side: entity.side,
+                    quantity: entity.quantity,
+                    price: entity.price,
+                    profit: entity.profit,
+                    createdAt: entity.createdAt,
+                };
+            })
+        );
 
         return {
             data,

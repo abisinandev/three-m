@@ -52,12 +52,17 @@ export const StrategiesTable: FC<StrategiesTableProps> = ({
                                 <tr key={item.id} className="border-b border-[#1e2025] hover:bg-[#15171a] transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="text-[13px] font-semibold text-white mb-0.5">{item.strategyName}</div>
-                                        <div className="text-[11px] text-[#5a5f6e] font-mono tracking-tight">ID: {item.id}</div>
+                                        <div className="text-[11px] text-[#5a5f6e] font-mono tracking-tight">{item.id}</div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className={`w-9 h-5 rounded-full flex items-center p-0.5 cursor-pointer transition-colors ${item.isActive ? 'bg-emerald-500' : 'bg-neutral-700'}`}>
-                                            <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200 ${item.isActive ? 'translate-x-4' : 'translate-x-0'}`} />
-                                        </div>
+                                        <span
+                                            className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium border ${item.isActive
+                                                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                                    : "bg-neutral-500/10 text-neutral-400 border-neutral-500/20"
+                                                }`}
+                                        >
+                                            {item.isActive ? "Active" : "Inactive"}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3 w-40">

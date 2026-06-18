@@ -183,7 +183,7 @@ const SipManagementPage = () => {
                     }}
                   >
                     <td className="px-5 py-4">
-                      <div className="text-[13px] font-medium text-neutral-200 truncate max-w-[120px]" title={sip.userId}>{sip.userId}</div>
+                      <div className="text-[13px] font-medium text-neutral-200 truncate max-w-[120px]" title={sip.userId}>{sip.userCode}</div>
                       <div className="text-[10px] text-neutral-500 font-mono uppercase mt-0.5">{sip.id.slice(-8)}</div>
                     </td>
                     <td className="px-5 py-4">

@@ -2,7 +2,7 @@ import { ContainerModule } from "inversify";
 import { ALGO_TRADING_TYPES } from "./algo-trading.type";
 import { AdminAlgoTradingUseCase } from "@application/use_cases/admin/algo-trading/admin-algo-trading.usecase";
 import { IAdminAlgoTradingUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-algo-trading-usecaes.interface";
-import { AdminGetStrategiesUseCase } from "@application/use_cases/admin/algo-trading/admin-get-strategies.usecaese";
+import { AdminGetStrategiesUseCase } from "@application/use_cases/admin/algo-trading/admin-get-strategies.usecase";
 import { AdminAlgoTradingController } from "@presentation/http/controllers/admin/admin-algo-trading.controller";
 import { AdminGetSignalUseCase } from "@application/use_cases/admin/algo-trading/admin-get-signal.usecase";
 import { IAdminGetSignalUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-get-signals-usecase.interface";

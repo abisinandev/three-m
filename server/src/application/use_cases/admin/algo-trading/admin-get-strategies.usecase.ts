@@ -31,7 +31,7 @@ export class AdminGetStrategiesUseCase implements IAdminGetStrategiesUseCase {
         const totalCount = await this._strategyRepository.countActiveStrategies();
 
         const data: AlgoStrategyResponseDTO[] = strategies.map(entity => ({
-            id: entity.id as string,
+            id: String(entity.id).slice(17).toLocaleUpperCase(),
             userId: entity.userId,
             symbol: entity.symbol,
             strategyName: entity.strategyName,

@@ -23,8 +23,6 @@ export class AdminAlgoTradingUseCase implements IAdminAlgoTradingUseCase {
 
         const activeSignalsCount = await this._signalRepo.countSignals();
 
-        const startOfToday = new Date();
-        startOfToday.setHours(0, 0, 0, 0);
         const tradesExecutedTodayCount = await this._tradeRepo.countTodaysTrades();
 
         const failedTradesCount = await this._orderRepo.countCancelledOrders();

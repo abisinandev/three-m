@@ -23,8 +23,8 @@ const BaseStrategiesRiskTable = () => {
             setEditingStrategy(null);
             setEditData(null);
         },
-        onError: () => {
-            toast.error('Failed to update risk settings');
+        onError: (err) => {
+            toast.error(err.response.data.message || 'Failed to update risk settings');
         }
     });
 
