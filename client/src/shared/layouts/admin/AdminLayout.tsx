@@ -29,6 +29,7 @@ const navItems = [
   { to: ROUTES.ADMIN.SIP_MANAGEMENT.ROOT, label: 'SIP Management', icon: DollarSign },
   { to: ROUTES.ADMIN.STOCK_MANAGEMENT, label: 'Stocks Management', icon: AlignHorizontalDistributeCenter },
   { to: ROUTES.ADMIN.ALGO_TRADING, label: 'Algo Trading', icon: Cpu },
+  { to: ROUTES.ADMIN.TRADES_MANAGEMENT, label: 'Trades', icon: Activity },
   { to: ROUTES.ADMIN.SUBSCRIPTIONS, label: 'Subscriptions', icon: CreditCard },
   { to: ROUTES.ADMIN.TRANSACTIONS_MANAGEMENT, label: 'Transactions', icon: Receipt },
   { to: ROUTES.ADMIN.SYSTEM_LOGS, label: 'System Logs', icon: Activity },

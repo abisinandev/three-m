@@ -5,7 +5,7 @@ import { FetchAdminAlgoStats, FetchAdminSignals, FetchAdminStrategies, FetchAdmi
 
 
 export const useAlgoTrading = () => {
-    const [activeTab, setActiveTab] = useState('Strategies');
+    const [activeTab, setActiveTab] = useState('Trades');
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
     const [debouncedSearch] = useDebounce(search, 500);

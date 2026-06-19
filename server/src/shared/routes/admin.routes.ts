@@ -52,13 +52,14 @@ export enum AdminDashboardRoutes {
     OVERVIEW = "/overview",
 }
 
-export enum AdminAlgoTradingRoutes {
+export enum AdminTradesRoutes {
     STATS = "/",
     BASE_STRATEGIES = "/base-strategies",
     RISK_CONFIG = "/risk-config",
     STRATEGIES = "/strategies",
     SIGNALS = "/signals",
     TRADES = "/trades",
+    ALL_TRADES = "/all-trades",
 }
 
 export enum AdminSystemRoutes {

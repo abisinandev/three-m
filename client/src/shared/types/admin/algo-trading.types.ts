@@ -43,6 +43,19 @@ export interface AdminAlgoTrade {
     profit: number | null;
     createdAt: string;
 }
+
+export interface AdminTrade {
+    id: string;
+    userId: string;
+    orderId: string;
+    symbol: string;
+    side: 'BUY' | 'SELL';
+    quantity: number;
+    price: string | number;
+    profit?: number;
+    isAlgoTrade: boolean;
+    createdAt: string;
+}
 export interface BaseStrategy {
     name: string;
     displayName: string;

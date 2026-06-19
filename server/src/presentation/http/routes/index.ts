@@ -23,7 +23,7 @@ import adminStockRoutes from '@presentation/http/routes/stocks/admin-stock-manag
 import userStockRoutes from '@presentation/http/routes/stocks/user-stock.routes';
 import ordersRoutes from '@presentation/http/routes/stocks/orders.routes';
 import algoTradingRoute from "@presentation/http/routes/algo-trading/algo-trading.routes";
-import adminAlgoTradingRoutes from '@presentation/http/routes/admin/admin-algo-trading.routes';
+import adminTradesRoutes from '@presentation/http/routes/admin/admin-trades.routes';
 import adminSubscriptionsRoutes from '@presentation/http/routes/admin/admin-subscription-management.routes'
 import userSubscriptionRoutes from '@presentation/http/routes/user/user-subscription.routes';
 import userDashboardRoutes from '@presentation/http/routes/user/user-dashboard.routes';
@@ -66,7 +66,7 @@ export const RegisterRoutes = (app: Application) => {
   app.use(BaseRoutes.ALGO_TRADING, (req, res, next) => authMiddleware.handle(req, res, next), algoTradingRoute);
 
 
-  app.use(BaseRoutes.ADMIN_ALGO_TRADING, (req, res, next) => authAdminMiddleware.handle(req, res, next), adminAlgoTradingRoutes);
+  app.use(BaseRoutes.ADMIN_TRADES, (req, res, next) => authAdminMiddleware.handle(req, res, next), adminTradesRoutes);
   app.use(BaseRoutes.ADMIN_SUBSCRIPTIONS, (req, res, next) => authAdminMiddleware.handle(req, res, next), adminSubscriptionsRoutes);
   app.use(BaseRoutes.ADMIN_SYSTEM, (req, res, next) => authAdminMiddleware.handle(req, res, next), adminSystemRoutes);
 };

@@ -85,7 +85,14 @@ const AlgoTradingPage = () => {
                 />
 
                 <div style={{ background: '#111214', borderRadius: 8, border: '1px solid #1e2025', overflow: 'hidden' }}>
-                    {activeTab === 'Strategies' ? (
+                    {activeTab === 'Trades' ? (
+                        <AlgoTradesTable
+                            items={items as AdminAlgoTrade[]}
+                            isLoading={isLoading}
+                            search={search}
+                            onSearchChange={setSearch}
+                        />
+                    ) : activeTab === 'Strategies' ? (
                         <StrategiesTable
                             items={items as AdminStrategy[]}
                             isLoading={isLoading}
@@ -95,13 +102,6 @@ const AlgoTradingPage = () => {
                     ) : activeTab === 'Signals' ? (
                         <SignalsTable
                             items={items as AdminSignal[]}
-                            isLoading={isLoading}
-                            search={search}
-                            onSearchChange={setSearch}
-                        />
-                    ) : activeTab === 'Trades' ? (
-                        <AlgoTradesTable
-                            items={items as AdminAlgoTrade[]}
                             isLoading={isLoading}
                             search={search}
                             onSearchChange={setSearch}

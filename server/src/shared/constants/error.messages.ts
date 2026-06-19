@@ -113,5 +113,11 @@ export const ErrorMessages = {
         UNAUTHORIZED: "You are not authorized to cancel this order",
         CANNOT_CANCEL: "Only pending orders can be cancelled",
     },
+    STRATEGY: {
+        RISK_AMOUNT: "Risk amount shouldn't be more than 1000",
+        MAX_TRADES: "Max trades shouldn't be more than 5",
+        STOP_LOSS: "Stop loss shouldn't be more than 100",
+        TAKE_PROFIT : "Take profit shouldn't be more than 200",
+    }
 } as const;
 
