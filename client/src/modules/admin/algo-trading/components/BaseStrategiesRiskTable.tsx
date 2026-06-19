@@ -4,6 +4,7 @@ import { FetchAdminBaseStrategies, UpdateAdminStrategyRiskConfig } from '@/share
 import { Edit2, Shield, Target, TrendingDown, TrendingUp, Info, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
 import type { StrategyRiskConfig, BaseStrategy } from '@/shared/types/admin/algo-trading.types';
+import { AxiosError } from 'axios';
 
 const BaseStrategiesRiskTable = () => {
     const queryClient = useQueryClient();
@@ -23,8 +24,11 @@ const BaseStrategiesRiskTable = () => {
             setEditingStrategy(null);
             setEditData(null);
         },
-        onError: (err) => {
-            toast.error(err.response.data.message || 'Failed to update risk settings');
+        onError: (err: unknown) => {
+            const error = err as AxiosError<{ message: string }>;
+            toast.error(
+                error.response?.data?.message || 'Failed to update risk settings'
+            );
         }
     });
 
@@ -91,13 +95,13 @@ const BaseStrategiesRiskTable = () => {
                             </div>
                             {editingStrategy === strategy.name ? (
                                 <div className="flex gap-1.5">
-                                    <button 
+                                    <button
                                         onClick={() => { setEditingStrategy(null); setEditData(null); }}
                                         className="p-1.5 text-neutral-400 hover:text-white bg-neutral-800 rounded transition-colors"
                                     >
                                         <X size={14} />
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={handleSave}
                                         disabled={updateMutation.isPending}
                                         className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[11px] font-bold transition-all disabled:opacity-50"
@@ -107,7 +111,7 @@ const BaseStrategiesRiskTable = () => {
                                     </button>
                                 </div>
                             ) : (
-                                <button 
+                                <button
                                     onClick={() => handleEdit(strategy)}
                                     className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1e2025] hover:bg-[#25282e] text-neutral-300 rounded text-[11px] font-bold transition-all border border-[#2a2d35]"
                                 >
@@ -124,7 +128,7 @@ const BaseStrategiesRiskTable = () => {
                                     <label className="text-[10px] font-bold uppercase tracking-wider">Risk Amount</label>
                                 </div>
                                 {editingStrategy === strategy.name && editData ? (
-                                    <input 
+                                    <input
                                         type="number"
                                         value={editData.riskAmount}
                                         onChange={(e) => setEditData({ ...editData, riskAmount: Number(e.target.value) })}
@@ -142,7 +146,7 @@ const BaseStrategiesRiskTable = () => {
                                     <label className="text-[10px] font-bold uppercase tracking-wider">Stop Loss</label>
                                 </div>
                                 {editingStrategy === strategy.name && editData ? (
-                                    <input 
+                                    <input
                                         type="number"
                                         value={editData.stopLoss}
                                         onChange={(e) => setEditData({ ...editData, stopLoss: Number(e.target.value) })}
@@ -160,7 +164,7 @@ const BaseStrategiesRiskTable = () => {
                                     <label className="text-[10px] font-bold uppercase tracking-wider">Take Profit</label>
                                 </div>
                                 {editingStrategy === strategy.name && editData ? (
-                                    <input 
+                                    <input
                                         type="number"
                                         value={editData.takeProfit}
                                         onChange={(e) => setEditData({ ...editData, takeProfit: Number(e.target.value) })}
@@ -178,7 +182,7 @@ const BaseStrategiesRiskTable = () => {
                                     <label className="text-[10px] font-bold uppercase tracking-wider">Daily Trades</label>
                                 </div>
                                 {editingStrategy === strategy.name && editData ? (
-                                    <input 
+                                    <input
                                         type="number"
                                         value={editData.maxTradesPerDay}
                                         onChange={(e) => setEditData({ ...editData, maxTradesPerDay: Number(e.target.value) })}
