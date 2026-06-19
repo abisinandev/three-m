@@ -2,17 +2,8 @@ import React from 'react';
 import { ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { Pagination } from '@shared/components/pagination/Pagination';
 import stockCurrencyService from '@/shared/services/external/stock-currency.service';
-import type { OrderHistoryItem } from '@/shared/services/stock/fetch-stocks-api';
+import { OrderHistoryTableProps } from '../types/order-history.table';
 
-interface OrderHistoryTableProps {
-    orders: OrderHistoryItem[];
-    total: number;
-    page: number;
-    limit: number;
-    onPageChange: (page: number) => void;
-    isLoading: boolean;
-    onNavigate: (symbol: string) => void;
-}
 
 const SideTag: React.FC<{ side?: string }> = ({ side }) => {
     const isSell = side?.toLowerCase() === 'sell';
@@ -174,10 +165,10 @@ export const OrderHistoryTable: React.FC<OrderHistoryTableProps> = ({
                                     </td>
 
                                     <td className="px-4 py-3 text-right">
-                                        <div className="text-sm font-bold tabular-nums" style={{ color: side.toLowerCase() === 'sell' ? '#FF1744' : '#00C853' }}>
-                                            {side.toLowerCase() === 'sell' ? '-' : '+'}
+                                        {/* <div className="text-sm font-bold tabular-nums" style={{ color: side.toLowerCase() === 'sell' ? '#FF1744' : '#00C853' }}> */}
+                                            {/* {side.toLowerCase() === 'sell' ? '-' : '+'} */}
                                             {stockCurrencyService.formatCurrency(tradeValue, 'INR')}
-                                        </div>
+                                        {/* </div> */}
                                     </td>
 
                                     <td className="px-4 py-3 text-center">

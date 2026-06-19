@@ -138,6 +138,53 @@ export class TradeRepository extends BaseRepository<TradeEntity, TradeDocument> 
         return 0
     }
 
+    async findAllTradesWithFilter(options: TradeFilterOptions): Promise<TradeEntity[]> {
+        const {
+            page = 1,
+            limit = 10,
+            search = "",
+            sortBy = "createdAt",
+            sortOrder = "desc",
+            filter = {}
+        } = options;
+
+        const skip = (Number(page) - 1) * Number(limit);
+        const sort: Record<string, 1 | -1> = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
+
+        const matchStage: Record<string, unknown> = { ...filter };
+
+        if (search) {
+            matchStage.$or = [
+                { symbol: { $regex: search, $options: "i" } },
+                { userId: { $regex: search, $options: "i" } },
+                { side: { $regex: search, $options: "i" } },
+            ];
+        }
+
+        const docs = await this.model
+            .find(matchStage)
+            .sort(sort)
+            .skip(skip)
+            .limit(Number(limit))
+            .exec();
+
+        return docs.map(doc => TradeMapper.toDomain(doc));
+    }
+
+    async countAllTrades(search = "", filter: Record<string, unknown> = {}): Promise<number> {
+        const matchStage: Record<string, unknown> = { ...filter };
+
+        if (search) {
+            matchStage.$or = [
+                { symbol: { $regex: search, $options: "i" } },
+                { userId: { $regex: search, $options: "i" } },
+                { side: { $regex: search, $options: "i" } },
+            ];
+        }
+
+        return this.model.countDocuments(matchStage).exec();
+    }
+
     async calculateTotalAlgoAUM(): Promise<number> {
         const result = await this.model.aggregate([
             { $match: { isAlgoTrade: true } },

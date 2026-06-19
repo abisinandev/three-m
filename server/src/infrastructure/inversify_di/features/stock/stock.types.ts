@@ -53,6 +53,7 @@ export const STOCK_TYPES = {
     AlgoStrategyConfigRepository: Symbol.for("AlgoStrategyConfigRepository"),
     AdminGetBaseStrategiesUseCase: Symbol.for("AdminGetBaseStrategiesUseCase"),
     AdminUpdateStrategyRiskConfigUseCase: Symbol.for("AdminUpdateStrategyRiskConfigUseCase"),
+    AdminGetAllTradesUseCase: Symbol.for("AdminGetAllTradesUseCase"),
     EvaluateStrategyUseCase: Symbol.for("EvaluateStrategyUseCase"),
 
     // Queue & BullMQ

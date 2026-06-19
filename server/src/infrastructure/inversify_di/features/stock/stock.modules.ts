@@ -40,6 +40,8 @@ import { AlgoStrategyConfigRepository } from "@infrastructure/databases/reposito
 import { IAdminGetBaseStrategiesUseCase, IAdminUpdateStrategyRiskConfigUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-base-strategy-risk.interface";
 import { AdminGetBaseStrategiesUseCase } from "@application/use_cases/admin/algo-trading/admin-get-base-strategies.usecase";
 import { AdminUpdateStrategyRiskConfigUseCase } from "@application/use_cases/admin/algo-trading/admin-update-strategy-risk-config.usecase";
+import { IAdminGetAllTradesUseCase } from "@application/use_cases/admin/trades/interfaces/admin-get-all-trades-usecase.interface";
+import { AdminGetAllTradesUseCase } from "@application/use_cases/admin/trades/admin-get-all-trades.usecase";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
 import { AlgoTradingController } from "@presentation/http/controllers/algo-trading/algo-trading.controller";
 import { GetStrategiesUseCase } from "@application/use_cases/algo-trading/get-strategies.usecase";
@@ -168,6 +170,7 @@ export const StockModules = new ContainerModule(({ bind }) => {
     bind<IAlgoStrategyConfigRepository>(STOCK_TYPES.AlgoStrategyConfigRepository).to(AlgoStrategyConfigRepository);
     bind<IAdminGetBaseStrategiesUseCase>(STOCK_TYPES.AdminGetBaseStrategiesUseCase).to(AdminGetBaseStrategiesUseCase);
     bind<IAdminUpdateStrategyRiskConfigUseCase>(STOCK_TYPES.AdminUpdateStrategyRiskConfigUseCase).to(AdminUpdateStrategyRiskConfigUseCase);
+    bind<IAdminGetAllTradesUseCase>(STOCK_TYPES.AdminGetAllTradesUseCase).to(AdminGetAllTradesUseCase);
     bind<IAlgoSignalRepository>(STOCK_TYPES.AlgoSignalRepository).to(AlgoSignalRepository);
     bind<IProcessSignalUseCase>(STOCK_TYPES.ProcessSignalUseCase).to(ProcessSignalUseCase);
     bind<IConfirmBuySignalUseCase>(STOCK_TYPES.ConfirmBuySignalUseCase).to(ConfirmBuySignalUseCase);

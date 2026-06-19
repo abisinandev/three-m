@@ -51,7 +51,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
                             <th className="px-5 py-2.5 text-[10px] text-neutral-500 font-medium tracking-wider uppercase">Purpose</th>
                             <th className="px-5 py-2.5 text-[10px] text-neutral-500 font-medium tracking-wider uppercase">Amount</th>
                             <th className="px-5 py-2.5 text-[10px] text-neutral-500 font-medium tracking-wider uppercase">Status</th>
-                            <th className="px-5 py-2.5 text-[10px] text-neutral-500 font-medium tracking-wider text-right uppercase">Actions</th>
+                            <th className="px-5 py-2.5 text-[10px] text-neutral-500 font-medium tracking-wider text-right uppercase">View</th>
                         </tr>
                     </thead>
                     <tbody className="bg-[#121214]">
@@ -85,7 +85,6 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
                                         <tr className="border-b border-neutral-800/60 hover:bg-neutral-800/20 transition-colors group">
                                             <td className="px-5 py-3">
                                                 <div className="text-[10px] text-emerald-500/90 font-mono tracking-tight">{tx.transactionId}</div>
-                                                <div className="text-[9px] text-neutral-600 truncate max-w-[80px]">{tx.id}</div>
                                             </td>
                                             <td className="px-5 py-3 text-[12px] text-neutral-300 font-medium">{tx.userCode}</td>
                                             <td className="px-5 py-3">

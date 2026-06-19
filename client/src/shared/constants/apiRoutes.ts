@@ -178,11 +178,12 @@ export const API_ROUTES = {
         },
 
         ALGO_TRADING: {
-            BASE: "/algo-trading",
-            GET_STATS: "/algo-trading",
-            GET_STRATEGIES: "/algo-trading/strategies",
-            GET_SIGNALS: "/algo-trading/signals",
-            GET_TRADES: "/algo-trading/trades",
+            BASE: "/trade",
+            GET_STATS: "/trade",
+            GET_STRATEGIES: "/trade/strategies",
+            GET_SIGNALS: "/trade/signals",
+            GET_TRADES: "/trade/trades",
+            GET_ALL_TRADES: "/trade/all-trades",
         },
 
         SYSTEM_MANAGEMENT: {
@@ -289,6 +290,8 @@ export const ROUTES = {
         BOT_MANAGEMENT: "/admin/bot-management",
 
         ALGO_TRADING: "/admin/algo-trading",
+
+        TRADES_MANAGEMENT: "/admin/trades",
 
         SUBSCRIPTIONS: "/admin/subscriptions",
 

@@ -3,6 +3,7 @@ import { IAdminGetSignalUseCase } from "@application/use_cases/admin/algo-tradin
 import { IAdminAlgoTradingUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-algo-trading-usecaes.interface";
 import { IAdminGetAlgoTradesUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-get-algo-trades-usecase.interface";
 import { IAdminGetBaseStrategiesUseCase, IAdminUpdateStrategyRiskConfigUseCase } from "@application/use_cases/admin/algo-trading/interfaces/admin-base-strategy-risk.interface";
+import { IAdminGetAllTradesUseCase } from "@application/use_cases/admin/trades/interfaces/admin-get-all-trades-usecase.interface";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ALGO_TRADING_TYPES } from "@infrastructure/inversify_di/features/algo-trading/algo-trading.type";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
@@ -12,7 +13,7 @@ import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
 @injectable()
-export class AdminAlgoTradingController {
+export class AdminTradesController {
     constructor(
         @inject(ALGO_TRADING_TYPES.AdminAlgoTradingUseCase) private readonly _getStats: IAdminAlgoTradingUseCase,
         @inject(ALGO_TRADING_TYPES.AdminGetStrategiesUseCase) private readonly _getStrategies: IAdminGetStrategiesUseCase,
@@ -20,6 +21,7 @@ export class AdminAlgoTradingController {
         @inject(ALGO_TRADING_TYPES.AdminGetAlgoTradesUseCase) private readonly _getAlgoTrades: IAdminGetAlgoTradesUseCase,
         @inject(STOCK_TYPES.AdminGetBaseStrategiesUseCase) private readonly _getBaseStrategies: IAdminGetBaseStrategiesUseCase,
         @inject(STOCK_TYPES.AdminUpdateStrategyRiskConfigUseCase) private readonly _updateRiskConfig: IAdminUpdateStrategyRiskConfigUseCase,
+        @inject(STOCK_TYPES.AdminGetAllTradesUseCase) private readonly _getAllTrades: IAdminGetAllTradesUseCase,
     ) { }
 
     async getAlgoTrading(_req: Request, res: Response, next: NextFunction) {
@@ -120,6 +122,25 @@ export class AdminAlgoTradingController {
             const sortOrder = (req.query.sortOrder as string) || "desc";
 
             const result = await this._getAlgoTrades.execute({ page, limit, search, sortBy, sortOrder });
+            return ResponseHelper.success(
+                res,
+                SuccessMessages.DATA.FETCHED,
+                result,
+                HttpStatus.OK
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAllTrades(req: Request, res: Response, next: NextFunction) {
+        try {
+            const page = parseInt(req.query.page as string, 10) || 1;
+            const limit = parseInt(req.query.limit as string, 10) || 10;
+            const search = (req.query.search as string) || "";
+            const type = (req.query.type as string) || "All";
+
+            const result = await this._getAllTrades.execute({ page, limit, search, type });
             return ResponseHelper.success(
                 res,
                 SuccessMessages.DATA.FETCHED,

@@ -1,6 +1,6 @@
 import adminApi from "@/lib/axios-admin";
 import { API_ROUTES } from "@shared/constants/apiRoutes";
-import type { StrategyFilters, StrategyRiskConfig, AdminStrategy, AdminSignal, AdminAlgoTrade } from "@shared/types/admin/algo-trading.types";
+import type { StrategyFilters, StrategyRiskConfig, AdminStrategy, AdminSignal, AdminAlgoTrade, AdminTrade } from "@shared/types/admin/algo-trading.types";
 
 
 export const FetchAdminAlgoStats = async () => {
@@ -34,6 +34,16 @@ export const FetchAdminSignals = async (filters: StrategyFilters): Promise<{ dat
 
 export const FetchAdminAlgoTrades = async (filters: StrategyFilters): Promise<{ data: { data: AdminAlgoTrade[]; total: number; totalPages: number } }> => {
     const response = await adminApi.get(API_ROUTES.ADMIN.ALGO_TRADING.GET_TRADES, {
+        withCredentials: true,
+        params: filters,
+        headers: { "Content-Type": "application/json" },
+    });
+
+    return response.data;
+};
+
+export const FetchAdminAllTrades = async (filters: StrategyFilters & { type?: string }): Promise<{ data: { data: AdminTrade[]; total: number; totalPages: number } }> => {
+    const response = await adminApi.get(API_ROUTES.ADMIN.ALGO_TRADING.GET_ALL_TRADES, {
         withCredentials: true,
         params: filters,
         headers: { "Content-Type": "application/json" },

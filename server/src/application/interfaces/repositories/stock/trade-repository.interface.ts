@@ -20,5 +20,7 @@ export interface ITradeRepository extends IBaseRepository<TradeEntity> {
     findAlgoTradesWithFilter(options: TradeFilterOptions): Promise<TradeEntity[]>;
     countAlgoTrades(search?: string): Promise<number>;
     countDailyAlgoTradesByStrategy(strategyName: string): Promise<number>;
+    findAllTradesWithFilter(options: TradeFilterOptions): Promise<TradeEntity[]>;
+    countAllTrades(search?: string): Promise<number>;
     calculateTotalAlgoAUM(): Promise<number>;
 }
