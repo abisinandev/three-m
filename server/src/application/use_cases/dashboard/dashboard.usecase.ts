@@ -72,6 +72,8 @@ export class DashboardUseCase implements IDashboardUseCase {
 
         const totalIncome = totalIncomeResult.status === "fulfilled" ? totalIncomeResult.value : 0;
         const totalExpenses = totalExpensesResult.status === "fulfilled" ? totalExpensesResult.value : 0;
+        console.log(totalIncomeResult, totalExpensesResult);
+        
         const breakdown = categoryBreakdownResult.status === "fulfilled"
             ? categoryBreakdownResult.value
             : { needsSpent: 0, wantsSpent: 0, savingsSpent: 0 };
@@ -109,10 +111,10 @@ export class DashboardUseCase implements IDashboardUseCase {
             };
         }));
 
-        const rawInvestments = recentInvestmentsResult.status === "fulfilled"
+        const investments = recentInvestmentsResult.status === "fulfilled"
             ? recentInvestmentsResult.value.slice(0, 4)
             : [];
-        const recentInvestments: DashboardInvestmentDTO[] = await Promise.all(rawInvestments.map(async inv => {
+        const recentInvestments: DashboardInvestmentDTO[] = await Promise.all(investments.map(async inv => {
             const fund = await this._mutualFundRepository.findBySchemeCode(inv.schemeCode);
             return {
                 id: inv.id || "",

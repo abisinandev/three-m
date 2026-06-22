@@ -44,9 +44,12 @@ export class ExpenseTrackerRepository extends BaseRepository<ExpenseTrackerEntit
     }
 
     async totalExpenses(userId: string): Promise<number> {
+
+        const currentMonth = new Date().toISOString().slice(0, 7);
+
         const docs = await this.model.aggregate([
             {
-                $match: { userId: userId } 
+                $match: { userId: userId, month: currentMonth }
             },
             {
                 $unwind: "$expenses"
@@ -59,7 +62,7 @@ export class ExpenseTrackerRepository extends BaseRepository<ExpenseTrackerEntit
             }
         ]);
 
-        return docs.length > 0 ? docs[0].totalExpense : 0; 
+        return docs.length > 0 ? docs[0].totalExpense : 0;
     }
 
     async categoryBreakdown(userId: string): Promise<{ needsSpent: number; wantsSpent: number; savingsSpent: number }> {
