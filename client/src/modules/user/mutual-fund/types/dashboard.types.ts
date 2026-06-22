@@ -4,7 +4,7 @@ export interface SipInstallment {
     userId: string;
     schemeCode: string;
     installmentNo: number;
-    executionDate: string; // Backend sends Date, frontend receives string
+    executionDate: string;
     amount: number;
     nav?: number;
     units?: number;
@@ -28,7 +28,7 @@ export interface SipResponse {
     nextExecutionDate: string;
     totalInstallments: number;
     executedInstallments: number;
-    status: 'ACTIVE' | 'PAUSED' | 'CANCELLED';
+    status: 'ACTIVE' | 'PAUSED' | 'CANCELLED' | 'COMPLETED';
     createdAt: string;
     updatedAt?: string;
     installments?: SipInstallment[];

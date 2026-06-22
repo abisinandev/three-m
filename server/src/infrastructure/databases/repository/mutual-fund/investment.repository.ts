@@ -8,7 +8,6 @@ import { IInvestmentRepository } from "@application/interfaces/repositories/feat
 import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 import { ClientSession, QueryOptions, Types, PipelineStage } from "mongoose";
 import { GroupedSchemeInvestments } from "@application/dto/portfolio/grouped-scheme-investments ";
-import { InvestmentRedeemResult } from "@domain/types/radeem-units.types";
 import { InvestmentFundDTO } from "@application/dto/portfolio/aggregated-asset.dto";
 import { PortfolioGrowthPoint } from "@application/dto/user/dashboard.dto";
 
@@ -524,5 +523,15 @@ export class InvestmentRepository extends BaseRepository<InvestmentEntity, Inves
             { $group: { _id: null, total: { $sum: "$amount" } } }
         ]);
         return mfResult.length > 0 ? mfResult[0].total : 0;
+    }
+
+    async findInvestmentsByInstallments(userId: string, installmentId: string): Promise<InvestmentEntity | null> {
+        const doc = await this.model.findOne(
+            { userId, sipInstallmentId: installmentId }
+        )
+
+        if (!doc) return null;
+
+        return this.mapper.toDomain(doc);
     }
 }  

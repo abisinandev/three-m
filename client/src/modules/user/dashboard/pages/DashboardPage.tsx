@@ -53,7 +53,7 @@ const DashboardPage = () => {
             isPositive: true,
         },
         {
-            icon: Activity, label: 'Net Savings',
+            icon: Activity, label: 'Remaining balance',
             value: formatCurrency(netSavings),
             change: netSavings >= 0 ? 'Surplus' : 'Deficit',
             isPositive: netSavings >= 0,

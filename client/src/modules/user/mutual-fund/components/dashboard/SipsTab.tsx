@@ -110,11 +110,12 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                             className="w-12 h-12 rounded-xl object-cover bg-white/5 border border-[#1e2025]"
                                         />
                                         <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-[#0d0d0e] flex items-center justify-center ${sip.status === 'ACTIVE' ? 'bg-green-500' :
-                                                sip.status === 'PAUSED' ? 'bg-amber-500' : 'bg-red-500'
+                                                sip.status === 'PAUSED' ? 'bg-amber-500' : sip.status === 'COMPLETED' ? 'bg-blue-500' : 'bg-red-500'
                                             }`}>
                                             {sip.status === 'ACTIVE' ? <Play size={8} className="text-white fill-current" /> :
                                                 sip.status === 'PAUSED' ? <Pause size={8} className="text-white fill-current" /> :
-                                                    <Trash2 size={8} className="text-white" />}
+                                                    sip.status === 'COMPLETED' ? <CalendarCheck size={8} className="text-white" /> :
+                                                        <Trash2 size={8} className="text-white" />}
                                         </div>
                                     </div>
 
@@ -142,7 +143,7 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                     </div>
 
                                     <div className="flex gap-2">
-                                        {sip.status !== 'CANCELLED' && (
+                                        {sip.status !== 'CANCELLED' && sip.status !== 'COMPLETED' && (
                                             <>
                                                 {sip.status === 'ACTIVE' ? (
                                                     <button
@@ -180,6 +181,11 @@ const SipsTab: React.FC<SipsTabProps> = ({
                                         {sip.status === 'CANCELLED' && (
                                             <span className="px-4 py-1.5 bg-red-500/10 text-red-500 text-xs font-bold uppercase tracking-widest rounded-full border border-red-500/20">
                                                 Cancelled
+                                            </span>
+                                        )}
+                                        {sip.status === 'COMPLETED' && (
+                                            <span className="px-4 py-1.5 bg-blue-500/10 text-blue-500 text-xs font-bold uppercase tracking-widest rounded-full border border-blue-500/20">
+                                                Completed
                                             </span>
                                         )}
                                     </div>

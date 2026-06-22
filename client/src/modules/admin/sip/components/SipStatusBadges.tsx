@@ -5,6 +5,7 @@ export const SipStatusBadge = ({ status }: { status: SipStatus }) => {
         ACTIVE: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
         PAUSED: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
         CANCELLED: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
+        COMPLETED: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
     };
 
     return (
