@@ -1,4 +1,4 @@
-export type SipStatus = 'ACTIVE' | 'PAUSED' | 'CANCELLED';
+export type SipStatus = 'ACTIVE' | 'PAUSED' | 'CANCELLED' | 'COMPLETED';
 export type InstallmentStatus = 'PENDING' | 'PAYMENT_SUCCESS' | 'ALLOCATED' | 'FAILED';
 
 export interface SIP {

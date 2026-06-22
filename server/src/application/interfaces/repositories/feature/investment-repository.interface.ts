@@ -2,7 +2,6 @@ import { InvestmentEntity } from "@domain/entities/mutual-fund/investment.entity
 import { IBaseRepository } from "../base-repository.interface";
 import { ClientSession, QueryOptions } from "mongoose";
 import { GroupedSchemeInvestments } from "@application/dto/portfolio/grouped-scheme-investments ";
-import { InvestmentRedeemResult } from "@domain/types/radeem-units.types";
 import { InvestmentFundDTO } from "@application/dto/portfolio/aggregated-asset.dto";
 import { PortfolioGrowthPoint } from "@application/dto/user/dashboard.dto";
 
@@ -35,4 +34,5 @@ export interface IInvestmentRepository extends IBaseRepository<InvestmentEntity>
     countInvestments(userId: string, options: QueryOptions): Promise<number>;
     portfolioGrowthByMonth(userId: string): Promise<PortfolioGrowthPoint[]>;
     calculateTotalAUM(): Promise<number>;
+    findInvestmentsByInstallments(userId: string, installmentId: string): Promise<InvestmentEntity | null>;
 }

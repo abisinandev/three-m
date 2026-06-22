@@ -11,6 +11,9 @@ import mongoose from "mongoose";
 import { ISipInstallmentRepository } from "@application/interfaces/repositories/feature/sip-intallment-repository.interface";
 import { SipInstallmentStatus } from "@domain/enum/funds/sip-intallment-status";
 import { SipInstallmentEntity } from "@domain/entities/mutual-fund/sip-intallment.entity";
+import { MUTUAL_FUND_TYPES } from "@infrastructure/inversify_di/features/mutual-fund/mutual-fund.types";
+import { IInvestmentRepository } from "@application/interfaces/repositories/feature/investment-repository.interface";
+import { InvestmentStatus } from "@domain/enum/funds/investment.enums";
 
 @injectable()
 export class CancelSipUseCase implements ICancelSipUseCase {
@@ -19,6 +22,7 @@ export class CancelSipUseCase implements ICancelSipUseCase {
         @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
         @inject(SIP_TYPES.SipRepository) private readonly _sipRepository: ISipRepository,
         @inject(SIP_TYPES.SipInstallmentRepository) private readonly _installmentsRepository: ISipInstallmentRepository,
+        @inject(MUTUAL_FUND_TYPES.InvestmentRepository) private readonly _investmentRepository: IInvestmentRepository,
     ) { }
 
     async execute(userId: string, sipId: string): Promise<void> {
@@ -44,8 +48,24 @@ export class CancelSipUseCase implements ICancelSipUseCase {
                 session
             );
 
-            const hasSuccess = installments.some(i => i.status === SipInstallmentStatus.SUCCESS);
-            if (hasSuccess) {
+            const hasUnredeemedInvestments = (
+                await Promise.all(
+                    installments.map(async (i) => {
+                        if (i.status !== SipInstallmentStatus.SUCCESS) {
+                            return false;
+                        }
+                        const investment =
+                            await this._investmentRepository.findInvestmentsByInstallments(
+                                userId,
+                                i.id as string
+                            );
+
+                        return investment && investment.status !== InvestmentStatus.REDEEMED;
+                    })
+                )
+            ).some(Boolean);
+            
+            if (hasUnredeemedInvestments) {
                 throw new ValidationError(ErrorMessages.SIP.EXISTING_INSTALLMENTS);
             }
 

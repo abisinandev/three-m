@@ -108,8 +108,6 @@ export class ConfirmRedeemUseCase implements IConfirmRedeemUseCase {
                     Number((redeemableUnits * latestNav).toFixed(2)),
                 );
 
-                console.log(updated, '---');
-                
                 remainingUnitsToRedeem = Number((remainingUnitsToRedeem - redeemableUnits).toFixed(4));
                 await this._investmentRepository.redeemInvestments(
                     inv.id as string,
