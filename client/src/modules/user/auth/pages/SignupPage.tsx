@@ -131,8 +131,17 @@ export const SignupPage: React.FC = () => {
                 }
             },
             onError: (err: unknown) => {
-                const error = err as { response?: { data?: { message?: string } } };
-                toast.error(error.response?.data?.message || "Verification failed");
+                const error = err as { response?: { data?: { message?: string; data?: { errors?: Record<string, string> } } } };
+                const backendErrors = error.response?.data?.data?.errors;
+                if (backendErrors) {
+                    setFormErrors((prev) => ({
+                        ...prev,
+                        ...(backendErrors as Partial<Record<keyof SignupType, string>>)
+                    }));
+                    toast.error(error.response?.data?.message || "Validation failed");
+                } else {
+                    toast.error(error.response?.data?.message || "Verification failed");
+                }
             },
         });
     };

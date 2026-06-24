@@ -11,8 +11,7 @@ export const API_ROUTES = {
             RESET_PASSWORD: "/auth/reset-password",
             REFRESH_TOKEN: "/auth/refresh",
             GOOGLE_AUTH: "/auth/google/callback",
-            TWO_FACTOR_VERIFY: (email: string) =>
-                `/auth/two-factor-verify?email=${encodeURIComponent(email)}`,
+            TWO_FACTOR_VERIFY: "/auth/two-factor-verify",
         },
 
         PROFILE: {

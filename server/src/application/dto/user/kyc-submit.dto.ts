@@ -22,6 +22,7 @@ export class DocumentDTO {
   @IsString()
   @IsNotEmpty({ message: "File URL is required" })
   @IsUrl({}, { message: "Invalid file URL" })
+  @Length(3, 100)
   fileUrl!: string;
 }
 
@@ -46,10 +47,6 @@ export class AddressDTO {
 }
 
 export class KycSubmitDTO {
-  @IsString()
-  @IsNotEmpty({ message: "User ID is required" })
-  userId!: string;
-
   @IsString()
   @IsNotEmpty({ message: "Full name is required" })
   fullName!: string;

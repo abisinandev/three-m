@@ -2,7 +2,6 @@ import type { WalletData } from "../../../modules/user/wallet/types/wallet.types
 import type { KycUser } from "./KycUserType";
 
 export type UserType = {
-    id: string;
     userCode: string;
 
     fullName: string;
@@ -12,7 +11,6 @@ export type UserType = {
     role: string;
     authProvider: string;
     isVerified: boolean;
-    isEmailVerified: boolean;
     kycId: string;
     isSubscribed: boolean;
     isBlocked: boolean;

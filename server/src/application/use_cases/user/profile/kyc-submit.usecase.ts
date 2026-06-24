@@ -15,18 +15,18 @@ export class KycSubmitUseCase implements IKycSubmitUseCase {
     @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
   ) { }
 
-  async execute(data: KycSubmitDTO): Promise<void> {
+  async execute(userId: string, data: KycSubmitDTO): Promise<void> {
     const existingKyc = await this._kycRepository.findOne({
-      userId: data.userId,
+      userId
     });
     const newKyc = toEntity(data);
 
     if (!existingKyc) {
       await this._kycRepository.create(newKyc);
       const kyc = await this._kycRepository.findOne({
-        userId: data.userId,
+        userId
       });
-      await this._userRepository.update(data.userId, {
+      await this._userRepository.update(userId, {
         kycId: kyc?.id,
         kycStatus: KycStatusType.PENDING,
       });
@@ -35,9 +35,9 @@ export class KycSubmitUseCase implements IKycSubmitUseCase {
 
     if (existingKyc?.status === KycStatusType.REJECTED) {
       await this._kycRepository.update(existingKyc.id as string, newKyc);
-      await this._userRepository.update(data.userId, { 
+      await this._userRepository.update(userId, {
         kycId: existingKyc.id,
-        kycStatus: KycStatusType.PENDING 
+        kycStatus: KycStatusType.PENDING
       });
       return;
     }

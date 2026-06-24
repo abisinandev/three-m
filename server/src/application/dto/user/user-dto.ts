@@ -1,7 +1,6 @@
 import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
 
 export type UserDTO = {
-  id: string;
   userCode: string;
   fullName: string;
   email: string;
@@ -10,7 +9,6 @@ export type UserDTO = {
   role: string;
   authProvider: string;
 
-  isEmailVerified: boolean;
   isVerified: boolean;
   isBlocked: boolean;
 

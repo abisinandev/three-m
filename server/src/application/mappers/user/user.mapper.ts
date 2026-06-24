@@ -21,7 +21,6 @@ export function toEntity(dto: CreateUserDTO, hashedPassword: string): UserEntity
 export function toUserResponse(user: UserEntity): UserDTO {
 
   return {
-    id: user.id as string,
     userCode: user.userCode,
     fullName: user.fullName,
     email: user.email,
@@ -30,7 +29,6 @@ export function toUserResponse(user: UserEntity): UserDTO {
     role: user.role,
     authProvider: user.authProvider,
 
-    isEmailVerified: user.isEmailVerified,
     isVerified: user.isVerified,
     isBlocked: user.isBlocked,
 

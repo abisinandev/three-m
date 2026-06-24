@@ -1,7 +1,6 @@
 export interface IStorageProvider {
   getSignedUploadUrl(
     folder: string,
-    userId: string,
   ): Promise<{
     signature: string;
     timestamp: number;

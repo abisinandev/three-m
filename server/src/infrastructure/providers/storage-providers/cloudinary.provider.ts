@@ -12,9 +12,9 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     });
   }
 
-  async getSignedUploadUrl(folder: string, userId: string) {
+  async getSignedUploadUrl(folder: string) {
     const timestamp = Math.floor(Date.now() / 1000);
-    const fullFolder = `${folder}/${userId}`;
+    const fullFolder = folder;
 
     const paramsToSign = `folder=${fullFolder}&timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`;
 
@@ -26,9 +26,9 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     return {
       signature,
       timestamp,
-      apiKey: env.CLOUDINARY_API_KEY || "",
-      cloudName: env.CLOUDINARY_CLOUD_NAME || "",
-      uploadPreset: env.CLOUDINARY_UPLOAD_PRESET || "",
+      apiKey: env.CLOUDINARY_API_KEY,
+      cloudName: env.CLOUDINARY_CLOUD_NAME,
+      uploadPreset: env.CLOUDINARY_UPLOAD_PRESET,
       folder: fullFolder,
     };
   }

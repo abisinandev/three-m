@@ -30,7 +30,6 @@ const UserSchema = new Schema<UserDocument>(
       required: function (this: UserDocument) {
         return this.authProvider === AuthProvider.MANUAL;
       },
-      // select: false,
       default: null,
     },
 
@@ -41,7 +40,6 @@ const UserSchema = new Schema<UserDocument>(
     },
 
     isVerified: { type: Boolean, default: false },
-    isEmailVerified: { type: Boolean, default: false },
     isBlocked: { type: Boolean, default: false },
 
     kycId: {

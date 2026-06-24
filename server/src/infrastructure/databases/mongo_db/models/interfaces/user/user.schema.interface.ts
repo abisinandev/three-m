@@ -22,7 +22,6 @@ export interface IUserSchema {
   role: Role;
 
   isVerified: boolean;
-  isEmailVerified: boolean;
   isBlocked: boolean;
 
   kycId: Types.ObjectId | KycDocument | null;

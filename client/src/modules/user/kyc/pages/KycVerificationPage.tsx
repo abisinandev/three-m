@@ -172,7 +172,7 @@ const KYCVerificationPage = () => {
             for (const key of ['pan', 'aadhaar', 'selfie'] as const) {
                 const file = files[key];
                 if (file) {
-                    const signatureData = await GetSignatureApi('kyc', user?.id as string);
+                    const signatureData = await GetSignatureApi('kyc');
                     const uploaded = await uploadToCloudinary(file, signatureData.data);
                     uploadedFiles[key] = uploaded.secure_url;
                 }
@@ -184,7 +184,6 @@ const KYCVerificationPage = () => {
             if (files.selfie) documents.push({ type: 'selfie', fileName: files.selfie.name, fileUrl: uploadedFiles.selfie || '' });
 
             await api.post(API_ROUTES.USER.KYC.SUBMIT, {
-                userId: user?.id,
                 fullName: details.fullName,
                 panNumber: details.panNumber.toUpperCase(),
                 aadharNumber: details.aadharNumber || null,

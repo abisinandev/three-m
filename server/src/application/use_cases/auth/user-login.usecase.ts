@@ -31,7 +31,6 @@ export class UserLoginUseCase implements IUserLoginUseCase {
 
     if (!existingUser) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
     if (existingUser.isBlocked) throw new ForbiddenError(ErrorMessages.USER.ACCOUNT_BLOCKED);
-    if (!existingUser.isEmailVerified) throw new ForbiddenError(ErrorMessages.AUTH.EMAIL_NOT_VERIFIED);
 
     if (!existingUser.password) {
       if (existingUser.authProvider !== AuthProvider.MANUAL) {

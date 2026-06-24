@@ -37,6 +37,7 @@ export const ErrorMessages = {
         EMAIL_ALREADY_EXISTS: "Email already exists",
         PHONE_ALREADY_EXISTS: "Phone number already exists",
         EMAIL_MUST_BE_STRING: "Email must be a string",
+        INVALID_IMAGE_URL: "Invalid image URL",
     },
     DB: {
         CONNECTION_FAILED: "Database URI is not defined",

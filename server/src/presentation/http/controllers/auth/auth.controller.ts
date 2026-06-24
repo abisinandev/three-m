@@ -40,15 +40,6 @@ export class AuthController {
       const dto = { ...req.body };
       const result = await this._userSignupUseCase.execute(dto);
 
-      if (result.isAlreadyCreated) {
-        return ResponseHelper.success(
-          res,
-          SuccessMessages.AUTH.ACCOUNT_EXISTS_NOT_VERIFIED,
-          { expiresAt: result.expiresAt },
-          HttpStatus.OK,
-        );
-      }
-
       return ResponseHelper.success(
         res,
         SuccessMessages.AUTH.OTP_SENT,
@@ -89,9 +80,8 @@ export class AuthController {
 
   async verifyTwoFactor(req: Request, res: Response, next: NextFunction) {
     try {
-      const email = req.query.email as string;
-      const { token } = { ...req.body };
-
+      const { email, token } = { ...req.body };
+      
       const result = await this._verifyTwoFactorUseCase.execute({
         email,
         token,
@@ -131,6 +121,7 @@ export class AuthController {
       return ResponseHelper.success(
         res,
         SuccessMessages.AUTH.EMAIL_VERIFIED,
+        null,
         HttpStatus.OK,
       );
 
@@ -174,6 +165,7 @@ export class AuthController {
       return ResponseHelper.success(
         res,
         SuccessMessages.AUTH.ACCESS_TOKEN_UPDATED,
+        null,
         HttpStatus.CREATED,
       );
 
@@ -190,6 +182,7 @@ export class AuthController {
       return ResponseHelper.success(
         res,
         SuccessMessages.AUTH.VERIFICATION_CODE_SENT,
+        null,
         HttpStatus.OK,
       );
     } catch (error) {
@@ -239,6 +232,7 @@ export class AuthController {
       return ResponseHelper.success(
         res,
         SuccessMessages.AUTH.PASSWORD_RESET,
+        null,
         HttpStatus.OK,
       );
 
