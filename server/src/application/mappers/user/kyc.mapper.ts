@@ -3,9 +3,9 @@ import type { KycSubmitDTO } from "@application/dto/user/kyc-submit.dto";
 import { KycEntity } from "@domain/entities/user/kyc.entity";
 import type { UserEntity } from "@domain/entities/user/user.entity";
 
-export const toEntity = (dto: KycSubmitDTO): KycEntity => {
+export const toEntity = (userId: string, dto: KycSubmitDTO): KycEntity => {
   return KycEntity.create({
-    userId: dto.userId,
+    userId,
     panNumber: dto.panNumber,
     documents: dto.documents,
     aadharNumber: dto.aadharNumber,

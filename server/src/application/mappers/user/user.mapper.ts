@@ -48,7 +48,8 @@ export function toUserResponse(user: UserEntity): UserDTO {
     avatar: user.avatar ?? null,
     googleId: user.googleId ?? null,
 
-    createdAt: user.createdAt.toISOString(),
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
   };
 }
 

@@ -3,5 +3,6 @@ export class KycDocumentVO {
     public readonly type: string,
     public readonly fileName: string,
     public readonly fileUrl: string,
+    public readonly publicId: string,
   ) {}
 }

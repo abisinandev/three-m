@@ -11,6 +11,8 @@ import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import api from '@/lib/axios-user';
 
 import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
+import { toast } from 'sonner';
+import { ValidateFileUploads } from '../../kyc/helpers/imageValidator';
 
 import { ProfileSidebar } from '../components/ProfileSidebar';
 import { PersonalInfoCard } from '../components/PersonalInfoCard';
@@ -102,6 +104,12 @@ const UserProfilePage = () => {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
+
+    const validation = await ValidateFileUploads(file, 'profile');
+    if (!validation.isValid) {
+      toast.error(validation.error);
+      return;
+    }
 
     setUploading(true);
 

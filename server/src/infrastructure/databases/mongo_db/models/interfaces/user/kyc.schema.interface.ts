@@ -8,6 +8,7 @@ export interface IKycSchema {
     type: string;
     fileName: string;
     fileUrl: string;
+    publicId: string;
   }[];
   status: KycStatusType;
   isKycVerified: boolean;

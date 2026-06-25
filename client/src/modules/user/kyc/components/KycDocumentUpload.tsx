@@ -1,5 +1,5 @@
 import { Upload, X, FileText } from 'lucide-react';
-import type { KycFiles, KycPreviews } from './KycTypes';
+import type { KycFiles, KycPreviews } from '../types/KycTypes';
 
 interface KycDocumentUploadProps {
     field: 'pan' | 'aadhaar';
@@ -15,18 +15,11 @@ export const KycDocumentUpload = ({ field, title, files, previews, handleFileCha
         <div className="relative">
             {previews[field] ? (
                 <div className="relative rounded-xl overflow-hidden border border-[#1e2025]">
-                    {files[field]?.type === 'application/pdf' ? (
-                        <div className="bg-[#0b0c0e] h-64 flex flex-col items-center justify-center">
-                            <FileText className="w-16 h-16 text-[#5a5f6e]" />
-                            <p className="text-[12px] font-medium text-[#5a5f6e] mt-3">PDF Document</p>
-                        </div>
-                    ) : (
-                        <img
-                            src={previews[field]!}
-                            alt="Preview"
-                            className="w-full h-64 object-cover"
-                        />
-                    )}
+                    <img
+                        src={previews[field]!}
+                        alt="Preview"
+                        className="w-full h-64 object-cover"
+                    />
                     <button
                         onClick={() => removeFile(field)}
                         className="absolute top-3 right-3 bg-black/70 hover:bg-black p-2 rounded-full border border-[#1e2025] transition-colors"
@@ -41,15 +34,18 @@ export const KycDocumentUpload = ({ field, title, files, previews, handleFileCha
                 >
                     <Upload className="w-10 h-10 text-[#5a5f6e] mx-auto mb-3" />
                     <p className="text-[12px] font-medium text-[#e8eaed]">Click to upload {title} • Max 5MB</p>
-                    <p className="text-[11px] font-medium text-[#5a5f6e] mt-1 tracking-wider uppercase">JPG, PNG or PDF</p>
+                    <p className="text-[11px] font-medium text-[#5a5f6e] mt-1 tracking-wider uppercase">JPG or PNG only</p>
                 </label>
             )}
             <input
                 id={`upload-${field}`}
                 type="file"
-                accept="image/*,.pdf"
+                accept="image/jpeg,image/png,image/jpg"
                 className="hidden"
-                onChange={(e) => handleFileChange(field, e.target.files?.[0] || null)}
+                onChange={(e) => {
+                    handleFileChange(field, e.target.files?.[0] || null);
+                    e.target.value = '';
+                }}
             />
         </div>
     );

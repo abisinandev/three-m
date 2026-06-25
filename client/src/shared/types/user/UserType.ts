@@ -42,4 +42,5 @@ export type UserType = {
     avatar: string | null;
     googleId: string | null;
     createdAt: string;
+    updatedAt: string;
 };

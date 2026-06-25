@@ -3,6 +3,10 @@ export interface kycDocuments {
   type: string;
   fileName: string;
   fileUrl: string;
+  publicId: string;
+  resourceType: string;
+  format: string;
+  bytes: number;
 }
 
 export interface Address{

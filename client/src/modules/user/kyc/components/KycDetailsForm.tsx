@@ -1,5 +1,5 @@
 import React from 'react';
-import type { DetailsData } from './KycTypes';
+import type { DetailsData } from '../types/KycTypes';
 
 interface KycDetailsFormProps {
     details: DetailsData;

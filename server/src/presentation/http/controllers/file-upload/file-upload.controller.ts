@@ -14,7 +14,7 @@ export class FileUploadController {
 
     async signUpload(req: Request, res: Response, next: NextFunction) {
         try {
-            const folder = req.query.folder as string;// take from body
+            const folder = req.query.folder as string;
             
             const result = await this._signatureUploadUseCase.execute({
                 folder: folder as string,

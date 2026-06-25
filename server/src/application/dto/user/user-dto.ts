@@ -29,5 +29,6 @@ export type UserDTO = {
   avatar: string | null;
   googleId: string | null;
 
-  createdAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 };

@@ -38,6 +38,7 @@ export const ErrorMessages = {
         PHONE_ALREADY_EXISTS: "Phone number already exists",
         EMAIL_MUST_BE_STRING: "Email must be a string",
         INVALID_IMAGE_URL: "Invalid image URL",
+        ALREADY_SUBMITTED: "Already submitted",
     },
     DB: {
         CONNECTION_FAILED: "Database URI is not defined",
@@ -118,7 +119,7 @@ export const ErrorMessages = {
         RISK_AMOUNT: "Risk amount shouldn't be more than 1000",
         MAX_TRADES: "Max trades shouldn't be more than 5",
         STOP_LOSS: "Stop loss shouldn't be more than 100",
-        TAKE_PROFIT : "Take profit shouldn't be more than 200",
+        TAKE_PROFIT: "Take profit shouldn't be more than 200",
     }
 } as const;
 

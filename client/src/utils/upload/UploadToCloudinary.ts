@@ -1,7 +1,7 @@
 import type { SignatureDataType } from "@shared/types/user/SignatureDataType";
 
 export const uploadToCloudinary = async (file: File, signatureData: SignatureDataType) => {
-  const { timestamp, signature, apiKey, cloudName, folder } = signatureData;
+  const { timestamp, signature, apiKey, cloudName, folder, allowedFormats } = signatureData;
 
   console.log("signatureData: ", signatureData)
   if (!timestamp || !signature || !apiKey || !cloudName) {
@@ -17,6 +17,7 @@ export const uploadToCloudinary = async (file: File, signatureData: SignatureDat
   const url = import.meta.env.VITE_CLOUDINARY_URL || "https://api.cloudinary.com/v1_1/"
 
   if (folder) formData.append("folder", folder);
+  if (allowedFormats) formData.append("allowed_formats", allowedFormats);
 
   const resourceType = file.type === "application/pdf" ? "image" : "auto";
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
-import type { KycFiles, KycPreviews } from './KycTypes';
+import type { KycFiles, KycPreviews } from '../types/KycTypes';
 
 interface KycSelfieCaptureProps {
     files: KycFiles;
@@ -15,8 +15,11 @@ export const KycSelfieCapture = ({ files, previews, handleFileChange, removeFile
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const streamRef = useRef<MediaStream | null>(null);
+    const isStartingRef = useRef(false);
 
     const startCamera = useCallback(async () => {
+        if (isStartingRef.current) return;
+        isStartingRef.current = true;
         try {
             const mediaStream = await navigator.mediaDevices.getUserMedia({
                 video: { facingMode: 'user' },
@@ -26,8 +29,11 @@ export const KycSelfieCapture = ({ files, previews, handleFileChange, removeFile
             if (videoRef.current) {
                 videoRef.current.srcObject = mediaStream;
             }
-        } catch {
-            toast.error('Camera access denied. Please allow permission.');
+        } catch (err) {
+            console.log("Error: ", err);
+            toast.error(err.message || 'Camera access denied. Please allow permission.', { id: 'camera-error' });
+        } finally {
+            isStartingRef.current = false;
         }
     }, []);
 
@@ -110,7 +116,10 @@ export const KycSelfieCapture = ({ files, previews, handleFileChange, removeFile
                         accept="image/*"
                         capture="user"
                         className="hidden"
-                        onChange={(e) => handleFileChange('selfie', e.target.files?.[0] || null)}
+                        onChange={(e) => {
+                            handleFileChange('selfie', e.target.files?.[0] || null);
+                            e.target.value = '';
+                        }}
                     />
                     Or choose from gallery
                 </label>
