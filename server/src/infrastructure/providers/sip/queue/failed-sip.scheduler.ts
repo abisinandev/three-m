@@ -10,7 +10,7 @@ export class FailedSipScheduler extends BaseScheduler {
         @inject(SIP_TYPES.AnalyzeFailedInstallmentsUseCase) private readonly _analyzeFailedSips: IAnalyzeFailedInstallmentsUseCase,
     ) {
         // Run every hour 
-        super('FAILED-SIP-SCHEDULER', '* * * * * *');
+        super('FAILED-SIP-SCHEDULER', '* * * * *');
     }
 
     protected async execute(): Promise<void> {

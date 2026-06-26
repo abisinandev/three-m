@@ -36,6 +36,7 @@ export const env = {
   REFRESH_SECRET: requireEnv("JWT_REFRESH_SECRET"),
   ACCESS_EXPIRES_IN: requireEnv("JWT_ACCESS_EXPIRES_IN"),
   REFRESH_EXPIRES_IN: requireEnv("JWT_REFRESH_EXPIRES_IN"),
+  JWT_SECRET: requireEnv("JWT_SECRET"),
 
   TTL: requireEnv("TTL") || 300,
 

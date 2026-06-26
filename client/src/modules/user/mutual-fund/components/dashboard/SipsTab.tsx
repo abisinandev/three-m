@@ -10,7 +10,7 @@ interface SipsTabProps {
     sips: SipResponse[];
     handlePause: (id: string) => void;
     handleResume: (id: string) => void;
-    handleEdit: (id: string) => void;
+    // handleEdit: (id: string) => void;
     handleCancel: (id: string) => void;
     isVerified: boolean;
 }

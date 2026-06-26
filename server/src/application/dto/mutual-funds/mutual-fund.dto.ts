@@ -9,10 +9,6 @@ import { FundCategory } from "@domain/enum/funds/fund-category.enum";
 import { RiskLevel } from "@domain/enum/funds/fund-risk-level.enum";
 
 export class MutualFundDTO {
-    @IsOptional()
-    @IsString()
-    id!: string;
-
     @IsString()
     schemeCode!: string;
 

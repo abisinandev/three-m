@@ -11,7 +11,6 @@ export type UserType = {
     role: string;
     authProvider: string;
     isVerified: boolean;
-    kycId: string;
     isSubscribed: boolean;
     isBlocked: boolean;
     isTwoFactorEnabled: boolean;
@@ -24,7 +23,7 @@ export type UserType = {
 
     wallet: WalletData;
     kyc: KycUser;
-    walletId: string;
+
     kycStatus: string;
 
     currency: string;
@@ -40,7 +39,7 @@ export type UserType = {
 
     // Profile
     avatar: string | null;
-    googleId: string | null;
+
     createdAt: string;
     updatedAt: string;
 };

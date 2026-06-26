@@ -6,6 +6,7 @@ import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
+import { IdProtector } from "@shared/utils/id-protector.util";
 import { type NextFunction, type Request, type Response } from "express";
 import { inject, injectable } from "inversify";
 
@@ -37,7 +38,8 @@ export class AdminKycController {
   async viewKycDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const { kycId } = req.params;
-      const result = await this._viewKycDetails.execute(kycId as string);
+      const decodedKycId = IdProtector.decodeId(kycId as string);
+      const result = await this._viewKycDetails.execute(decodedKycId);
 
       return ResponseHelper.success(
         res,
@@ -53,10 +55,11 @@ export class AdminKycController {
   async rejectKyc(req: Request, res: Response, next: NextFunction) {
     try {
       const { kycId } = req.params;
+      const decodedKycId = IdProtector.decodeId(kycId as string);
       const data = { ...req.body };
 
       await this._rejectKycUseCase.execute({
-        kycId: kycId as string,
+        kycId: decodedKycId,
         reason: data.reason,
       });
 
@@ -74,7 +77,8 @@ export class AdminKycController {
   async verifyKyc(req: Request, res: Response, next: NextFunction) {
     try {
       const { kycId } = req.params;
-      await this._verifyKycUseCase.execute(kycId as string);
+      const decodedKycId = IdProtector.decodeId(kycId as string);
+      await this._verifyKycUseCase.execute(decodedKycId);
 
       return ResponseHelper.success(
         res,
@@ -87,3 +91,4 @@ export class AdminKycController {
     }
   }
 }
+

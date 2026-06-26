@@ -31,7 +31,6 @@ export class MutualFundDetailsUseCase implements IMutualFundDetailsUseCase {
 
         const absoluteReturn = calculateReturn(navHistories);
         return {
-            id: fund.id as string,
             schemeCode: fund.schemeCode,
             schemeName: fund.schemeName,
             amc: fund.amc,

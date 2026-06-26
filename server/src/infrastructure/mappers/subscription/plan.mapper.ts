@@ -29,7 +29,6 @@ const toPersistance = (entity: PlanEntity): Partial<PlanDocument> => {
 
 const toDTO = (entity: PlanEntity): PlanDTO => {
     return {
-        id: entity.id as string,
         code: entity.code,
         price: entity.price,
         durationInDays: entity.durationInDays,

@@ -16,8 +16,6 @@ export const toEntity = (dto: UserWalletDTO): WalletEntity => {
 
 export const toWalletResponse = (wallet: WalletEntity, transactions: TransactionResponseDTO[]): WalletResponseDTO => {
     return {
-        id: wallet.id as string,
-        userId: wallet.userId,
         balance: wallet.balance,
         currency: wallet.currency,
         status: wallet.status,

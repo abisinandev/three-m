@@ -19,7 +19,6 @@ export enum AdminProtectedRoutes {
     REJECT_KYC = "/reject-kyc/:kycId",
 
     FETCH_TRANSACTIONS = "/transactions",
-    VERIFY_TRANSACTIONS = "/transaction-verify/:txId",
 }
 
 export enum AdminStockRoutes {

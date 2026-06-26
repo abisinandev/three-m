@@ -111,9 +111,9 @@ const MutualFundDashboard = () => {
     const handleResume = (sipId: string) => resumeMutation.mutate(sipId);
     const handleCancel = (sipId: string) => cancelMutation.mutate(sipId);
 
-    const handleEdit = (sipId: string) => {
-        alert(`Edit flow for SIP ${sipId} would open here (demo)`);
-    };
+    // const handleEdit = (sipId: string) => {
+    //     toast(`Edit flow for SIP ${sipId} would open here`);
+    // };
 
     return (
         <div
@@ -178,7 +178,7 @@ const MutualFundDashboard = () => {
                                 sips={sips}
                                 handlePause={handlePause}
                                 handleResume={handleResume}
-                                handleEdit={handleEdit}
+                                // handleEdit={handleEdit}
                                 handleCancel={handleCancel}
                                 isVerified={user?.isVerified ?? false}
                             />

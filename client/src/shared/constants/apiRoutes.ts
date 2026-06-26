@@ -79,6 +79,7 @@ export const API_ROUTES = {
                 `/user/mutual-funds/sip/resume/${sipId}`,
             CANCEL_SIP: (sipId: string) =>
                 `/user/mutual-funds/sip/cancel/${sipId}`,
+            ONE_TIME_INVESTMENT: '/user/mutual-funds/investment/one-time',
         },
 
         STOCKS: {

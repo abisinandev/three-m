@@ -24,9 +24,7 @@ export class IdempotencyService implements IIdempotencyService {
 
             const parsed = JSON.parse(existing);
 
-            if (
-                parsed.hash === requestHash
-            ) {
+            if (parsed.hash === requestHash) {
 
                 throw new ValidationError(
                     "Duplicate request detected"
@@ -48,7 +46,6 @@ export class IdempotencyService implements IIdempotencyService {
             );
 
         if (!locked) {
-
             throw new ValidationError(
                 "Request already processing"
             );

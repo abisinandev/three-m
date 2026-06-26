@@ -17,7 +17,6 @@ export interface Address{
 }
 export interface KycUser {
   id: string;
-  userId: string;
   userCode: string;
   fullName: string;
   documents: kycDocuments[];
