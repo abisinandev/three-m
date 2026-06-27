@@ -21,7 +21,7 @@ export const toEntity = (dto: MutualFundDTO): MutualFundEntity => {
 
 export const toMutualFundResponse = (data: MutualFundEntity, cagr?: ICagrDTO): FundListDTO => {
     return {
-        id: data.id as string,
+        // id: data.id as string,
         schemeName: data.schemeName,
         schemeCode: data.schemeCode,
         amc: data.amc,

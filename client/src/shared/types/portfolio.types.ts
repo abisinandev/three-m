@@ -1,6 +1,4 @@
 export interface IInvestmentResponse {
-    id?: string;
-    userId: string;
     assetId: string;
     symbol?: string;
     name?: string;

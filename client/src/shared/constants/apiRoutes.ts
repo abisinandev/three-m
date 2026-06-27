@@ -16,11 +16,11 @@ export const API_ROUTES = {
 
         PROFILE: {
             GET: "/user/profile/me",
-            UPDATE: "/user/profile/update",
+            UPDATE: "/user/profile",
             CHANGE_PASSWORD: "/user/change-password",
-            SEND_EMAIL_OTP: "/user/profile/update/email/send-otp",
-            VERIFY_EMAIL_OTP: "/user/profile/update/email/verify-otp",
-            UPLOAD_IMAGE: "/user/profile/update/profile-image",
+            SEND_EMAIL_OTP: "/user/profile/email/otp",
+            VERIFY_EMAIL_OTP: "/user/profile/email/otp/verify",
+            UPLOAD_IMAGE: "/user/profile/avatar",
             LOGOUT: "/user/logout",
         },
 
@@ -37,7 +37,7 @@ export const API_ROUTES = {
         },
 
         PAYMENT: {
-            CHECKOUT_SESSION: "/payments/create-checkout-session",
+            CHECKOUT_SESSION: "/payments/checkout",
             VERIFY: "/payments/verify",
         },
 
@@ -70,16 +70,16 @@ export const API_ROUTES = {
             LIST: "/user/mutual-funds/lists",
             DETAILS: (schemeCode: string | number) =>
                 `/user/mutual-funds/${schemeCode}`,
-            INVEST_ONE_TIME: "/user/mutual-funds/investment/one-time",
-            START_SIP: "/user/mutual-funds/sip/create",
+            INVEST_ONE_TIME: "/user/mutual-funds/investments",
+            START_SIP: "/user/mutual-funds/sip",
             FETCH_SIPS: "/user/mutual-funds/sip",
             PAUSE_SIP: (sipId: string) =>
-                `/user/mutual-funds/sip/pause/${sipId}`,
+                `/user/mutual-funds/sip/${sipId}/pause`,
             RESUME_SIP: (sipId: string) =>
-                `/user/mutual-funds/sip/resume/${sipId}`,
+                `/user/mutual-funds/sip/${sipId}/resume`,
             CANCEL_SIP: (sipId: string) =>
-                `/user/mutual-funds/sip/cancel/${sipId}`,
-            ONE_TIME_INVESTMENT: '/user/mutual-funds/investment/one-time',
+                `/user/mutual-funds/sip/${sipId}/cancel`,
+            ONE_TIME_INVESTMENT: '/user/mutual-funds/investments',
         },
 
         STOCKS: {
@@ -120,10 +120,10 @@ export const API_ROUTES = {
 
         EXPENSE_TRACKER: {
             GET_DATA: "/user/expense-tracker",
-            ADD_EXPENSE: "/user/expense-tracker/add-expense",
-            ADD_INCOME: "/user/expense-tracker/add-income",
+            ADD_EXPENSE: "/user/expense-tracker/expenses",
+            ADD_INCOME: "/user/expense-tracker/income",
             DELETE_EXPENSE: (id: string | number) =>
-                `/user/expense-tracker/delete-expense/${id}`,
+                `/user/expense-tracker/expenses/${id}`,
             ANALYTICS: "/user/expense-tracker/analytics",
             BUDGET_PLAN: "/user/expense-tracker/budget-plan",
             SIMULATE: "/user/expense-tracker/simulate",

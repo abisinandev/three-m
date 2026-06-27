@@ -62,6 +62,10 @@ adminApi.interceptors.response.use(
             throw notFound();
         }
 
+        if (originalRequest.url?.includes("/authentication")) {
+            return Promise.reject(err);
+        }
+
         if (err.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 

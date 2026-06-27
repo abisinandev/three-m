@@ -11,7 +11,6 @@ import { StockQueryOptions } from "@application/dto/stocks/stock.dto";
 import { WatchlistDTO } from "@application/dto/stocks/watchlist.dto";
 import { IGetMarketMoversUseCase } from "@application/use_cases/stock/interfaces/get-market-movers.interface";
 import { IFetchOrderHistoryUseCase } from "@application/use_cases/stock/interfaces/fetch-order-history.interface";
-
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";

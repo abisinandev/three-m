@@ -21,17 +21,13 @@ export const toTransactionEntity = (data: AddToWalletDTO) => {
 
 export const toTransactionResponse = (transaction: TransactionEntity): TransactionResponseDTO => {
     return {
-        id: transaction.id,
-        userId: transaction.userId,
         userCode: transaction.userCode,
         transactionId: transaction.transactionId,
         amount: transaction.amount,
         currency: transaction.currency,
-        paymentIntentId: transaction.paymentIntentId as string,
         referenceType: transaction.referenceType,
         status: transaction.status,
         type: transaction.type,
-        fundId: transaction.fundId,
         receipt_url: transaction.receipt_url,
         referenceId: transaction.referenceId?.toString(),
         createdAt: transaction.createdAt,

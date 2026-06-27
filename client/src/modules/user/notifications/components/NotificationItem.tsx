@@ -90,7 +90,6 @@ export const NotificationItem = ({ notif, onMarkAsRead }: NotificationItemProps)
         setError(null);
         try {
             await AlgoTradingApiService.confirmSignal({
-                notificationId: notif.id,
                 signalId: signalId!,
                 symbol,
                 action,

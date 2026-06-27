@@ -39,8 +39,6 @@ export const toInvestmentResponse = (
         investmentType: entity.investmentType,
         createdAt: entity.createdAt,
         status: entity.status,
-        userId: entity.userId,
-        id: entity.id,
         nav: entity.nav,
         updatedAt: entity.navDate,
         schemeName: fund?.schemeName as string,

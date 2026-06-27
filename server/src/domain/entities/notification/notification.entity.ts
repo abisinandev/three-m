@@ -1,5 +1,6 @@
 import { NotificationData, NotificationType } from "./enums/notification-type.enums";
 
+const NOTIFICATION_TTL_DAYS = 7;
 
 export class NotificationEntity {
     private readonly _id?: string;
@@ -9,6 +10,7 @@ export class NotificationEntity {
     private readonly _message: string;
     private readonly _read: boolean;
     private readonly _createdAt: string;
+    private readonly _expiresAt: Date;
     private readonly _data?: NotificationData;
 
     private constructor(props: {
@@ -19,6 +21,7 @@ export class NotificationEntity {
         message?: string;
         read?: boolean;
         createdAt?: string;
+        expiresAt?: Date;
         data?: NotificationData;
     }) {
         this._id = props.id;
@@ -28,7 +31,14 @@ export class NotificationEntity {
         this._message = props.message ?? "";
         this._read = props.read ?? false;
         this._createdAt = props.createdAt ?? new Date().toISOString();
+        this._expiresAt = props.expiresAt ?? NotificationEntity.defaultExpiresAt();
         this._data = props.data;
+    }
+
+    private static defaultExpiresAt(): Date {
+        const date = new Date();
+        date.setDate(date.getDate() + NOTIFICATION_TTL_DAYS);
+        return date;
     }
 
     static create(props: {
@@ -45,6 +55,7 @@ export class NotificationEntity {
             message: props.message,
             read: false,
             createdAt: new Date().toISOString(),
+            expiresAt: NotificationEntity.defaultExpiresAt(),
             data: props.data
         });
     }
@@ -57,6 +68,7 @@ export class NotificationEntity {
         message: string;
         read: boolean;
         createdAt: string;
+        expiresAt?: Date;
         data?: NotificationData;
     }): NotificationEntity {
         return new NotificationEntity(props);
@@ -90,14 +102,16 @@ export class NotificationEntity {
         return this._createdAt;
     }
 
+    get expiresAt() {
+        return this._expiresAt;
+    }
+
     get data() {
         return this._data;
     }
 
     toJSON() {
         return {
-            id: this._id,
-            userId: this._userId,
             type: this._type,
             title: this._title,
             message: this._message,

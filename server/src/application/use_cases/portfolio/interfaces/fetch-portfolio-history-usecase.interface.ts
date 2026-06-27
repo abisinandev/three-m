@@ -1,9 +1,6 @@
 import { QueryOptions } from "mongoose";
 
 export interface PortfolioHistoryDTO {
-    id: string;
-    userId: string;
-    assetId: string;
     assetName: string;
     assetType: "STOCK" | "MF";
     side: "BUY" | "SELL" | "REDEEMED" | "INVESTED" | "ALLOTTED";

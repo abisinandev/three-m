@@ -43,7 +43,6 @@ const StockDetailPage = () => {
   } = useQuery({
     queryKey: ["stockDetails", symbol],
     queryFn: () => finnhubService.getStockDetails(symbol),
-    refetchInterval: 3000,
     enabled: !!symbol,
   });
 

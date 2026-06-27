@@ -5,7 +5,6 @@ export type SignalAction = "BUY" | "SELL";
 export type OrderType = "MARKET_ORDER" | "LIMIT_ORDER";
 
 export interface ConfirmSignalRequest {
-  notificationId: string;
   signalId: string;
   symbol: string;
   action: SignalAction;
