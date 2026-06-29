@@ -1,4 +1,8 @@
+import { ROUTES } from "@/shared/constants/apiRoutes";
+import { useNavigate } from "@tanstack/react-router";
+
 export const FinalCTA: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <section className="mt-7 py-12 px-4 sm:px-6 lg:px-8  text-center rounded-2xl border border-white/5">
       <div className="max-w-3xl mx-auto">
@@ -12,7 +16,9 @@ export const FinalCTA: React.FC = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <button className="bg-teal-green text-white px-8 py-3 rounded-md text-sm font-semibold hover:bg-teal-green/90 transition-all duration-200 transform hover:scale-105">
+          <button 
+            onClick={() => navigate({ to: ROUTES.AUTH.SIGNUP.ROOT })}
+            className="bg-teal-green text-white px-8 py-3 rounded-md text-sm font-semibold hover:bg-teal-green/90 transition-all duration-200 transform hover:scale-105">
             Start Free
           </button>
           <button className="border border-teal-green text-white px-8 py-3 rounded-md text-sm font-semibold hover:bg-teal-green hover:text-deep-charcoal transition-colors duration-200">

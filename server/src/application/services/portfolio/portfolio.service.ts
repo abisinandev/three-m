@@ -16,7 +16,7 @@ export class PortfolioService implements IPortfolioService {
         userId: string,
         assetId: string,
         assetType: AssetType,
-        amount: number,
+        amount: number,//qty or units
         price: number,
         session: ClientSession
     ): Promise<void> {
@@ -75,8 +75,10 @@ export class PortfolioService implements IPortfolioService {
             const currentQuantity = portfolio.quantity ?? 0;
 
             const newQuantity = currentQuantity + purchasedQuantityOrUnits;
+            console.log(newQuantity, '-----newQuantity');
 
             const newAvgPrice = newTotalInvested / newQuantity;
+            console.log(newAvgPrice, '----newAvgPrice')
 
             portfolio.updateQuantityAndPrice(
                 newQuantity,

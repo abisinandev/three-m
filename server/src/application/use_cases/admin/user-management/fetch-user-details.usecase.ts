@@ -6,6 +6,7 @@ import type { QueryOptions } from "mongoose";
 import type { IFetchUserDetails } from "./interfaces/fetch-user-details.interface";
 import { toUserResponse } from "@application/mappers/user/user.mapper";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
+import { IdProtector } from "@shared/utils/id-protector.util";
 
 @injectable()
 export class FetchUserDetails implements IFetchUserDetails {
@@ -14,7 +15,7 @@ export class FetchUserDetails implements IFetchUserDetails {
   ) { }
 
   async execute(data: QueryOptions): Promise<FetchDataResponseDTO<UserDTO>> {
-    
+
     const allUsers = await this._userRepository.findWithFilters({
       search: data.search,
       page: data.page,
@@ -29,7 +30,12 @@ export class FetchUserDetails implements IFetchUserDetails {
     const { totalVerifiedUsersCount } = await this._userRepository.CountVerifiedUsers();
 
     return {
-      data: allUsers.map((user) => toUserResponse(user)),
+      data: allUsers.map((user) => {
+        return {
+          id: IdProtector.encodeId(user.id as string),
+          ...toUserResponse(user),
+        };
+      }),
       total: totalCount,
       page: data.page || 1,
       limit: data.limit || 10,
