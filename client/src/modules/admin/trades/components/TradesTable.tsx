@@ -47,7 +47,7 @@ export const TradesTable = ({ items, isLoading, search, onSearchChange, type, on
                     <thead className="bg-[#111214] border-b border-[#1e2025] text-[#5a5f6e] uppercase tracking-wider">
                         <tr>
                             <th className="px-6 py-3 font-medium">Order ID</th>
-                            <th className="px-6 py-3 font-medium">User ID</th>
+                            <th className="px-6 py-3 font-medium">UserCode</th>
                             <th className="px-6 py-3 font-medium">Symbol</th>
                             <th className="px-6 py-3 font-medium">Side</th>
                             <th className="px-6 py-3 font-medium">Type</th>
@@ -75,9 +75,9 @@ export const TradesTable = ({ items, isLoading, search, onSearchChange, type, on
                             </tr>
                         ) : (
                             items.map((trade) => (
-                                <tr key={trade.id} className="hover:bg-[#151619] transition-colors">
+                                <tr key={trade.userCode} className="hover:bg-[#151619] transition-colors">
                                     <td className="px-6 py-3 font-mono text-[#8b92a5]">{trade.orderId}</td>
-                                    <td className="px-6 py-3 font-mono text-[#8b92a5]">{trade.userId}</td>
+                                    <td className="px-6 py-3 font-mono text-[#8b92a5]">{trade.userCode}</td>
                                     <td className="px-6 py-3 font-medium">{trade.symbol}</td>
                                     <td className="px-6 py-3">
                                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium ${trade.side === 'BUY' ? 'bg-[#00c853]/10 text-[#00c853]' : 'bg-[#ff3d00]/10 text-[#ff3d00]'}`}>

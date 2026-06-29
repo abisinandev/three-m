@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Search } from 'lucide-react';
 import { EXCHANGE_OPTIONS, STATUS_OPTIONS, VISIBILITY_OPTIONS } from '../constants/stock-management.constants';
 
 interface StockFiltersProps {
+    searchValue: string;
     onSearchChange: (search: string) => void;
     exchange: string;
     onExchangeChange: (val: string) => void;
@@ -13,6 +14,7 @@ interface StockFiltersProps {
 }
 
 export const StockFilters: React.FC<StockFiltersProps> = ({
+    searchValue,
     onSearchChange,
     exchange,
     onExchangeChange,
@@ -21,6 +23,10 @@ export const StockFilters: React.FC<StockFiltersProps> = ({
     visible,
     onVisibleChange
 }) => {
+    // Keep a ref to the raw input so we can read its value for the debounced callback.
+    // We use defaultValue + ref instead of controlled value to avoid re-renders on every keystroke.
+    const inputRef = useRef<HTMLInputElement>(null);
+
     return (
         <div 
             style={{ 
@@ -37,7 +43,9 @@ export const StockFilters: React.FC<StockFiltersProps> = ({
             <div className="relative flex-1 min-w-[240px]">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5f6e] w-3.5 h-3.5" />
                 <input 
-                    type="text" 
+                    ref={inputRef}
+                    type="text"
+                    defaultValue={searchValue}
                     placeholder="Search by Symbol or Name..." 
                     onChange={(e) => onSearchChange(e.target.value)}
                     style={{

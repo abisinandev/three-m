@@ -21,8 +21,8 @@ export const ADMIN_TYPES = {
   RejectKycUseCase: Symbol.for("RejectKycUseCase"),
   FetchTransactionsUseCase: Symbol.for("FetchTransactionsUseCase"),
   SipManagementUseCase: Symbol.for("SipManagementUseCase"),
-  AdminStocksUseCase: Symbol.for("AdminStocksUseCase"),
-  AdminStockUpdateUseCase: Symbol.for("AdminStockUpdateUseCase"),
+  StockManagementUseCase: Symbol.for("StockManagementUseCase"),
+  StockUpdateUseCase: Symbol.for("StockUpdateUseCase"),
   SearchStocksUseCase: Symbol.for("SearchStocksUseCase"),
   AddStockUseCase: Symbol.for("AddStockUseCase"),
 

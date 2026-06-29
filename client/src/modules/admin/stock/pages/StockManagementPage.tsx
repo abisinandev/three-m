@@ -12,6 +12,8 @@ export default function StockManagementPage() {
         filters,
         stocks,
         total,
+        totalPages,
+        currentPage,
         isLoading,
         isError,
         updateFilters,
@@ -67,6 +69,7 @@ export default function StockManagementPage() {
 
       
                 <StockFilters 
+                    searchValue={filters.search}
                     onSearchChange={debouncedSearch}
                     exchange={filters.exchange}
                     onExchangeChange={(v) => updateFilters({ exchange: v })}
@@ -88,9 +91,10 @@ export default function StockManagementPage() {
                     {!isLoading && !isError && stocks.length > 0 && (
                         <div className="p-4 border-t border-[#1e2025] bg-[#0b0c0e]">
                             <Pagination
-                                page={filters.page}
+                                page={currentPage}
                                 limit={filters.limit}
                                 total={total}
+                                totalPages={totalPages}
                                 onPageChange={(page) => updateFilters({ page })}
                             />
                         </div>

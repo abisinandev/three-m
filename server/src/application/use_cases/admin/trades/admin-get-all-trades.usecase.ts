@@ -5,11 +5,14 @@ import { IAdminGetAllTradesUseCase } from "./interfaces/admin-get-all-trades-use
 import { inject, injectable } from "inversify";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { ITradeRepository } from "@application/interfaces/repositories/stock/trade-repository.interface";
+import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
+import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
 
 @injectable()
 export class AdminGetAllTradesUseCase implements IAdminGetAllTradesUseCase {
     constructor(
         @inject(STOCK_TYPES.TradeRepository) private readonly _tradeRepository: ITradeRepository,
+        @inject(USER_TYPES.UserRepository) private readonly _userRepository: IUserRepository,
     ) { }
 
     async execute(query: QueryOptions): Promise<FetchDataResponseDTO<AdminTradeResponseDTO>> {
@@ -28,21 +31,26 @@ export class AdminGetAllTradesUseCase implements IAdminGetAllTradesUseCase {
             search: String(search),
             filter
         });
-        
+
         const total = await this._tradeRepository.countAllTrades(String(search));
 
         return {
-            data: trades.map(trade => ({
-                id: String(trade.id).slice(17).toUpperCase(),
-                userId: String(trade.userId).slice(17).toUpperCase(),
-                orderId: String(trade.orderId).slice(17).toUpperCase(),
-                symbol: trade.symbol,
-                side: trade.side,
-                quantity: trade.quantity,
-                price: trade.price,
-                isAlgoTrade: trade.isAlgoTrade,
-                createdAt: trade.createdAt
-            })),
+            data: await Promise.all(
+                trades.map(async (trade) => {
+                    const user = await this._userRepository.findById(trade.userId);
+
+                    return {
+                        userCode: user?.userCode as string,
+                        orderId: String(trade.orderId).slice(17).toUpperCase(),
+                        symbol: trade.symbol,
+                        side: trade.side,
+                        quantity: trade.quantity,
+                        price: trade.price,
+                        isAlgoTrade: trade.isAlgoTrade,
+                        createdAt: trade.createdAt,
+                    };
+                })
+            ),
             total,
             page: Number(page),
             limit: Number(limit),

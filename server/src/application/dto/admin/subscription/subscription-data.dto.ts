@@ -25,8 +25,6 @@ export interface SubscriptionStatsDTO {
 }
 
 export interface UserSubscriptionDTO {
-    id: string;
-    userId: string;
     fullName: string;
     email: string;
     planCode: SubscriptionPlans;

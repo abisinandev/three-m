@@ -3,13 +3,13 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tansta
 import { useDebouncedCallback } from 'use-debounce';
 import { StockManagementApi } from '../services/StockManagementApi';
 import { DEFAULT_FILTERS } from '../constants/stock-management.constants';
-import type { Stock, StockFilters, StockStatusKey } from '../types/stock-management.types';
+import type { Stock, StockFilters, StockPaginatedResponse, StockStatusKey } from '../types/stock-management.types';
 
 export const useStockManagement = () => {
     const queryClient = useQueryClient();
     const [filters, setFilters] = useState<StockFilters>(DEFAULT_FILTERS);
 
-    const { data, isLoading, isError, refetch } = useQuery({
+    const { data, isLoading, isError, refetch } = useQuery<StockPaginatedResponse>({
         queryKey: ['admin-stocks', filters],
         queryFn: () => StockManagementApi.fetchStocks(filters),
         placeholderData: keepPreviousData,
@@ -20,9 +20,9 @@ export const useStockManagement = () => {
             StockManagementApi.updateStockStatus(symbol, updates),
         onMutate: async ({ symbol, updates }) => {
             await queryClient.cancelQueries({ queryKey: ['admin-stocks', filters] });
-            const previousData = queryClient.getQueryData(['admin-stocks', filters]);
+            const previousData = queryClient.getQueryData<StockPaginatedResponse>(['admin-stocks', filters]);
 
-            queryClient.setQueryData(['admin-stocks', filters], (old: { data: Stock[]; total: number } | undefined) => {
+            queryClient.setQueryData<StockPaginatedResponse>(['admin-stocks', filters], (old) => {
                 if (!old) return old;
                 return {
                     ...old,
@@ -44,13 +44,20 @@ export const useStockManagement = () => {
 
     const stocks = useMemo(() => data?.data ?? [], [data]);
     const total = data?.total ?? 0;
+    const totalPages = data?.totalPages ?? 0;
+    const currentPage = data?.page ?? filters.page;
 
+    // When changing any filter other than page, reset to page 1.
+    // When explicitly changing the page, preserve the new page value.
     const updateFilters = (updates: Partial<StockFilters>) => {
-        setFilters((prev) => ({
-            ...prev,
-            ...updates,
-            page: updates.page ?? 1,
-        }));
+        setFilters((prev) => {
+            const isPageChange = 'page' in updates && Object.keys(updates).length === 1;
+            return {
+                ...prev,
+                ...updates,
+                page: isPageChange ? (updates.page ?? 1) : 1,
+            };
+        });
     };
 
     const debouncedSearch = useDebouncedCallback(
@@ -66,6 +73,8 @@ export const useStockManagement = () => {
         filters,
         stocks,
         total,
+        totalPages,
+        currentPage,
         isLoading,
         isError,
         updateFilters,

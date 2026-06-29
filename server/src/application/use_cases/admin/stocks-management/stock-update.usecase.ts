@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
-import { IAdminStockUpdateUseCase } from "./interface/admin-stock-update-usecase.interface";
+import { IStockUpdateUseCase } from "./interface/stock-update-usecase.interface";
 import { STOCK_TYPES } from "@infrastructure/inversify_di/features/stock/stock.types";
 import { IStockRepository } from "@application/interfaces/repositories/stock/stock-repository.interface";
 
 @injectable()
-export class AdminStockUpdateUseCase implements IAdminStockUpdateUseCase {
+export class StockUpdateUseCase implements IStockUpdateUseCase {
     constructor(
         @inject(STOCK_TYPES.StockRepository) private readonly _stockRepository: IStockRepository,
     ) { }

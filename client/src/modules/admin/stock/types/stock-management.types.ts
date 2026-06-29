@@ -21,4 +21,12 @@ export interface StockFilters {
     isVisible: string;
 }
 
+export interface StockPaginatedResponse {
+    data: Stock[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+}
+
 export type StockStatusKey = 'isTradable' | 'isVisible';

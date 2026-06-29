@@ -3,7 +3,6 @@ export type InstallmentStatus = 'PENDING' | 'PAYMENT_SUCCESS' | 'ALLOCATED' | 'F
 
 export interface SIP {
     id: string;
-    userId: string;
     userCode?: string;
     schemeCode: string;
     amount: number;

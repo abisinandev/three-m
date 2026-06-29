@@ -73,7 +73,6 @@ const AuthenticationPage = () => {
 
         if (adminCodeError || passwordError) {
             setErrors({ adminCode: adminCodeError, password: passwordError });
-            toast.error("Please fix the errors below");
             return;
         }
 

@@ -4,7 +4,6 @@ import { SipInstallmentDto } from "./sip-installment.dto";
 export interface SipDto {
     readonly id?: string;
 
-    readonly userId: string;
     readonly userCode?: string;
     readonly schemeCode: string;
     readonly schemeName?: string;
