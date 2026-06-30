@@ -106,10 +106,10 @@ export const HoldingsTable = ({
                 <>
                     {items.map((inv, idx) => (
                         <HoldingsTableRow
-                            key={inv.id || inv.schemeCode || idx}
+                            key={inv.schemeCode || idx}
                             inv={inv}
                             isLast={idx === items.length - 1}
-                            isExpanded={expandedId === (inv.id || inv.schemeCode)}
+                            isExpanded={expandedId === ( inv.schemeCode)}
                             onExpand={setExpandedId}
                             onNavigate={onNavigate}
                             returnType={returnType}

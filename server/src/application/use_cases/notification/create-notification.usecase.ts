@@ -40,7 +40,7 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
         this.notificationService.send(input.userId, {
             ...payload,
             createdAt: new Date(payload.createdAt),
-            id: payload.id || '',
+            id: payload.id as string,
             data: payload.data || {}
         });
     }

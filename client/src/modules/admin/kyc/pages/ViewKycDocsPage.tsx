@@ -74,7 +74,7 @@ const ViewKycDocPage = () => {
             <div>
               <h1 className="text-[18px] font-bold tracking-tight text-[#e8eaed]">KYC Review</h1>
               <p className="text-[12px] text-[#5a5f6e] font-medium mt-0.5 tracking-wide">
-                {kyc.fullName} • {kyc.userCode || kyc.userId}
+                {kyc.fullName} • {kyc.userCode}
               </p>
             </div>
           </div>

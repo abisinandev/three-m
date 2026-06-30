@@ -112,6 +112,7 @@ export class NotificationEntity {
 
     toJSON() {
         return {
+            id: this._id,
             type: this._type,
             title: this._title,
             message: this._message,

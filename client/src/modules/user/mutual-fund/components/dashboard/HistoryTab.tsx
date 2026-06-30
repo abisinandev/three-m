@@ -85,7 +85,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({
                     <>
                         <div className="divide-y divide-[#1e2025]">
                             {paginatedData.map((tx) => (
-                                <div key={tx.id} className="py-3 flex justify-between items-center text-sm group hover:bg-[#1a1a1a]/50 px-2 rounded-lg transition-colors">
+                                <div key={tx.createdAt as string} className="py-3 flex justify-between items-center text-sm group hover:bg-[#1a1a1a]/50 px-2 rounded-lg transition-colors">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-lg bg-[#1a1c20] border border-[#1e2025] flex items-center justify-center overflow-hidden flex-shrink-0">
                                             {tx.logo ? (
