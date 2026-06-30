@@ -32,6 +32,7 @@ export class PortfolioProjectionUseCase implements IPortfolioProjectionUseCase {
 
         const portfolioAssets = await this._portfolioRepository.findByUserId(userId) ?? [];
         if (!portfolioAssets.length) return {
+            currentValue: 0,
             projectedValue: 0,
             projectedProfit: 0,
             futureTotalInvestment: 0,
@@ -78,9 +79,10 @@ export class PortfolioProjectionUseCase implements IPortfolioProjectionUseCase {
         }
 
         const futureTotalInvestment = totalInvestment;
-        const projectedProfit = futureValue - futureTotalInvestment;
+        const projectedProfit = futureValue - currentValue;
 
         return {
+            currentValue: Number(currentValue.toFixed(2)),
             projectedValue: Number(futureValue.toFixed(2)),
             projectedProfit: Number(projectedProfit.toFixed(2)),
             futureTotalInvestment,

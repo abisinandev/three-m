@@ -80,7 +80,7 @@ export const HoldingsTableRow = ({
 
     const isMF = !isStock;
     const statusStyle = getStatusStyle(inv.status);
-    const itemId = (inv.id || inv.schemeCode) as string;
+    const itemId = (inv.schemeCode) as string;
 
     const quantity = inv.units ?? inv.quantity ?? 0;
     const avgPrice = isMF ? (inv.nav || inv.avgPrice || 0) : (inv.avgPrice || (inv.amount && quantity ? inv.amount / quantity : 0));

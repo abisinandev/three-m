@@ -85,7 +85,9 @@ export const ErrorMessages = {
         EXISTING_INSTALLMENTS: "Please redeem your existing installments first before cancelling the SIP.",
     },
     EXPENSE_TRACKER: {
-        INSUFFICIENT_BALANCE: "Insufficient funds: You don't have enough balance to add this expense."
+        INSUFFICIENT_BALANCE: "Insufficient balance: You don't have enough balance to add this expense",
+        ADD_INCOME: "You can't add an expense because your current balance is zero. Add an income to continue",
+
     },
     STOCKS: {
         FAILED_TO_FETCH: "Failed to fetch latest price",

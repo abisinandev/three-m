@@ -78,6 +78,7 @@ export interface IRedeemedInvestment {
 }
 
 export interface IPortfolioProjectionResponse {
+    currentValue: number;
     projectedValue: number;
     projectedProfit: number;
     futureTotalInvestment: number;

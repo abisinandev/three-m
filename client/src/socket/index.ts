@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-export const socket = io("http://localhost:9000", {
+export const socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:9000", {
     withCredentials: true,
-    transports:["websocket"]
+    transports: ["websocket"]
 });

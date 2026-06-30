@@ -13,7 +13,7 @@ import { ErrorMessages } from "@shared/constants/error.messages";
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { ICreateNotificationUseCase } from "@application/use_cases/notification/interfaces/create-notification-usecase.interface";
 import { NotificationType } from "@domain/entities/notification/enums/notification-type.enums";
-import { NotFoundError } from "@presentation/express/utils/error-handling";
+import { NotFoundError, ValidationError } from "@presentation/express/utils/error-handling";
 import mongoose from "mongoose";
 
 @injectable()
@@ -38,7 +38,12 @@ export class AddExpensesUseCase implements IAddExpenseUseCase {
                 { userId, month: currentMonth },
                 session
             );
-            if (!tracker) throw new NotFoundError(ErrorMessages.USER.NOT_FOUND);
+            if (!tracker) throw new ValidationError(ErrorMessages.EXPENSE_TRACKER.ADD_INCOME);
+
+            const totalIncome = tracker.incomes.reduce((acc, inc) => acc + inc.amount, 0);
+            if (dto.amount > totalIncome) {
+                throw new ValidationError(ErrorMessages.EXPENSE_TRACKER.INSUFFICIENT_BALANCE);
+            }
 
             const updatedSpent =
                 tracker.expenseSummary.totalNeedsSpent +

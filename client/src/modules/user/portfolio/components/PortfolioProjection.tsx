@@ -2,28 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Loader2 } from 'lucide-react';
 import { getPortfolioProjection } from '@/shared/services/portfolio/portfolio-api';
 import type { IPortfolioProjectionResponse } from '@shared/types/portfolio.types';
-
-const fmt = (n: number) =>
-    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
-
-const fmtShort = (n: number) => {
-    if (n >= 1_00_00_000) return `₹${(n / 1_00_00_000).toFixed(2)}Cr`;
-    if (n >= 1_00_000) return `₹${(n / 1_00_000).toFixed(2)}L`;
-    if (n >= 1_000) return `₹${(n / 1_000).toFixed(1)}K`;
-    return `₹${n.toFixed(0)}`;
-};
-
-function buildPath(pts: { x: number; y: number }[]) {
-    if (!pts.length) return { line: '', area: '' };
-    let line = `M ${pts[0].x} ${pts[0].y}`;
-    for (let i = 1; i < pts.length; i++) {
-        const cp1x = pts[i - 1].x + (pts[i].x - pts[i - 1].x) * 0.5;
-        line += ` C ${cp1x} ${pts[i - 1].y}, ${cp1x} ${pts[i].y}, ${pts[i].x} ${pts[i].y}`;
-    }
-    const bottomY = pts[0].y > pts[pts.length - 1].y ? pts[0].y + 20 : pts[pts.length - 1].y + 20;
-    const area = `${line} L ${pts[pts.length - 1].x} ${bottomY} L ${pts[0].x} ${bottomY} Z`;
-    return { line, area };
-}
+import { buildPath, fmt, fmtShort } from '../utils/build-path.utils';
 
 export function PortfolioProjection() {
     const [returnRate, setReturnRate] = useState(12);
@@ -286,7 +265,7 @@ export function PortfolioProjection() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid #161820' }}>
                         <span style={{ fontSize: 10, color: '#5a5f70' }}>Current Value</span>
                         <span style={{ fontSize: 10, color: '#c9cdd4', fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>
-                            {fmt(data.futureTotalInvestment)}
+                            {fmt(data.currentValue)}
                         </span>
                     </div>
 
