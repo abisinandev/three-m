@@ -25,7 +25,7 @@ const notificationSchema = new Schema<NotificationDocument>({
     },
     expiresAt: {
         type: Date,
-        required: false,
+        required: true,
     },
     createdAt: {
         type: Date,
@@ -37,6 +37,6 @@ const notificationSchema = new Schema<NotificationDocument>({
     },
 });
 
-notificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 3600 });
+notificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export const NotificationModel = mongoose.model("Notification", notificationSchema);

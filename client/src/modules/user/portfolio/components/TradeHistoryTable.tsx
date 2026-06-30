@@ -1,34 +1,9 @@
 import { TABLE_HEADERS } from '../constants/portfolio.constants';
+import { TradeHistoryTableProps } from '../types/portfolio-types';
 import { formatCurrency } from '../utils/portfolio.utils';
 import { Pagination } from '@shared/components/pagination/Pagination';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 
-interface TradeHistoryItem {
-    id: string;
-    side: string;
-    totalAmount: number;
-    price: number;
-    quantity: number;
-    date?: string;
-    createdAt?: string;
-    assetType?: string;
-    assetName?: string;
-    symbol?: string;
-    assetId?: string;
-    orderType?: string;
-    exchange?: string;
-    productType?: string;
-    triggerPrice?: number;
-}
-
-interface TradeHistoryTableProps {
-    data: TradeHistoryItem[];
-    total: number;
-    page: number;
-    limit: number;
-    onPageChange: (page: number) => void;
-    isLoading: boolean;
-}
 
 const SideTag = ({ side }: { side?: string }) => {
     const isSell = side?.toLowerCase() === 'sell';

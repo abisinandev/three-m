@@ -22,8 +22,6 @@ export class FetchSubscriptionsUseCase implements IFetchSubscriptionsUseCase {
             subscriptions.map(async (sub) => {
                 const user = await this._userRepo.findById(sub.userId);
                 return {
-                    id: sub.id as string,
-                    userId: sub.userId,
                     fullName: user?.fullName || "Unknown",
                     email: user?.email || "N/A",
                     planCode: sub.planCode,

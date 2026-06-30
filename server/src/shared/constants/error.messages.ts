@@ -37,6 +37,8 @@ export const ErrorMessages = {
         EMAIL_ALREADY_EXISTS: "Email already exists",
         PHONE_ALREADY_EXISTS: "Phone number already exists",
         EMAIL_MUST_BE_STRING: "Email must be a string",
+        INVALID_IMAGE_URL: "Invalid image URL",
+        ALREADY_SUBMITTED: "Already submitted",
     },
     DB: {
         CONNECTION_FAILED: "Database URI is not defined",
@@ -83,7 +85,9 @@ export const ErrorMessages = {
         EXISTING_INSTALLMENTS: "Please redeem your existing installments first before cancelling the SIP.",
     },
     EXPENSE_TRACKER: {
-        INSUFFICIENT_BALANCE: "Insufficient funds: You don't have enough balance to add this expense."
+        INSUFFICIENT_BALANCE: "Insufficient balance: You don't have enough balance to add this expense",
+        ADD_INCOME: "You can't add an expense because your current balance is zero. Add an income to continue",
+
     },
     STOCKS: {
         FAILED_TO_FETCH: "Failed to fetch latest price",
@@ -117,7 +121,7 @@ export const ErrorMessages = {
         RISK_AMOUNT: "Risk amount shouldn't be more than 1000",
         MAX_TRADES: "Max trades shouldn't be more than 5",
         STOP_LOSS: "Stop loss shouldn't be more than 100",
-        TAKE_PROFIT : "Take profit shouldn't be more than 200",
+        TAKE_PROFIT: "Take profit shouldn't be more than 200",
     }
 } as const;
 

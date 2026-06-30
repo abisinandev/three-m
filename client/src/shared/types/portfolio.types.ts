@@ -1,6 +1,4 @@
 export interface IInvestmentResponse {
-    id?: string;
-    userId: string;
     assetId: string;
     symbol?: string;
     name?: string;
@@ -80,6 +78,7 @@ export interface IRedeemedInvestment {
 }
 
 export interface IPortfolioProjectionResponse {
+    currentValue: number;
     projectedValue: number;
     projectedProfit: number;
     futureTotalInvestment: number;

@@ -76,7 +76,6 @@ export class MutualFundUserController {
             const dto = { ...req.body };
             const userId = req.user?.id;
             const idempotencyKey = req.headers['x-idempotency-key'] as string;
-
             await this._investmentUseCase.execute(dto, userId as string, idempotencyKey);
 
             return ResponseHelper.success(

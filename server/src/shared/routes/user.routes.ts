@@ -3,10 +3,10 @@ export enum UserRoutes {
     CHANGE_PASSWORD = "/change-password",
     LOGOUT = "/logout",
     KYC_SUBMIT = "/kyc/submit",
-    PROFILE_UPDATE = '/profile/update',
-    EMAIL_UPDATE_OTP_SEND = '/profile/update/email/send-otp',
-    EMAIL_UPDATE_VERIFY = '/profile/update/email/verify-otp',
-    UPLOAD_PROFILE_IMAGE = '/profile/update/profile-image',
+    PROFILE_UPDATE = '/profile',
+    EMAIL_UPDATE_OTP_SEND = '/profile/email/otp',
+    EMAIL_UPDATE_VERIFY = '/profile/email/otp/verify',
+    UPLOAD_PROFILE_IMAGE = '/profile/avatar',
     WALLET = '/wallet',
     MF_FUND = "/:schemeCode",
     STOCKS = "/stocks"
@@ -15,20 +15,20 @@ export enum UserRoutes {
 export enum UserMutualFundRoutes {
     LISTS = "/lists",
     INVESTMENTS = "/investments",
-    INVESTMENT_ONE_TIME = '/investment/one-time',
+    INVESTMENT_ONE_TIME = '/investments',
     FETCH_FUND_DETAILS = "/:schemeCode"
 }
 
 export enum UserSipRoutes {
-    CREATE = "/create",
+    CREATE = "/",
     LIST = '/',
-    PAUSE = '/pause/:sipId',
-    RESUME = '/resume/:sipId',
-    CANCEL = '/cancel/:sipId'
+    PAUSE = '/:sipId/pause',
+    RESUME = '/:sipId/resume',
+    CANCEL = '/:sipId/cancel'
 }
 
 export enum UserPaymentRoutes {
-    CREATE_CHECKOUT_SESSION = '/create-checkout-session',
+    CREATE_CHECKOUT_SESSION = '/checkout',
     VERIFY = '/verify'
 }
 

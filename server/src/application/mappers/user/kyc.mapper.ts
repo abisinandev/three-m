@@ -2,10 +2,11 @@ import type { KycResponseDTO } from "@application/dto/user/kyc-response.dto";
 import type { KycSubmitDTO } from "@application/dto/user/kyc-submit.dto";
 import { KycEntity } from "@domain/entities/user/kyc.entity";
 import type { UserEntity } from "@domain/entities/user/user.entity";
+import { IdProtector } from "@shared/utils/id-protector.util";
 
-export const toEntity = (dto: KycSubmitDTO): KycEntity => {
+export const toEntity = (userId: string, dto: KycSubmitDTO): KycEntity => {
   return KycEntity.create({
-    userId: dto.userId,
+    userId,
     panNumber: dto.panNumber,
     documents: dto.documents,
     aadharNumber: dto.aadharNumber,
@@ -15,8 +16,7 @@ export const toEntity = (dto: KycSubmitDTO): KycEntity => {
 
 export const toKycResponse = (data: KycEntity, user: UserEntity): KycResponseDTO => {
   return {
-    id: data.id,
-    userId: data.userId,
+    id: IdProtector.encodeId(data.id as string),
     userCode: user.userCode,
     email: user.email,
     fullName: user.fullName,

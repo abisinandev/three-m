@@ -45,8 +45,7 @@ export interface AdminAlgoTrade {
 }
 
 export interface AdminTrade {
-    id: string;
-    userId: string;
+    userCode: string;
     orderId: string;
     symbol: string;
     side: 'BUY' | 'SELL';

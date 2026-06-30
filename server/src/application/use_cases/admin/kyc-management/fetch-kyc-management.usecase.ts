@@ -27,9 +27,11 @@ export class FetchAllKycDocsUseCase implements IFetchAllKycDocsUseCase {
     );
 
     const { totalCount } = await this._kycRepository.count();
-    console.log(fullData);
+
+    const validData = fullData.filter(({ user }) => user !== null);
+
     return {
-      data: fullData.map(({ kyc, user }) =>
+      data: validData.map(({ kyc, user }) =>
         toKycResponse(kyc, user as UserEntity),
       ),
       total: totalCount,

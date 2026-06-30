@@ -8,6 +8,7 @@ import {
   Length,
   Matches,
   ValidateNested,
+  IsNumber,
 } from "class-validator";
 
 export class DocumentDTO {
@@ -23,19 +24,44 @@ export class DocumentDTO {
   @IsNotEmpty({ message: "File URL is required" })
   @IsUrl({}, { message: "Invalid file URL" })
   fileUrl!: string;
+
+  @IsString()
+  @IsNotEmpty({ message: "Public ID is required" })
+  publicId!: string;
+
+  @IsString()
+  @IsNotEmpty({ message: "Resource type is required" })
+  resourceType!: string;
+
+  @IsString()
+  @IsNotEmpty({ message: "Format is required" })
+  format!: string;
+
+  @IsNumber()
+  @IsNotEmpty({ message: "Bytes is required" })
+  bytes!: number;
 }
 
 export class AddressDTO {
   @IsString()
   @IsNotEmpty({ message: "Full address is required" })
+  @Length(10, 300, {
+    message: "Address must be between 10 and 300 characters",
+  })
   fullAddress!: string;
 
   @IsString()
   @IsNotEmpty({ message: "City is required" })
+  @Matches(/^[A-Za-z\s]+$/, {
+    message: "City can only contain letters and spaces",
+  })
   city!: string;
 
   @IsString()
   @IsNotEmpty({ message: "State is required" })
+  @Matches(/^[A-Za-z\s]+$/, {
+    message: "State can only contain letters and spaces",
+  })
   state!: string;
 
   @IsString()
@@ -47,11 +73,11 @@ export class AddressDTO {
 
 export class KycSubmitDTO {
   @IsString()
-  @IsNotEmpty({ message: "User ID is required" })
-  userId!: string;
-
-  @IsString()
   @IsNotEmpty({ message: "Full name is required" })
+  @Length(3, 100)
+  @Matches(/^[A-Za-z\s'-]+$/, {
+    message: "Full name contains invalid characters",
+  })
   fullName!: string;
 
   @IsString()
@@ -66,7 +92,6 @@ export class KycSubmitDTO {
   @Matches(/^\d{12}$/, {
     message: "Aadhar must be 12 digits",
   })
-  @IsOptional()
   aadharNumber!: string;
 
   @ValidateNested()

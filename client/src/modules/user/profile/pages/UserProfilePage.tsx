@@ -11,6 +11,8 @@ import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import api from '@/lib/axios-user';
 
 import { ROUTES, API_ROUTES } from '@shared/constants/apiRoutes';
+import { toast } from 'sonner';
+import { ValidateFileUploads } from '../../kyc/helpers/imageValidator';
 
 import { ProfileSidebar } from '../components/ProfileSidebar';
 import { PersonalInfoCard } from '../components/PersonalInfoCard';
@@ -31,7 +33,7 @@ const UserProfilePage = () => {
     date ? format(new Date(date), 'MMM dd, yyyy') : '—';
 
   const kycStatus = user?.kycStatus;
-  const hasKycStarted = user?.kycId || kycStatus;
+  const hasKycStarted = kycStatus;
   const kycInfo = (() => {
     if (!hasKycStarted) {
       return {
@@ -101,20 +103,25 @@ const UserProfilePage = () => {
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user?.id) return;
+    if (!file || !user) return;
+
+    const validation = await ValidateFileUploads(file, 'profile');
+    if (!validation.isValid) {
+      toast.error(validation.error);
+      return;
+    }
 
     setUploading(true);
 
     try {
-      const signatureData = await GetSignatureApi("profile", user.id);
+      const signatureData = await GetSignatureApi("profile");
       const result = await uploadToCloudinary(file, signatureData.data);
       await api.patch(API_ROUTES.USER.PROFILE.UPLOAD_IMAGE, {
-        userId: user?.id,
         url: result.secure_url
       });
       setUser({ ...user, avatar: result.secure_url });
     } catch (_err) {
-      console.error("Profile image upload failed", _err);
+      console.error("Profile image upload failed: ", _err);
     } finally {
       setUploading(false);
     }

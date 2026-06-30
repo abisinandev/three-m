@@ -1,6 +1,4 @@
 export interface AdminAlgoSignalResponseDTO {
-    id: string;
-    userId: string;
     symbol: string;
     strategyName: string;
     action: string;

@@ -7,8 +7,6 @@ import { NavHistoryDTO } from "./nav-histroy.dto";
 
 
 export interface FundDetailsDTO {
-    id: string;
-
     schemeCode: string;
     schemeName: string;
     amc: string;

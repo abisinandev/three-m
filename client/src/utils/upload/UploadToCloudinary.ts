@@ -1,9 +1,9 @@
 import type { SignatureDataType } from "@shared/types/user/SignatureDataType";
 
 export const uploadToCloudinary = async (file: File, signatureData: SignatureDataType) => {
-  const { timestamp, signature, apiKey, cloudName, folder } = signatureData;
-  
-  console.log("signatureData: ",signatureData)
+  const { timestamp, signature, apiKey, cloudName, folder, allowedFormats } = signatureData;
+
+  console.log("signatureData: ", signatureData)
   if (!timestamp || !signature || !apiKey || !cloudName) {
     throw new Error("Invalid Cloudinary signature data");
   }
@@ -14,18 +14,20 @@ export const uploadToCloudinary = async (file: File, signatureData: SignatureDat
   formData.append("timestamp", timestamp.toString());
   formData.append("signature", signature);
 
+  const url = import.meta.env.VITE_CLOUDINARY_URL || "https://api.cloudinary.com/v1_1/"
+
   if (folder) formData.append("folder", folder);
+  if (allowedFormats) formData.append("allowed_formats", allowedFormats);
 
   const resourceType = file.type === "application/pdf" ? "image" : "auto";
 
-  const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+  const uploadUrl = `${url}${cloudName}/${resourceType}/upload`;
 
   const res = await fetch(uploadUrl, {
     method: "POST",
     body: formData,
   });
   const data = await res.json();
-  console.log(" UPdladod,",data)
 
   if (!res.ok) {
     console.error("Cloudinary upload failed:", data);

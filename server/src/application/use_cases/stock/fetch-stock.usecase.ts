@@ -46,7 +46,6 @@ export class FetchStocksUseCase implements IFetchStocksUseCase {
 
                 return {
                     ...stock,
-                    id: stock.id as string,
                     price: quote?.price ?? null,
                     change: quote?.change ?? 0,
                     changePercent: quote?.changePercent ?? 0,

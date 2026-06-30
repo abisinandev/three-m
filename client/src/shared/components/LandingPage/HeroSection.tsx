@@ -9,7 +9,7 @@ export const HeroSection: React.FC = () => {
 
           <div className="space-y-7 lg:space-y-9 animate-fade-in">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-tight text-cool-white">
-              The <span className="text-teal-green">Three-M</span> Philosophy:<br className="hidden lg:inline" />
+              The <span className="text-teal-green">Three-M</span> Objectives:<br className="hidden lg:inline" />
               <span className="text-teal-green">Make</span>, <span className="text-teal-green">Manage</span>, and <span className="text-teal-green">Multiply</span> Your Wealth
             </h1>
 

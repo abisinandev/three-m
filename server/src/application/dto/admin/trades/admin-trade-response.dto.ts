@@ -1,6 +1,5 @@
 export interface AdminTradeResponseDTO {
-    id: string;
-    userId: string;
+    userCode: string;
     orderId: string;
     symbol: string;
     side: string;

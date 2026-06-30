@@ -1,8 +1,6 @@
 import { InvestmentStatus, InvestmentType, PaymentMethod } from "@domain/enum/funds/investment.enums";
 
 export interface InvestmentResponseDTO {
-    id?: string;
-    userId: string;
     schemeCode: string;
 
     amount: number;

@@ -1,7 +1,6 @@
 import { SubscriptionPlans } from "@domain/entities/subscription/enums/plans.enum";
 
 export interface PlanDTO {
-    id: string;
     code: SubscriptionPlans;
     price: number;
     durationInDays: number;

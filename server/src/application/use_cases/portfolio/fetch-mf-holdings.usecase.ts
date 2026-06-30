@@ -58,8 +58,6 @@ export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsU
             const fundXirr = this.xirrService.calculate(cashflows);
 
             data.push({
-                id: pf.id as string,
-                userId: pf.userId,
                 schemeCode: fund.schemeCode,
                 schemeName: fund.schemeName,
                 amount: pf.investedAmount,

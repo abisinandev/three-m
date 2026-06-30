@@ -4,6 +4,7 @@ export interface PortfolioProjectionDTO {
 }
 
 export interface PortfolioProjectionResponseDTO {
+    currentValue: number;
     projectedValue: number;
     projectedProfit: number;
     futureTotalInvestment: number;

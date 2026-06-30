@@ -1,7 +1,6 @@
 import { KycStatusType } from "@domain/enum/users/kyc-status.enum";
 
-export type UserDTO = {
-  id: string;
+export interface UserDTO {
   userCode: string;
   fullName: string;
   email: string;
@@ -10,7 +9,6 @@ export type UserDTO = {
   role: string;
   authProvider: string;
 
-  isEmailVerified: boolean;
   isVerified: boolean;
   isBlocked: boolean;
 
@@ -22,14 +20,14 @@ export type UserDTO = {
     status: string;
     plan: string;
   };
-  kycId: string;
   kycStatus?: KycStatusType;
-  walletId: string;
+
 
   currency: string;
 
   avatar: string | null;
-  googleId: string | null;
 
-  createdAt: string;
+
+  createdAt: Date;
+  updatedAt: Date;
 };

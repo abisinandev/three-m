@@ -26,6 +26,7 @@ export const toPersistance = (data: KycEntity): Partial<KycDocument> => {
         type: doc.type,
         fileName: doc.fileName,
         fileUrl: doc.fileUrl,
+        publicId: doc.publicId,
       })) ?? [],
 
     address: data.address

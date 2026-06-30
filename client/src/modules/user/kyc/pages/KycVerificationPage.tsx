@@ -4,7 +4,6 @@ import api from '@/lib/axios-user';
 import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import { useUserStore } from '@stores/user/UserStore';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
-
 import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
@@ -14,14 +13,8 @@ import { KycAddressForm } from '../components/KycAddressForm';
 import { KycDocumentUpload } from '../components/KycDocumentUpload';
 import { KycSelfieCapture } from '../components/KycSelfieCapture';
 import type { AddressData, DetailsData, KycFiles, KycPreviews, kycDocuments } from '@/shared/types/user/KycUserType';
-
-const steps = [
-    { id: 1, title: 'Your Details', field: 'details', isForm: true },
-    { id: 2, title: 'Address Proof', field: 'address', isForm: true },
-    { id: 3, title: 'PAN Card', field: 'pan' },
-    { id: 4, title: 'Aadhar Card', field: 'aadhaar' },
-    { id: 5, title: 'Live Selfie', field: 'selfie' },
-];
+import { steps } from '../helpers/kyc-steps';
+import { ValidateFileUploads } from '../helpers/imageValidator';
 
 const KYCVerificationPage = () => {
     const [currentStep, setCurrentStep] = useState(0);
@@ -72,51 +65,16 @@ const KYCVerificationPage = () => {
         }
     }, [user]);
 
-
-    useEffect(() => {
-        const fetchLocationByPin = async () => {
-            if (address.pincode.length === 6) {
-                try {
-                    const response = await fetch(`https://api.postalpincode.in/pincode/${address.pincode}`);
-                    const data = await response.json();
-                    if (data && data[0].Status === 'Success') {
-                        const postOffice = data[0].PostOffice[0];
-                        setAddress(prev => ({
-                            ...prev,
-                            city: postOffice.District,
-                            state: postOffice.State
-                        }));
-                        toast.success('City & State auto-filled!');
-                    } else if (data && data[0].Status === 'Error') {
-                        toast.error('Invalid PIN Code');
-                    }
-                } catch (_error) {
-                    console.error('Error fetching location from PIN:', _error);
-                }
-            }
-        };
-
-        const timeoutId = setTimeout(() => fetchLocationByPin(), 500);
-        return () => clearTimeout(timeoutId);
-    }, [address.pincode]);
-
-    const handleFileChange = (field: 'pan' | 'aadhaar' | 'selfie', file: File | null) => {
+    const handleFileChange = async (field: 'pan' | 'aadhaar' | 'selfie', file: File | null) => {
         if (!file) {
             setFiles(prev => ({ ...prev, [field]: null }));
             setPreviews(prev => ({ ...prev, [field]: null }));
             return;
         }
 
-        const maxSize = 5 * 1024 * 1024;
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
-
-        if (!allowedTypes.includes(file.type)) {
-            toast.error('Only JPG, PNG or PDF allowed');
-            return;
-        }
-
-        if (file.size > maxSize) {
-            toast.error('File must be under 5MB');
+        const validation = await ValidateFileUploads(file, field);
+        if (!validation.isValid) {
+            toast.error(validation.error);
             return;
         }
 
@@ -167,24 +125,29 @@ const KYCVerificationPage = () => {
     const handleSubmit = async () => {
         setIsSubmitting(true);
         try {
-            const uploadedFiles: Record<string, string> = {};
+            const uploadedFiles: Record<string, { secure_url: string, public_id: string, resource_type: string, format: string, bytes: number }> = {};
 
             for (const key of ['pan', 'aadhaar', 'selfie'] as const) {
                 const file = files[key];
                 if (file) {
-                    const signatureData = await GetSignatureApi('kyc', user?.id as string);
+                    const signatureData = await GetSignatureApi('kyc');
                     const uploaded = await uploadToCloudinary(file, signatureData.data);
-                    uploadedFiles[key] = uploaded.secure_url;
+                    uploadedFiles[key] = { 
+                        secure_url: uploaded.secure_url, 
+                        public_id: uploaded.public_id,
+                        resource_type: uploaded.resource_type,
+                        format: uploaded.format,
+                        bytes: uploaded.bytes
+                    };
                 }
             }
 
             const documents: kycDocuments[] = [];
-            if (files.pan) documents.push({ type: 'pan', fileName: files.pan.name, fileUrl: uploadedFiles.pan || '' });
-            if (files.aadhaar) documents.push({ type: 'aadhaar', fileName: files.aadhaar.name, fileUrl: uploadedFiles.aadhaar || '' });
-            if (files.selfie) documents.push({ type: 'selfie', fileName: files.selfie.name, fileUrl: uploadedFiles.selfie || '' });
+            if (files.pan) documents.push({ type: 'pan', fileName: files.pan.name, fileUrl: uploadedFiles.pan?.secure_url || '', publicId: uploadedFiles.pan?.public_id || '', resourceType: uploadedFiles.pan?.resource_type || '', format: uploadedFiles.pan?.format || '', bytes: uploadedFiles.pan?.bytes || 0 });
+            if (files.aadhaar) documents.push({ type: 'aadhaar', fileName: files.aadhaar.name, fileUrl: uploadedFiles.aadhaar?.secure_url || '', publicId: uploadedFiles.aadhaar?.public_id || '', resourceType: uploadedFiles.aadhaar?.resource_type || '', format: uploadedFiles.aadhaar?.format || '', bytes: uploadedFiles.aadhaar?.bytes || 0 });
+            if (files.selfie) documents.push({ type: 'selfie', fileName: files.selfie.name, fileUrl: uploadedFiles.selfie?.secure_url || '', publicId: uploadedFiles.selfie?.public_id || '', resourceType: uploadedFiles.selfie?.resource_type || '', format: uploadedFiles.selfie?.format || '', bytes: uploadedFiles.selfie?.bytes || 0 });
 
             await api.post(API_ROUTES.USER.KYC.SUBMIT, {
-                userId: user?.id,
                 fullName: details.fullName,
                 panNumber: details.panNumber.toUpperCase(),
                 aadharNumber: details.aadharNumber || null,

@@ -1,9 +1,9 @@
 export enum ExpenseRoutes {
     ROOT = '/',
-    ADD_INCOME = '/add-income',
-    ADD_EXPENSE = '/add-expense',
-    DELETE_EXPENSE = '/delete-expense/:index',
-    MINIMAL_EXPENSE = '/expenses',
+    ADD_INCOME = '/income',
+    ADD_EXPENSE = '/expenses',
+    DELETE_EXPENSE = '/expenses/:index',
+    MINIMAL_EXPENSE = '/expenses/summary',
     FETCH_ANALYTICS = '/analytics',
     BUDGET_PLAN = '/budget-plan'
 }

@@ -26,7 +26,6 @@ export class FetchWatchlistUseCase implements IFetchWatchlistUseCase {
 
             if (stock) {
                 stocks.push({
-                    id: stock.id as string,
                     name: stock.name,
                     symbol: stock.symbol,
                     exchange: stock.exchange,

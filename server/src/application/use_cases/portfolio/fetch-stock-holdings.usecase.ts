@@ -53,8 +53,6 @@ export class FetchStockHoldingsUseCase implements IFetchStockHoldingsUseCase {
             const profit = currentValue - stockPf.investedAmount;
 
             data.push({
-                id: stockPf.id as string,
-                userId: stockPf.userId,
                 schemeCode: symbol,
                 schemeName: stockDetails?.name || symbol,
                 amount: stockPf.investedAmount,

@@ -122,7 +122,7 @@ export default function AddMutualFundPage() {
         setSubmitError(null);
 
         try {
-            const signatureData = await GetSignatureApi(adminId, 'fund-logo');
+            const signatureData = await GetSignatureApi('fund-logo');
             const result = await uploadToCloudinary(file, signatureData.data);
             setLogoUrl(result.secure_url);
         } catch (err: unknown) {

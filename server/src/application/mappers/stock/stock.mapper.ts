@@ -4,7 +4,6 @@ import { StockDTO } from "@application/dto/stocks/stock.dto";
 export const StockMapper = {
     toDTO: (entity: StockEntity): StockDTO => {
         return {
-            id: entity.id as string,
             symbol: entity.symbol,
             name: entity.name,
             exchange: entity.exchange,

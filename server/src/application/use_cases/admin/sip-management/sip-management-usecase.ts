@@ -6,6 +6,7 @@ import { SipDto } from "@application/dto/sip/sip-response.dto";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { IUserRepository } from "@application/interfaces/repositories/user/user-repository.interface";
+import { IdProtector } from "@shared/utils/id-protector.util";
 
 @injectable()
 export class SipManagementUseCase implements ISipManagementUseCase {
@@ -32,8 +33,7 @@ export class SipManagementUseCase implements ISipManagementUseCase {
                 const user = await this._userRepo.findById(sip.userId);
 
                 return {
-                    id: sip.id,
-                    userId: sip.userId,
+                    id: IdProtector.encodeId(sip.id as string),
                     userCode: user?.userCode,
                     schemeCode: sip.schemeCode,
                     amount: sip.amount,

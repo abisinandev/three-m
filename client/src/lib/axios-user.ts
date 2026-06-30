@@ -11,8 +11,9 @@ const api = axios.create({
 })
 
 const authFreeRoutes = [
-    "/auth/login",
-    "/auth/signup",
+    // "/auth/login",
+    // "/auth/signup",
+    "/auth/",
 ];
 
 interface RetryConfig extends InternalAxiosRequestConfig {

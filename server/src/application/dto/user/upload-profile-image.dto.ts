@@ -1,8 +1,8 @@
-import { IsOptional } from "class-validator";
+import { IsNotEmpty, IsString, IsUrl } from "class-validator";
 
-export class UploadProfileImageDTO{
-    @IsOptional()
-    userId!: string;
-    @IsOptional()
+export class UploadProfileImageDTO {
+    @IsString()
+    @IsNotEmpty()
+    @IsUrl()
     url!: string;
 }

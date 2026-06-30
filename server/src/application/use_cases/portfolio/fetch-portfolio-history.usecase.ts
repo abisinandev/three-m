@@ -43,9 +43,6 @@ export class FetchPortfolioHistoryUseCase implements IFetchPortfolioHistoryUseCa
 
             const stock = await this._stockRepository.findBySymbol(trade.symbol);
             history.push({
-                id: trade.id as string,
-                userId: trade.userId,
-                assetId: trade.symbol,
                 assetName: stock?.name || trade.symbol,
                 assetType: "STOCK",
                 side: trade.side,
@@ -67,9 +64,6 @@ export class FetchPortfolioHistoryUseCase implements IFetchPortfolioHistoryUseCa
             if (inv.status === InvestmentStatus.INITIATED) continue;
 
             history.push({
-                id: inv.id,
-                userId: userId,
-                assetId: inv.schemeCode,
                 assetName: inv.fund?.schemeName || inv.schemeCode,
                 assetType: "MF",
                 side: inv.status === "REDEEMED" ? "REDEEMED" : "INVESTED",

@@ -10,6 +10,14 @@ export const SecurityCard = ({
   user
 }: SecurityCardProps) => {
   const isGoogleUser = user?.authProvider === "google";
+
+  const daysAgo = user?.createdAt
+    ? Math.floor(
+      (Date.now() - new Date(user.createdAt).getTime()) /
+      (1000 * 60 * 60 * 24)
+    )
+    : 0;
+  
   return (
     <div style={{ background: '#111214', border: '1px solid #1e2025', borderRadius: 6 }} className="overflow-hidden">
       <div style={{ borderBottom: '1px solid #1e2025' }} className="px-5 py-3">
@@ -22,7 +30,7 @@ export const SecurityCard = ({
           <div>
             <p style={{ fontSize: 13, fontWeight: 500, color: '#e8eaed', margin: 0 }}>Password</p>
             <p style={{ fontSize: 11, color: '#5a5f6e', margin: '2px 0 0 0' }}>
-              {isGoogleUser ? "Managed by Google" : "Last updated 30 days ago"}
+              {isGoogleUser ? "Managed by Google" : `Last updated ${daysAgo} days ago`}
             </p>
           </div>
           <button

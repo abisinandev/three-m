@@ -1,6 +1,4 @@
 export interface AlgoStrategyResponseDTO {
-    id: string;
-    userId: string;
     symbol: string;
     strategyName: string;
     config: Record<string, unknown>;

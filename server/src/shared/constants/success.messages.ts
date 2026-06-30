@@ -29,6 +29,7 @@ export const SuccessMessages = {
         PROFILE_IMAGE_ADDED: "Profile image added",
         EMAIL_UPDATE_OTP_SENT: "OTP sent to email. Please check your inbox to verify your email",
         EMAIL_UPDATED: "Email updated successfully",
+        KYC_SUBMITTED: "Kyc submission successful"
     },
     DATA: {
         FETCHED: "Data fetched successfully",
@@ -81,5 +82,6 @@ export const SuccessMessages = {
     AI_CHATBOT: {
         DATA: "Responded successfully",
         UPGRADE_PLAN: "Upgrade to Premium to unlock full AI capabilities.",
-    }
+    },
+    
 } as const;

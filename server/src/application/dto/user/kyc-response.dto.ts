@@ -3,7 +3,6 @@ import type { KycDocumentVO } from "@domain/entities/user/user-value-objects/kyc
 
 export interface KycResponseDTO {
   id?: string;
-  userId: string;
   userCode?: string;
   email?: string;
   fullName?: string;

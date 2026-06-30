@@ -1,7 +1,7 @@
 import { MutualFundNavDTO } from "./mutual-fund-nav-dto";
 
 export interface FundListDTO {
-  id: string;
+  // id: string;
   schemeCode: string;
   schemeName: string;
   amc: string;

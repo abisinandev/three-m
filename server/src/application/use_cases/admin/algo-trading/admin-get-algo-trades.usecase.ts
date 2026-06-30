@@ -34,9 +34,6 @@ export class AdminGetAlgoTradesUseCase implements IAdminGetAlgoTradesUseCase {
                 const user = await this._userRepo.findById(entity.userId);
 
                 return {
-                    id: String(entity.id).slice(17).toLocaleUpperCase(),
-                    userId: user?.userCode as string,
-                    orderId: entity.orderId,
                     symbol: entity.symbol,
                     side: entity.side,
                     quantity: entity.quantity,

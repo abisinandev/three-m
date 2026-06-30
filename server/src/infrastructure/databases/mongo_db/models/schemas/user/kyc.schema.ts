@@ -9,6 +9,7 @@ const DocumentSchema = new Schema(
     type: { type: String, required: true, trim: true },
     fileName: { type: String, required: true },
     fileUrl: { type: String, required: true },
+    publicId: { type: String, required: true },
   },
   { _id: false }  
 );

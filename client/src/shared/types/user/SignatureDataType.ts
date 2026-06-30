@@ -4,4 +4,5 @@ export type SignatureDataType = {
     apiKey: string;
     cloudName: string;
     folder: string;
+    allowedFormats?: string;
 }

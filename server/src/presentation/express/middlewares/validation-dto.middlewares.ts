@@ -30,7 +30,7 @@ export const validateDTO = <T extends object>(
       });
 
       throw new AppError(
-        ErrorMessages.AUTH.INVALID_CREDENTIALS,
+        ErrorMessages.VALIDATION.FAILED,
         HttpStatus.BAD_REQUEST,
         { errors: formattedErrors },
       );

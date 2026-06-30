@@ -26,8 +26,6 @@ export class AdminGetSignalUseCase implements IAdminGetSignalUseCase {
         const totalCount = await this._getSignals.countSignals();
 
         const data: AdminAlgoSignalResponseDTO[] = signals.map(entity => ({
-            id: entity.id as string,
-            userId: entity.userId,
             symbol: entity.symbol,
             strategyName: entity.strategyName,
             action: entity.action,

@@ -38,10 +38,8 @@ import { IAdminRepository } from "@application/interfaces/repositories/admin/adm
 import { AdminSipController } from "@presentation/http/controllers/admin/admin-sip.controller";
 import { ISipManagementUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-management-usecase.interface";
 import { SipManagementUseCase } from "@application/use_cases/admin/sip-management/sip-management-usecase";
-import { IAdminStocksUseCase } from "@application/use_cases/admin/stocks-management/interface/admin-stocks-usecase.interface";
-import { AdminStocksUseCase } from "@application/use_cases/admin/stocks-management/admin-stocks.usecase";
-import { IAdminStockUpdateUseCase } from "@application/use_cases/admin/stocks-management/interface/admin-stock-update-usecase.interface";
-import { AdminStockUpdateUseCase } from "@application/use_cases/admin/stocks-management/admin-stock-update.usecase";
+import { IStockUpdateUseCase } from "@application/use_cases/admin/stocks-management/interface/stock-update-usecase.interface";
+import { StockUpdateUseCase } from "@application/use_cases/admin/stocks-management/stock-update.usecase";
 import { ISearchStocksUseCase } from "@application/use_cases/admin/stocks-management/interface/search-stocks.interface";
 import { SearchStocksUseCase } from "@application/use_cases/admin/stocks-management/search-stocks.usecase";
 import { IAddStockUseCase } from "@application/use_cases/admin/stocks-management/interface/add-stock.interface";
@@ -53,6 +51,8 @@ import { SystemJobLogRepository } from "@infrastructure/databases/repository/adm
 import { JobLoggerService } from "@application/services/admin/job-logger.service";
 import { GetSystemJobLogsUseCase } from "@application/use_cases/admin/system-logs/get-system-job-logs.usecase";
 import { GetSystemJobLogDetailUseCase } from "@application/use_cases/admin/system-logs/get-system-job-log-detail.usecase";
+import { StockManagementUseCase } from "@application/use_cases/admin/stocks-management/stocks-management.usecase";
+import { IStockManagementUseCase } from "@application/use_cases/admin/stocks-management/interface/stocks-management-usecase.interface";
 
 export const AdminModule = new ContainerModule(({ bind }) => {
   //Usecases
@@ -71,8 +71,8 @@ export const AdminModule = new ContainerModule(({ bind }) => {
   bind<IVerifyKycUseCase>(ADMIN_TYPES.VerifyKycUseCase).to(VerifyKycUseCase);
   bind<IRejectKycUseCase>(ADMIN_TYPES.RejectKycUseCase).to(RejectKycUseCase);
   bind<ISipManagementUseCase>(ADMIN_TYPES.SipManagementUseCase).to(SipManagementUseCase);
-  bind<IAdminStocksUseCase>(ADMIN_TYPES.AdminStocksUseCase).to(AdminStocksUseCase);
-  bind<IAdminStockUpdateUseCase>(ADMIN_TYPES.AdminStockUpdateUseCase).to(AdminStockUpdateUseCase);
+  bind<IStockManagementUseCase>(ADMIN_TYPES.StockManagementUseCase).to(StockManagementUseCase);
+  bind<IStockUpdateUseCase>(ADMIN_TYPES.StockUpdateUseCase).to(StockUpdateUseCase);
   bind<ISearchStocksUseCase>(ADMIN_TYPES.SearchStocksUseCase).to(SearchStocksUseCase);
   bind<IAddStockUseCase>(ADMIN_TYPES.AddStockUseCase).to(AddStockUseCase);
 

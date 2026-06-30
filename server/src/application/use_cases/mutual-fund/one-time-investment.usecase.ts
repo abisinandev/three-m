@@ -24,12 +24,12 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
 
     async execute(data: InvestmentDTO, userId: string, idempotencyKey: string): Promise<void> {
         const { amount, schemeCode, investmentType, paymentMethod } = data;
-
+        
         await this._idempotencyService.checkAndLock(idempotencyKey, data);
 
         const session = await mongoose.startSession();
 
-        try { 
+        try {
             await session.withTransaction(async () => {
                 const { user, wallet, fund } = await this._validationService.validateInvestment(
                     userId,
@@ -58,6 +58,7 @@ export class OneTimeInvestmentUseCase implements IOneTimeInvestmentUseCase {
 
                 await this._transactionService.markSuccess(newTransaction, session);
             });
+
         } finally {
             await session.endSession();
         }

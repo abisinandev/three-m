@@ -21,7 +21,6 @@ export class UserEntity {
 
   private _role: Role;
 
-  private _isEmailVerified: boolean;
   private _isVerified: boolean;
   private _isBlocked: boolean;
 
@@ -56,7 +55,6 @@ export class UserEntity {
     phone?: Phone | null;
     password?: Password | null;
     role: Role;
-    isEmailVerified: boolean;
     isVerified: boolean;
     isBlocked: boolean;
     subscriptionStatus: SubscriptionStatus;
@@ -89,7 +87,6 @@ export class UserEntity {
     this._password = props.password ?? null;
 
     this._role = props.role;
-    this._isEmailVerified = props.isEmailVerified;
     this._isVerified = props.isVerified;
     this._isBlocked = props.isBlocked;
 
@@ -131,7 +128,6 @@ export class UserEntity {
       phone: Phone.create(data.phone),
       password: Password.create(data.password),
       role: data.role ?? Role.USER,
-      isEmailVerified: false,
       isVerified: false,
       isBlocked: false,
       subscriptionStatus: SubscriptionStatus.INACTIVE,
@@ -158,7 +154,6 @@ export class UserEntity {
       phone: null,
       password: null,
       role: Role.USER,
-      isEmailVerified: true,
       isVerified: false,
       isBlocked: false,
       subscriptionStatus: SubscriptionStatus.INACTIVE,
@@ -181,7 +176,6 @@ export class UserEntity {
     phone?: string | null;
     password?: string | null;
     role: Role;
-    isEmailVerified: boolean;
     isVerified: boolean;
     isBlocked: boolean;
     subscriptionStatus: SubscriptionStatus;
@@ -243,9 +237,7 @@ export class UserEntity {
   get isTwoFactorEnabled() {
     return this._isTwoFactorEnabled;
   }
-  get isEmailVerified() {
-    return this._isEmailVerified;
-  }
+
   get isBlocked() {
     return this._isBlocked;
   }
@@ -301,10 +293,6 @@ export class UserEntity {
 
   changePassword(newPassword: string): void {
     this._password = Password.create(newPassword);
-  }
-
-  verifyEmail(): void {
-    this._isEmailVerified = true;
   }
 
   block(): void {

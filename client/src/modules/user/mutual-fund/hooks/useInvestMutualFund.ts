@@ -3,6 +3,7 @@ import api from '@/lib/axios-user';
 import type { InvestmentPayload } from '../types/mutual-fund.types';
 import { createIdempotencyKey } from '@/utils/uuid/generate-idempotency-key';
 import { toast } from 'sonner';
+import { API_ROUTES } from '@/shared/constants/apiRoutes';
 
 
 export const useInvestMutualFund = <T = { data?: unknown }>(onSuccess: (data: T) => void, onError: (msg: string) => void) => {
@@ -11,7 +12,7 @@ export const useInvestMutualFund = <T = { data?: unknown }>(onSuccess: (data: T)
 
     return useMutation({
         mutationFn: async (payload: InvestmentPayload) => {
-            const res = await api.post('/user/mutual-funds/investment/one-time',
+            const res = await api.post(API_ROUTES.USER.MUTUAL_FUNDS.ONE_TIME_INVESTMENT,
                 payload,
                 {
                     headers: { 'x-idempotency-key': createIdempotencyKey(payload) }

@@ -6,6 +6,7 @@ import type { UserMeResponseDTO } from "@application/dto/user/user-me-response.d
 import type { KycEntity } from "@domain/entities/user/kyc.entity";
 import type { WalletEntity } from "@domain/entities/user/wallet.entity";
 import { maskSensitiveData } from "@shared/utils/masking";
+import { IdProtector } from "@shared/utils/id-protector.util";
 
 // Dto => Domain
 export function toEntity(dto: CreateUserDTO, hashedPassword: string): UserEntity {
@@ -21,7 +22,6 @@ export function toEntity(dto: CreateUserDTO, hashedPassword: string): UserEntity
 export function toUserResponse(user: UserEntity): UserDTO {
 
   return {
-    id: user.id as string,
     userCode: user.userCode,
     fullName: user.fullName,
     email: user.email,
@@ -30,7 +30,6 @@ export function toUserResponse(user: UserEntity): UserDTO {
     role: user.role,
     authProvider: user.authProvider,
 
-    isEmailVerified: user.isEmailVerified,
     isVerified: user.isVerified,
     isBlocked: user.isBlocked,
 
@@ -43,14 +42,14 @@ export function toUserResponse(user: UserEntity): UserDTO {
       plan: user.subscriptionPlan,
     },
 
-    kycId: user.kycId as string,
     kycStatus: user.kycStatus,
-    walletId: user.walletId as string,
+
     currency: user.currency,
     avatar: user.avatar ?? null,
-    googleId: user.googleId ?? null,
 
-    createdAt: user.createdAt.toISOString(),
+
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
   };
 }
 
@@ -65,7 +64,7 @@ export function toUserMeResponse(
     ...userDto,
     kyc: kyc
       ? {
-        id: kyc.id as string,
+
         status: kyc.status,
         panNumber: maskSensitiveData(kyc.panNumber),
         aadharNumber: maskSensitiveData(kyc.aadharNumber),
@@ -82,7 +81,7 @@ export function toUserMeResponse(
       : undefined,
     wallet: wallet
       ? {
-        id: wallet.id as string,
+
         balance: wallet.balance,
         currency: wallet.currency,
         status: wallet.status,

@@ -7,6 +7,7 @@ import { ResponseHelper } from "@presentation/express/utils/response-handling/re
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { SIP_TYPES } from "@infrastructure/inversify_di/features/sip/sip.types";
+import { IdProtector } from "@shared/utils/id-protector.util";
 
 @injectable()
 export class AdminSipController {
@@ -32,8 +33,9 @@ export class AdminSipController {
     async fetchSipDetails(req: Request, res: Response, next: NextFunction) {
         try {
             const sipId = req.params.sipId;
+            const decodedId = IdProtector.decodeId(sipId as string);
             const result = await this._sipDetailsUseCase.execute(
-                sipId as string,
+                decodedId,
                 req.query
             );
             return ResponseHelper.success(
@@ -46,4 +48,4 @@ export class AdminSipController {
             next(error)
         }
     }
-}
+}

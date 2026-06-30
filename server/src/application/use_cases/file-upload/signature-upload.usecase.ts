@@ -14,7 +14,6 @@ export class SignatureUploadUseCase implements ISignatureUploadUseCase {
   async execute(data: SignatureUploadDTO): Promise<signatureUploadResponseDTO> {
     return await this._cloudinaryStorage.getSignedUploadUrl(
       data.folder,
-      data.userId,
     );
   }
 }

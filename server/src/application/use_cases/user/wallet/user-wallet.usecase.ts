@@ -52,8 +52,6 @@ export class UserWalletUseCase implements IUserWalletUseCase {
         const transactionResponses: TransactionResponseDTO[] = walletTransactions.map(tx => toTransactionResponse(tx));
 
         const walletResponse: WalletResponseDTO = {
-            id: wallet.id as string,
-            userId: wallet.userId,
             balance: wallet.balance,
             currency: wallet.currency,
             status: wallet.status,

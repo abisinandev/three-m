@@ -5,6 +5,7 @@ import { SuccessMessage } from "@domain/enum/express/messages/success.message";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
+import { IdProtector } from "@shared/utils/id-protector.util";
 import { type NextFunction, type Request, type Response } from "express";
 import { inject, injectable } from "inversify";
 
@@ -34,7 +35,8 @@ export class AdminUserController {
   async blockUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-      await this._blockUserUsecase.execute(userId as string);
+      const decodedId = IdProtector.decodeId(userId as string);
+      await this._blockUserUsecase.execute(decodedId);
 
       return ResponseHelper.success(
         res,
@@ -50,7 +52,9 @@ export class AdminUserController {
   async unblockUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
-      await this._unblockUserUsecase.execute(userId as string);
+      const decodedId = IdProtector.decodeId(userId as string);
+
+      await this._unblockUserUsecase.execute(decodedId);
 
       return ResponseHelper.success(
         res,

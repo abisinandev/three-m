@@ -90,7 +90,7 @@ export const StockOnboardingModal: FC<StockOnboardingModalProps> = ({ isOpen, on
             let logoUrl = null;
 
             if (logoFile && adminId) {
-                const signatureData = await GetSignatureApi(adminId, 'stock_logos');
+                const signatureData = await GetSignatureApi('stock_logos');
                 const uploadRes = await uploadToCloudinary(logoFile, signatureData.data);
                 logoUrl = uploadRes.secure_url;
             }

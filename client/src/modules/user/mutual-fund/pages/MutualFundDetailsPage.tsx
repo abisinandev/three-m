@@ -59,7 +59,7 @@ const MutualFundDetailsPage = () => {
       setErrorMsg('');
     },
     (msg) => {
-      alert(msg);
+      // alert(msg);
     }
   );
 

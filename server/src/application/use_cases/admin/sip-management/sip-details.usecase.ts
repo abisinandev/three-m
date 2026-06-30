@@ -55,9 +55,6 @@ export class SipDetailsUseCase implements ISipDetailsUseCase {
         const user = await this._userRepository.findById(sip.userId as string);
         const installmentDtos: SipInstallmentDto[] =
             (installments ?? []).map(i => ({
-                id: i.id,
-                sipId: i.sipId,
-                userId: i.userId,
                 schemeCode: i.schemeCode,
                 installmentNo: i.installmentNo,
                 executionDate: i.executionDate,
@@ -73,8 +70,6 @@ export class SipDetailsUseCase implements ISipDetailsUseCase {
 
         return {
             data: {
-                id: sip.id,
-                userId: sip.userId,
                 userCode: user?.userCode,
                 schemeCode: sip.schemeCode,
                 amount: sip.amount,

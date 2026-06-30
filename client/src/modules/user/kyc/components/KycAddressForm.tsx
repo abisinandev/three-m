@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Loader2, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
-import type { AddressData } from './KycTypes';
+import type { AddressData } from '../types/KycTypes';
 
 
 interface KycAddressFormProps {

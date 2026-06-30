@@ -21,16 +21,6 @@ export class UserRepository extends BaseRepository<UserEntity, UserDocument> imp
     return this.mapper.toDomain(userDoc);
   }
 
-  async verifyEmail(email: string): Promise<UserEntity | null> {
-    const userDoc = await this.model.findOneAndUpdate(
-      { email },
-      { $set: { isEmailVerified: true } },
-      { new: true },
-    );
-    if (!userDoc) return null;
-    return this.mapper.toDomain(userDoc);
-  }
-
   async updatePassword(id: string, password: string): Promise<void> {
     await this.model.findByIdAndUpdate(id, { $set: { password } });
   }

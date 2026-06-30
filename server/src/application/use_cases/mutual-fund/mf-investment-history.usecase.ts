@@ -18,8 +18,6 @@ export class MfInvestmentHistoryUseCase implements IMfInvestmentHistoryUseCase {
 
         for (const invest of investments) {
             grouped.push({
-                id: invest.id,
-                userId: invest.userId,
                 schemeCode: invest.schemeCode,
 
                 amount: invest.amount,

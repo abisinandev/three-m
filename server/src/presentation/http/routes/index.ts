@@ -65,7 +65,6 @@ export const RegisterRoutes = (app: Application) => {
   app.use(BaseRoutes.USER_STOCK_ORDER, (req, res, next) => authMiddleware.handle(req, res, next), ordersRoutes);
   app.use(BaseRoutes.ALGO_TRADING, (req, res, next) => authMiddleware.handle(req, res, next), algoTradingRoute);
 
-
   app.use(BaseRoutes.ADMIN_TRADES, (req, res, next) => authAdminMiddleware.handle(req, res, next), adminTradesRoutes);
   app.use(BaseRoutes.ADMIN_SUBSCRIPTIONS, (req, res, next) => authAdminMiddleware.handle(req, res, next), adminSubscriptionsRoutes);
   app.use(BaseRoutes.ADMIN_SYSTEM, (req, res, next) => authAdminMiddleware.handle(req, res, next), adminSystemRoutes);
