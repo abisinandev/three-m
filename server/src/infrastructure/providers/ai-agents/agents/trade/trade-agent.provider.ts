@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
+import { ChatMessage } from "@infrastructure/databases/mongo_db/models/interfaces/chat/chat-message.interface";
 import { ITradeBotAgent } from "@application/interfaces/services/ai-chatbot/trade-bot-agent.interface";
 import { AI_SYSTEM_TYPES } from "@infrastructure/inversify_di/features/ai-system/ai-system.type";
 import { IListBestStocksUseCase } from "@application/use_cases/ai-chatbot/interface/list-best-stocks.usecase.interface";

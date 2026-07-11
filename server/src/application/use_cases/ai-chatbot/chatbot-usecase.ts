@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { IChatbotUseCase } from "./interface/chatbot-usecase.interface";
 import { AI_SYSTEM_TYPES } from "@infrastructure/inversify_di/features/ai-system/ai-system.type";
 import { IChatHistoryService } from "@application/interfaces/services/ai-chatbot/chat-history-service.interface";
-import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
+import { ChatMessage } from "@infrastructure/databases/mongo_db/models/interfaces/chat/chat-message.interface";
 import { IDetectAgent } from "@application/interfaces/services/ai-chatbot/detect-agent.interface";
 import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
 import { IFeatureAccessService } from "@application/interfaces/services/subscription/feature-access-service.interface";

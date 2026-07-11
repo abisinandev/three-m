@@ -4,7 +4,7 @@ import { IDetectAgent } from "@application/interfaces/services/ai-chatbot/detect
 import { IEducationAgent } from "@application/interfaces/services/ai-chatbot/education-agent.interface";
 import { IPortfolioAgent } from "@application/interfaces/services/ai-chatbot/portfolio-agent.interface";
 import { ITradeBotAgent } from "@application/interfaces/services/ai-chatbot/trade-bot-agent.interface";
-import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
+import { ChatMessage } from "@infrastructure/databases/mongo_db/models/interfaces/chat/chat-message.interface";
 import { AgentResponse } from "@application/interfaces/services/ai-chatbot/agent-response.interface";
 
 @injectable()

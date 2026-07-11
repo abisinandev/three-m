@@ -14,6 +14,12 @@ export class ChangeEmailVerifyOtpUseCase implements IChangeEmailVerifyOtpUseCase
     ) { }
 
     async execute(userId: string, data: VerifyOtpDTO): Promise<void> {
+
+        const user = await this._userRepository.findById(userId);
+        if (!user) {
+            throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
+        }
+
         const redisKey = `change-email-otp:${data.email}`;
         const storedOtp = await redisClient.hgetall(redisKey);
 
@@ -27,11 +33,6 @@ export class ChangeEmailVerifyOtpUseCase implements IChangeEmailVerifyOtpUseCase
 
         if (storedOtp.otp !== data.otp) {
             throw new ValidationError(ErrorMessages.AUTH.INVALID_OTP);
-        }
-
-        const user = await this._userRepository.findById(userId);
-        if (!user) {
-            throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
         }
 
         await redisClient.del(redisKey);

@@ -2,7 +2,7 @@ import { INotificationRepository } from "@application/interfaces/repositories/fe
 import { NOTIFICATION_TYEPS } from "@infrastructure/inversify_di/features/notification/notification.type";
 import { inject, injectable } from "inversify";
 import { IGetNotificationsUseCase } from "./interfaces/get-notifications.usecase.interface";
-import { NotificationDTO } from "@application/dtos/notification/notification.dto";
+import { NotificationDTO } from "@application/dto/notification/notification.dto";
 
 @injectable()
 export class GetNotificationsUseCase implements IGetNotificationsUseCase {

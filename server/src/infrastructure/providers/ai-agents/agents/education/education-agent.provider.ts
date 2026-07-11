@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { IEducationAgent } from "@application/interfaces/services/ai-chatbot/education-agent.interface";
-import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
+import { ChatMessage } from "@infrastructure/databases/mongo_db/models/interfaces/chat/chat-message.interface";
 import { groqModel } from "../../groq.config";
 import { FinancialIntelligentTool } from "../../langchain/tools/financial-intelligent";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
