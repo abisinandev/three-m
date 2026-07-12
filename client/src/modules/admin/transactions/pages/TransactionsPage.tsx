@@ -4,6 +4,7 @@ import { useState } from "react";
 import { TransactionsApi } from "@/shared/services/admin/transaction/transactions-api";
 import { TransactionStatsCard } from "../components/TransactionStatsCard";
 import { TransactionsTable } from "../components/TransactionsTable";
+import { Pagination } from "@shared/components/pagination/Pagination";
 import type { TransactionsResponse } from "../types/transaction.types";
 
 export default function TransactionManagementPage() {
@@ -100,12 +101,15 @@ export default function TransactionManagementPage() {
                     transactions={transactions}
                     isLoading={isLoading}
                     isError={isError}
-                    currentPage={currentPage}
+                />
+                <Pagination
+                    page={currentPage}
                     limit={limit}
                     total={meta.total}
                     totalPages={meta.totalPages}
-                    totalAmount={meta.totalAmount}
                     onPageChange={handlePageChange}
+                    isLoading={isLoading}
+                    unit="transactions"
                 />
             </div>
         </div>

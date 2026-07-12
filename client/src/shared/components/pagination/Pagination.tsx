@@ -6,69 +6,46 @@ type PaginationProps = {
   total: number;
   totalPages?: number;
   onPageChange: (page: number) => void;
+  isLoading?: boolean;
+  unit?: string;
 };
 
-export const Pagination = ({ page, limit, total, totalPages: totalPagesProp, onPageChange }: PaginationProps) => {
+export const Pagination = ({
+  page,
+  limit,
+  total,
+  totalPages: totalPagesProp,
+  onPageChange,
+  isLoading = false,
+  unit = "results",
+}: PaginationProps) => {
   const totalPages = totalPagesProp ?? Math.ceil(total / limit);
-  const startItem = (page - 1) * limit + 1;
+  const startItem = total === 0 ? 0 : (page - 1) * limit + 1;
   const endItem = Math.min(page * limit, total);
 
-  if (totalPages <= 1) return null;
-
-  const pages: number[] = [];
-  const showPages = 5;
-
-  let start = Math.max(1, page - Math.floor(showPages / 2));
-  const end = Math.min(totalPages, start + showPages - 1);
-
-  if (end === totalPages) {
-    start = Math.max(1, totalPages - showPages + 1);
-  }
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i);
-  }
+  if (totalPages <= 1 && total <= limit) return null;
 
   return (
-    <div className="flex items-center justify-between border-t border-neutral-800 px-6 py-4">
-      <p className="text-xs text-neutral-500">
-        Showing {startItem}–{endItem} of {total.toLocaleString()} results
-      </p>
-
-      <div className="flex items-center gap-1">
+    <div className="p-4 border-t border-[#1e2025] flex justify-between items-center text-[11px] text-[#5a5f6e] bg-[#111214]">
+      <div className="font-medium bg-[#1a1c20] px-2 py-1 rounded">
+        Showing <span className="text-white">{startItem}–{endItem}</span> of{" "}
+        <span className="text-white">{total.toLocaleString()}</span> {unit}
+      </div>
+      <div className="flex gap-1.5 items-center">
+        <span className="mr-2">Page {page} of {totalPages}</span>
         <button
           onClick={() => onPageChange(page - 1)}
-          disabled={page === 1}
-          className={`p-2 rounded-lg transition ${page === 1
-              ? "text-neutral-600 cursor-not-allowed"
-              : "text-neutral-400 hover:bg-neutral-700"
-            }`}
+          disabled={page === 1 || isLoading}
+          className="p-1.5 bg-[#1a1c20] border border-[#1e2025] text-[#5a5f6e] hover:text-white disabled:opacity-30 disabled:hover:text-[#5a5f6e] rounded-md transition-all shadow-sm"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft size={16} />
         </button>
-
-        {pages.map((p) => (
-          <button
-            key={p}
-            onClick={() => onPageChange(p)}
-            className={`min-w-10 px-3 py-2 rounded-lg text-xs font-medium transition ${page === p
-                ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-400"
-                : "text-neutral-400 hover:bg-neutral-700"
-              }`}
-          >
-            {p}
-          </button>
-        ))}
-
         <button
           onClick={() => onPageChange(page + 1)}
-          disabled={page === totalPages}
-          className={`p-2 rounded-lg transition ${page === totalPages
-              ? "text-neutral-600 cursor-not-allowed"
-              : "text-neutral-400 hover:bg-neutral-700"
-            }`}
+          disabled={page >= totalPages || isLoading}
+          className="p-1.5 bg-[#1a1c20] border border-[#1e2025] text-[#5a5f6e] hover:text-white disabled:opacity-30 disabled:hover:text-[#5a5f6e] rounded-md transition-all shadow-sm"
         >
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight size={16} />
         </button>
       </div>
     </div>

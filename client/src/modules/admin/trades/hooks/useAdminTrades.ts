@@ -5,9 +5,14 @@ import { FetchAdminAllTrades } from '@/shared/services/admin/algo-trading/admin-
 
 export const useAdminTrades = () => {
     const [page, setPage] = useState(1);
-    const [search, setSearch] = useState('');
+    const [search, setSearchRaw] = useState('');
     const [type, setType] = useState('All'); // 'All', 'Manual', 'Algo'
     const [debouncedSearch] = useDebounce(search, 500);
+
+    const setSearch = (value: string) => {
+        setSearchRaw(value);
+        setPage(1);
+    };
 
     const {
         data: tradesData,
@@ -35,6 +40,7 @@ export const useAdminTrades = () => {
 
     return {
         page,
+        setPage,
         search,
         setSearch,
         type,

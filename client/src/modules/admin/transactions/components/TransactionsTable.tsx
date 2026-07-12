@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import { Eye, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, ChevronUp } from "lucide-react";
 import { PaymentStatusBadge } from "./PaymentStatusBadge";
 import type { Transaction } from "../types/transaction.types";
 
@@ -8,35 +8,17 @@ interface TransactionsTableProps {
     transactions: Transaction[];
     isLoading: boolean;
     isError: boolean;
-    currentPage: number;
-    limit: number;
-    totalAmount: number;
-    total: number;
-    totalPages: number;
-    onPageChange: (page: number) => void;
 }
 
 export const TransactionsTable: React.FC<TransactionsTableProps> = ({
     transactions,
     isLoading,
     isError,
-    currentPage,
-    total,
-    totalPages,
-    onPageChange,
 }) => {
     const [expandedRow, setExpandedRow] = useState<string | null>(null);
 
     const toggleExpand = (id: string) => {
         setExpandedRow(expandedRow === id ? null : id);
-    };
-
-    const handlePrevPage = () => {
-        if (currentPage > 1) onPageChange(currentPage - 1);
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages) onPageChange(currentPage + 1);
     };
 
     return (
@@ -138,29 +120,6 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
                         )}
                     </tbody>
                 </table>
-            </div>
-
-            <div className="p-3 border-t border-neutral-800/80 flex justify-between items-center text-[11px] text-neutral-500 bg-[#121214]">
-                <div className="font-medium bg-neutral-800/20 px-2 py-0.5 rounded text-[10px]">
-                    Showing <span className="text-white">{transactions.length}</span> of <span className="text-white">{total}</span>
-                </div>
-                <div className="flex gap-1 items-center">
-                    <span className="mr-2 text-[10px]">Page <span className="text-white">{currentPage}</span> of <span className="text-white">{totalPages}</span></span>
-                    <button
-                        onClick={handlePrevPage}
-                        disabled={currentPage === 1 || isLoading}
-                        className="p-1 bg-neutral-800 border border-neutral-700 text-neutral-400 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-400 rounded transition-all shadow-sm"
-                    >
-                        <ChevronLeft size={14} />
-                    </button>
-                    <button
-                        onClick={handleNextPage}
-                        disabled={currentPage >= totalPages || isLoading}
-                        className="p-1 bg-neutral-800 border border-neutral-700 text-neutral-400 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-400 rounded transition-all shadow-sm"
-                    >
-                        <ChevronRight size={14} />
-                    </button>
-                </div>
             </div>
         </div>
     );
