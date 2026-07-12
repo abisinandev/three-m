@@ -26,6 +26,7 @@ export interface KycUser {
   aadharNumber: string;
   status: string;
   rejectionReason?: string;
+  submissionCount?: number;
   createdAt: string;
 }
 export interface DetailsData {
@@ -39,6 +40,7 @@ export interface AddressData {
     city: string;
     state: string;
     pincode: string;
+    isPincodeValid?: boolean;
 }
 
 export interface KycFiles {

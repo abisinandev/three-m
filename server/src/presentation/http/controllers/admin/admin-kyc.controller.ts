@@ -2,7 +2,7 @@ import type { IFetchAllKycDocsUseCase } from "@application/use_cases/admin/kyc-m
 import type { IRejectKycUseCase } from "@application/use_cases/admin/kyc-management/interfaces/reject-kyc-usecase.interface";
 import type { IVerifyKycUseCase } from "@application/use_cases/admin/kyc-management/interfaces/verify-kyc-usecase.interface";
 import type { IViewKycDetailsUseCase } from "@application/use_cases/admin/kyc-management/interfaces/view-kyc-details-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
@@ -25,7 +25,7 @@ export class AdminKycController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.DATA_FETCHED,
+        SuccessMessages.DATA.FETCHED,
         result,
         HttpStatus.OK,
       );
@@ -43,7 +43,7 @@ export class AdminKycController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.DATA_FETCHED,
+        SuccessMessages.DATA.FETCHED,
         result,
         HttpStatus.OK,
       );
@@ -65,7 +65,7 @@ export class AdminKycController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.REJECT_KYC,
+        SuccessMessages.USER.KYC_REJECTED,
         HttpStatus.OK,
       );
 
@@ -82,7 +82,7 @@ export class AdminKycController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.VERIFY_KYC,
+        SuccessMessages.USER.KYC_VERIFIED,
         HttpStatus.OK,
       );
 

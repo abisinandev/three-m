@@ -51,16 +51,21 @@ export const KycAddressForm = ({ address, setAddress }: KycAddressFormProps) => 
                         setAddress(prev => ({
                             ...prev,
                             city: postOffice.District,
-                            state: postOffice.State
+                            state: postOffice.State,
+                            isPincodeValid: true
                         }));
                     } else if (data && data[0].Status === 'Error') {
                         toast.error('Invalid PIN Code');
+                        setAddress(prev => ({ ...prev, isPincodeValid: false }));
                     }
                 } catch {
                     console.error('Error fetching location from PIN');
+                    setAddress(prev => ({ ...prev, isPincodeValid: false }));
                 } finally {
                     setIsFetchingPin(false);
                 }
+            } else {
+                setAddress(prev => ({ ...prev, isPincodeValid: false }));
             }
         };
 
@@ -132,7 +137,7 @@ export const KycAddressForm = ({ address, setAddress }: KycAddressFormProps) => 
                         placeholder="6-digit PIN"
                         value={address.pincode}
                         maxLength={6}
-                        onChange={(e) => setAddress(prev => ({ ...prev, pincode: e.target.value.replace(/\D/g, '') }))}
+                        onChange={(e) => setAddress(prev => ({ ...prev, pincode: e.target.value.replace(/\D/g, ''), isPincodeValid: false }))}
                         className={`w-full px-4 py-3 bg-[#0b0c0e] border border-[#1e2025] rounded-xl text-[#e8eaed] text-[13px] placeholder-[#333] focus:outline-none focus:border-[#00C853]/50 font-medium tracking-wider transition-all ${isFetchingPin ? 'opacity-70' : ''}`}
                     />
                     {isFetchingPin && (

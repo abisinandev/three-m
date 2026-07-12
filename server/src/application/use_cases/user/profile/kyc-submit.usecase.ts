@@ -28,23 +28,23 @@ export class KycSubmitUseCase implements IKycSubmitUseCase {
       for (const doc of data.documents) {
         fileUploadValidator(doc.fileUrl, doc.publicId);
 
-        const castedDoc = doc; 
+        const castedDoc = doc;
         if (castedDoc.resourceType !== 'image') {
-          throw new ValidationError(`Invalid resource type: ${castedDoc.resourceType}`);
+          throw new ValidationError(ErrorMessages.KYC.UNSUPPORTED_DOCUMENT);
         }
         if (!allowedFormats.includes(castedDoc.format)) {
-          throw new ValidationError(`Invalid format: ${castedDoc.format}`);
+          throw new ValidationError(ErrorMessages.KYC.UNSUPPORTED_FORMAT);
         }
         if (castedDoc.bytes > maxSizeBytes) {
-          throw new ValidationError(`File size exceeds 5MB limit`);
+          throw new ValidationError(ErrorMessages.KYC.FILE_TOO_LARGE);
         }
 
         const asset = await this._storageProvider.verifyAsset(doc.publicId);
         if (!asset) {
-          throw new ValidationError(`Asset not found in Cloudinary`);
+          throw new ValidationError(ErrorMessages.KYC.FILE_NOT_FOUND);
         }
         if (asset.resource_type !== 'image' || !allowedFormats.includes(asset.format) || asset.bytes > maxSizeBytes) {
-          throw new ValidationError(`Cloudinary metadata verification failed`);
+          throw new ValidationError(ErrorMessages.KYC.METADATA_VERIFICATION_FAILED);
         }
       }
 
@@ -66,6 +66,12 @@ export class KycSubmitUseCase implements IKycSubmitUseCase {
       }
 
       if (existingKyc?.status === KycStatusType.REJECTED) {
+        if (existingKyc.submissionCount >= 3) {
+          throw new ValidationError(ErrorMessages.KYC.MAX_ATTEMPTS_REACHED);
+        }
+
+        newKyc.incrementSubmissionCount();
+
         await this._kycRepository.update(existingKyc.id as string, newKyc);
         await this._userRepository.update(userId, {
           kycId: existingKyc.id,

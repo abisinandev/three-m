@@ -16,6 +16,7 @@ export class KycEntity {
     pincode: string;
   };
   private _rejectionReason?: string | null;
+  private _submissionCount: number;
   private readonly _createdAt?: Date;
 
   private constructor(props: {
@@ -33,6 +34,7 @@ export class KycEntity {
       pincode: string;
     };
     rejectionReason?: string | null;
+    submissionCount?: number;
     createdAt?: Date;
   }) {
     this._id = props.id;
@@ -44,6 +46,7 @@ export class KycEntity {
     this._aadharNumber = props.aadharNumber ?? null;
     this._address = props.address;
     this._rejectionReason = props.rejectionReason ?? null;
+    this._submissionCount = props.submissionCount ?? 1;
     this._createdAt = props.createdAt;
   }
 
@@ -63,6 +66,7 @@ export class KycEntity {
       aadharNumber: data.aadharNumber ?? null,
       address: data.address,
       rejectionReason: null,
+      submissionCount: 1,
     });
   }
 
@@ -76,6 +80,7 @@ export class KycEntity {
     aadharNumber?: string | null;
     address: { fullAddress: string; city: string; state: string; pincode: string };
     rejectionReason?: string | null;
+    submissionCount: number;
     createdAt?: Date;
   }): KycEntity {
     return new KycEntity({
@@ -88,6 +93,7 @@ export class KycEntity {
       aadharNumber: data.aadharNumber ?? null,
       address: data.address,
       rejectionReason: data.rejectionReason ?? null,
+      submissionCount: data.submissionCount,
       createdAt: data.createdAt,
     });
   }
@@ -119,6 +125,9 @@ export class KycEntity {
   get rejectionReason() {
     return this._rejectionReason;
   }
+  get submissionCount() {
+    return this._submissionCount;
+  }
   get createdAt() {
     return this._createdAt;
   }
@@ -141,5 +150,17 @@ export class KycEntity {
   updateAddress(address: { fullAddress: string; city: string; state: string; pincode: string }) {
     this._address = address;
   }
-  
+
+  incrementSubmissionCount() {
+    if (this._submissionCount) {
+      this._submissionCount += 1;
+    } else {
+      this._submissionCount = 1;
+    }
+  }
+
+  setSubmissionCount(count: number) {
+    this._submissionCount = count;
+  }
+
 }

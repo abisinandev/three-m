@@ -21,6 +21,7 @@ export interface IKycSchema {
     pincode: string;
   };
   rejectionReason?: string | null;
+  submissionCount: number;
   createdAt?: Date;  
   updatedAt?: Date; 
 }

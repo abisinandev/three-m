@@ -14,9 +14,7 @@ export const fetchKycUsers = async ({ page = 1, status = "pending" }: KycFilters
 };
 
 export const FetchUserKycApi = async (kycId: string): Promise<{ data: KycUser }> => {
-    console.log("kyc: ", kycId)
     const response = await adminApi.get(API_ROUTES.ADMIN.KYC.VIEW(kycId));
-    console.log("FetchUserKycApi: ", response.data)
     return response.data
 }
 

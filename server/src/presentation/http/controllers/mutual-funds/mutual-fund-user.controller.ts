@@ -2,7 +2,7 @@ import { IOneTimeInvestmentUseCase } from "@application/use_cases/mutual-fund/in
 import { IListFundsUserSideUseCase } from "@application/use_cases/mutual-fund/interfaces/list-fund-usecase.interface";
 import { IMfInvestmentHistoryUseCase } from "@application/use_cases/mutual-fund/interfaces/mf-investment-history-usecase.interface";
 import { IMutualFundDetailsUseCase } from "@application/use_cases/mutual-fund/interfaces/mutual-fund-details-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { NavInterval } from "@domain/enum/funds/nav-intervals.enums";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
@@ -46,7 +46,7 @@ export class MutualFundUserController {
 
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
             )
@@ -62,7 +62,7 @@ export class MutualFundUserController {
             const result = await this._mfDetailsUsecase.execute(schemeCode as string, interval as NavInterval);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
             )
@@ -80,7 +80,7 @@ export class MutualFundUserController {
 
             return ResponseHelper.success(
                 res,
-                SuccessMessage.INVESTMENT_SUCCESS,
+                SuccessMessages.PAYMENT.INVESTMENT_SUCCESS,
                 null,
                 HttpStatus.CREATED
             )
@@ -95,7 +95,7 @@ export class MutualFundUserController {
             const result = await this._mfInvestmentsHistory.execute(userId as string);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK,
             )

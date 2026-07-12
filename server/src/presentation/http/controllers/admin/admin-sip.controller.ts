@@ -1,6 +1,6 @@
 import { ISipDetailsUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-details-usecase.interface";
 import { ISipManagementUseCase } from "@application/use_cases/admin/sip-management/interfaces/sip-management-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
@@ -21,7 +21,7 @@ export class AdminSipController {
             const result = await this._sipManagementUseCase.execute(req.query);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK,
             )
@@ -40,7 +40,7 @@ export class AdminSipController {
             );
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
             )

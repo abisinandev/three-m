@@ -122,6 +122,16 @@ export const ErrorMessages = {
         MAX_TRADES: "Max trades shouldn't be more than 5",
         STOP_LOSS: "Stop loss shouldn't be more than 100",
         TAKE_PROFIT: "Take profit shouldn't be more than 200",
-    }
+    },
+    KYC: {
+        MAX_ATTEMPTS_REACHED: "Maximum KYC submission attempts reached. Please contact support.",
+        INVALID_DOCUMENT: "Invalid document",
+        UNSUPPORTED_FORMAT: "Unsupported file format. Please upload a valid image file.",
+        FILE_TOO_LARGE: "File size exceeds the limit of 5MB",
+        FILE_NOT_FOUND: "File not found in Cloudinary",
+        METADATA_VERIFICATION_FAILED: "Cloudinary metadata verification failed",
+        UNSUPPORTED_DOCUMENT: "Unsupported document type.",
+    },
+
 } as const;
 

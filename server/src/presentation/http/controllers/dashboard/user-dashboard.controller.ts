@@ -1,5 +1,5 @@
 import type { IDashboardUseCase } from "@application/use_cases/dashboard/interface/dashboard-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { DASHBOARD_TYPES } from "@infrastructure/inversify_di/features/dashboard/dashboard.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
@@ -20,7 +20,7 @@ export class DashboardController {
 
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK,
             );

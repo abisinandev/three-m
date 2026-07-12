@@ -16,12 +16,23 @@ export class FetchUserDetails implements IFetchUserDetails {
 
   async execute(data: QueryOptions): Promise<FetchDataResponseDTO<UserDTO>> {
 
+    const filter: Record<string, unknown> = {};
+    const status = (data as any).status;
+    if (status === 'active') {
+      filter.isBlocked = false;
+    } else if (status === 'blocked') {
+      filter.isBlocked = true;
+    } else if (status === 'verified') {
+      filter.isVerified = true;
+    }
+
     const allUsers = await this._userRepository.findWithFilters({
       search: data.search,
       page: data.page,
       limit: data.limit,
       sortBy: data.sortBy,
       sortOrder: data.sortOrder,
+      filter,
     });
 
     const { totalCount } = await this._userRepository.count();

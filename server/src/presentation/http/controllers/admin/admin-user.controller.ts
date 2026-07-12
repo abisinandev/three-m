@@ -1,7 +1,7 @@
 import type { IBlockUserUseCase } from "@application/use_cases/admin/user-management/interfaces/block-user-usecase.interface";
 import type { IFetchUserDetails } from "@application/use_cases/admin/user-management/interfaces/fetch-user-details.interface";
 import type { IUnblockUserUsecase } from "@application/use_cases/admin/user-management/interfaces/unblock-user-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
@@ -22,7 +22,7 @@ export class AdminUserController {
       const result = await this._fetchUserDetails.execute(req.query);
       return ResponseHelper.success(
         res,
-        SuccessMessage.DATA_FETCHED,
+        SuccessMessages.DATA.FETCHED,
         result,
         HttpStatus.OK,
       );
@@ -40,7 +40,7 @@ export class AdminUserController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.BLOCKED_MSG,
+        SuccessMessages.USER.BLOCKED,
         HttpStatus.OK,
       );
 
@@ -58,7 +58,7 @@ export class AdminUserController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.UNBLOCK_MSG,
+        SuccessMessages.USER.UNBLOCKED,
         HttpStatus.OK,
       );
 

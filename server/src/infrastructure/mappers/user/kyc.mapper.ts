@@ -14,6 +14,7 @@ export const toDomain = (doc: KycDocument): KycEntity => {
     isKycVerified: doc.isKycVerified,
     status: doc.status,
     rejectionReason: doc.rejectionReason as string,
+    submissionCount: doc.submissionCount,
     createdAt: doc.createdAt,
   });
 };
@@ -43,6 +44,7 @@ export const toPersistance = (data: KycEntity): Partial<KycDocument> => {
     isKycVerified: data.isKycVerified,
     status: data.status as KycStatusType,
     rejectionReason: data.rejectionReason ?? null,
+    submissionCount: data.submissionCount,
   };
 };
 
