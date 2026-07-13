@@ -15,7 +15,11 @@ const PaymentSuccessPage = () => {
         queryKey: ["verify-payment", sessionId],
         queryFn: () => VerifyPaymentApi(sessionId),
         enabled: !!sessionId,
-        retry: 1,
+        retry: false,          // backend already verified — retrying on error is misleading
+        staleTime: Infinity,   // payment result never goes stale in this session
+        gcTime: 1000 * 60 * 5, // keep in cache for 5 minutes
+        refetchOnWindowFocus: false,   // don't re-verify when user tabs back in
+        refetchOnReconnect: false,
     });
 
     useEffect(() => {

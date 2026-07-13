@@ -3,12 +3,11 @@ import type { IAdminAuthVerifyOtpUseCase } from "@application/use_cases/admin/au
 import type { IAdminLogoutUseCase } from "@application/use_cases/admin/auth/interfaces/admin-logout.interface";
 import type { IRefreshTokenUseCase } from "@application/use_cases/admin/auth/interfaces/admin-refresh-token.interface";
 import type { IAdminResendOtpUseCase } from "@application/use_cases/admin/auth/interfaces/admin-resend-otp-usecase-interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ValidationError } from "@presentation/express/utils/error-handling";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
-import { SuccessMessages } from "@shared/constants/success.messages";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
@@ -29,7 +28,7 @@ export class AdminAuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.OTP_SEND,
+        SuccessMessages.AUTH.OTP_SENT,
         { expiresAt, resendCount, email },
         HttpStatus.OK
       );
@@ -59,7 +58,7 @@ export class AdminAuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.AUTHENTICATION_DONE,
+        SuccessMessages.AUTH.AUTHENTICATION_DONE,
         { accessToken: "created" },
         HttpStatus.OK
       );
@@ -73,26 +72,6 @@ export class AdminAuthController {
     try {
       const dto = { ...req.body };
       await this._adminResendOtpUsecase.execute(dto);
-
-      // res.cookie("refreshToken", result.refreshToken, {
-      //   httpOnly: true,
-      //   secure: true,
-      //   sameSite: "lax",
-      //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      // });
-
-      // res.cookie("accessToken", result.accessToken, {
-      //   httpOnly: true,
-      //   secure: true,
-      //   sameSite: "lax",
-      //   maxAge: 15 * 60 * 1000, // 15 minutes
-      // });
-
-      // res.status(HttpStatus.OK).json({
-      //   success: true,
-      //   message: SuccessMessage.AUTHENTICATION_DONE,
-      //   // data: { accessToken: "created" },
-      // });
 
       return ResponseHelper.success(
         res,
@@ -124,7 +103,7 @@ export class AdminAuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.ACCESS_TOKEN_UPDATED,
+        SuccessMessages.AUTH.ACCESS_TOKEN_UPDATED,
         HttpStatus.OK,
       );
 
@@ -144,7 +123,7 @@ export class AdminAuthController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.LOGGED_OUT,
+        SuccessMessages.AUTH.LOGGED_OUT,
         HttpStatus.OK,
       );
 

@@ -42,13 +42,14 @@ export const FiltersRow = ({
       </button>
 
       <select
-        value={currentFilters.role || ""}
-        onChange={(e) => onFilterChange("role", e.target.value || undefined)}
+        value={currentFilters.status || ""}
+        onChange={(e) => onFilterChange("status", e.target.value || undefined)}
         className="px-4 py-2.5 bg-[#111111] border border-neutral-800 rounded-lg text-sm text-gray-300 focus:outline-none focus:border-teal-500/40 transition-colors"
       >
         <option value="">All Users</option>
         <option value="active">Active Only</option>
         <option value="blocked">Blocked Only</option>
+        <option value="verified">Verified Only</option>
       </select>
 
       <select

@@ -34,6 +34,7 @@ const KycSchema = new Schema<KycDocument>(
     aadharNumber: { type: String, trim: true, sparse: true, default: null },
     address: { type: AddressSchema, required: true },
     rejectionReason: { type: String, trim: true, default: null },
+    submissionCount: { type: Number, default: 1 },
   },
   { timestamps: true, versionKey: false }
 );

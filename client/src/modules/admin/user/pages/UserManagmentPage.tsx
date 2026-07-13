@@ -32,7 +32,7 @@ export default function UserManagement() {
         page: 1,
         limit: 10,
         search: '',
-        role: '',
+        status: '',
         sortBy: 'createdAt',
         sortOrder: 'desc',
     });

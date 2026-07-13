@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { ADMIN_TYPES } from "@infrastructure/inversify_di/features/admin/admin.types";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { NextFunction, Request, Response } from "express";
 import { IGetSystemJobLogDetailUseCase } from "@application/use_cases/admin/system-logs/interfaces/get-system-job-log-detail.interface";
@@ -23,7 +23,7 @@ export class AdminSystemController {
                 page: Number(page) || 1,
                 limit: Number(limit) || 20
             });
-            return ResponseHelper.success(res, SuccessMessage.DATA_FETCHED, result, HttpStatus.OK);
+            return ResponseHelper.success(res, SuccessMessages.DATA.FETCHED, result, HttpStatus.OK);
         } catch (error) {
             next(error);
         }
@@ -33,7 +33,7 @@ export class AdminSystemController {
         try {
             const { id } = req.params;
             const result = await this._getLogDetail.execute(id as string);
-            return ResponseHelper.success(res, SuccessMessage.DATA_FETCHED, result, HttpStatus.OK);
+            return ResponseHelper.success(res, SuccessMessages.DATA.FETCHED, result, HttpStatus.OK);
         } catch (error) {
             next(error);
         }

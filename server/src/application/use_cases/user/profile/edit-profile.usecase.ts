@@ -18,13 +18,11 @@ export class EditProfileUseCase implements IEditProfileUseCase {
             Object.entries(data).filter(([_, value]) => value !== undefined)
         );
 
-        console.log("FilteredData :", filteredData);
-
         if (Object.keys(filteredData).length === 0) {
             throw new ValidationError(ErrorMessages.USER.PROFILE_UPDATE_FAILED);
         }
 
         const user = await this._userRepository.update(userId, filteredData);
-        console.log("user; ,", user);
+        console.log("user: ", user);
     }
 }

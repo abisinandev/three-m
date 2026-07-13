@@ -5,7 +5,7 @@ import { StrategiesTable } from '../components/StrategiesTable';
 import { SignalsTable } from '../components/SignalsTable';
 import BaseStrategiesRiskTable from '../components/BaseStrategiesRiskTable';
 import { AlgoTradesTable } from '../components/AlgoTradesTable';
-import { AlgoPagination } from '../components/AlgoPagination';
+import { Pagination } from '@shared/components/pagination/Pagination';
 import { useAlgoTrading } from '../hooks/useAlgoTrading';
 import type { AdminStrategy, AdminSignal, AdminAlgoTrade } from '@/shared/types/admin/algo-trading.types';
 
@@ -15,11 +15,10 @@ const AlgoTradingPage = () => {
         activeTab,
         tabs,
         page,
+        setPage,
         search,
         setSearch,
         handleTabChange,
-        handleNextPage,
-        handlePrevPage,
         refetchAll,
         stats,
         items,
@@ -116,15 +115,14 @@ const AlgoTradingPage = () => {
                     )}
 
                     {!isLoading && (activeTab === 'Strategies' || activeTab === 'Signals' || activeTab === 'Trades') && items.length > 0 && (
-                        <AlgoPagination
+                        <Pagination
                             page={page}
+                            limit={10}
+                            total={totalItems}
                             totalPages={totalPages}
-                            itemsCount={items.length}
-                            totalItems={totalItems}
-                            unit={activeTab.toLowerCase()}
+                            onPageChange={setPage}
                             isLoading={isLoading}
-                            onPrevPage={handlePrevPage}
-                            onNextPage={handleNextPage}
+                            unit={activeTab.toLowerCase()}
                         />
                     )}
                 </div>

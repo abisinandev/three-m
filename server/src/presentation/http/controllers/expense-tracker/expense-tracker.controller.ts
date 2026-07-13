@@ -1,7 +1,7 @@
 import { IAddIncomeUseCase } from "@application/use_cases/expense-tracker/interfaces/add-income-usecase.interface";
 import { IAddExpenseUseCase } from "@application/use_cases/expense-tracker/interfaces/add-expenses-usecase.interface";
 import { IExpenseTrackerUseCase } from "@application/use_cases/expense-tracker/interfaces/expense-tracker-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { EXPENSE_TRACKER_TYPE } from "@infrastructure/inversify_di/features/expense-tracker/expense-tracker.type";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
@@ -32,7 +32,7 @@ export class ExpenseTrackerController {
             const result = await this._expenseTrackerUsecase.execute(userId, month);
             return ResponseHelper.success( 
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
             )
@@ -50,7 +50,7 @@ export class ExpenseTrackerController {
 
             return ResponseHelper.success(
                 res,
-                SuccessMessage.OPERATION_SUCCESSFUL,
+                SuccessMessages.DATA.OPERATION_SUCCESSFUL,
                 result,
                 HttpStatus.OK
             )
@@ -67,7 +67,7 @@ export class ExpenseTrackerController {
             const result = await this._addExpenseUseCase.execute(dto, userId);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.OPERATION_SUCCESSFUL,
+                SuccessMessages.DATA.OPERATION_SUCCESSFUL,
                 result,
                 HttpStatus.OK
             )
@@ -84,7 +84,7 @@ export class ExpenseTrackerController {
             await this._deleteExpenseUseCase.execute(userId, parseInt(index as string, 10));
             return ResponseHelper.success(
                 res,
-                SuccessMessage.OPERATION_SUCCESSFUL,
+                SuccessMessages.DATA.OPERATION_SUCCESSFUL,
                 null,
                 HttpStatus.OK
             )
@@ -100,7 +100,7 @@ export class ExpenseTrackerController {
             const result = await this._analyticsUseCase.execute(userId, month);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.DATA_FETCHED,
+                SuccessMessages.DATA.FETCHED,
                 result,
                 HttpStatus.OK
             );
@@ -116,7 +116,7 @@ export class ExpenseTrackerController {
             const result = await this._calculateBudgetPlanUseCase.execute(userId, dto);
             return ResponseHelper.success(
                 res,
-                SuccessMessage.OPERATION_SUCCESSFUL,
+                SuccessMessages.DATA.OPERATION_SUCCESSFUL,
                 result,
                 HttpStatus.OK
             );

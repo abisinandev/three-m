@@ -1,4 +1,4 @@
-import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
+import { ChatMessage } from "@infrastructure/databases/mongo_db/models/interfaces/chat/chat-message.interface";
 import { AgentResponse } from "./agent-response.interface";
 
 export interface ITradeBotAgent {

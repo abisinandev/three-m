@@ -8,7 +8,6 @@ const router = Router();
 
 const controller = container.get<PaymentController>(PAYMENT_TYPES.PaymentController);
 
-// router.post('/create-intent', paymentController.createPaymentIntent.bind(paymentController));
 router.post(
     UserPaymentRoutes.CREATE_CHECKOUT_SESSION,
     controller.createCheckoutSession.bind(controller)

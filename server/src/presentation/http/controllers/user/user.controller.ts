@@ -6,14 +6,13 @@ import type { IKycSubmitUseCase } from "@application/use_cases/user/profile/inte
 import { IProfileImageUploadUseCase } from "@application/use_cases/user/profile/interfaces/profile-image-upload-usecase.interface";
 import type { IUserLogoutUseCase } from "@application/use_cases/auth/interfaces/user-logout-usecase.interface";
 import type { IUserProfileInterface } from "@application/use_cases/user/profile/interfaces/user-profile-usecase.interface";
-import { SuccessMessage } from "@domain/enum/express/messages/success.message";
+import { SuccessMessages } from "@shared/constants/success.messages";
 import { HttpStatus } from "@domain/enum/express/status-code";
 import { USER_TYPES } from "@infrastructure/inversify_di/features/user/user.types";
 import { logger } from "@infrastructure/providers/logger/pino.logger";
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import type { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
-import { SuccessMessages } from "@shared/constants/success.messages";
 
 @injectable()
 export class UserController {
@@ -37,7 +36,7 @@ export class UserController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.DATA_FETCHED,
+        SuccessMessages.DATA.FETCHED,
         result,
         HttpStatus.OK,
       );
@@ -59,7 +58,7 @@ export class UserController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.PASSWORD_CHANGED,
+        SuccessMessages.AUTH.PASSWORD_CHANGED,
         null,
         HttpStatus.OK,
       );
@@ -94,7 +93,7 @@ export class UserController {
       await this._editProfileUseCase.execute(userId as string, dto);
       return ResponseHelper.success(
         res,
-        SuccessMessage.PROFILE_UPDATION_DONE,
+        SuccessMessages.USER.PROFILE_UPDATED,
         null,
         HttpStatus.OK,
       );
@@ -110,7 +109,7 @@ export class UserController {
       await this._profileImageUploadUseCase.execute(userId, dto);
       return ResponseHelper.success(
         res,
-        SuccessMessage.PROFILE_IMAGE_ADDED,
+        SuccessMessages.USER.PROFILE_IMAGE_ADDED,
         null,
         HttpStatus.OK,
       );
@@ -128,7 +127,7 @@ export class UserController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.EMAIL_UPDATION_OTP_SEND,
+        SuccessMessages.USER.EMAIL_UPDATE_OTP_SENT,
         null,
         HttpStatus.OK,
       );
@@ -145,7 +144,7 @@ export class UserController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.EMAIL_UPDATION_VERIFY_OTP,
+        SuccessMessages.USER.EMAIL_UPDATED,
         null,
         HttpStatus.OK,
       );
@@ -165,7 +164,7 @@ export class UserController {
 
       return ResponseHelper.success(
         res,
-        SuccessMessage.LOGGED_OUT,
+        SuccessMessages.AUTH.LOGGED_OUT,
         null,
         HttpStatus.OK,
       );

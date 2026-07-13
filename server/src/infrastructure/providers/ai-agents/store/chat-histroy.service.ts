@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { IChatHistoryService } from "@application/interfaces/services/ai-chatbot/chat-history-service.interface";
-import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
+import { ChatMessage } from "@infrastructure/databases/mongo_db/models/interfaces/chat/chat-message.interface";
 import { redisClient } from "@infrastructure/providers/redis/redis.provider";
 
 const MAX_MESSAGES = 20;

@@ -77,6 +77,7 @@ export function toUserMeResponse(
           }
           : undefined,
         rejectionReason: kyc.rejectionReason ?? null,
+        submissionCount: kyc.submissionCount,
       }
       : undefined,
     wallet: wallet

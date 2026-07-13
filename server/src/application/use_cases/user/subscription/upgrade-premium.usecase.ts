@@ -30,7 +30,16 @@ export class UpgradePremiumUseCase implements IUpgradePremiumUseCase {
         const session = await mongoose.startSession();
 
         try {
-            session.startTransaction();
+            await session.startTransaction();
+
+            const isExists = await this._transactionRepository.findByPaymentId(
+                data.paymentIntentId as string,
+                session
+            );
+            if (isExists) {
+                await session.commitTransaction();
+                return;
+            }
 
             const user = await this._userRepository.findById(data.userId);
             if (!user) throw new NotFoundError(ErrorMessages.AUTH.USER_NOT_FOUND);
@@ -66,20 +75,10 @@ export class UpgradePremiumUseCase implements IUpgradePremiumUseCase {
                 receipt_url: data.receipt_url,
             });
 
-            const isExists = await this._transactionRepository.findByPaymentId(
-                data.paymentIntentId as string,
-                session
-            );
-            if (isExists) {
-                await session.commitTransaction();
-                return;
-            }
-
             try {
-
                 await this._transactionRepository.createTransaction(transaction, session);
-
             } catch (error: unknown) {
+                // Duplicate key from a concurrent insert — treat as already fulfilled
                 if (
                     typeof error === "object" && error !== null && "code" in error &&
                     (error as { code: number }).code === 11000

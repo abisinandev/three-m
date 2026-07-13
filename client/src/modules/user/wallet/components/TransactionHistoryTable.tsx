@@ -54,8 +54,8 @@ export const TransactionHistoryTable: React.FC<TransactionHistoryTableProps> = (
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-[#1e2025] bg-[#111214]">
-                            {transactions.map((tx) => (
-                                <tr key={tx.id} className="hover:bg-white/[0.015] transition-colors group">
+                            {transactions.map((tx, index) => (
+                                <tr key={tx.transactionId || tx.id || index} className="hover:bg-white/[0.015] transition-colors group">
                                     <td className="px-5 py-3.5">
                                         <TransactionStatusBadge status={tx.status} />
                                     </td>

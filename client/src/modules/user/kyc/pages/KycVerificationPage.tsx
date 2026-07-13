@@ -102,7 +102,8 @@ const KYCVerificationPage = () => {
             address.fullAddress.trim().length > 10 &&
             address.city.trim().length > 2 &&
             address.state.trim().length > 2 &&
-            /^\d{6}$/.test(address.pincode)
+            /^\d{6}$/.test(address.pincode) &&
+            address.isPincodeValid === true
         );
     };
 
@@ -147,11 +148,13 @@ const KYCVerificationPage = () => {
             if (files.aadhaar) documents.push({ type: 'aadhaar', fileName: files.aadhaar.name, fileUrl: uploadedFiles.aadhaar?.secure_url || '', publicId: uploadedFiles.aadhaar?.public_id || '', resourceType: uploadedFiles.aadhaar?.resource_type || '', format: uploadedFiles.aadhaar?.format || '', bytes: uploadedFiles.aadhaar?.bytes || 0 });
             if (files.selfie) documents.push({ type: 'selfie', fileName: files.selfie.name, fileUrl: uploadedFiles.selfie?.secure_url || '', publicId: uploadedFiles.selfie?.public_id || '', resourceType: uploadedFiles.selfie?.resource_type || '', format: uploadedFiles.selfie?.format || '', bytes: uploadedFiles.selfie?.bytes || 0 });
 
+            const { isPincodeValid, ...addressToSubmit } = address;
+
             await api.post(API_ROUTES.USER.KYC.SUBMIT, {
                 fullName: details.fullName,
                 panNumber: details.panNumber.toUpperCase(),
                 aadharNumber: details.aadharNumber || null,
-                address,
+                address: addressToSubmit,
                 documents,
             });
 
@@ -174,22 +177,34 @@ const KYCVerificationPage = () => {
 
     const progress = ((currentStep + 1) / steps.length) * 100;
 
+    const isMaxAttemptsReached = user?.kycStatus === 'rejected' && (user?.kyc?.submissionCount ?? 0) >= 3;
+
     return (
         <>
             <div className="min-h-screen bg-[#0b0c0e] flex items-center justify-center px-4 py-8 font-sans">
                 <div className="w-full max-w-md">
 
-                    {user?.kycStatus === 'rejected' && currentStep === 0 && (
+                    {isMaxAttemptsReached ? (
                         <div className="mb-6 p-4 bg-[#F44336]/10 border border-[#F44336]/20 rounded-2xl shadow-[0_0_15px_rgba(244,67,54,0.1)]">
                             <h3 className="text-[#F44336] text-[13px] font-bold flex items-center gap-2 mb-1.5 tracking-tight uppercase">
                                 <AlertCircle className="w-4 h-4" />
-                                Previous KYC Rejected
+                                Maximum Attempts Reached
+                            </h3>
+                            <p className="text-[#e8eaed] text-[12px] font-medium leading-relaxed opacity-90">
+                                You have reached the maximum number of KYC submission attempts (3). Please contact support for further assistance.
+                            </p>
+                        </div>
+                    ) : user?.kycStatus === 'rejected' && currentStep === 0 ? (
+                        <div className="mb-6 p-4 bg-[#F44336]/10 border border-[#F44336]/20 rounded-2xl shadow-[0_0_15px_rgba(244,67,54,0.1)]">
+                            <h3 className="text-[#F44336] text-[13px] font-bold flex items-center gap-2 mb-1.5 tracking-tight uppercase">
+                                <AlertCircle className="w-4 h-4" />
+                                Previous KYC Rejected (Attempt {user?.kyc?.submissionCount || 1} of 3)
                             </h3>
                             <p className="text-[#e8eaed] text-[12px] font-medium leading-relaxed opacity-90">
                                 {user?.kyc?.rejectionReason || "Your previous submission didn't meet our guidelines. Please carefully re-enter your details and upload clear, readable documents."}
                             </p>
                         </div>
-                    )}
+                    ) : null}
 
                     {submitStatus === 'success' && (
                         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -209,22 +224,26 @@ const KYCVerificationPage = () => {
                         Back to Profile
                     </button>
 
-                    <div className="text-center mb-8">
-                        <h2 className="text-[18px] font-semibold text-[#e8eaed] tracking-tight">Complete KYC Verification</h2>
-                        <p className="text-[12px] text-[#5a5f6e] font-medium mt-1">
-                            Step {currentStep + 1} of {steps.length} • {step.title}
-                        </p>
-                    </div>
+                    {!isMaxAttemptsReached && (
+                        <div className="text-center mb-8">
+                            <h2 className="text-[18px] font-semibold text-[#e8eaed] tracking-tight">Complete KYC Verification</h2>
+                            <p className="text-[12px] text-[#5a5f6e] font-medium mt-1">
+                                Step {currentStep + 1} of {steps.length} • {step.title}
+                            </p>
+                        </div>
+                    )}
 
-                    <div className="w-full h-1.5 bg-[#111214] rounded-full overflow-hidden mb-8 border border-[#1e2025]">
-                        <div
-                            className="h-full bg-gradient-to-r from-[#00C853] to-[#00E676] transition-all duration-500 shadow-[0_0_10px_rgba(0,200,83,0.5)]"
-                            style={{ width: `${progress}%` }}
-                        />
-                    </div>
+                    {!isMaxAttemptsReached && (
+                        <>
+                            <div className="w-full h-1.5 bg-[#111214] rounded-full overflow-hidden mb-8 border border-[#1e2025]">
+                                <div
+                                    className="h-full bg-gradient-to-r from-[#00C853] to-[#00E676] transition-all duration-500 shadow-[0_0_10px_rgba(0,200,83,0.5)]"
+                                    style={{ width: `${progress}%` }}
+                                />
+                            </div>
 
-                    <div className="bg-[#111214] rounded-2xl border border-[#1e2025] p-6 shadow-2xl">
-                        <div className="space-y-6">
+                            <div className="bg-[#111214] rounded-2xl border border-[#1e2025] p-6 shadow-2xl">
+                                <div className="space-y-6">
 
                             <div className="text-center">
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#0b0c0e] border border-[#1e2025] mb-4 shadow-inner">
@@ -305,6 +324,8 @@ const KYCVerificationPage = () => {
                             </div>
                         </div>
                     </div>
+                    </>
+                    )}
 
                 </div>
             </div>

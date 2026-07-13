@@ -1,17 +1,16 @@
 import { RefreshCw, Activity } from 'lucide-react';
 import { TradesTable } from '../components/TradesTable';
-import { AlgoPagination } from '@/modules/admin/algo-trading/components/AlgoPagination';
+import { Pagination } from '@shared/components/pagination/Pagination';
 import { useAdminTrades } from '../hooks/useAdminTrades';
 
 const AdminTradesPage = () => {
     const {
         page,
+        setPage,
         search,
         setSearch,
         type,
         handleTypeChange,
-        handleNextPage,
-        handlePrevPage,
         refetch,
         items,
         totalItems,
@@ -93,15 +92,14 @@ const AdminTradesPage = () => {
                     />
 
                     {!isLoading && items.length > 0 && (
-                        <AlgoPagination
+                        <Pagination
                             page={page}
+                            limit={10}
+                            total={totalItems}
                             totalPages={totalPages}
-                            itemsCount={items.length}
-                            totalItems={totalItems}
-                            unit="trades"
+                            onPageChange={setPage}
                             isLoading={isLoading}
-                            onPrevPage={handlePrevPage}
-                            onNextPage={handleNextPage}
+                            unit="trades"
                         />
                     )}
                 </div>

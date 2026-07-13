@@ -4,11 +4,9 @@ import { useUserStore } from '@stores/user/UserStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { UpdateProfileApi, SendEmailOtpApi, VerifyEmailOtpApi } from '@shared/services/user/update-profile-api';
 import { toast } from 'sonner';
-
-interface EditProfileModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-}
+import { getErrorMessage } from '@/utils/validation/error-message.util';
+import { userProfileSchema } from '@/utils/validation/user-profile.validation';
+import { EditProfileModalProps } from '../interfaces/IEditProfile';
 
 const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
     const { user } = useUserStore();
@@ -41,23 +39,45 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
     useEffect(() => {
         const changed = email.trim() !== originalEmail.trim();
         setIsEmailChanged(changed);
+        
         if (!changed) {
             setShowOtpField(false);
             setIsEmailVerified(false);
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors.email;
+                return newErrors;
+            });
+        } else {
+            const emailResult = userProfileSchema.pick({ email: true }).safeParse({ email });
+            if (emailResult.success) {
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    if (newErrors.email === 'Invalid email' || newErrors.email === 'Verify your new email') {
+                        delete newErrors.email;
+                    }
+                    return newErrors;
+                });
+            }
         }
     }, [email, originalEmail]);
 
     const validate = () => {
+        const result = userProfileSchema.safeParse({ fullName, phone, email });
         const newErrors: Record<string, string> = {};
 
-        if (!fullName.trim()) newErrors.fullName = 'Name is required';
-        else if (fullName.trim().length < 2) newErrors.fullName = 'Name too short';
+        if (!result.success) {
+            result.error.issues.forEach(issue => {
+                const path = issue.path[0] as string;
+                if (!newErrors[path]) {
+                    newErrors[path] = issue.message;
+                }
+            });
+        }
 
-        if (phone && !/^\d{10}$/.test(phone)) newErrors.phone = 'Invalid phone number';
-
-        if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) newErrors.email = 'Invalid email';
-
-        if (isEmailChanged && !isEmailVerified) newErrors.email = 'Verify your new email';
+        if (isEmailChanged && !isEmailVerified && !newErrors.email) {
+            newErrors.email = 'Verify your new email';
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -66,7 +86,7 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
     const sendOtpMutation = useMutation({
         mutationFn: () => SendEmailOtpApi({ email: email.trim() }),
         onSuccess: () => setShowOtpField(true),
-        onError: () => setErrors(prev => ({ ...prev, email: 'Failed to send OTP' })),
+        onError: (error: unknown) => setErrors(prev => ({ ...prev, email: getErrorMessage(error, 'Failed to send OTP') })),
     });
 
     const verifyOtpMutation = useMutation({
@@ -76,7 +96,7 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
             setShowOtpField(false);
             setOtp('');
         },
-        onError: () => setErrors(prev => ({ ...prev, otp: 'Invalid or expired OTP' })),
+        onError: (error: unknown) => setErrors(prev => ({ ...prev, otp: getErrorMessage(error, 'Invalid or expired OTP') })),
     });
 
     const updateProfileMutation = useMutation({
@@ -93,8 +113,8 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
             onClose();
         },
 
-        onError: () => {
-            setErrors(prev => ({ ...prev, submit: 'Failed to update profile' }));
+        onError: (error: unknown) => {
+            setErrors(prev => ({ ...prev, submit: getErrorMessage(error, 'Failed to update profile') }));
         },
     });
 

@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { ChatMessage } from "@application/interfaces/models/chat-message.interface";
+import { ChatMessage } from "@infrastructure/databases/mongo_db/models/interfaces/chat/chat-message.interface";
 import { IPortfolioAgent } from "@application/interfaces/services/ai-chatbot/portfolio-agent.interface";
 import { IPortfolioSummaryUseCase } from "@application/use_cases/portfolio/interfaces/portfolio-summary-usecase.interface";
 import { PORTFOLIO_TYPES } from "@infrastructure/inversify_di/features/portfolio/portfolio.types";
