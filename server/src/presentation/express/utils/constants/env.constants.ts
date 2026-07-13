@@ -27,7 +27,7 @@ export const env = {
   EMAIL_USER: requireEnv("EMAIL_USER"),
   EMAIL_PASS: requireEnv("EMAIL_PASS"),
 
-  FRONTEND_URL_DEV: requireEnv("FRONTEND_URL_DEV"),
+  FRONTEND_URL: requireEnv("FRONTEND_URL"),
   FRONTEND_URL_PRODUCION: requireEnv("FRONTEND_URL_PRODUCION"),
 
   CORS_ORIGINS: requireEnv("CORS_ORIGINS"),
