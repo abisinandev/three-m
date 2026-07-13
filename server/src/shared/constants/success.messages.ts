@@ -42,6 +42,9 @@ export const SuccessMessages = {
     PAYMENT: {
         TRANSACTION_VERIFIED: "Transaction verified",
         INVESTMENT_SUCCESS: "Investment successfully done",
+        VERIFIED: "Payment verified successfully",
+        SESSION_EXPIRED: "Session expired",
+        SESSION_CREATED: "Checkout session created successfully"
     },
     SIP: {
         PAUSED: "SIP paused",
@@ -83,5 +86,5 @@ export const SuccessMessages = {
         DATA: "Responded successfully",
         UPGRADE_PLAN: "Upgrade to Premium to unlock full AI capabilities.",
     },
-    
+
 } as const;

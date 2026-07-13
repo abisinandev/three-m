@@ -59,6 +59,8 @@ export const ErrorMessages = {
         EXTERNAL_VERIFICATION_ONLY: "External transaction only allowed to verify",
         LIMIT_EXCEEDED: "Transaction amount exceeds the allowed limit of ₹10,000",
         INVALID_AMOUNT: "Invalid amount",
+        PAYMENT_NOT_SUCCESSFUL: "Payment not successful",
+        INVALID_PAYMENT_METADATA: "Invalid payment metadata",
     },
     TRANSACTIONS: {
         MAX_TRANSACTION: "At a time only can transfer 10_0000rs"

@@ -1,4 +1,3 @@
-
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { PAYMENT_TYPES } from "@infrastructure/inversify_di/features/payment/payment.types";
@@ -6,6 +5,8 @@ import { IProcessStripePaymentUseCase } from "@application/use_cases/payment/int
 import { ResponseHelper } from "@presentation/express/utils/response-handling/response.helper";
 import { ICreateCheckoutSessionUseCase } from "@application/use_cases/payment/interfaces/create-checkout-session-usecase.interface";
 import { ValidationError } from "@presentation/express/utils/error-handling";
+import { HttpStatus } from "@domain/enum/express/status-code";
+import { SuccessMessages } from "@shared/constants/success.messages";
 
 
 @injectable()
@@ -25,9 +26,9 @@ export class PaymentController {
             });
             return ResponseHelper.success(
                 res,
-                "Checkout session created",
+                SuccessMessages.PAYMENT.SESSION_CREATED,
                 { checkoutUrl: result.url },
-                200
+                HttpStatus.OK
             );
         } catch (error) {
             next(error);
@@ -39,19 +40,21 @@ export class PaymentController {
         try {
             const { sessionId } = req.body;
 
-            if (!sessionId) throw new ValidationError("Session ID expired");
+            if (!sessionId) throw new ValidationError(
+                SuccessMessages.PAYMENT.SESSION_EXPIRED,
+            );
 
             const result = await this._processPayment.execute(sessionId);
 
             return ResponseHelper.success(
                 res,
-                "Payment verified successfully",
+                SuccessMessages.PAYMENT.VERIFIED,
                 {
                     amount: result.amount,
                     purpose: result.purpose,
                     status: 'SUCCESSFUL'
                 },
-                200
+                HttpStatus.OK
             );
         } catch (error) {
             next(error)

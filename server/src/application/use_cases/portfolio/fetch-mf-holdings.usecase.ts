@@ -79,7 +79,7 @@ export class FetchMutualFundHoldingsUseCase implements IFetchMutualFundHoldingsU
                 createdAt: pf.createdAt,
                 updatedAt: pf.updatedAt,
             });
-        }
+        };
 
         return {
             data,
