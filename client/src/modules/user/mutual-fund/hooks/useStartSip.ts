@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 import api from '@/lib/axios-user';
 import { createIdempotencyKey } from '@/utils/uuid/generate-idempotency-key';
+import { API_ROUTES } from '@/shared/constants/apiRoutes';
 
 interface SipPayload {
     schemeCode: string;
@@ -20,7 +21,7 @@ export const useStartSip = <T = { message?: string; data?: unknown }>(
 
     return useMutation({
         mutationFn: async (payload: SipPayload) => {
-            const res = await api.post('/user/mutual-funds/sip/create',
+            const res = await api.post(API_ROUTES.USER.MUTUAL_FUNDS.START_SIP,
                 payload,
                 {
                     headers: { 'x-idempotency-key': createIdempotencyKey(payload as unknown as Parameters<typeof createIdempotencyKey>[0]) }
