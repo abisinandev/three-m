@@ -4,6 +4,7 @@ import { toast } from "sonner";
 const CheckoutForm = ({ loading, setLoading }: { loading: boolean; setLoading: (l: boolean) => void }) => {
     const stripe = useStripe();
     const elements = useElements();
+    const url = import.meta.env.VITE_FRONTEND_URL
 
     const handleSubmit = async () => {
         if (!stripe || !elements) return;
@@ -13,7 +14,7 @@ const CheckoutForm = ({ loading, setLoading }: { loading: boolean; setLoading: (
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                return_url: `${window.location.origin}/user/payment-success`,
+                return_url: `${url}/user/payment-success`,
             },
         });
 
