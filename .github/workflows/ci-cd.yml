@@ -88,35 +88,32 @@ jobs:
           strip_components: 1
 
       - name: Deploy on EC2
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
+            set -e
+
             cd ~/three-m/server
-            
-            # Load new image
-            sudo docker load < backend-app.tar.gz
-            
-            # Stop and remove old container
-            sudo docker stop three-m-backend || true
-            sudo docker rm three-m-backend || true
-            
-            # Run new container
-            sudo docker run -d \
-              --name three-m-backend \
-              --restart unless-stopped \
-              -p 9000:9000 \
-              -e NODE_ENV=production \
-              --env-file .env \
-              backend-app:${{ github.sha }}
-            
-            # Cleanup
-            sudo docker system prune -f
-            rm -f backend-app.tar.gz
-            
-            # Verify
-            sleep 5
-            sudo docker ps | grep three-m-backend
+
+            echo "Pulling latest code..."
+            git fetch origin
+            git reset --hard origin/master
+
+            echo "Building and starting containers..."
+            docker compose up -d --build
+
+            echo "Cleaning unused images..."
+            docker image prune -f
+
+            echo "Waiting for application..."
+            sleep 10
+
+            echo "Checking application health..."
+            curl --fail http://localhost:9000/health
+
+            echo "Running containers:"
+            docker compose ps
