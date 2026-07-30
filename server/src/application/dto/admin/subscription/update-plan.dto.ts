@@ -27,7 +27,6 @@ export class UpdatePlanDTO {
 
   @IsOptional()
   @IsArray()
-  @ArrayNotEmpty()
   @IsString({ each: true })
   features!: string[];
 

@@ -12,11 +12,11 @@ export class ChangeStatusUseCase implements IChangeFundStatusUseCase {
         @inject(MUTUAL_FUND_TYPES.MutualFundRepository) private readonly _mutualFundRepository: IMutualFundRepository,
     ) { }
 
-    async execute(fundId: string): Promise<void> {
-        const fund = await this._mutualFundRepository.findById(fundId);
+    async execute(schemeCode: string): Promise<void> {
+        const fund = await this._mutualFundRepository.findBySchemeCode(schemeCode);
         if (!fund) throw new NotFoundError(ErrorMessages.DB.DATA_NOT_FOUND);
 
-        await this._mutualFundRepository.update(fundId, {
+        await this._mutualFundRepository.update(fund.id as string, {
             status: fund.status === "Active" ? FundStatus.INACTIVE : FundStatus.ACTIVE
         });
 

@@ -36,7 +36,7 @@ export const fetchMutualFunds = async ({
 
 
 export const updateStatus = async (fund: MutualFundType, newStatus: string) => {
-    await adminApi.patch(API_ROUTES.ADMIN.MUTUAL_FUNDS.UPDATE_STATUS(fund.id), {
+    await adminApi.patch(API_ROUTES.ADMIN.MUTUAL_FUNDS.UPDATE_STATUS(fund.schemeCode), {
         status: newStatus,
     });
 }

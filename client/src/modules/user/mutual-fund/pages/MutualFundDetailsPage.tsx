@@ -19,11 +19,13 @@ import { useInvestMutualFund } from '../hooks/useInvestMutualFund';
 import { usePremiumModalStore } from '@stores/user/PremiumModalStore';
 import { toast } from 'sonner';
 import { useUserStore } from '@stores/user/UserStore';
+import { usePremiumPlan } from '@/shared/services/admin/subscription/subscription-api';
 
 const PAYMENT_METHOD = 'WALLET' as const;
 const INVESTMENT_TYPE = 'ONE_TIME' as const;
 
 const MutualFundDetailsPage = () => {
+  const { data: plan } = usePremiumPlan();
   const { schemeCode } = useParams({ from: '/user/mutual-funds/$schemeCode' });
   const navigate = useNavigate();
   const [activePeriod, setActivePeriod] = useState<'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY'>('MONTHLY');
@@ -213,7 +215,17 @@ const MutualFundDetailsPage = () => {
                       toast.error("Complete your KYC to enable investment features");
                       return;
                     }
+                    // If Premium plan is deactivated by Admin completely, or SIP is not in Premium features -> allow access without upgrade modal
                     if (!user?.isSubscribed) {
+                      if (plan?.isActive === false) {
+                        setShowSipModal(true);
+                        return;
+                      }
+                      const sipInPremiumPlan = plan?.features?.includes("SIP_AUTOMATION");
+                      if (!sipInPremiumPlan) {
+                        setShowSipModal(true);
+                        return;
+                      }
                       toast.warning("Upgrade to Premium to use SIP investment feature");
                       openPremiumModal();
                     } else {

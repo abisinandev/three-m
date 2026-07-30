@@ -4,14 +4,23 @@ import { IFeatureAccessService } from "@application/interfaces/services/subscrip
 import { SUBSCRIPTION_TYPES } from "@infrastructure/inversify_di/features/subscription/subscription.types";
 import { PlanEntity } from "@domain/entities/subscription/plan.entity";
 import { IGetUserPlanUseCase } from "@application/use_cases/user/subscription/interfaces/get-user-plan.usecase.interface";
+import { IPlanRepository } from "@application/interfaces/repositories/subscriptions/plan-repository.interface";
+import { SubscriptionPlans } from "@domain/entities/subscription/enums/plans.enum";
 
 @injectable()
 export class FeatureAccessService implements IFeatureAccessService {
     constructor(
-        @inject(SUBSCRIPTION_TYPES.GetUserPlanUseCase) private readonly _getUserPlanUseCase: IGetUserPlanUseCase
+        @inject(SUBSCRIPTION_TYPES.GetUserPlanUseCase) private readonly _getUserPlanUseCase: IGetUserPlanUseCase,
+        @inject(SUBSCRIPTION_TYPES.PlanRepository) private readonly _planRepo: IPlanRepository,
     ) { }
 
     async hasAccess(userId: string, feature: Features): Promise<boolean> {
+        const premiumPlan = await this._planRepo.findByCode(SubscriptionPlans.PREMIUM);
+
+        if (premiumPlan && !premiumPlan.isActive) {
+            return true;
+        }
+
         const plan = await this._getUserPlanUseCase.execute(userId);
 
         if (!plan) return false;
@@ -22,5 +31,4 @@ export class FeatureAccessService implements IFeatureAccessService {
     async getUserPlan(userId: string): Promise<PlanEntity | null> {
         return this._getUserPlanUseCase.execute(userId);
     }
-
 }

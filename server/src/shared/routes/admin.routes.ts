@@ -37,7 +37,7 @@ export enum AdminSipRoutes {
 export enum AdminMutualFundRoutes {
     ADD_FUNDS = "/add-fund",
     LIST_FUNDS = "/list",
-    UPDATE_STATUS = "/:fundId/status"
+    UPDATE_STATUS = "/:schemeCode/status"
 }
 
 export enum AdminSubscriptionRoutes {

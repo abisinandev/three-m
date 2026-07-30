@@ -51,13 +51,16 @@ export class MutualFundsAdminController {
 
     async updateStatus(req: Request, res: Response, next: NextFunction) {
         try {
-            const fundId = req.params.fundId
-            await this._changeFundStatus.execute(fundId as string);
-            await this._mutualFundNavUpdate.execute(NavInterval.DAILY);
-            await this._mutualFundNavUpdate.execute(NavInterval.WEEKLY);
-            await this._mutualFundNavUpdate.execute(NavInterval.MONTHLY);
-            await this._mutualFundNavUpdate.execute(NavInterval.YEARLY);
-            await this._mfCagrUpdateUseCase.execute();
+            const schemeCode = req.params.schemeCode
+            await this._changeFundStatus.execute(schemeCode as string);
+
+            await Promise.all([
+                await this._mutualFundNavUpdate.execute(NavInterval.DAILY),
+                await this._mutualFundNavUpdate.execute(NavInterval.WEEKLY),
+                await this._mutualFundNavUpdate.execute(NavInterval.MONTHLY),
+                await this._mutualFundNavUpdate.execute(NavInterval.YEARLY),
+                await this._mfCagrUpdateUseCase.execute(),
+            ])
 
             return ResponseHelper.success(
                 res,
