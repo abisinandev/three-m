@@ -59,22 +59,22 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
 
     async execute(order: ConfirmSignalDTO): Promise<undefined | { message: string, upgrade: boolean }> {
 
-        
+
         const hasAccess = await this._featureAccess.hasAccess(
             order.userId,
             Features.STOCK_TRADING,
         );
-        
+
         if (!hasAccess) {
             return {
                 message: SuccessMessages.SUBSCRIPTION.UPGRADE_PREMIUM,
                 upgrade: true
             };
         }
-        
+
         if (!isIndianMarketOpen())
             throw new ValidationError(ErrorMessages.STOCKS.MARKET_CLOSED);
-        
+
         const { userId } = order;
         const signal = await this._signalRepository.findById(order.signalId);
         if (!signal) throw new NotFoundError(SuccessMessages.ALGO.SIGNAL_NOT_FOUND);
@@ -126,7 +126,11 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
                 throw new ValidationError(ErrorMessages.STOCKS.INVALID_MARKET_PRICE);
 
             //Strategy configuired qty
-            const orderQty = Math.floor(Number(riskConfig?.riskAmount) / marketPrice);
+            let orderQty = Math.floor(Number(riskConfig?.riskAmount) / marketPrice);
+            if (orderQty <= 0) {
+                orderQty = 1;
+            }
+
 
             const execution = {
                 filledQty: orderQty,
@@ -147,7 +151,6 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
                 throw new ValidationError(ErrorMessages.WALLET.INSUFFICIENT_BALANCE);
             }
 
-
             const transaction = TransactionEntity.create({
                 userId,
                 userCode: user.userCode,
@@ -157,7 +160,6 @@ export class ConfirmBuySignalUseCase implements IConfirmBuySignalUseCase {
                 status: TransactionStatus.PENDING,
                 type: TransactionTypes.BUY
             })
-
             const newTransaction = await this._transactionRepository.createTransaction(transaction, session);
 
             wallet.debit(execution.totalValue);

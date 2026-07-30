@@ -30,6 +30,11 @@ export const useStartSip = <T = { message?: string; data?: unknown }>(
             return res.data;
         },
         onSuccess: (data) => {
+            if ((data as { upgrade?: boolean; message?: string })?.upgrade) {
+                usePremiumModalStore.getState().onOpen();
+                onError((data as { message?: string })?.message || 'Feature restricted. Please upgrade to access.', data);
+                return;
+            }
             queryClient.invalidateQueries({ queryKey: ['portfolio'] });
             queryClient.invalidateQueries({ queryKey: ['sip-investments'] });
             onSuccess(data);

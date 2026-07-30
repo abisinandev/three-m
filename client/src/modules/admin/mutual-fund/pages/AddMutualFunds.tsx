@@ -1,10 +1,10 @@
 'use client';
-
 import { useState, useMemo, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import {
+    ArrowLeft,
     Plus,
     Search,
     X,
@@ -31,8 +31,11 @@ import { GetSignatureApi } from '@shared/services/user/get-signature-api';
 import { uploadToCloudinary } from '@utils/upload/UploadToCloudinary';
 import { useAdminStore } from '@/stores/admin/useAdminStore';
 import type { AddFundPayload, MfScheme } from '@/shared/types/admin/mutual-fund-management.types';
+import { useNavigate } from '@tanstack/react-router';
+import { ROUTES } from '@/shared/constants/apiRoutes';
 
 export default function AddMutualFundPage() {
+    const navigate = useNavigate();
     const adminId = useAdminStore(state => state.data?.adminCode || 'admin');
     const queryClient = useQueryClient();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -51,7 +54,13 @@ export default function AddMutualFundPage() {
         queryKey: ['mf-master'],
         queryFn: async () => {
             const url = import.meta.env.VITE_MF_API_URL;
-            if (!url) throw new Error("VITE_MF_API_URL is not defined in environment variables");
+            if (!url) {
+                const configError = new Error(
+                    'Mutual fund API URL is not configured. Please contact the system administrator.'
+                );
+                configError.name = 'ConfigurationError';
+                throw configError;
+            }
             const res = await axios.get<MfScheme[]>(url);
             return res.data;
         },
@@ -61,7 +70,7 @@ export default function AddMutualFundPage() {
     const addFundMutation = useMutation({
         mutationFn: async () => {
             if (!selectedScheme) {
-                throw new Error('Please select a scheme first');
+                return null;
             }
 
             const payload: AddFundPayload = {
@@ -225,13 +234,22 @@ export default function AddMutualFundPage() {
         >
             <main className="px-6 pt-6 max-w-[1200px] mx-auto space-y-6">
                 <div className="flex justify-between items-end">
-                    <div>
-                        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
-                            Onboard Mutual Funds
-                        </h1>
-                        <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
-                            Search and verify growth/direct plans for the platform
-                        </p>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => navigate({ to: ROUTES.ADMIN.MUTUAL_FUNDS_MANAGEMENT.ROOT })}
+                            className="p-1.5 rounded-lg border border-[#1e2025] bg-[#111214] hover:bg-[#1a1c20] hover:border-[#2a2d35] text-[#5a5f6e] hover:text-white transition-all"
+                            title="Go back"
+                        >
+                            <ArrowLeft size={15} />
+                        </button>
+                        <div>
+                            <h1 style={{ fontSize: 16, fontWeight: 600, color: '#e8eaed', letterSpacing: '-0.2px', margin: 0 }}>
+                                Onboard Mutual Funds
+                            </h1>
+                            <p style={{ fontSize: 11, color: '#5a5f6e', marginTop: 2, margin: 0 }}>
+                                Search and verify growth/direct plans for the platform
+                            </p>
+                        </div>
                     </div>
 
                     <div style={{ fontSize: 10, color: '#5a5f6e', letterSpacing: '0.05em', textTransform: 'uppercase' }}>

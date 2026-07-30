@@ -24,9 +24,6 @@ export class RSIStrategy implements Strategy {
         const prevData = prevDataRaw ? JSON.parse(prevDataRaw) : null;
         const prevRSI = prevData?.rsi;
 
-        // const prevRSI = 40
-        // const currentRSI = 25
-
         // Store new state
         await redisClient.set(
             key,

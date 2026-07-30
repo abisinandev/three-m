@@ -19,8 +19,10 @@ import { CompanyInfoCard } from "../components/CompanyInfoCard";
 import PendingOrdersTable from "../components/PendingOrdersTable";
 import { usePremiumModalStore } from "@stores/user/PremiumModalStore";
 import { toast } from "sonner";
+import { usePremiumPlan } from "@/shared/services/admin/subscription/subscription-api";
 
 const StockDetailPage = () => {
+  const { data: plan } = usePremiumPlan();
   const user = useUserStore((state) => state.user);
   const { symbol } = useParams({ strict: false }) as { symbol: string };
   const [realtimePrice, setRealtimePrice] = useState<number | null>(null);
@@ -112,8 +114,13 @@ const StockDetailPage = () => {
       return;
     }
     if (!user?.isSubscribed) {
-      openPremiumModal();
-      return;
+      if (plan?.isActive !== false) {
+        const stockTradingInPremium = plan?.features?.includes("STOCK_TRADING");
+        if (stockTradingInPremium) {
+          openPremiumModal();
+          return;
+        }
+      }
     }
     setTradeType(type);
     setIsTradeModalOpen(true);

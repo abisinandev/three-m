@@ -156,7 +156,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-medium text-white truncate">
-                {data?.fullName || 'Admin User'}
+                {data?.fullName || 'Admin'}
               </p>
               <p className="text-[11px] text-neutral-500 truncate">
                 Administrator
@@ -176,7 +176,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             >
               <Menu size={20} className="text-neutral-400" />
             </button>
-            
+
           </div>
 
           <div className="flex items-center gap-2">

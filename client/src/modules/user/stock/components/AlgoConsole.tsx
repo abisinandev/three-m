@@ -11,6 +11,7 @@ import {
 } from "@/shared/services/algo-trading/algo-trading-api";
 
 import type { AlgoConsoleProps } from "@/shared/types/stock/stock.types";
+import { usePremiumPlan } from "@/shared/services/admin/subscription/subscription-api";
 
 export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) => {
   const [algoStep, setAlgoStep] = useState<"idle" | "selecting" | "active">(
@@ -110,17 +111,22 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
 
   const user = useUserStore((state) => state.user);
 
+  const { data: plan } = usePremiumPlan();
+
   const handleSetupClick = () => {
     if (!user?.isVerified) {
       toast.error("Complete your KYC to enable algorithmic trading.");
       return;
     }
     if (!user?.isSubscribed) {
-      toast.warning("Upgrade to Premium to unlock algorithmic trading.");
-      onPremiumModalOpen();
-    } else {
-      setAlgoStep("selecting");
+      const algoTradingInPremium = plan?.isActive !== false && plan?.features?.includes("ALGO_TRADING");
+      if (algoTradingInPremium) {
+        toast.warning("Upgrade to Premium to unlock algorithmic trading.");
+        onPremiumModalOpen();
+        return;
+      }
     }
+    setAlgoStep("selecting");
   };
 
   return (
