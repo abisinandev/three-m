@@ -69,7 +69,6 @@ export const TradeHistoryTable = ({
 
             {!data || data.length === 0 ? (
                 <div className="py-12 text-center text-sm text-[#5a5f6e]">
-                    <div className="text-2xl mb-2">📋</div>
                     No transaction history found
                 </div>
             ) : (
