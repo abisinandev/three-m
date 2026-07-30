@@ -11,7 +11,7 @@ export const toEntity = (dto: MutualFundDTO): MutualFundEntity => {
         amc: dto.amc,
         category: dto.category,
         subCategory: dto.subCategory,
-        logo: dto.logo,
+        logo: dto.logo as string,
         risk: dto.risk,
         source: "MF_API",
         status: FundStatus.INACTIVE,
