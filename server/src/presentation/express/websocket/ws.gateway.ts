@@ -73,7 +73,13 @@ export class WsGateway implements IWsGateway {
                 if (!symbol) return;
                 const room = `symbol:${symbol}`;
                 socket.join(room);
+
                 this.marketDataService.subscribeToSymbol(symbol);
+
+                if (!this.subscriptions.has(room)) {
+                    this.subscriptions.set(room, new Set());
+                }
+                this.subscriptions.get(room)?.add(socket.id);
                 console.log(`Socket ${socket.id} subscribed to ${room}`);
             });
 
@@ -81,19 +87,38 @@ export class WsGateway implements IWsGateway {
                 if (!symbol) return;
                 const room = `symbol:${symbol}`;
                 socket.leave(room);
+
+                if (this.subscriptions.has(room)) {
+                    const clients = this.subscriptions.get(room)!;
+                    clients.delete(socket.id);
+
+                    if (clients.size === 0) {
+                        this.subscriptions.delete(room);
+                    }
+
+                    const isStillTracked = Array.from(this.subscriptions.keys()).some(
+                        k => k === room || k.startsWith(`${symbol}:`)
+                    );
+                    if (!isStillTracked) {
+                        this.marketDataService.unsubscribeFromSymbol(symbol);
+                    }
+                }
                 console.log(`Socket ${socket.id} unsubscribed from ${room}`);
             });
 
             socket.on("disconnect", () => {
-
                 this.subscriptions.forEach((clients, room) => {
                     if (clients.delete(socket.id)) {
-
                         if (clients.size === 0) {
                             this.subscriptions.delete(room);
 
-                            const symbol = room.split(':')[0];
-                            const isStillTracked = Array.from(this.subscriptions.keys()).some(k => k.startsWith(`${symbol}:`));
+                            const symbol = room.startsWith('symbol:')
+                                ? room.slice(7)
+                                : room.split(':')[0];
+
+                            const isStillTracked = Array.from(this.subscriptions.keys()).some(
+                                k => k === `symbol:${symbol}` || k.startsWith(`${symbol}:`)
+                            );
                             if (!isStillTracked) {
                                 this.marketDataService.unsubscribeFromSymbol(symbol);
                             }
