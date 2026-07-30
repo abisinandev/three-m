@@ -1,63 +1,9 @@
 import React from 'react';
-import { ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { Pagination } from '@shared/components/pagination/Pagination';
 import stockCurrencyService from '@/shared/services/external/stock-currency.service';
 import { OrderHistoryTableProps } from '../types/order-history.table';
+import { OrderTypeBadge, SideTag, StatusBadge } from './HistoryTable';
 
-
-const SideTag: React.FC<{ side?: string }> = ({ side }) => {
-    const isSell = side?.toLowerCase() === 'sell';
-    return (
-        <div className={`flex items-center gap-1 text-xs font-extrabold px-1.5 py-0.5 rounded border uppercase tracking-wider shrink-0 ${isSell ? 'bg-red-500/10 text-[#FF1744] border-red-500/20' : 'bg-emerald-500/10 text-[#00C853] border-emerald-500/20'}`}>
-            {isSell ? <ArrowUpRight size={10} /> : <ArrowDownLeft size={10} />}
-            {side || '—'}
-        </div>
-    );
-};
-
-const OrderTypeBadge: React.FC<{ type?: string; isAlgo?: boolean }> = ({ type, isAlgo }) => {
-    if (!type) return null;
-    return (
-        <div className="flex gap-1 items-center">
-            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider bg-[#5a5f6e]/15 text-[#9ca3af] border-[#5a5f6e]/20">
-                {type.replace('_', ' ')}
-            </span>
-            {isAlgo && (
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider bg-[#2962ff]/15 text-[#2962ff] border-[#2962ff]/20">
-                    ALGO
-                </span>
-            )}
-        </div>
-    );
-};
-
-const StatusBadge: React.FC<{ status?: string }> = ({ status }) => {
-    const s = status?.toUpperCase() || 'PENDING';
-    let color = '#ffab00'; // Amber
-    let bg = 'rgba(255,171,0,0.12)';
-    let border = '1px solid rgba(255,171,0,0.2)';
-    let icon = <Clock size={9} />;
-
-    if (s === 'FILLED') {
-        color = '#00C853'; // Emerald
-        bg = 'rgba(0,200,83,0.12)';
-        border = '1px solid rgba(0,200,83,0.2)';
-        icon = <CheckCircle2 size={9} />;
-    } else if (s === 'CANCELLED' || s === 'REJECTED') {
-        color = '#FF1744'; // Rose
-        bg = 'rgba(255,23,68,0.12)';
-        border = '1px solid rgba(255,23,68,0.2)';
-        icon = <XCircle size={9} />;
-    }
-
-    return (
-        <div className={`inline-flex items-center gap-1 text-xs font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider`}
-            style={{ color, background: bg, border }}>
-            {icon}
-            {s}
-        </div>
-    );
-};
 
 export const OrderHistoryTable: React.FC<OrderHistoryTableProps> = ({
     orders,
@@ -83,7 +29,6 @@ export const OrderHistoryTable: React.FC<OrderHistoryTableProps> = ({
     if (!orders || orders.length === 0) {
         return (
             <div className="text-center py-10 text-[#5a5f6e] text-sm bg-[#111214] border border-[#1e2025] rounded-lg">
-                <div className="text-2xl mb-2">📋</div>
                 No order history found.
             </div>
         );
@@ -95,14 +40,13 @@ export const OrderHistoryTable: React.FC<OrderHistoryTableProps> = ({
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-[#1e2025] text-[#5a5f6e] uppercase tracking-widest bg-[#0e1014]">
-                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-left">Asset</th>
-                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-left">Side</th>
-                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-left">Type</th>
-                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-right">Quantity</th>
-                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-right">Price</th>
-                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-right">Total Value</th>
-                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-center">Status</th>
-                            <th className="text-xs font-semibold px-4 py-2.5 tracking-wider text-right">Date</th>
+                            <th className="text-xs font-semibold px-4 py-3 tracking-wider text-left align-middle">Asset</th>
+                            <th className="text-xs font-semibold px-4 py-3 tracking-wider text-left align-middle">Side</th>
+                            <th className="text-xs font-semibold px-4 py-3 tracking-wider text-left align-middle">Type</th>
+                            <th className="text-xs font-semibold px-4 py-3 tracking-wider text-right align-middle">Quantity</th>
+                            <th className="text-xs font-semibold px-4 py-3 tracking-wider text-right align-middle">Total</th>
+                            <th className="text-xs font-semibold px-4 py-3 tracking-wider text-center align-middle">Status</th>
+                            <th className="text-xs font-semibold px-4 py-3 tracking-wider text-right align-middle">Date</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[#1e2025]">
@@ -115,20 +59,20 @@ export const OrderHistoryTable: React.FC<OrderHistoryTableProps> = ({
                             return (
                                 <tr key={item.id} className="hover:bg-[#15171a] transition-colors group">
                                     {/* Asset column */}
-                                    <td className="px-4 py-3 cursor-pointer" onClick={() => onNavigate(item.symbol)}>
+                                    <td className="px-4 py-3 align-middle cursor-pointer" onClick={() => onNavigate(item.symbol)}>
                                         <div className="flex items-center gap-3">
                                             {item.logo ? (
-                                                <img src={item.logo} alt={item.symbol} className="w-7 h-7 rounded border border-[#1e2025] bg-white object-contain" />
+                                                <img src={item.logo} alt={item.symbol} className="w-7 h-7 rounded border border-[#1e2025] bg-white object-contain shrink-0" />
                                             ) : (
-                                                <div className="w-7 h-7 rounded bg-[#1a1c20] border border-[#1e2025] flex items-center justify-center font-bold text-[10px]">
+                                                <div className="w-7 h-7 rounded bg-[#1a1c20] border border-[#1e2025] flex items-center justify-center font-bold text-[10px] shrink-0 text-[#e8eaed]">
                                                     {item.symbol.charAt(0)}
                                                 </div>
                                             )}
-                                            <div>
+                                            <div className="flex flex-col justify-center">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-semibold text-[#e8eaed]">{item.symbol}</span>
+                                                    <span className="text-sm font-semibold text-[#e8eaed] leading-none">{item.symbol}</span>
                                                 </div>
-                                                <div className="text-xs text-[#5a5f6e] max-w-[150px] truncate" title={item.name}>
+                                                <div className="text-xs text-[#5a5f6e] max-w-[150px] truncate leading-tight mt-1" title={item.name}>
                                                     {item.name}
                                                 </div>
                                             </div>
@@ -136,58 +80,48 @@ export const OrderHistoryTable: React.FC<OrderHistoryTableProps> = ({
                                     </td>
 
                                     {/* Side column */}
-                                    <td className="px-4 py-3">
+                                    <td className="px-4 py-3 align-middle">
                                         <div className="flex items-center">
                                             <SideTag side={side} />
                                         </div>
                                     </td>
 
-                                    <td className="px-4 py-3">
+                                    <td className="px-4 py-3 align-middle">
                                         <OrderTypeBadge type={item.orderType} isAlgo={item.isAlgoTrade} />
                                     </td>
 
-                                    <td className="px-4 py-3 text-right">
-                                        <div className="text-sm font-semibold text-[#e8eaed] tabular-nums">
+                                    <td className="px-4 py-3 text-right align-middle">
+                                        <div className="text-sm font-semibold text-[#e8eaed] tabular-nums leading-none">
                                             {item.filledQty}
                                         </div>
-                                        <p className="text-xs text-[#5a5f6e] mt-0.5">shares</p>
+                                        <div className="text-xs text-[#5a5f6e] mt-1 leading-none">shares</div>
                                     </td>
 
-                                    <td className="px-4 py-3 text-right font-medium">
-                                        <div className="text-sm font-semibold text-[#e8eaed] tabular-nums">
-                                            {stockCurrencyService.formatCurrency(price, 'INR')}
-                                        </div>
-                                        {item.limitPrice && item.limitPrice > 0 && (
-                                            <p className="text-xs text-[#5a5f6e] mt-0.5 tabular-nums">
-                                                Limit: {stockCurrencyService.formatCurrency(item.limitPrice, 'INR')}
-                                            </p>
-                                        )}
-                                    </td>
-
-                                    <td className="px-4 py-3 text-right">
-                                        {/* <div className="text-sm font-bold tabular-nums" style={{ color: side.toLowerCase() === 'sell' ? '#FF1744' : '#00C853' }}> */}
-                                            {/* {side.toLowerCase() === 'sell' ? '-' : '+'} */}
+                                    <td className="px-4 py-3 text-right align-middle">
+                                        <div className="text-sm font-semibold text-[#e8eaed] tabular-nums leading-none">
                                             {stockCurrencyService.formatCurrency(tradeValue, 'INR')}
-                                        {/* </div> */}
+                                        </div>
                                     </td>
 
-                                    <td className="px-4 py-3 text-center">
+                                    <td className="px-4 py-3 text-center align-middle">
                                         <StatusBadge status={item.status} />
                                     </td>
 
                                     {/* Date column */}
-                                    <td className="px-4 py-3 text-right">
+                                    <td className="px-4 py-3 text-right align-middle whitespace-nowrap">
                                         {tradeDate ? (
-                                            <>
-                                                <p className="text-xs text-[#9ca3af] m-0 tabular-nums">
-                                                    {tradeDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}
-                                                </p>
-                                                <p className="text-xs text-[#5a5f6e] mt-0.5 tabular-nums">
-                                                    {tradeDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
-                                                </p>
-                                            </>
+                                            <div className="flex flex-col items-end gap-0.5">
+                                                <span className="text-xs text-[#9ca3af] tabular-nums leading-none">
+                                                    {tradeDate.getDate().toString().padStart(2, '0')}{' '}
+                                                    {tradeDate.toLocaleString('en-IN', { month: 'short' })}{' '}
+                                                    '{tradeDate.getFullYear().toString().slice(2)}
+                                                </span>
+                                                <span className="text-[11px] text-[#5a5f6e] tabular-nums leading-none">
+                                                    {tradeDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                                </span>
+                                            </div>
                                         ) : (
-                                            <p className="text-xs text-[#5a5f6e] m-0">—</p>
+                                            <span className="text-xs text-[#5a5f6e]">—</span>
                                         )}
                                     </td>
                                 </tr>
