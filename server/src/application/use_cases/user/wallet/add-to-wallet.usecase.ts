@@ -26,7 +26,7 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
         const session = await mongoose.startSession();
 
         try {
- 
+
             await session.startTransaction();
 
             const user = await this._userRepository.findById(data.userId);
@@ -41,7 +41,7 @@ export class AddToWalletUseCase implements IAddToWalletUseCase {
 
             if (wallet && data.amount > 10_0000)
                 throw new ValidationError(ErrorMessages.TRANSACTIONS.MAX_TRANSACTION)
-            
+
             const transactionEntity = toTransactionEntity({ ...data, userCode: user.userCode });
 
             const isExists = await this._transactionRepository.findByPaymentId(

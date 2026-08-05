@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Bot, ChevronRight, Zap } from "lucide-react";
 import { toast } from "sonner";
+import ConfirmModal from "@shared/components/modals/ConfirmModal";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useUserStore } from "@stores/user/UserStore";
 import {
@@ -18,6 +19,7 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
     "idle"
   );
   const [selectedStrategy, setSelectedStrategy] = useState("");
+  const [showStopConfirm, setShowStopConfirm] = useState(false);
 
   const { data: strategies = [], isLoading: isLoadingStrategies } = useQuery({
     queryKey: ["algoStrategies"],
@@ -100,12 +102,16 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
 
   const handleAlgoStop = () => {
     if (activeStrategy?._id) {
-      toggleStatusMutation.mutate({
-        strategyId: activeStrategy._id,
-        isActive: false,
-      });
+      toggleStatusMutation.mutate(
+        { strategyId: activeStrategy._id, isActive: false },
+        {
+          onSuccess: () => setShowStopConfirm(false),
+          onError: () => setShowStopConfirm(false),
+        }
+      );
     } else {
       setAlgoStep("idle");
+      setShowStopConfirm(false);
     }
   };
 
@@ -247,7 +253,7 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
               </div>
             </div>
             <button
-              onClick={handleAlgoStop}
+              onClick={() => setShowStopConfirm(true)}
               disabled={toggleStatusMutation.isPending}
               className="w-full py-2 bg-[#FF1744]/10 text-[#FF1744] border border-[#FF1744]/20 hover:bg-[#FF1744]/20 text-[11px] font-bold rounded transition-colors uppercase tracking-widest"
             >
@@ -255,6 +261,18 @@ export const AlgoConsole = ({ symbol, onPremiumModalOpen }: AlgoConsoleProps) =>
                 ? "Stopping..."
                 : "Terminate Strategy"}
             </button>
+
+            <ConfirmModal
+              isOpen={showStopConfirm}
+              onClose={() => setShowStopConfirm(false)}
+              onConfirm={handleAlgoStop}
+              title="Terminate Strategy"
+              message={`Stop the active "${strategies.find((s) => s.name === selectedStrategy)?.displayName ?? selectedStrategy}" strategy on ${symbol}? Running positions will no longer be managed automatically.`}
+              confirmText="Terminate"
+              cancelText="Keep Running"
+              variant="destructive"
+              loading={toggleStatusMutation.isPending}
+            />
           </div>
         )}
       </div>

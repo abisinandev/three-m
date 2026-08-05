@@ -5,7 +5,9 @@ export const useDashboard = () => {
     const { data, isLoading, isError } = useQuery({
         queryKey: ["user-dashboard"],
         queryFn: fetchDashboardData,
-        staleTime: 1000 * 60 * 2,
+        staleTime: 0,
+        refetchOnMount: true,
+        refetchOnWindowFocus: true,
     });
 
     return { data, isLoading, isError };
