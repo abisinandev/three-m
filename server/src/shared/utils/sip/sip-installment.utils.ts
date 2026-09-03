@@ -25,6 +25,10 @@ export const calculateNextExecutionDate = (
             nextDate.setMonth(nextDate.getMonth() + 3);
             break;
 
+        case SipFrequency.YEARLY:
+            nextDate.setFullYear(nextDate.getFullYear() + 1);
+            break;
+
         default:
             throw new Error(`Unsupported SIP frequency: ${frequency}`);
     }
