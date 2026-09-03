@@ -1,20 +1,7 @@
-import type { FundDetails } from '../../types/details.types';
 import { X, Loader2 } from 'lucide-react';
 import { useState } from 'react';
-
-interface StartSipModalProps {
-    data: FundDetails;
-    onClose: () => void;
-    onProceed: (sipData: SipData) => void;
-    isSubmitting?: boolean;
-}
-
-export interface SipData {
-    amount: number;
-    frequency: "DAILY" | 'WEEKLY' | "MONTHLY" | "YEARLY";
-    startDate: string;
-    totalInstallments: number;
-}
+import { SipData, StartSipModalProps } from '../../types/sip.types';
+import { getTotalInstallments } from '../../helpers/installment';
 
 export const StartSipModal = ({
     data,
@@ -27,6 +14,8 @@ export const StartSipModal = ({
     const [startDate, setStartDate] = useState<string>('');
     const [duration, setDuration] = useState<number>(12);
     const [errorMsg, setErrorMsg] = useState<string>('');
+
+    const totalInstallments = getTotalInstallments(duration, frequency);
 
     const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = Number(e.target.value);
@@ -68,7 +57,7 @@ export const StartSipModal = ({
             amount,
             frequency,
             startDate,
-            totalInstallments: duration
+            totalInstallments
         });
     };
 
@@ -176,9 +165,9 @@ export const StartSipModal = ({
                     {/* Footer */}
                     <div className="px-5 py-4 bg-[#111214] flex items-center justify-between border-t border-[#1e2025]">
                         <div className="flex flex-col">
-                            <span className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-wider">Est. Total</span>
+                            <span className="text-[9px] text-[#5a5f6e] font-bold uppercase tracking-wider">Est. Total ({totalInstallments} installments)</span>
                             <span className="text-[14px] font-black text-white">
-                                ₹{(amount * duration).toLocaleString()}
+                                ₹{(amount * totalInstallments).toLocaleString()}
                             </span>
                         </div>
 

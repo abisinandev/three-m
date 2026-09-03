@@ -138,12 +138,21 @@ export class SipEntity {
 
     cancel() {
 
+        if (this.status === SipStatus.CANCELLED) {
+            throw new ValidationError("SIP is already cancelled");
+        }
+
+        if (this.status === SipStatus.COMPLETED) {
+            throw new ValidationError("Completed SIP cannot be cancelled");
+        }
+
         if (
-            this.status !== SipStatus.ACTIVE
+            this.status !== SipStatus.ACTIVE &&
+            this.status !== SipStatus.PAUSED
         ) {
 
             throw new ValidationError(
-                "Only active SIP can cancel"
+                "Only active or paused SIP can be cancelled"
             );
         }
 
