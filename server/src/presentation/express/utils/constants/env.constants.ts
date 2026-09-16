@@ -84,4 +84,5 @@ export const env = {
   TWELVE_DATA_API: requireEnv("TWELVE_DATA_API"),
 
   MF_API_URL: requireEnv("MF_API_URL"),
+  OLLAMA_BASE_URL: process.env.OLLAMA_BASE_URL || "http://localhost:11434",
 };

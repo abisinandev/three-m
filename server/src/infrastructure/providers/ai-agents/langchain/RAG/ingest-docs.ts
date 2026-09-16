@@ -1,7 +1,9 @@
 import path from "node:path";
 import crypto from "node:crypto";
 
-import { embeddings } from "./ollama.embedded";
+const hashId = (text: string) => crypto.createHash("sha256").update(text).digest("hex");
+
+import { embeddings } from "./pinecone.embedded";
 import { pineconeIndex } from "../pinecone-vector-db";
 import { loadTxtFiles } from "./text.loader";
 
@@ -15,7 +17,7 @@ async function upsertBatch(docs: Document[]) {
     const vectors = await embeddings.embedDocuments(texts);
 
     const records = vectors.map((vector, i) => ({
-        id: crypto.randomUUID(),
+        id: hashId(docs[i].pageContent),
         values: vector,
         metadata: {
             text: docs[i].pageContent,
