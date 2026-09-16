@@ -3,7 +3,7 @@ import { PineconeStore } from "@langchain/pinecone";
 import { Document } from "@langchain/core/documents";
 import { ISemanticCacheService } from "@application/interfaces/services/ai-chatbot/semantic-cache-service.interface";
 import { pineconeIndex } from "../langchain/pinecone-vector-db";
-import { embeddings } from "../langchain/RAG/ollama.embedded";
+import { embeddings } from "../langchain/RAG/pinecone.embedded";
 
 @injectable()
 export class SemanticCacheService implements ISemanticCacheService {

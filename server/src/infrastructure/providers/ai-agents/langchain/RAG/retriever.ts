@@ -1,5 +1,5 @@
 import { PineconeStore } from "@langchain/pinecone";
-import { embeddings } from "./ollama.embedded";
+import { embeddings } from "./pinecone.embedded";
 import { pineconeIndex } from "../pinecone-vector-db";
 
 export const getVectorStore = async () => {
